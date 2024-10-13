@@ -1,0 +1,38 @@
+name: Test (lint and unittests) # Name of the workflow
+
+on:
+  push:
+    branches:
+      - main # Run this workflow on any push to the 'main' branch
+  pull_request:
+    types: [opened, synchronize, reopened] # Run this workflow when a PR is opened, synchronized, or reopened
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest # This job runs on the latest version of Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 # Checks out the repository code so we can build and test it
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3 # Sets up the .NET environment
+      with:
+        dotnet-version: '8.0.x' # Specifies the .NET SDK version (8.0.x)
+
+    - name: Install dependencies
+      run: |
+        dotnet restore # Restores dependencies for all projects in the repository
+
+    - name: Build solution
+      run: |
+        dotnet build --no-restore --configuration Release 
+        # Builds the solution in Release mode
+        # '--no-restore' skips dependency restore, as it was already done in the previous step
+
+    - name: Run tests
+      run: |
+        dotnet test "./Restaurant App Unittesting" --no-build --configuration Release --collect:"XPlat Code Coverage"
+        # Runs tests in the 'Restaurant App Unittesting' folder, using Release configuration
+        # '--no-build' skips the build step, since we already built it
+        # '--collect:"XPlat Code Coverage"' enables code coverage collection (optional)
