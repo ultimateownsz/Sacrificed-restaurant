@@ -40,6 +40,4 @@ public static class AccountsAccess
         _connection.Execute(sql, new { Id = id });
     }
 
-
-
 }
