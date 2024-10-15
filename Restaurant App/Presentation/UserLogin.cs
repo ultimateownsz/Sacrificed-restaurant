@@ -13,7 +13,7 @@ static class UserLogin
         AccountModel acc = accountsLogic.CheckLogin(email, password);
         if (acc != null)
         {
-            Console.WriteLine("Welcome back " + acc.FullName);
+            Console.WriteLine("Welcome back " + acc.FirstName + acc.LastName);
             Console.WriteLine("Your email number is " + acc.EmailAddress);
 
             //Write some code to go back to the menu
