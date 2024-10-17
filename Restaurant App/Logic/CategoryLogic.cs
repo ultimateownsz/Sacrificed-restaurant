@@ -7,8 +7,10 @@ public class CategoryLogic
         _categories = categories;
     }
 
-    public List<ProductCategory> FilterByCategory(ProductCategoryType categoryType)
+    public List<ProductCategory> FilterByCategory(string categoryType)
     {
-        return _categories.Where(category => category.CategoryType == categoryType).ToList();
+        return _categories
+            .Where(x => x.Category == categoryType)
+            .ToList();
     }
 }

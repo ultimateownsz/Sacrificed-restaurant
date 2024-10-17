@@ -6,32 +6,50 @@ class Program
 {
     static void Main(string[] args)
     {
-        InventoryLogic inventory = new InventoryLogic();
+        FoodMenuLogic menu = new FoodMenuLogic(1, new ThemeLogic());
 
-        ProductModel pizza = new ProductModel(1, "Pizza", 100, 12.99m, 1, ProductCategoryType.MainDishes);
-        inventory.AddProduct(pizza);
-        pizza.CustomAttributes["Theme"] = "Italian";
-        ProductsAccess.Write(pizza);
+        // ThemeLogic themeLogic = new ThemeLogic();
+        // themeLogic.SetTheme("Italian", new List<ProductCategory> { "MainDishes", "Alcoholic Beverages" });
 
+        var italianMenu = new MenuModel(1, "Italian");
+        
+        ProductCategory pizzaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pizza");
+        ProductCategory pastaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pasta");
+        ProductCategory craftBeerAlchoholCategory = new ProductCategory("Alcoholic Beverages", "Italian", "Craft beer");
+        
+        
+        ProductModel pizza = new ProductModel(1, "Pizza", 1, 12.99m, italianMenu.MenuId, pizzaMainDishCategory);
+        ProductModel pasta = new ProductModel(2, "Pasta", 1, 12.99m, italianMenu.MenuId, pastaMainDishCategory);
+        ProductModel moretti = new ProductModel(3, "Moretti", 1, 2.99m, italianMenu.MenuId, craftBeerAlchoholCategory);
+        
+        menu.AddProduct(pizza);
+        menu.AddProduct(pasta);
+        menu.AddProduct(moretti);
 
-        ProductModel pasta = new ProductModel(2, "Pasta", 100, 12.99m, 1, ProductCategoryType.MainDishes);
-        inventory.AddProduct(pasta);
-        pasta.CustomAttributes["Theme"] = "Italian";
+        // ProductManager
+        // ProductManager.AddProduct(pizza);
+        // ProductManager.AddProduct(pasta);
+        // ProductManager.AddProduct(moretti);
 
-        ProductModel moretti = new ProductModel(3, "Moretti", 100, 2.99m, 1, ProductCategoryType.AlcoholicBeverages);
-        inventory.AddProduct(moretti);
-        moretti.CustomAttributes["Theme"] = "Italian";
+        // ProductView.DisplayAllProducts();
+
+        ProductManager.DeleteProduct(1);
+        ProductManager.DeleteProduct(2);
+        ProductManager.DeleteProduct(3);
+
+        // ThemesAccess.Write(italianMenu);
+        
+        // ThemesAccess.Delete(1);
 
         // List<ProductModel> allProducts = new List<ProductModel> { pizza, pasta, moretti };
 
-        ThemeLogic themeLogic = new ThemeLogic();
-        themeLogic.SetTheme("Italian", new List<ProductCategoryType> { ProductCategoryType.MainDishes, ProductCategoryType.AlcoholicBeverages });
+        // foreach (var product in allProducts)
+        // {
+        //     var categoryType = product.Category.GetCategoryType();
+        //     var theme = product.Category.Theme;
+            // Console.WriteLine($"{product.ProductName} - Category: {categoryType}, Theme: {theme}");
+        // }
 
-        // List<ProductModel> italianProducts = themeLogic.GetProductsByCurrentTheme(allProducts);
 
-        foreach (var product in inventory.GetAllProducts().Values)
-        {
-            Console.WriteLine($"{product.ProductName} - Category: {product.CategoryType}, Theme: {product.CustomAttributes["Theme"]}");
-        }
     }
 }

@@ -1,16 +1,16 @@
 public class ProductLogic
 {
-    private InventoryLogic inventory = new InventoryLogic();
+    private FoodMenuLogic menu = new FoodMenuLogic(1, new ThemeLogic());
 
-    public void AddProductToInventory(ProductModel product)
+    public void AddProductToMenu(ProductModel product)
     {
-        inventory.AddProduct(product);
+        menu.AddProduct(product);
         // SaveInventoryToDB();
     }
 
     public void SaveInventoryToDB()
     {
-        Dictionary<string, ProductModel> products = inventory.GetAllProducts();
+        Dictionary<string, ProductModel> products = menu.GetAllProducts();
         // Save products to database
         // ProductAccess.SaveProducts(products);
     }

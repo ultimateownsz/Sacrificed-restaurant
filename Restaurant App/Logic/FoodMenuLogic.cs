@@ -1,6 +1,15 @@
-public class InventoryLogic
+public class FoodMenuLogic
 {
     private Dictionary<string, ProductModel> products = new();
+    public long MenuId { get; set; }
+    public ThemeLogic Theme { get; set; }
+
+    public FoodMenuLogic(long menuId, ThemeLogic theme)
+    {
+        MenuId = menuId;
+        Theme = theme;
+    }
+
     public void AddProduct(ProductModel product)
     {
         if (products.ContainsKey(product.ProductName))
