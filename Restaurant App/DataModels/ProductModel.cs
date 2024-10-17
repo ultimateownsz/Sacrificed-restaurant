@@ -1,11 +1,11 @@
 public class ProductModel : IProduct
 {
     public long ProductId { get; set; }
-    public string ProductName { get; set; }
+    public string ProductName { get; set; } = string.Empty;
     public long Quantity { get; set; }
     public decimal Price { get; set; }
     public long MenuID { get; set; }
-    public ProductCategory Category { get; set; }
+    public string Category { get; set; }
 
     // public string CategoryTypeString => Category.GetCategoryType();
     
@@ -16,7 +16,7 @@ public class ProductModel : IProduct
     // - example: (string)product.CustomAttributes["Theme"]
     public Dictionary<string, object> CustomAttributes { get; set; } = new();
 
-    // public ProductModel() {}
+    public ProductModel() {}
 
     public ProductModel(long productID, string productName, long quantity, decimal price, long menuID, ProductCategory category)
     {
@@ -25,7 +25,7 @@ public class ProductModel : IProduct
         Quantity = quantity;
         Price = price;
         MenuID = menuID;
-        Category = category;
+        Category = category.Category;
     }
 
     public void UpdateQuantity(long newQuantity)

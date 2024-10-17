@@ -19,7 +19,7 @@ public static class ProductsAccess
             product.Quantity,
             product.Price,
             product.MenuID,
-            product.Category
+            Category = product.Category.ToString()
         });
 
         _connection.Close();
@@ -45,7 +45,6 @@ public static class ProductsAccess
             return null;
         }
 
-        var categoryString = result.Category.ToString();
         
         // map the result to a ProductModel object
         return new ProductModel(

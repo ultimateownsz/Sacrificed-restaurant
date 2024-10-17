@@ -3,15 +3,15 @@ static class ProductManager
     // static private ProductModel _productModel = new ProductModel();
     public static void AddProduct(ProductModel product)
     {
-        // if (product == null)
-        // {
-        //     throw new ArgumentNullException(nameof(product));
-        // }
 
         if (ProductsAccess.GetById(product.ProductId) != null)
         {
             Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} already exists.");
             return;
+        }
+        if (product == null)
+        {
+            throw new ArgumentNullException(nameof(product));
         }
         ProductsAccess.Write(product);
         Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} added successfully.");
@@ -29,12 +29,6 @@ static class ProductManager
         if (productId <= 0)
         {
             Console.WriteLine(nameof(productId), "Product ID must be greater than 0.");
-            return;
-        }
-
-        if (ProductsAccess.GetById(productId) == null)
-        {
-            Console.WriteLine($"No product found with ID {productId}");
             return;
         }
         ProductsAccess.Delete(productId);

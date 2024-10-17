@@ -3,7 +3,7 @@
 // in the ProductCategory.cs file I made a switch case for each enum to return the correct string
 // 
 
-public static class ProductCategoryType
+public class ProductCategoryType
 {
     public const string MainDishes = "Main Dishes";
     public const string SideDishes = "Side Dishes";

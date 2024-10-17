@@ -1,20 +1,20 @@
 public class ProductCategory : IProduct
 {
-    public string Theme { get; set; }
-    public string ProductName { get; set; }
+    public string Theme { get; set; } = "Default Theme";
+    public string ProductName { get; set; } = "Default";
     public Dictionary<string, object> CustomAttributes { get; set; } = new ();
     // public Dictionary<string, string> CategoryAttributes { get; set; } = new();
-    public string Category { get; set; }
+    public string Category { get; set; } = "Defaulkt";
 
     public ProductCategory(string category, string theme, string name)
     {
+        Category = category;
+        Theme = theme;
+        ProductName = name;
         if (!isValidCategory(category))
         {
             return;
         }
-        Category = category;
-        Theme = theme;
-        ProductName = name;
     }
 
     public bool isValidCategory(string category)
