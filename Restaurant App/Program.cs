@@ -1,3 +1,61 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Welcome to this amazing program");
-Menu.Start();
+﻿using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        InitializeDatabase();
+        RunApplication();
+    }
+
+    private static void InitializeDatabase()
+    {
+
+        // Create an Admin account
+        AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
+        AccountsAccess.Write(admin);
+
+        // Create a User account
+        AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
+        AccountsAccess.Write(user);
+
+
+    }
+
+    private static void RunApplication()
+    {
+        Console.WriteLine("Log in");
+        Console.Write("Email: ");
+        string email = Console.ReadLine();
+        Console.Write("Wachtwoord: ");
+        string password = Console.ReadLine();
+
+        var account = new AccountsLogic().CheckLogin(email, password);
+
+        if (account != null)
+        {
+            if (account.IsAdmin == 1)
+            {
+                ShowAdminMenu();
+            }
+            else
+            {
+                ShowUserMenu();
+            }
+        }
+        else
+        {
+            Console.WriteLine("Ongeldige inloggegevens.");
+        }
+    }
+
+    private static void ShowAdminMenu()
+    {
+        Console.WriteLine("Welkom bij het Admin menu.");
+    }
+
+    private static void ShowUserMenu()
+    {
+        Console.WriteLine("Welkom bij het Gebruikers menu.");
+    }
+}

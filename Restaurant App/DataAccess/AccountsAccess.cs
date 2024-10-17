@@ -11,15 +11,16 @@ public static class AccountsAccess
 
     public static void Write(AccountModel account)
     {
-        string sql = $"INSERT INTO {Table} (email, password, firstName, lastName, phoneNumber, isAdmin) VALUES (@EmailAddress, @Password, @FirstName, @LastName, @PhoneNumber, @isAdmin)";
+        string sql = $"INSERT INTO {Table} (userID, firstName, lastName, email, password, phoneNumber, isAdmin) VALUES (@UserID, @FirstName, @LastName, @EmailAddress, @Password, @PhoneNumber, @IsAdmin)";
         _connection.Execute(sql, account);
     }
 
 
-    public static AccountModel GetById(int id)
+
+    public static AccountModel GetById(int userID)
     {
-        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
-        return _connection.QueryFirstOrDefault<AccountModel>(sql, new { Id = id });
+        string sql = $"SELECT * FROM {Table} WHERE userID = @UserID";
+        return _connection.QueryFirstOrDefault<AccountModel>(sql, new { UserID = userID });
     }
 
     public static AccountModel GetByEmail(string email)
@@ -30,14 +31,14 @@ public static class AccountsAccess
 
     public static void Update(AccountModel account)
     {
-        string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, firstName = @FirstName, lastName = @LastName, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE id = @Id";
+        string sql = $"UPDATE {Table} SET userID = @UserID, email = @EmailAddress, password = @Password, firstName = @FirstName, lastName = @LastName, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE userID = @UserID";
         _connection.Execute(sql, account);
     }
 
-    public static void Delete(int id)
+    public static void Delete(int userID)
     {
-        string sql = $"DELETE FROM {Table} WHERE id = @Id";
-        _connection.Execute(sql, new { Id = id });
+        string sql = $"DELETE FROM {Table} WHERE userID = @UserID";
+        _connection.Execute(sql, new { UserID = userID });
     }
 
 

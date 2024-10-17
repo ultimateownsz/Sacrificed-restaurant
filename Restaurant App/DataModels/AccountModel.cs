@@ -1,17 +1,17 @@
 ﻿public class AccountModel
 {
 
-    public Int64 Id { get; set; }
-    public string EmailAddress { get; set; }
-    public string Password { get; set; }
+    public Int64 UserID { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public int PhoneNumber { get; set; }
-    public bool IsAdmin { get; set; }
+    public string EmailAddress { get; set; }
+    public string Password { get; set; }
+    public Int64 PhoneNumber { get; set; }
+    public int IsAdmin { get; set; }
 
-    public AccountModel(Int64 id, string email, string password, string firstName, string lastName, int phoneNumber, bool isAdmin)
+    public AccountModel(Int64 userID, string firstName, string lastName, string email, string password, Int64 phoneNumber, int isAdmin)
     {
-        Id = id;
+        UserID = userID;
         EmailAddress = email;
         Password = password;
         FirstName = firstName;
