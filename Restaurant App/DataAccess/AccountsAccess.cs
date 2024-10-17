@@ -16,22 +16,23 @@ public static class AccountsAccess
     }
 
 
-
+    //NIET aanpassen
     public static AccountModel GetById(int userID)
     {
         string sql = $"SELECT * FROM {Table} WHERE userID = @UserID";
         return _connection.QueryFirstOrDefault<AccountModel>(sql, new { UserID = userID });
     }
 
+    //NIET aanpassen
     public static AccountModel GetByEmail(string email)
     {
-        string sql = $"SELECT * FROM {Table} WHERE email = @Email";
-        return _connection.QueryFirstOrDefault<AccountModel>(sql, new { Email = email });
+        string sql = $"SELECT * FROM {Table} WHERE email = @EmailAddress";
+        return _connection.QueryFirstOrDefault<AccountModel>(sql, new { EmailAddress = email });
     }
 
     public static void Update(AccountModel account)
     {
-        string sql = $"UPDATE {Table} SET userID = @UserID, email = @EmailAddress, password = @Password, firstName = @FirstName, lastName = @LastName, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE userID = @UserID";
+        string sql = $"UPDATE {Table} SET userID = @UserID, firstName = @FirstName, lastName = @LastName, email = @EmailAddress, password = @Password, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE userID = @UserID";
         _connection.Execute(sql, account);
     }
 

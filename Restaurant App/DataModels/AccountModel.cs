@@ -9,6 +9,8 @@
     public Int64 PhoneNumber { get; set; }
     public int IsAdmin { get; set; }
 
+    public AccountModel() {}
+
     public AccountModel(Int64 userID, string firstName, string lastName, string email, string password, Int64 phoneNumber, int isAdmin)
     {
         UserID = userID;

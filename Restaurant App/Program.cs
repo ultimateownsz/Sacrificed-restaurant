@@ -12,12 +12,16 @@ class Program
     {
 
         // Create an Admin account
-        AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
-        AccountsAccess.Write(admin);
+        AccountModel admin = new AccountModel(3, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
+        // AccountsAccess.Write(admin);
+        // AccountsAccess.Delete(1);
+        // AccountsAccess.Delete(2);
 
         // Create a User account
-        AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
-        AccountsAccess.Write(user);
+        AccountModel user = new AccountModel(4, "User", "userName", "user@example.com", "user123", 987654321, 0);
+        // AccountsAccess.Write(user);
+        // AccountsAccess.Delete(1);
+        // AccountsAccess.Delete(2);
 
 
     }
@@ -52,6 +56,7 @@ class Program
     private static void ShowAdminMenu()
     {
         Console.WriteLine("Welkom bij het Admin menu.");
+        AdminMenu.AdminStart();
     }
 
     private static void ShowUserMenu()
