@@ -11,7 +11,7 @@ class Program
         // ThemeLogic themeLogic = new ThemeLogic();
         // themeLogic.SetTheme("Italian", new List<ProductCategory> { "MainDishes", "Alcoholic Beverages" });
 
-        var italianMenu = new MenuModel(1, "Italian");
+        MenuModel italianMenu = new MenuModel(1, "Italian");
         
         ProductCategory pizzaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pizza");
         ProductCategory pastaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pasta");
@@ -27,15 +27,15 @@ class Program
         menu.AddProduct(moretti);
 
         // ProductManager
-        // ProductManager.AddProduct(pizza);
-        // ProductManager.AddProduct(pasta);
-        // ProductManager.AddProduct(moretti);
+        ProductController.AddProduct(pizza);
+        ProductController.AddProduct(pasta);
+        ProductController.AddProduct(moretti);
 
-        // ProductView.DisplayAllProducts();
+        ProductView.DisplayAllProducts();
 
-        ProductManager.DeleteProduct(1);
-        ProductManager.DeleteProduct(2);
-        ProductManager.DeleteProduct(3);
+        // ProductController.DeleteProduct(1);
+        // ProductController.DeleteProduct(2);
+        // ProductController.DeleteProduct(3);
 
         // ThemesAccess.Write(italianMenu);
         

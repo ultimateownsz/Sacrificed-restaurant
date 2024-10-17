@@ -4,17 +4,17 @@ public class ProductCategory : IProduct
     public string ProductName { get; set; } = "Default";
     public Dictionary<string, object> CustomAttributes { get; set; } = new ();
     // public Dictionary<string, string> CategoryAttributes { get; set; } = new();
-    public string Category { get; set; } = "Defaulkt";
+    public string Category { get; set; } = "Default";
 
     public ProductCategory(string category, string theme, string name)
     {
         Category = category;
         Theme = theme;
         ProductName = name;
-        if (!isValidCategory(category))
-        {
-            return;
-        }
+        // if (!isValidCategory(category))
+        // {
+        //     return;
+        // }
     }
 
     public bool isValidCategory(string category)

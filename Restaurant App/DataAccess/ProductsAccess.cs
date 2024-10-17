@@ -9,7 +9,6 @@ public static class ProductsAccess
 
     public static void Write(ProductModel product)
     {
-        // 
         _connection.Open();
         string sql = $"INSERT INTO {Table} (productID, productName, quantity, price, menuID, category) VALUES (@ProductId, @ProductName, @Quantity, @Price, @MenuID, @Category)";
         _connection.Execute(sql, new
@@ -38,23 +37,7 @@ public static class ProductsAccess
         string sql = $"SELECT * FROM {Table} WHERE productID = @ProductId";
         
         // query the result and map it to a dynamic object
-        var result = _connection.QueryFirstOrDefault<dynamic>(sql, new { ProductId = productID });
-
-        if (result == null)
-        {
-            return null;
-        }
-
-        
-        // map the result to a ProductModel object
-        return new ProductModel(
-            result.ProductId,
-            result.ProductName,
-            result.Quantity,
-            result.Price,
-            result.MenuID,
-            result.Category
-        );
+        return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductId = productID });
     }
 
     public static ProductModel GetByName(string productName)

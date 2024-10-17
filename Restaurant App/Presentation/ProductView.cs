@@ -7,7 +7,7 @@ static class ProductView
         Console.WriteLine("Available products:");
         foreach (var product in products)
         {
-            Console.WriteLine($"- {product.ProductName} | Quantity: {product.Quantity}");
+            Console.WriteLine($"- Product: {product.ProductName} | Quantity: {product.Quantity}");
         }
     }
 }
