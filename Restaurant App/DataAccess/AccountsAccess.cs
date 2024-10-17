@@ -31,7 +31,7 @@ public static class AccountsAccess
 
     public static void Update(AccountModel account)
     {
-        string sql = $"UPDATE {Table} SET userID = @UserID, email = @EmailAddress, password = @Password, firstName = @FirstName, lastName = @LastName, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE userID = @UserID";
+        string sql = $"UPDATE {Table} SET userID = @UserID, firstName = @FirstName, lastName = @LastName, email = @EmailAddress, password = @Password, phoneNumber = @PhoneNumber, isAdmin = @IsAdmin WHERE userID = @UserID";
         _connection.Execute(sql, account);
     }
 

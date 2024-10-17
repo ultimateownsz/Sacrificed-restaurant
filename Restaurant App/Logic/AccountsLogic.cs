@@ -9,7 +9,7 @@ public class AccountsLogic
 
     public AccountsLogic()
     {
-
+        
     }
 
     public AccountModel GetById(int id)
