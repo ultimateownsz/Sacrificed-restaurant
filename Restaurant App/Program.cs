@@ -2,10 +2,12 @@
 
 class Program
 {
+
+    // Aub even niet aanzitten voor nu
     static void Main(string[] args)
     {
         InitializeDatabase();
-        RunApplication();
+        Menu.Start();
     }
 
     private static void InitializeDatabase()
@@ -21,42 +23,5 @@ class Program
         // AccountsAccess.Delete(1);
         // AccountsAccess.Delete(2);
 
-    }
-
-    private static void RunApplication()
-    {
-        Console.WriteLine("Log in");
-        Console.Write("Email: ");
-        string email = Console.ReadLine();
-        Console.Write("Wachtwoord: ");
-        string password = Console.ReadLine();
-
-        var account = new AccountsLogic().CheckLogin(email, password);
-
-        if (account != null)
-        {
-            if (account.IsAdmin == 1)
-            {
-                ShowAdminMenu();
-            }
-            else
-            {
-                ShowUserMenu();
-            }
-        }
-        else
-        {
-            Console.WriteLine("Ongeldige inloggegevens.");
-        }
-    }
-
-    private static void ShowAdminMenu()
-    {
-        Console.WriteLine("Welkom bij het Admin menu.");
-    }
-
-    private static void ShowUserMenu()
-    {
-        Console.WriteLine("Welkom bij het Gebruikers menu.");
     }
 }
