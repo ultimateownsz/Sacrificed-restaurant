@@ -6,38 +6,40 @@ class Program
 {
     static void Main(string[] args)
     {
-        FoodMenuLogic menu = new FoodMenuLogic(1, new ThemeLogic());
+        // add products to store in the a dictionary
+        ThemeMenuLogic menu = new ThemeMenuLogic(1, new ThemeModel());
 
-        // ThemeLogic themeLogic = new ThemeLogic();
-        // themeLogic.SetTheme("Italian", new List<ProductCategory> { "MainDishes", "Alcoholic Beverages" });
-
-        MenuModel italianMenu = new MenuModel(1, "Italian");
+        ThemeMenuModel italianMenu = new ThemeMenuModel(1, "Italian");
         
+        // create product categories, with a theme, and a product name
         ProductCategory pizzaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pizza");
         ProductCategory pastaMainDishCategory = new ProductCategory("MainDishes", "Italian", "Pasta");
         ProductCategory craftBeerAlchoholCategory = new ProductCategory("Alcoholic Beverages", "Italian", "Craft beer");
         
-        
+        // create products, with a quantity, a price, a menu ID, and a category
         ProductModel pizza = new ProductModel(1, "Pizza", 1, 12.99m, italianMenu.MenuId, pizzaMainDishCategory);
         ProductModel pasta = new ProductModel(2, "Pasta", 1, 12.99m, italianMenu.MenuId, pastaMainDishCategory);
         ProductModel moretti = new ProductModel(3, "Moretti", 1, 2.99m, italianMenu.MenuId, craftBeerAlchoholCategory);
         
+        // add products to the dictionary
         menu.AddProduct(pizza);
         menu.AddProduct(pasta);
         menu.AddProduct(moretti);
 
-        // ProductManager
-        ProductController.AddProduct(pizza);
-        ProductController.AddProduct(pasta);
-        ProductController.AddProduct(moretti);
+        // Write products to the database
+        // ProductController.AddProduct(pizza);
+        // ProductController.AddProduct(pasta);
+        // ProductController.AddProduct(moretti);
 
         ProductView.DisplayAllProducts();
 
-        // ProductController.DeleteProduct(1);
-        // ProductController.DeleteProduct(2);
-        // ProductController.DeleteProduct(3);
+        // delete products out of the database
+        ProductController.DeleteProduct(1);
+        ProductController.DeleteProduct(2);
+        ProductController.DeleteProduct(3);
 
-        // ThemesAccess.Write(italianMenu);
+        ThemesAccess.Write(italianMenu);
+        ThemeView.DisplayActiveTheme(italianMenu);
         
         // ThemesAccess.Delete(1);
 

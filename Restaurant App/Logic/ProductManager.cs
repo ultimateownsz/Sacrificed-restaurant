@@ -6,6 +6,7 @@ static class ProductManager
         {
             throw new ArgumentNullException(nameof(product));
         }
+
         if (ProductsAccess.GetById(product.ProductId) != null)
         {
             // Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} already exists.");

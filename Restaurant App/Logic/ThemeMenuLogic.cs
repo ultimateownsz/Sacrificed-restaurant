@@ -1,10 +1,10 @@
-public class FoodMenuLogic
+public class ThemeMenuLogic
 {
     private Dictionary<string, ProductModel> products = new();
     public long MenuId { get; set; }
-    public ThemeLogic Theme { get; set; }
+    public ThemeModel Theme { get; set; }
 
-    public FoodMenuLogic(long menuId, ThemeLogic theme)
+    public ThemeMenuLogic(long menuId, ThemeModel theme)
     {
         MenuId = menuId;
         Theme = theme;
@@ -45,5 +45,16 @@ public class FoodMenuLogic
     public Dictionary<string, ProductModel> GetAllProducts()
     {
         return products;
+    }
+
+    public bool BelongsToActiveTheme(ThemeModel themeModel, ProductCategory productCategory)
+    {
+        bool IsThemeActive = themeModel.IsThemeActive;
+
+        bool themeMatches = themeModel.CurrentTheme == productCategory.Theme;
+
+        bool categoryIsInTheme = themeModel.ThemeCategories.Contains(productCategory.Category);
+
+        return IsThemeActive && themeMatches && categoryIsInTheme;
     }
 }

@@ -1,9 +1,9 @@
-public class ThemeLogic
+public class ThemeModel
 {
     public bool IsThemeActive { get; set; }
     public string CurrentTheme { get; set; } = "Default Theme";
     public List<string> ThemeCategories { get; set; } = new();
-    public ThemeLogic()
+    public ThemeModel()
     {
         IsThemeActive = false;
     }

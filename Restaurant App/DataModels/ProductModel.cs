@@ -5,16 +5,7 @@ public class ProductModel : IProduct
     public long Quantity { get; set; }
     public decimal Price { get; set; }
     public long MenuID { get; set; }
-    public string Category { get; set; }
-
-    // public string CategoryTypeString => Category.GetCategoryType();
-    
-    // a dict for storing custom attributes specific to each product
-    // - "Theme": string, "CategoryType": ProductCategoryType
-    // - example: {"Theme": "Italian", "CategoryType": ProductCategoryType.MainDishes}
-    // don't forget to cast the value to the correct type when using it
-    // - example: (string)product.CustomAttributes["Theme"]
-    public Dictionary<string, object> CustomAttributes { get; set; } = new();
+    public string Category { get; set; } = string.Empty;
 
     public ProductModel() {}
 

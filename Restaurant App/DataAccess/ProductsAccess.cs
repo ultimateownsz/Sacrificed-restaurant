@@ -75,8 +75,6 @@ public static class ProductsAccess
         {
             return;
         }
-
-
     }
 
     public static IEnumerable<ProductModel> GetByCategory(string category)

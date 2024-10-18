@@ -1,9 +1,9 @@
-public class MenuModel
+public class ThemeMenuModel
 {
     public long MenuId { get; set; }
     public string ThemeName { get; set; }
 
-    public MenuModel(long menuId, string themeName)
+    public ThemeMenuModel(long menuId, string themeName)
     {
         MenuId = menuId;
         ThemeName = themeName;

@@ -1,7 +1,6 @@
-// enums are used to define the types of data that can be stored in the database
-// usefull against refactoring or typechecking
-// in the ProductCategory.cs file I made a switch case for each enum to return the correct string
-// 
+// these constants define the allowed values for the product category type
+// they are used to ensure data consistency and prevent invalid data being stored in the db
+// in the ProductCategory.cs file, a switch case is used to map each constant to a string value
 
 public class ProductCategoryType
 {
