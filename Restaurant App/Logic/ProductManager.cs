@@ -30,7 +30,7 @@ static class ProductManager
 
     public static bool DeleteProduct(long productId)
     {
-        if (productId <= 0)
+        if (productId < 0)
         {
             throw new ArgumentOutOfRangeException($"{nameof(productId)} Product ID must be greater than 0.");
             // return ;

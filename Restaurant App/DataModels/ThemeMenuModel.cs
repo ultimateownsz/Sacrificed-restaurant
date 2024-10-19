@@ -1,3 +1,5 @@
+// creates theme menu models for the database
+
 public class ThemeMenuModel
 {
     public long MenuId { get; set; } = 0;

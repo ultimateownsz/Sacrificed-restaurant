@@ -9,10 +9,16 @@ public static class ProductsAccess
 
     public static void Write(ProductModel product)
     {
+        // open the db connection
         _connection.Open();
         string sql = $"INSERT INTO {Table} (productID, productName, quantity, price, menuID, category) VALUES (@ProductId, @ProductName, @Quantity, @Price, @MenuID, @Category)";
+        
+        // instead of using _connection.Execute(sql, product), we can use
         _connection.Execute(sql, new
         {
+            // in dapper you make a temporary placeholder similair to the "?" with new { }, instead of directly using the variable name
+            // these placeholders will be replaced by the actual values
+            // also in the model class you need to make an empty constructor to make it work
             product.ProductId,
             product.ProductName,
             product.Quantity,
@@ -21,15 +27,9 @@ public static class ProductsAccess
             Category = product.Category.ToString()
         });
 
+        // close the db connection
         _connection.Close();
     }
-
-    // public static bool ProductExists(long productId)
-    // {
-    //     // Select 1 means that it checks if the row productID exists, instead of using 'Select *'
-    //     string sql = $"SELECT * FROM {Table} WHERE productID = @ProductId";
-    //     return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductId = productId }) != null;
-    // }
 
     public static ProductModel GetById(long productID)
     {

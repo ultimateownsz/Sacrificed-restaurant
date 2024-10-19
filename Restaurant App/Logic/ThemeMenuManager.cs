@@ -28,9 +28,13 @@ static class ThemeMenuManager
         {
             return false;
         }
-        ThemesAccess.Delete(theme.MenuId);
+        else
+        {
+            ThemesAccess.Delete(theme.MenuId);
+        }
         return true;
     }
+
     public static List<ThemeMenuModel> GetAllThemes()
     {
         return ThemesAccess.GetAll().ToList();

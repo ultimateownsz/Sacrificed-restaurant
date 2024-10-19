@@ -10,11 +10,11 @@ static class ThemeView
 
         if (ThemeMenuManager.AddTheme(theme) == false)
         {
-            Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} already exists.");
+            Console.WriteLine($"{theme.MenuId}: {theme.Theme} added.");
         }
         else
         {
-            Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} added.");
+            Console.WriteLine($"You try to add a theme that already exists: {theme.MenuId}: {theme.Theme}.");
         }
     }
 
@@ -25,34 +25,16 @@ static class ThemeView
             throw new ArgumentNullException(nameof(theme));
         }
 
-        if (ThemeMenuManager.DeleteTheme(theme) == false)
-        {
-            Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} does not exist.");
-        }
-        else
+        if (ThemeMenuManager.DeleteTheme(theme) )
         {
             Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} deleted.");
         }
+        // else
+        // {
+        //     Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} does not exist, or is already deleted.");
+        // }
     }
-    
-    // public static void DisplayActiveTheme(ThemeMenuModel theme)
-    // {
-    //     if (theme == null)
-    //     {
-    //         throw new ArgumentNullException(nameof(theme));
-    //     }
 
-    //     if (ThemeMenuManager.ActiveTheme(theme) == false)
-    //     {
-    //         Console.WriteLine($"\nTheme: {theme.Theme}, with ID: {theme.MenuId} does not exist.");
-    //     }
-    //     else
-    //     {
-    //         Console.WriteLine($"\nTheme: {theme.Theme}, with ID: {theme.MenuId}.");
-    //     }
-    // }
-
-    // TODO Add method to display all themes (not yet working)
     public static void DisplayAllThemes()
     {
         List<ThemeMenuModel> themes = ThemeMenuManager.GetAllThemes();
@@ -60,7 +42,7 @@ static class ThemeView
         {
             foreach (var theme in themes)
             {
-                Console.WriteLine($"Menu: {theme.MenuId}, theme: {theme.Theme}");
+                Console.WriteLine($"- ID: {theme.MenuId}, theme: {theme.Theme}");
             }
         }
         else

@@ -1,3 +1,6 @@
+// this class is used to check if the product category is valid
+// it uses the ProductCategoryType const string to check if the category is valid
+
 public class ProductCategory : IProduct
 {
     public string Theme { get; set; } = "Default Theme";

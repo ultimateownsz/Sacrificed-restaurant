@@ -7,6 +7,7 @@ public class ProductModel : IProduct
     public long MenuID { get; set; }
     public string Category { get; set; } = string.Empty;
 
+    // you must need an empty constructor because of in the ProductsAccess write/update method you create temporary variable placeholders
     public ProductModel() {}
 
     public ProductModel(long productID, string productName, long quantity, decimal price, long menuID, ProductCategory category)

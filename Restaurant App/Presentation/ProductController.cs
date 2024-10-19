@@ -13,7 +13,7 @@ public static class ProductController
         }
         else
         {
-            Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} added successfully.");
+            Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} added.");
         }
     }
 
@@ -31,13 +31,13 @@ public static class ProductController
 
     public static void DeleteProduct(long productId)
     {
-        if (ProductManager.DeleteProduct(productId) == false)
+        if (ProductManager.DeleteProduct(productId))
         {
-            Console.WriteLine($"Database does not contain a product with ID: {productId}.");
+            Console.WriteLine($"Product with ID: {productId} deleted.");
         }
-        else
-        {
-            Console.WriteLine($"Product with ID: {productId} deleted successfully.");
-        }
+        // else
+        // {
+        //     Console.WriteLine($"No product found with ID: {productId}, or the product has already been deleted.");
+        // }
     }
 }

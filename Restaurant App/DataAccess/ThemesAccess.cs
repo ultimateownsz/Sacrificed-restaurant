@@ -59,10 +59,10 @@ public static class ThemesAccess
         string sql = $"DELETE FROM {Table} WHERE menuID = @MenuId";
         var result = _connection.Execute(sql, new { MenuId = menuID });
 
-        if (result == 0)
-        {
-            return;
-        }
+        // if (result == 0)
+        // {
+        //     return;
+        // }
     }
 
     public static void Delete(ThemeMenuModel themeName)
