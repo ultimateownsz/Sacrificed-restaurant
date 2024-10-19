@@ -1,11 +1,16 @@
 public class ThemeMenuModel
 {
-    public long MenuId { get; set; }
-    public string ThemeName { get; set; }
+    public long MenuId { get; set; } = 0;
+    public string Theme { get; set; } = "Default Theme";
+    public List<string> themes { get; set; } = new List<string> { };
+
+    public ThemeMenuModel() {}
 
     public ThemeMenuModel(long menuId, string themeName)
     {
         MenuId = menuId;
-        ThemeName = themeName;
+        Theme = themeName;
     }
+
+    // public List<ThemeMenuModel> themes = new List<ThemeMenuModel> { };
 }

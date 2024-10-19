@@ -24,12 +24,12 @@ public static class ProductsAccess
         _connection.Close();
     }
 
-    public static bool ProductExists(long productId)
-    {
-        // Select 1 means that it checks if the row productID exists, instead of using 'Select *'
-        string sql = $"SELECT * FROM {Table} WHERE productID = @ProductId";
-        return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductId = productId }) != null;
-    }
+    // public static bool ProductExists(long productId)
+    // {
+    //     // Select 1 means that it checks if the row productID exists, instead of using 'Select *'
+    //     string sql = $"SELECT * FROM {Table} WHERE productID = @ProductId";
+    //     return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductId = productId }) != null;
+    // }
 
     public static ProductModel GetById(long productID)
     {

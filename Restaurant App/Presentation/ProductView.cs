@@ -1,13 +1,19 @@
 static class ProductView
 {
+    // Display all products
     public static void DisplayAllProducts()
     {
-        var products = ProductsAccess.GetAll();
-
-        Console.WriteLine("Available products:");
-        foreach (var product in products)
+        List<ProductModel> products = ProductManager.GetAllProducts();
+        if (products.Count > 0)
         {
-            Console.WriteLine($"- Product: {product.ProductName} | Quantity: {product.Quantity}");
+            foreach (var product in products)
+            {
+                Console.WriteLine($"- Product: {product.ProductName}, quantity: {product.Quantity}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No products found.");
         }
     }
 }

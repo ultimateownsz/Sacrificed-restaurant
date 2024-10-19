@@ -10,11 +10,11 @@ public static class ThemesAccess
     public static void Write(ThemeMenuModel menu)
     {
         _connection.Open();
-        string sql = $"INSERT INTO {Table} (menuID, theme) VALUES (@MenuId, @ThemeName)";
+        string sql = $"INSERT INTO {Table} (menuID, theme) VALUES (@MenuId, @Theme)";
         _connection.Execute(sql, new
         {
             menu.MenuId,
-            menu.ThemeName
+            menu.Theme
         });
 
         _connection.Close();
@@ -26,10 +26,16 @@ public static class ThemesAccess
         return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { MenuId = menuID });
     }
 
+    public static ThemeMenuModel GetById(string themeName)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE theme = @Theme";
+        return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { Theme = themeName });
+    }
+
     public static ThemeMenuModel GetByName(string themeName)
     {
         string sql = $"SELECT * FROM {Table} WHERE theme = @ProductName";
-        return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { ThemeName = themeName });
+        return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { Theme = themeName });
     }
 
     public static IEnumerable<ThemeMenuModel> GetAll()
@@ -40,11 +46,11 @@ public static class ThemesAccess
 
     public static void Update(ThemeMenuModel menu)
     {
-        string sql = $"UPDATE {Table} SET theme = @ThemeName WHERE menuID = @MenuId";
+        string sql = $"UPDATE {Table} SET theme = @Theme WHERE menuID = @MenuId";
         _connection.Execute(sql, new 
         {
             menu.MenuId,
-            menu.ThemeName
+            menu.Theme
         });
     }
 
@@ -57,5 +63,17 @@ public static class ThemesAccess
         {
             return;
         }
+    }
+
+    public static void Delete(ThemeMenuModel themeName)
+    {
+        string sql = $"DELETE FROM {Table} WHERE theme = @Theme";
+        _connection.Execute(sql, new { Theme = themeName });
+    }
+
+    public static IEnumerable<ThemeMenuModel> GetByThemeName(string themeName)
+    {
+        string sql = $"Select * from {Table} where theme = @Theme";
+        return _connection.Query<ThemeMenuModel>(sql, new { Theme = themeName });
     }
 }

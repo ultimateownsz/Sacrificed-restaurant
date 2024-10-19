@@ -1,3 +1,6 @@
+// logic for filtering products by category
+// this is used to filter products by category type in the ProductView.cs file
+
 public class CategoryLogic
 {
     private readonly List<ProductCategory> _categories;

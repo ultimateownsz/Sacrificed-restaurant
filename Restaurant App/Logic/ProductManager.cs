@@ -1,3 +1,5 @@
+// this class handles all the logic for adding, updating, and deleting products
+
 static class ProductManager
 {
     public static bool AddProduct(ProductModel product)
@@ -42,5 +44,10 @@ static class ProductManager
         ProductsAccess.Delete(productId);
         // Console.WriteLine($"Product with ID: {productId} deleted successfully.");
         return true;
+    }
+
+     public static List<ProductModel> GetAllProducts()
+    {
+        return ProductsAccess.GetAll().ToList();
     }
 }
