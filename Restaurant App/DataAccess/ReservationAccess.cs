@@ -75,4 +75,13 @@ public static class ReservationAccess
         string sql = $"DELETE FROM {Table} WHERE reservationID = @ReservationID";
         _connection.Execute(sql, new { ReservationID = reservationID });
     }
+
+    //This fucnction is called in the logic layer(ReservationLogic.cs)
+    //It gets the latest(MAX) reservation ID in the database
+    public static Int64 GetLatestReservationID()
+    {
+        string sql = $"SELECT MAX(reservationID) FROM {Table}";
+        return _connection.QueryFirstOrDefault<Int64>(sql);
+    }
+
 }

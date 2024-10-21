@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-
-
-//This class is not static so later on we can use inheritance and interfaces
-public class AccountsLogic
+﻿public class AccountsLogic
 {
 
     //Static properties are shared across all instances of the class
@@ -35,8 +28,5 @@ public class AccountsLogic
         }
         return null;
     }
+    
 }
-
-
-
-
