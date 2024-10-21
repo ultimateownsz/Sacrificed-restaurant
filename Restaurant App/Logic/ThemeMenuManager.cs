@@ -4,10 +4,10 @@ static class ThemeMenuManager
 {
     public static bool AddTheme(ThemeMenuModel theme)
     {
-        if (theme == null)
-        {
-            throw new ArgumentNullException(nameof(theme));
-        }
+        // if (theme == null)
+        // {
+        //     throw new ArgumentNullException(nameof(theme));
+        // }
 
         if (ThemesAccess.GetById(theme.MenuId) != null)
         {

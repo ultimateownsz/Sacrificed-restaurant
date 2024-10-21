@@ -1,22 +1,22 @@
 static class ThemeView
 {
-    
     public static void AddTheme(ThemeMenuModel theme)
     {
         if (theme == null)
         {
             throw new ArgumentNullException(nameof(theme));
         }
-
-        if (ThemeMenuManager.AddTheme(theme) == false)
+        if (ThemeMenuManager.AddTheme(theme) == true)
         {
-            Console.WriteLine($"{theme.MenuId}: {theme.Theme} added.");
+            Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} added.");
         }
         else
         {
-            Console.WriteLine($"You try to add a theme that already exists: {theme.MenuId}: {theme.Theme}.");
+            Console.WriteLine($"Theme: {theme.Theme}, with ID: {theme.MenuId} already exists.");
         }
+        
     }
+
 
     public static void DeleteTheme(ThemeMenuModel theme)
     {
