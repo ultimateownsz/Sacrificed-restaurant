@@ -3,7 +3,7 @@ static class MakingReservations
 
     static private ReservationLogic reservationLogic = new ReservationLogic();
 
-    public static void Start()//This function gets called through the menu to ask the user for his reservation information
+    public static void Start(AccountModel acc)//This function gets called through the menu to ask the user for his reservation information
     {
         //Ask the date of the reservation
         Console.WriteLine("Welcome to the reservation page");
@@ -23,7 +23,7 @@ static class MakingReservations
             Console.WriteLine("Please enter the number of guests");
             string reservationAmount = Console.ReadLine();
 
-            reservationLogic.SaveReservation(date, tableChoice, reservationAmount);
+            reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.Id);
         }
         else
         {

@@ -3,7 +3,7 @@ static class UserLogin
     static private AccountsLogic accountsLogic = new AccountsLogic();
 
 
-    public static void Start()
+    public static AccountModel Start()
     {
         Console.WriteLine("Welcome to the login page");
         Console.WriteLine("Please enter your email address");
@@ -15,6 +15,7 @@ static class UserLogin
         {
             Console.WriteLine("Welcome back " + acc.FullName);
             Console.WriteLine("Your email number is " + acc.EmailAddress);
+            return acc;
 
             //Write some code to go back to the menu
             //Menu.Start();
@@ -22,6 +23,7 @@ static class UserLogin
         else
         {
             Console.WriteLine("No account found with that email and password");
+            return null;
         }
     }
 }

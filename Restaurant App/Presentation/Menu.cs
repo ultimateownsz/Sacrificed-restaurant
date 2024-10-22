@@ -8,15 +8,19 @@ static class Menu
     {
         Console.WriteLine("Enter 1 to login");
         Console.WriteLine("Enter 2 to enter the reservation menu"); 
-
+        AccountModel acc = null;
         string input = Console.ReadLine();
         if (input == "1")
         {
-            UserLogin.Start();
+            acc = UserLogin.Start();
         }
-        else if (input == "2")
+        else if (input == "2" && acc is not null)
         {
-            MakingReservations.Start();
+            MakingReservations.Start(acc);
+        }
+        else if (input == "2" && acc is null)
+        {
+            Console.WriteLine("Please log in first");
         }
         else
         {

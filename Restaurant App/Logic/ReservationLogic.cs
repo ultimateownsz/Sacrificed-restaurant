@@ -14,7 +14,7 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
-    public Int64 SaveReservation(string date, string tableChoice, string reservationAmount)
+    public Int64 SaveReservation(string date, string tableChoice, string reservationAmount, Int64 userId)
     {   
         if (CurrentReservation != null)
         {
@@ -22,7 +22,7 @@ public class ReservationLogic
             CurrentReservation.TableChoice = ConvertTableChoice(tableChoice);
             CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
             CurrentReservation.ID = GenerateNewReservationID();
-            CurrentReservation.UserID = Userid;
+            CurrentReservation.UserID = userId;
             ReservationAccess.Write(CurrentReservation);
             return CurrentReservation.UserID;
         }
