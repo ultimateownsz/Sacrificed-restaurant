@@ -8,11 +8,18 @@ public static class ReservationAccess
 
     private static string Table = "Reservation";
 
-    public static void Write(ReservationModel reservation)
+public static void Write(ReservationModel reservation)
+{
+    string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
+    _connection.Execute(sql, new
     {
-        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
-        _connection.Execute(sql, reservation);
-    }
+        ReservationID = reservation.ID,
+        Date = reservation.Date,
+        TableChoice = reservation.TableChoice,
+        ReservationAmount = reservation.ReservationAmount,
+        UserID = reservation.UserID
+    });
+}
 
     public static List<ReservationModel> GetAllReservations()
     {
@@ -81,7 +88,6 @@ public static class ReservationAccess
     public static Int64 GetLatestReservationID()
     {
         string sql = $"SELECT MAX(reservationID) FROM {Table}";
-        return _connection.QueryFirstOrDefault<Int64>(sql);
+        return _connection.ExecuteScalar<Int64?>(sql) ?? 0;
     }
-
 }

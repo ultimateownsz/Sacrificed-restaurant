@@ -5,21 +5,21 @@ class Program
     // Aub even niet aanzitten voor nu
     static void Main(string[] args)
     {
-        InitializeDatabase();
+        // InitializeDatabase();
         Menu.Start();
     }
 
-    private static void InitializeDatabase()
-    {
+    // private static void InitializeDatabase()
+    // {
 
 
-        AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
-        AccountsAccess.Write(admin);
+    //     // AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
+    //     // AccountsAccess.Write(admin);
 
-        AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
-        AccountsAccess.Write(user);
-        // AccountsAccess.Delete(1);
-        // AccountsAccess.Delete(2);
+    //     // AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
+    //     // AccountsAccess.Write(user);
+    //     // AccountsAccess.Delete(1);
+    //     // AccountsAccess.Delete(2);
 
-    }
+    // }
 }
