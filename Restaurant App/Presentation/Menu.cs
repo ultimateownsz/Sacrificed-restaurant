@@ -5,13 +5,13 @@ static class Menu
     static public void Start()
     {
         Console.WriteLine("Enter 1 to login");
-        // in the future we'll add different numbers to do something else, hence 1 to login
-
+        Console.WriteLine("Enter 2 to enter the reservation menu"); 
+        AccountModel acc = null;
         string input = Console.ReadLine();
 
         if (input == "1")
         {
-            AccountModel loggedInAccount = UserLogin.Start();
+            AccountModel loggedInAccount = acc = UserLogin.Start();
             if (loggedInAccount != null)
             {
                 if (loggedInAccount.IsAdmin == 1)
@@ -24,9 +24,13 @@ static class Menu
                 }
             }
         }
-        else if (input == "2")
+        else if (input == "2" && acc is not null)
         {
-            Console.WriteLine("This feature is not yet implemented.");
+            MakingReservations.Start(acc);
+        }
+        else if (input == "2" && acc is null)
+        {
+            Console.WriteLine("Please log in first");
         }
         else
         {

@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-
 public class AccountsLogic
 {
     public static AccountModel? CurrentAccount { get; private set; }
@@ -39,4 +34,5 @@ public class AccountsLogic
 
         return null;
     }
+    
 }

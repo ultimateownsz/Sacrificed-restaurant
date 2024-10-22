@@ -42,6 +42,4 @@ public static class AccountsAccess
         _connection.Execute(sql, new { UserID = userID });
     }
 
-
-
 }

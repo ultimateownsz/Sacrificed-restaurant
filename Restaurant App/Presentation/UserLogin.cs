@@ -4,6 +4,7 @@ static class UserLogin
 {
     static private AccountsLogic accountsLogic = new AccountsLogic();
 
+
     public static AccountModel Start()
     {
         Console.WriteLine("Welcome to the login page");
@@ -17,10 +18,12 @@ static class UserLogin
         {
             Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);
             Console.WriteLine("Your email is: " + acc.EmailAddress);
+            return acc;
         }
         else
         {
-            Console.WriteLine("No account found with that email and password.");
+            Console.WriteLine("No account found with that email and password");
+            return null;
         }
 
         return acc;
