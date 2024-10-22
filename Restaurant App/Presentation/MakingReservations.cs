@@ -23,7 +23,7 @@ static class MakingReservations
             Console.WriteLine("Please enter the number of guests");
             string reservationAmount = Console.ReadLine();
 
-            reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.Id);
+            reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.UserID);
         }
         else
         {
