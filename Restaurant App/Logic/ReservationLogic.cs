@@ -2,7 +2,7 @@ public class ReservationLogic
 {
 
     //Static properties are shared across all instances of the class
-    public static ReservationModel? CurrentReservation { get; private set; }
+    public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0);
     public static Int64 Userid { get; private set; }
 
     public ReservationLogic()
@@ -23,8 +23,9 @@ public class ReservationLogic
             CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
             CurrentReservation.ID = GenerateNewReservationID();
             CurrentReservation.UserID = userId;
+            Console.WriteLine($"resID: {CurrentReservation.UserID}, Date: {CurrentReservation.Date}, Table Choice: {CurrentReservation.TableChoice}, Number of People: {CurrentReservation.ReservationAmount}, UserID: {CurrentReservation.UserID}");
             ReservationAccess.Write(CurrentReservation);
-            return CurrentReservation.UserID;
+            return CurrentReservation.ID;
         }
         return 0;
     }
@@ -73,8 +74,16 @@ public class ReservationLogic
         return ReservationAccess.GetByReservationID(id);
     }
 
-    public void RemoveReservation(int id)
+    public bool RemoveReservation(int id)
     {
-        ReservationAccess.Delete(id);
+        if(ReservationAccess.GetByReservationID(id) == null)
+        {
+            return false;
+        }
+        else
+        {
+            ReservationAccess.Delete(id);
+            return true;
+        }
     }
 }

@@ -45,7 +45,7 @@ static class AdminMenu
         {
             foreach (var reservation in reservations)
             {
-                Console.WriteLine($"ID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+                Console.WriteLine($"ReservationID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
             }
         }
         AdminStart();
@@ -84,7 +84,7 @@ static class AdminMenu
                 break;
 
             case "2":
-                Console.Write("Enter Date (e.g., YYYYMMDD): ");
+                Console.Write("Enter Date (DDMMYYYY): ");
                 if (int.TryParse(Console.ReadLine(), out int date))
                 {
                     filteredReservations = ReservationAdminLogic.GetReservationsByDate(date);

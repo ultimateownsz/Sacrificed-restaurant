@@ -5,7 +5,6 @@ static class Menu
     static public void Start()
     {
         Console.WriteLine("Enter 1 to login");
-        Console.WriteLine("Enter 2 to enter the reservation menu"); 
         AccountModel acc = null;
         string input = Console.ReadLine();
 
@@ -20,17 +19,9 @@ static class Menu
                 }
                 else
                 {
-                    ShowUserMenu();  // directs to User menu if the account is a regular user
+                    ShowUserMenu(acc);  // directs to User menu if the account is a regular user
                 }
             }
-        }
-        else if (input == "2" && acc is not null)
-        {
-            MakingReservations.Start(acc);
-        }
-        else if (input == "2" && acc is null)
-        {
-            Console.WriteLine("Please log in first");
         }
         else
         {
@@ -39,8 +30,27 @@ static class Menu
         }
     }
 
-    private static void ShowUserMenu()
+    private static void ShowUserMenu(AccountModel acc)
     {
         Console.WriteLine("Welcome to the User menu.");
+        Console.WriteLine("Enter 1 to enter the reservation menu");
+        string input = Console.ReadLine();
+        if (input == "1" && acc is not null)
+        {
+            MakingReservations.Start(acc);
+        }
+        else if (input == "1" && acc is null)
+        {
+            Console.WriteLine("Please log in first");
+        }
+        else if (input == "q")
+        {
+            return;
+        }
+        else
+        {
+            Console.WriteLine("Invalid input");
+            ShowUserMenu(acc);  // restart the menu if input is invalid
+        }
     }
 }

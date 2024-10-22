@@ -23,14 +23,18 @@ static class MakingReservations
             Console.WriteLine("Please enter the number of guests");
             string reservationAmount = Console.ReadLine();
 
-            reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.Id);
+            Console.WriteLine(reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.UserID));
+            
         }
         else
         {
             Console.WriteLine("Please enter the reservation code(id)");
             int removeID = Convert.ToInt32(Console.ReadLine());
-            reservationLogic.RemoveReservation(removeID);
-            Console.WriteLine("The reservation has been cancelled");
+            
+            if(reservationLogic.RemoveReservation(removeID) == true)
+                Console.WriteLine("The reservation has been cancelled");
+            else
+                Console.WriteLine("Invalid ID, reservation has not been cancelled");
         }
     }
 }
