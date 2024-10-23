@@ -23,7 +23,6 @@ public class ReservationLogic
             CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
             CurrentReservation.ID = GenerateNewReservationID();
             CurrentReservation.UserID = userId;
-            Console.WriteLine($"resID: {CurrentReservation.UserID}, Date: {CurrentReservation.Date}, Table Choice: {CurrentReservation.TableChoice}, Number of People: {CurrentReservation.ReservationAmount}, UserID: {CurrentReservation.UserID}");
             ReservationAccess.Write(CurrentReservation);
             return CurrentReservation.ID;
         }

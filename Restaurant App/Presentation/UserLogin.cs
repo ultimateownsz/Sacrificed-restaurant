@@ -25,7 +25,5 @@ static class UserLogin
             Console.WriteLine("No account found with that email and password");
             return null;
         }
-
-        return acc;
     }
 }
