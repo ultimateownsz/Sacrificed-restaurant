@@ -45,7 +45,7 @@ static class AdminMenu
         {
             foreach (var reservation in reservations)
             {
-                Console.WriteLine($"ID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+                Console.WriteLine($"ReservationID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
             }
         }
         AdminStart();
@@ -84,10 +84,21 @@ static class AdminMenu
                 break;
 
             case "2":
-                Console.Write("Enter Date (e.g., YYYYMMDD): ");
+                Console.Write("Enter Date (DDMMYYYY): ");
                 if (int.TryParse(Console.ReadLine(), out int date))
                 {
-                    filteredReservations = ReservationAdminLogic.GetReservationsByDate(date);
+                    var reservationsByDate = ReservationAdminLogic.GetReservationsByDate(date);
+                    if (reservationsByDate.Count > 0)
+                    {
+                        foreach (var reservation in reservationsByDate)
+                        {
+                            Console.WriteLine($"ID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No reservations found for that date.");
+                    }
                 }
                 else
                 {
@@ -99,7 +110,18 @@ static class AdminMenu
                 Console.Write("Enter User ID: ");
                 if (int.TryParse(Console.ReadLine(), out int userID))
                 {
-                    filteredReservations = ReservationAdminLogic.GetReservationsByUserID(userID);
+                    var reservationsByUserID = ReservationAdminLogic.GetReservationsByUserID(userID);
+                    if (reservationsByUserID.Count > 0)
+                    {
+                        foreach (var reservation in reservationsByUserID)
+                        {
+                            Console.WriteLine($"ID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No reservations found for that User ID.");
+                    }
                 }
                 else
                 {
@@ -107,24 +129,25 @@ static class AdminMenu
                 }
                 break;
 
+
             default:
                 Console.WriteLine("Invalid choice.");
                 FilterReservations();
                 return;
         }
 
-        if (filteredReservations.Count == 0)
-        {
-            Console.WriteLine("No reservations found matching the criteria.");
-        }
-        else
-        {
-            Console.WriteLine("Filtered Reservations:");
-            foreach (var res in filteredReservations)
-            {
-                Console.WriteLine($"ID: {res.ID}, Date: {res.Date}, Table Choice: {res.TableChoice}, Number of People: {res.ReservationAmount}, UserID: {res.UserID}");
-            }
-        }
+        // if (filteredReservations.Count == 0)
+        // {
+        //     Console.WriteLine("No reservations found matching the criteria.");
+        // }
+        // else
+        // {
+        //     Console.WriteLine("Filtered Reservations:");
+        //     foreach (var res in filteredReservations)
+        //     {
+        //         Console.WriteLine($"ID: {res.ID}, Date: {res.Date}, Table Choice: {res.TableChoice}, Number of People: {res.ReservationAmount}, UserID: {res.UserID}");
+        //     }
+        // }
         AdminStart();
     }
 

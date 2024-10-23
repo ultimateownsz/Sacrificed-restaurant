@@ -8,46 +8,46 @@ public static class ReservationAccess
 
     private static string Table = "Reservation";
 
-public static void Write(ReservationModel reservation)
-{
-    string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
-    _connection.Execute(sql, new
+    public static void Write(ReservationModel reservation)
     {
-        ReservationID = reservation.ID,
-        Date = reservation.Date,
-        TableChoice = reservation.TableChoice,
-        ReservationAmount = reservation.ReservationAmount,
-        UserID = reservation.UserID
-    });
-}
+        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
+        _connection.Execute(sql, new
+        {
+            ReservationID = reservation.ID,
+            Date = reservation.Date,
+            TableChoice = reservation.TableChoice,
+            ReservationAmount = reservation.ReservationAmount,
+            UserID = reservation.UserID
+        });
+    }
 
     public static List<ReservationModel> GetAllReservations()
     {
-        string sql = $"SELECT * FROM {Table}";
+        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table}";
         return _connection.Query<ReservationModel>(sql).AsList();
     }
 
     public static ReservationModel GetByReservationID(int reservationID)
     {
-        string sql = $"SELECT * FROM {Table} WHERE reservationID = @ReservationID";
+        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE reservationID = @ReservationID";
         return _connection.QueryFirstOrDefault<ReservationModel>(sql, new { ReservationID = reservationID });
     }
 
     public static List<ReservationModel> GetByUserID(int userID)
     {
-        string sql = $"SELECT * FROM {Table} WHERE userID = @UserID";
+        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE userID = @UserID";
         return _connection.Query<ReservationModel>(sql, new { UserID = userID }).AsList();
     }
 
     public static List<ReservationModel> GetByDate(int date)
     {
-        string sql = $"SELECT * FROM {Table} WHERE date = @Date";
+        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE date = @Date";
         return _connection.Query<ReservationModel>(sql, new { Date = date }).AsList();
     }
 
     public static List<ReservationModel> GetFilteredReservations(int? reservationID = null, int? date = null, int? userID = null)
     {
-        var sql = $"SELECT * FROM {Table} WHERE 1=1";
+        var sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE 1=1";
         var parameters = new DynamicParameters();
 
         if (reservationID.HasValue)
@@ -71,11 +71,24 @@ public static void Write(ReservationModel reservation)
         return _connection.Query<ReservationModel>(sql, parameters).AsList();
     }
 
+
     public static void Update(ReservationModel reservation)
     {
-        string sql = $"UPDATE {Table} SET date = @Date, tableChoice = @TableChoice, reservationAmount = @ReservationAmount, userID = @UserID WHERE reservationID = @ReservationID";
-        _connection.Execute(sql, reservation);
+        using (var connection = new SqliteConnection("Data Source=DataSources/project.db"))
+        {
+            connection.Open();
+            string sql = $"UPDATE {Table} SET date = @Date, tableChoice = @TableChoice, reservationAmount = @ReservationAmount, userID = @UserID WHERE reservationID = @ReservationID";
+            connection.Execute(sql, new
+            {
+                ReservationID = reservation.ID,
+                Date = reservation.Date,
+                TableChoice = reservation.TableChoice,
+                ReservationAmount = reservation.ReservationAmount,
+                UserID = reservation.UserID
+            });
+        }
     }
+
 
     public static void Delete(int reservationID)
     {
@@ -83,7 +96,7 @@ public static void Write(ReservationModel reservation)
         _connection.Execute(sql, new { ReservationID = reservationID });
     }
 
-    //This fucnction is called in the logic layer(ReservationLogic.cs)
+    //This function is called in the logic layer(ReservationLogic.cs)
     //It gets the latest(MAX) reservation ID in the database
     public static Int64 GetLatestReservationID()
     {
