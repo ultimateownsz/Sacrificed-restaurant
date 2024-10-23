@@ -71,6 +71,28 @@ public static class ReservationAccess
         return _connection.Query<ReservationModel>(sql, parameters).AsList();
     }
 
+    // NIEUW (for menu items)
+    public static List<ProductModel> GetMenuItemsByReservationID(int reservationID)
+    {
+        string sql = @"
+        SELECT 
+            p.productID AS ProductId, 
+            p.productName AS ProductName, 
+            p.quantity AS Quantity, 
+            p.price AS Price, 
+            p.menuID AS MenuID, 
+            p.category AS Category
+        FROM 
+            [Order] o
+        JOIN 
+            Product p ON o.productID = p.productID
+        WHERE 
+            o.reservationID = @ReservationID";
+
+        return _connection.Query<ProductModel>(sql, new { ReservationID = reservationID }).AsList();
+    }
+
+
 
     public static void Update(ReservationModel reservation)
     {

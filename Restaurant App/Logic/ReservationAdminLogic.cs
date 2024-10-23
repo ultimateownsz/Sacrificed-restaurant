@@ -27,6 +27,13 @@ public static class ReservationAdminLogic
         return ReservationAccess.GetFilteredReservations(reservationID, date, userID);
     }
 
+    // NIEUW (for menu items)
+    public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
+    {
+        return ReservationAccess.GetMenuItemsByReservationID(reservationID);
+    }
+
+
     public static void UpdateReservation(ReservationModel reservation)
     {
         ReservationAccess.Update(reservation);
