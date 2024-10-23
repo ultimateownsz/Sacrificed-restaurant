@@ -5,8 +5,10 @@ static class AdminMenu
         System.Console.WriteLine("Welcome to the Admin page!");
         System.Console.WriteLine("1. View all reservations");
         System.Console.WriteLine("2. Filter reservations");
-        System.Console.WriteLine("3. Update a reservation");
-        System.Console.WriteLine("4. Delete a reservation");
+        // NIEUW (for menu items)
+        System.Console.WriteLine("3. View the selected menu items per reservation");
+        System.Console.WriteLine("4. Update a reservation");
+        System.Console.WriteLine("5. Delete a reservation");
         System.Console.WriteLine("Q. Go back to the main menu");
 
         string choice = Console.ReadLine().ToLower();
@@ -19,9 +21,12 @@ static class AdminMenu
                 FilterReservations();
                 break;
             case "3":
-                UpdateReservation();
+                ViewMenuItemsForReservation();
                 break;
             case "4":
+                UpdateReservation();
+                break;
+            case "5":
                 DeleteReservation();
                 break;
             case "q":
@@ -129,7 +134,6 @@ static class AdminMenu
                 }
                 break;
 
-
             default:
                 Console.WriteLine("Invalid choice.");
                 FilterReservations();
@@ -148,6 +152,45 @@ static class AdminMenu
         //         Console.WriteLine($"ID: {res.ID}, Date: {res.Date}, Table Choice: {res.TableChoice}, Number of People: {res.ReservationAmount}, UserID: {res.UserID}");
         //     }
         // }
+        AdminStart();
+    }
+
+    // NIEUW (for menu items)
+    static void ViewMenuItemsForReservation()
+    {
+        Console.Write("Enter the Reservation ID to view the selected menu items: ");
+        if (int.TryParse(Console.ReadLine(), out int reservationID))
+        {
+            var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
+
+            if (reservation != null)
+            {
+                Console.WriteLine($"Reservation ID: {reservation.ID}, Date: {reservation.Date}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+
+                var menuItems = ReservationAdminLogic.GetMenuItemsForReservation(reservationID);
+
+                if (menuItems.Count > 0)
+                {
+                    Console.WriteLine("Selected Menu Items:");
+                    foreach (var item in menuItems)
+                    {
+                        Console.WriteLine($"- {item.Category}: {item.ProductName} (Quantity: {item.Quantity}, Price: {item.Price})");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No menu items found for this reservation.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Reservation not found.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid Reservation ID format.");
+        }
         AdminStart();
     }
 
