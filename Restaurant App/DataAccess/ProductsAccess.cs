@@ -40,6 +40,15 @@ public static class ProductsAccess
         return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductId = productID });
     }
 
+    public static IEnumerable<ProductModel> GetByIds(IEnumerable<long> productIds)
+    {
+        // query all columns from product table
+        string sql = $"SELECT * FROM {Table} WHERE productID IN @ProductIds";
+        
+        // query the result and map it to a dynamic object
+        return _connection.Query<ProductModel>(sql, new { ProductIds = productIds });
+    }
+
     public static ProductModel GetByName(string productName)
     {
         string sql = $"SELECT 1 FROM {Table} WHERE productName = @ProductName";
