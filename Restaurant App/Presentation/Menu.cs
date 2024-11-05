@@ -4,8 +4,10 @@ static class Menu
 {
     static public void Start()
     {
-        Console.WriteLine("Enter 1 to login");
+        Console.WriteLine("Enter 1 to login:");
+        Console.WriteLine("Enter 2 to register a new account:");
         AccountModel acc = null;
+        AccountsLogic accL = null;
         string input = Console.ReadLine();
 
         if (input == "1")
@@ -22,6 +24,11 @@ static class Menu
                     ShowUserMenu(acc);  // directs to User menu if the account is a regular user
                 }
             }
+        }
+        else if (input == "2")
+        {
+            accL = new AccountsLogic();
+            accL.CreateAccount();
         }
         else
         {
