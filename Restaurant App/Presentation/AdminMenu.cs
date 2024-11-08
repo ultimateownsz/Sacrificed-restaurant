@@ -2,14 +2,17 @@ static class AdminMenu
 {
     static public void AdminStart()
     {
-        System.Console.WriteLine("Welcome to the Admin page!");
-        System.Console.WriteLine("1. View all reservations");
-        System.Console.WriteLine("2. Filter reservations");
+        Console.WriteLine("Welcome to the Admin page!");
+        Console.WriteLine("1. View all reservations");
+        Console.WriteLine("2. Filter reservations");
         // NIEUW (for menu items)
-        System.Console.WriteLine("3. View the selected menu items per reservation");
-        System.Console.WriteLine("4. Update a reservation");
-        System.Console.WriteLine("5. Delete a reservation");
-        System.Console.WriteLine("Q. Go back to the main menu");
+        Console.WriteLine("3. View the selected menu items per reservation");
+        Console.WriteLine("4. Update a reservation");
+        Console.WriteLine("5. Delete a reservation");
+        Console.WriteLine("6. View all scheduled themes");
+        Console.WriteLine("7. Add a theme for an upcoming month");
+        Console.WriteLine("8. Edit the month of an existing theme");
+        Console.WriteLine("Q. Go back to the main menu");
 
         string choice = Console.ReadLine().ToLower();
         switch (choice)
@@ -28,6 +31,15 @@ static class AdminMenu
                 break;
             case "5":
                 DeleteReservation();
+                break;
+            case "6":
+                ThemeView.DisplayAllThemes();
+                break;
+            case "7":
+                ThemeView.AddTheme();
+                break;
+            case "8":
+                ThemeView.UpdateTheme();
                 break;
             case "q":
                 Menu.Start();
