@@ -61,6 +61,12 @@ public static class ProductsAccess
         return _connection.Query<ProductModel>(sql);
     }
 
+    public static IEnumerable<ProductModel> GetAllByCategory(string category)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE category = @Category";
+        return _connection.Query<ProductModel>(sql, new { Category = category });
+    }
+
     public static void Update(ProductModel product)
     {
         string sql = $"UPDATE {Table} SET productName = @ProductName, quantity = @Quantity, price = @Price, menuID = @MenuID, category = @Category WHERE productID = @ProductId";

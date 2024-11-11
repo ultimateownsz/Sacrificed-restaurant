@@ -50,4 +50,9 @@ static class ProductManager
     {
         return ProductsAccess.GetAll().ToList();
     }
+
+     public static List<ProductModel> GetAllWithinCategory(string category)
+    {
+        return ProductsAccess.GetAllByCategory(category).ToList();
+    }
 }
