@@ -2,27 +2,79 @@
 
 static class ThemeMenuManager
 {
+    
+    public static List<(int year, int month, string themeName)> GetMonthlyDisplay(int startYear)
+    {
+        var displayData = new List<(int year, int month, string themeName)>();
+
+        // check if scheduled themes dict is updated with themes
+        var themes = GetScheduledThemes();  // retrieve themes from database
+        UpdateThemeSchedule(startYear, 1, themes);  // populate ThemeScheduledByYear
+
+        foreach (var yearEntry in ThemeScheduledByYear)
+        {
+            int year = yearEntry.Key;
+
+            for (int month = 1; month <= 12; month++)
+            {
+                // check if there's a theme scheduled for this month
+                var themeForMonth = yearEntry.Value.FirstOrDefault(t => t.ScheduledMonth == month);
+                string theme = themeForMonth?.ThemeName ?? "Not scheduled";
+
+                // add each month, with either the theme name or "Not scheduled"
+                displayData.Add((year, month, theme));
+            }
+        }
+        return displayData;
+    }
+    
+    
     // temporary theme method
+    public static Dictionary<int, List<ThemeMenuModel>> ThemeScheduledByYear = new();
     public static List<ThemeMenuModel> GetScheduledThemes()
     {
-        List<ThemeMenuModel> themes = ThemesAccess.GetAllThemes().ToList();
+        // retrieve all themes from the database without year and month
+        var themes = ThemesAccess.GetAllThemes().ToList();
 
-        // // test purposes
+        // use a dict for scheduling information for demo purposes
         int startYear = DateTime.Now.Year;
         int startMonth = DateTime.Now.Month;
 
-        for (int i = 0; i < themes.Count; i++)
-        {
-            int adjustedMonth = (startMonth + i - 1) % 12 + 1;
-            themes[i].ScheduledMonth = adjustedMonth;
+        UpdateThemeSchedule(startYear, startMonth, themes);
 
-            // increment the year when we pass January
-            themes[i].ScheduledYear = startYear + (startMonth + i - 1) / 12;
-
-            // 
-            // themes[i].MenuId = i + 1;
-        }
         return themes;
+    }
+
+    // update scheduling information in dict
+    private static void UpdateThemeSchedule(int startYear, int startMonth, List<ThemeMenuModel> themes)
+    {
+        ThemeScheduledByYear.Clear();
+        int year = startYear;
+        int month = startMonth;
+
+        foreach (var theme in themes)
+        {
+            // make sure dict has current year key
+            if (!ThemeScheduledByYear.ContainsKey(year))
+            {
+                ThemeScheduledByYear[year] = new List<ThemeMenuModel>();
+            }
+
+            // set theme's scheduled month and year for display purposes
+            theme.ScheduledYear = year;
+            theme.ScheduledMonth = month;
+
+            // add the theme do the dict for the specific year
+            ThemeScheduledByYear[year].Add(theme);
+
+            // move to the next month
+            month++;
+            if (month > 12)
+            {
+                month = 1;
+                year++;
+            }
+        }
     }
 
     public static string GetMonthName(int month)
@@ -63,34 +115,58 @@ static class ThemeMenuManager
     // add a theme to the database if call of 'CanAddTheme' returns true
     public static void AddTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
     {
-        if (ThemesAccess.GetAllThemes().Any(t => t.ScheduledYear == scheduledYear && t.ScheduledMonth == scheduledMonth))
+        
+        // prevent adding a theme if it's already scheduled for month and year
+        if (ThemeScheduledByYear.ContainsKey(scheduledYear) &&
+            ThemeScheduledByYear[scheduledYear].Any(t => t.ScheduledMonth == scheduledMonth))
         {
             return;
         }
 
+        // make sure if the date is in the future
         if (!IsFutureDate(scheduledYear, scheduledMonth))
         {
             return;
         }
+        
+        // store scheduling information temporarily in the dict -> later in the database
+        if (!ThemeScheduledByYear.ContainsKey(scheduledYear))
+        {
+            ThemeScheduledByYear[scheduledYear] = new List<ThemeMenuModel>();
+        }
+        
         theme.ScheduledYear = scheduledYear;
         theme.ScheduledMonth = scheduledMonth;
-        ThemesAccess.AddTheme(theme);
-    }
+        ThemeScheduledByYear[scheduledYear].Add(theme);
 
+        // only save theme name and menu id to the database
+        ThemesAccess.AddTheme(new ThemeMenuModel { ThemeName = theme.ThemeName, MenuId = theme.MenuId });
 
-    // edit an existing theme (no calendar constraints)
-    public static bool UpdateTheme(ThemeMenuModel newTheme)
-    {
-        return ThemesAccess.UpdateTheme(newTheme);
     }
 
     // edit an existing theme (with calendar constraints)
     public static bool UpdateTheme(ThemeMenuModel newTheme, int scheduledYear, int scheduledMonth)
     {
+        // check if the date is in the future
         if (IsFutureDate(scheduledYear, scheduledMonth))
         {
+            // look for an existing theme in the temporary scheduling dict
+            if (ThemeScheduledByYear.ContainsKey(scheduledYear))
+            {
+                var existingTheme = ThemeScheduledByYear[scheduledYear]
+                    .FirstOrDefault(t => t.ScheduledMonth == scheduledMonth);
+            
+                if (existingTheme != null)
+                {
+                    existingTheme.ThemeName = newTheme.ThemeName;
+                    newTheme.MenuId = existingTheme.MenuId;
+                }
+                // update in the database using the correct MenuId
+            }
+            // ensure the theme exists and update it
             return ThemesAccess.UpdateTheme(newTheme);
         }
+        // theme not found or date invalid
         return false;
     }
 
@@ -114,7 +190,12 @@ static class ThemeMenuManager
         }
         else
         {
-            ThemesAccess.DeleteTheme(theme.MenuId);
+            // remove from the dict
+            if (ThemeScheduledByYear.ContainsKey(theme.ScheduledYear))
+            {
+                ThemeScheduledByYear[theme.ScheduledYear].RemoveAll(t => t.MenuId == theme.MenuId);
+            }
+            ThemesAccess.DeleteTheme(theme.MenuId);  // delete only from the database
         }
         return true;
     }
