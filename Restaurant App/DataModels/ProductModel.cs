@@ -6,11 +6,12 @@ public class ProductModel : IProduct
     public decimal Price { get; set; }
     public long MenuID { get; set; }
     public string Category { get; set; } = string.Empty;
+    public string Type { get; set; } = " ";
 
     // you must need an empty constructor because of in the ProductsAccess write/update method you create temporary variable placeholders
     public ProductModel() {}
 
-    public ProductModel(long productID, string productName, long quantity, decimal price, long menuID, ProductCategory category)
+    public ProductModel(long productID, string productName, long quantity, decimal price, long menuID, ProductCategory category, string type)
     {
         ProductId = productID;
         ProductName = productName;
@@ -18,6 +19,7 @@ public class ProductModel : IProduct
         Price = price;
         MenuID = menuID;
         Category = category.Category;
+        Type = type;
     }
 
     public void UpdateQuantity(long newQuantity)

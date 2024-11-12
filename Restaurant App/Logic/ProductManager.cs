@@ -55,4 +55,6 @@ static class ProductManager
     {
         return ProductsAccess.GetAllByCategory(category).ToList();
     }
+
+
 }
