@@ -27,6 +27,23 @@ public static class ReservationAccess
         return _connection.Query<ReservationModel>(sql).AsList();
     }
 
+    public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
+    {
+        string sql = $@"
+            SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID
+            FROM {Table}
+            WHERE CAST(SUBSTR(date, 3, 2) AS INT) = @Month AND CAST(SUBSTR(date, 5, 4) AS INT) = @Year";
+
+        return _connection.Query<ReservationModel>(sql, new { Month = month, Year = year }).AsList();
+    }
+
+    public static string GetThemeByMenuID(int menuID)
+    {
+        string sql = "SELECT theme FROM Menu WHERE menuID = @MenuID";
+        return _connection.QueryFirstOrDefault<string>(sql, new { MenuID = menuID });
+    }
+
+
     public static ReservationModel GetByReservationID(int reservationID)
     {
         string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE reservationID = @ReservationID";
@@ -71,7 +88,6 @@ public static class ReservationAccess
         return _connection.Query<ReservationModel>(sql, parameters).AsList();
     }
 
-    // NIEUW (for menu items)
     public static List<ProductModel> GetMenuItemsByReservationID(int reservationID)
     {
         string sql = @"
@@ -92,8 +108,6 @@ public static class ReservationAccess
         return _connection.Query<ProductModel>(sql, new { ReservationID = reservationID }).AsList();
     }
 
-
-
     public static void Update(ReservationModel reservation)
     {
         using (var connection = new SqliteConnection("Data Source=DataSources/project.db"))
@@ -110,7 +124,6 @@ public static class ReservationAccess
             });
         }
     }
-
 
     public static void Delete(int reservationID)
     {
