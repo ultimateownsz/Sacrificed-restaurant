@@ -3,17 +3,22 @@
 public class ThemeMenuModel
 {
     private static long _nextId = 1;
-    public long MenuId { get; private set; }
-    public string ThemeName { get; set; }
-    public int ScheduledYear { get; set; } = 0;  // temporary property for display purposes
-    public int ScheduledMonth { get; set; } = 0;  // temporary property for display purposes
+    public long MenuId { get; set; }
+    public string ThemeName { get; internal set; }
+    public int ScheduledYear { get; set; }  // temporary property for display purposes
+    public int ScheduledMonth { get; set; }  // temporary property for display purposes
 
-    public ThemeMenuModel() { }
+    public ThemeMenuModel()
+    {
+        SetMenuId();
+        ThemeName = "Default theme";
+    }
 
     public ThemeMenuModel(string themeName)
     {
-        MenuId = _nextId;
-        _nextId++;
+        SetMenuId();
         ThemeName = themeName;
     }
+
+    private void SetMenuId() => MenuId = _nextId++;
 }

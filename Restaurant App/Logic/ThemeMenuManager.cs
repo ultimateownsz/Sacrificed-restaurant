@@ -5,34 +5,25 @@ static class ThemeMenuManager
     // temporary theme method
     public static List<ThemeMenuModel> GetScheduledThemes()
     {
-        var themes = ThemesAccess.GetAllThemes().ToList();
+        List<ThemeMenuModel> themes = ThemesAccess.GetAllThemes().ToList();
 
-        // test purposes
+        // // test purposes
         int startYear = DateTime.Now.Year;
         int startMonth = DateTime.Now.Month;
 
         for (int i = 0; i < themes.Count; i++)
         {
-            themes[i].ScheduledYear = startYear;
-            themes[i].ScheduledMonth = (startMonth + i) % 12;
-            if (themes[i].ScheduledMonth < startMonth)
-            {
-                themes[i].ScheduledYear++;
-            }
+            int adjustedMonth = (startMonth + i - 1) % 12 + 1;
+            themes[i].ScheduledMonth = adjustedMonth;
+
+            // increment the year when we pass January
+            themes[i].ScheduledYear = startYear + (startMonth + i - 1) / 12;
+
+            // 
+            // themes[i].MenuId = i + 1;
         }
         return themes;
     }
-    
-    
-    // // retrieve all themes
-    // public static List<ThemeMenuModel> ViewThemes()
-    // {
-    //     // view all themes in chronological order
-    //     return ThemesAccess.GetAllThemes()
-    //         .OrderBy(t => t.ScheduledYear)
-    //         .ThenBy(t => t.ScheduledMonth)
-    //         .ToList();
-    // }
 
     public static string GetMonthName(int month)
     {
@@ -72,6 +63,15 @@ static class ThemeMenuManager
     // add a theme to the database if call of 'CanAddTheme' returns true
     public static void AddTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
     {
+        if (ThemesAccess.GetAllThemes().Any(t => t.ScheduledYear == scheduledYear && t.ScheduledMonth == scheduledMonth))
+        {
+            return;
+        }
+
+        if (!IsFutureDate(scheduledYear, scheduledMonth))
+        {
+            return;
+        }
         theme.ScheduledYear = scheduledYear;
         theme.ScheduledMonth = scheduledMonth;
         ThemesAccess.AddTheme(theme);

@@ -14,17 +14,16 @@ public static class ThemesAccess
         return _connection.Query<ThemeMenuModel>(sql);
     }
 
-    public static void AddTheme(ThemeMenuModel theme)
+    public static int AddTheme(ThemeMenuModel theme)
     {
-        _connection.Open();
-        string sql = $"INSERT INTO {Table} (menuID, theme) VALUES (@MenuId, @ThemeName)";
-        _connection.Execute(sql, new
+        string sql = $"INSERT INTO {Table} (menuID, theme) VALUES (@MenuId, @ThemeName); SELECT last_insert_rowid()";
+        int newId = _connection.ExecuteScalar<int>(sql, new
         {
             theme.MenuId,
             theme.ThemeName
         });
 
-        _connection.Close();
+        return newId;
     }
     public static bool UpdateTheme(ThemeMenuModel theme)
     {
