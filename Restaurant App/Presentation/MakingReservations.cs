@@ -195,8 +195,14 @@ static class MakingReservations
             // Proceed to the next guest after finishing their order
             Console.WriteLine("\nPress any key to continue to the next guest...");
             Console.ReadKey();
-        
-            PrintReceipt(allOrders, reservationId);
+            if(allOrders.Count == 0)
+            {
+                Console.WriteLine("============================================");
+                Console.WriteLine("  Invalid order, you have ordered nothing  ");
+                Console.WriteLine("============================================");
+            }
+            else
+                PrintReceipt(allOrders, reservationId);
         }
     }
 
@@ -204,7 +210,7 @@ static class MakingReservations
     public static void PrintReceipt(List<ProductModel> guestOrder, Int64 reservationId)
         {
             Console.Clear();
-            Console.WriteLine("===== Receipt =====");
+            Console.WriteLine("===========Receipt===========");
             decimal totalAmount = 0;
 
             foreach (var product in guestOrder)
