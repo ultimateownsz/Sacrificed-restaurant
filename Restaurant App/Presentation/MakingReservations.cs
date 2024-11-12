@@ -1,40 +1,47 @@
-static class MakingReservations
+
+using System;
+using Logic;
+
+
+namespace Presentation
 {
-
-    static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
-    static private OrderLogic orderLogic = new();
-
-    public static void Start(AccountModel acc)//This function gets called through the menu to ask the user for his reservation information
+    public static class MakingReservations
     {
 
-        while (true)
+        static private ReservationLogic reservationLogic = new();
+        static private ReservationMenuLogic reservationMenuLogic = new();
+        static private OrderLogic orderLogic = new();
+        private static CalendarLogic calendarLogic = new CalendarLogic();
+
+        public static void ReservationMenu(AccountModel acc)
         {
-            Console.WriteLine("Welcome to the reservation page");
-            Console.WriteLine("1. Make reservation");
-            Console.WriteLine("2. Remove reservation");
-            Console.WriteLine("3. Exit");
-
-            string input = Console.ReadLine().ToLower();
-
-            if  (input == "1" || input == "make reservation")
+            while (true)
             {
-                MakingReservation(acc);
-            }
+                Console.WriteLine("Welcome to the reservation page");
+                Console.WriteLine("1. Make reservation");
+                Console.WriteLine("2. Remove reservation");
+                Console.WriteLine("3. Exit");
 
-            else if (input == "2" || input == "remove reservation")
-            {
-                Console.WriteLine("Please enter the reservation code(id)");
-                int removeID = Convert.ToInt32(Console.ReadLine());
-                
-                if(reservationLogic.RemoveReservation(removeID) == true)
-                    Console.WriteLine("The reservation has been cancelled");
+                string input = Console.ReadLine().ToLower();
+
+                if  (input == "1" || input == "make reservation")
+                {
+                    MakingReservation(acc);
+                }
+
+                else if (input == "2" || input == "remove reservation")
+                {
+                    Console.WriteLine("Please enter the reservation code(id)");
+                    int removeID = Convert.ToInt32(Console.ReadLine());
+                    
+                    if(reservationLogic.RemoveReservation(removeID) == true)
+                        Console.WriteLine("The reservation has been cancelled");
+                    else
+                        Console.WriteLine("Invalid ID, reservation has not been cancelled");
+                }
                 else
-                    Console.WriteLine("Invalid ID, reservation has not been cancelled");
+                    return;
             }
-            else
-                return;
-        }
     }
 
     public static void MakingReservation(AccountModel acc)
@@ -224,4 +231,84 @@ static class MakingReservations
             Console.WriteLine($"Reservation code:      {reservationId}");
             Console.WriteLine("============================");
         }
+
+        
+
+        public static void DisplayCalendar(DateTime currentDate)
+        {
+            Console.Clear();
+            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
+
+            // Display calendar days layout
+            Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+            int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
+
+            // Adjust for 0-based index for Monday start
+            startDay = startDay == 0 ? 6 : startDay - 1;
+
+            // Print spaces for the first week
+            for (int i = 0; i < startDay; i++)
+                Console.Write("   ");
+
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                Console.Write($"{day,2} ");
+                if ((day + startDay) % 7 == 0) Console.WriteLine();
+            }
+
+            Console.WriteLine("\nPREVIOUS         NEXT");
+            Console.WriteLine("Press P for Previous month, N for Next month, S to select a date, or Q to quit.");
+        }
+
+        public static void CalendarNavigation()
+        {
+            DateTime currentDate = DateTime.Now;
+            bool running = true;
+
+            while (running)
+            {
+                DisplayCalendar(currentDate);
+                string input = Console.ReadLine().ToLower();
+
+                switch (input)
+                {
+                    case "p":
+                        currentDate = currentDate.AddMonths(-1);
+                        break;
+                    case "n":
+                        currentDate = currentDate.AddMonths(1);
+                        break;
+                    case "s":
+                        Console.Write("Enter day to select: ");
+                        if (int.TryParse(Console.ReadLine(), out int day) && day >= 1 && day <= DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
+                        {
+                            DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, day);
+                            ShowAvailableTables(selectedDate);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid day.");
+                        }
+                        break;
+                    case "q":
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input. Try again.");
+                        break;
+                }
+            }
+        }
+
+        public static void ShowAvailableTables(DateTime selectedDate)
+        {
+            var availableTables = calendarLogic.GetAvailableTables(selectedDate);
+            Console.WriteLine($"Available tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
+            foreach (var table in availableTables)
+            {
+                Console.WriteLine($" - {table}");
+            }
+        }
+    }
 }
