@@ -6,7 +6,7 @@ static class ThemeView
         Console.Clear();
 
         // for now we use dict for the year & month values, next sprint should be from database
-        var monthlyThemes = ThemeMenuManager.GetMonthlyDisplay(2025);
+        var monthlyThemes = ThemeMenuManager.GetMonthlyDisplay();
 
         // Console.WriteLine("\nScheduled themes by month: ");
         Console.WriteLine("{0,-12} {1}: {2}", "Month", "Year", "Theme");
@@ -110,7 +110,7 @@ static class ThemeView
                 }
 
             newScheduledMonth = InputValidator.GetValidMonth("\nEnter the month you want to edit (1-12) ");
-            newScheduledYear = InputValidator.GetValidYear("\nEnter the year you want to edit (YYYY) ", 2025);
+            newScheduledYear = InputValidator.GetValidYear("\nEnter the year you want to edit (YYYY) ", DateTime.Now.Year);
         
             string newTheme = InputValidator.GetValidString("\nEnter a new theme (name): ");
         
