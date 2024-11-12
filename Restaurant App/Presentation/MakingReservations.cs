@@ -1,105 +1,89 @@
-static class MakingReservations
+
+using System;
+using Logic;
+
+
+namespace Presentation
 {
-
-    static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
-    static private OrderLogic orderLogic = new();
-
-    public static void Start(AccountModel acc)//This function gets called through the menu to ask the user for his reservation information
+    public static class MakingReservations
     {
-        
-        Console.WriteLine("Welcome to the reservation page");
-        Console.WriteLine("1. Make reservation");
-        Console.WriteLine("2. Remove reservation");
-        Console.WriteLine("3. Exit");
+        private static CalendarLogic calendarLogic = new CalendarLogic();
 
-        string input = Console.ReadLine().ToLower();
-
-        if  (input == "1" || input == "make reservation")
+        public static void DisplayCalendar(DateTime currentDate)
         {
-            
-            //Ask the date of the reservation
-            //Checks if the date is within a month
-            string date;
-            while (true)
+            Console.Clear();
+            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
+
+            // Display calendar days layout
+            Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+            int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
+
+            // Adjust for 0-based index for Monday start
+            startDay = startDay == 0 ? 6 : startDay - 1;
+
+            // Print spaces for the first week
+            for (int i = 0; i < startDay; i++)
+                Console.Write("   ");
+
+            for (int day = 1; day <= daysInMonth; day++)
             {
-                Console.WriteLine("Please enter your desired date d/m/y"); 
-                date = Console.ReadLine();
-                DateTime currentDate = DateTime.Now;
-                DateTime desiredDate = Convert.ToDateTime(date);
-                if(desiredDate > currentDate.AddDays(30))
-                {
-                    Console.WriteLine("The desired date is more than 30 days from the current date, please try again");
-                }
-                else if(desiredDate < currentDate)
-                {
-                    Console.WriteLine("The desired date is lower than today's date, please try again");
-                }
-                else
-                    break;
-            }
-            
-            //Ask the user for the table of choice
-            Console.WriteLine("Please enter your desired table choice\n1.Table for two\n2.Table for four\n3.Table for six");
-            string tableChoice = Console.ReadLine();
-
-            //Ask the user for the reservation amount
-            Console.WriteLine("Please enter the number of guests");
-            string reservationAmount = Console.ReadLine();
-
-            Int64 reservationId = reservationLogic.SaveReservation(date, tableChoice, reservationAmount, acc.UserID);
-            Dictionary<string, (Int64 productId, double Price)> products = new();
-            double total = 0;
-            List<string> orders = new();
-
-            Console.WriteLine("Here is the menu");
-            Console.WriteLine($"{reservationMenuLogic.GetCurrentMenu()}");
-
-            foreach(ProductModel product in ProductManager.GetAllProducts())
-            {   
-                products.Add(product.ProductName, (product.ProductId ,Convert.ToDouble(product.Price)));
-                Console.WriteLine($"{product.Category}\n{product.ProductName}, Price: {product.Price}");
+                Console.Write($"{day,2} ");
+                if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            while(true)
-            {
-                Console.WriteLine("Order more or type exit to move on");
-                string productChoice = Console.ReadLine();
-                if (productChoice == "exit")
-                    break;
-                else if(products.ContainsKey(productChoice))
-                {
-                    double price = products[productChoice].Price;
-                    Console.WriteLine($"You have ordered {productChoice} for {price}");
-                    total += price;
-                    orders.Add(productChoice);
-                    orderLogic.SaveOrder(reservationId, products[productChoice].productId);
-                }
-                else
-                {
-                    Console.WriteLine("This item is not on the menu");
-                }
-            }
-
-            Console.WriteLine($"Your reservation ID is {reservationId}");
-            foreach(string order in orders)
-            {
-                Console.WriteLine(order);
-            }
-            Console.WriteLine($"Your total is {total}");
-
+            Console.WriteLine("\nPREVIOUS         NEXT");
+            Console.WriteLine("Press P for Previous month, N for Next month, S to select a date, or Q to quit.");
         }
-        else if (input == "2" || input == "remove reservation")
+
+        public static void CalendarNavigation()
         {
-            Console.WriteLine("Please enter the reservation code(id)");
-            int removeID = Convert.ToInt32(Console.ReadLine());
-            
-            if(reservationLogic.RemoveReservation(removeID) == true)
-                Console.WriteLine("The reservation has been cancelled");
-            else
-                Console.WriteLine("Invalid ID, reservation has not been cancelled");
+            DateTime currentDate = DateTime.Now;
+            bool running = true;
+
+            while (running)
+            {
+                DisplayCalendar(currentDate);
+                string input = Console.ReadLine().ToLower();
+
+                switch (input)
+                {
+                    case "p":
+                        currentDate = currentDate.AddMonths(-1);
+                        break;
+                    case "n":
+                        currentDate = currentDate.AddMonths(1);
+                        break;
+                    case "s":
+                        Console.Write("Enter day to select: ");
+                        if (int.TryParse(Console.ReadLine(), out int day) && day >= 1 && day <= DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
+                        {
+                            DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, day);
+                            ShowAvailableTables(selectedDate);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid day.");
+                        }
+                        break;
+                    case "q":
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input. Try again.");
+                        break;
+                }
+            }
         }
-        else
-            return;
+
+        public static void ShowAvailableTables(DateTime selectedDate)
+        {
+            var availableTables = calendarLogic.GetAvailableTables(selectedDate);
+            Console.WriteLine($"Available tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
+            foreach (var table in availableTables)
+            {
+                Console.WriteLine($" - {table}");
+            }
+        }
     }
 }

@@ -1,25 +1,16 @@
 ﻿using System;
+using Presentation;
+
 class Program
 {
-
-    // Aub even niet aanzitten voor nu
     static void Main(string[] args)
     {
-        // InitializeDatabase();
-        Menu.Start();
+        Console.WriteLine("Welcome to the Reservation System");
+        Console.WriteLine("Starting Calendar Navigation...");
+        
+        // Start the calendar navigation to test the calendar and reservation functionality
+        MakingReservations.CalendarNavigation();
+        
+        Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
     }
-
-    // private static void InitializeDatabase()
-    // {
-
-
-    //     // AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
-    //     // AccountsAccess.Write(admin);
-
-    //     // AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
-    //     // AccountsAccess.Write(user);
-    //     // AccountsAccess.Delete(1);
-    //     // AccountsAccess.Delete(2);
-
-    // }
 }
