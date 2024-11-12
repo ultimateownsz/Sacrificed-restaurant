@@ -7,6 +7,16 @@ public static class ReservationAdminLogic
         return ReservationAccess.GetAllReservations();
     }
 
+    public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
+    {
+        return ReservationAccess.GetReservationsByMonthYear(month, year);
+    }
+
+    public static string GetThemeByMenuID(int menuID)
+    {
+        return ReservationAccess.GetThemeByMenuID(menuID);
+    }
+
     public static ReservationModel GetReservationByID(int reservationID)
     {
         return ReservationAccess.GetByReservationID(reservationID);
@@ -22,17 +32,10 @@ public static class ReservationAdminLogic
         return ReservationAccess.GetByUserID(userID);
     }
 
-    public static List<ReservationModel> GetFilteredReservations(int? reservationID = null, int? date = null, int? userID = null)
-    {
-        return ReservationAccess.GetFilteredReservations(reservationID, date, userID);
-    }
-
-    // NIEUW (for menu items)
     public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
     {
         return ReservationAccess.GetMenuItemsByReservationID(reservationID);
     }
-
 
     public static void UpdateReservation(ReservationModel reservation)
     {
