@@ -14,12 +14,12 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
-    public Int64 SaveReservation(string date, string tableChoice, string reservationAmount, Int64 userId)
+    public Int64 SaveReservation(string date, string reservationAmount, Int64 userId)
     {   
         if (CurrentReservation != null)
         {
             CurrentReservation.Date = ConvertDate(date);
-            CurrentReservation.TableChoice = ConvertTableChoice(tableChoice);
+            CurrentReservation.TableChoice = TableChoice(reservationAmount);
             CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
             CurrentReservation.ID = GenerateNewReservationID();
             CurrentReservation.UserID = userId;
@@ -33,20 +33,22 @@ public class ReservationLogic
     public Int64 ConvertDate(string date)
     {
         date = date.Replace("/", "");
+        date = date.Replace("-", "");
+        date = date.Replace(" ", "");
         Int64 convertedDate = Convert.ToInt64(date);
         return convertedDate;
     }
 
     //Converts the tableChoice from string to Int64 and saves it into CurrentReservation
-    public Int64 ConvertTableChoice(string tableChoice)
+    public Int64 TableChoice(string tableChoice)
     {
         switch (tableChoice.ToLower())
         {
-            case "1" or "two" or "table for two":
+            case "1" or "2" or "one" or "two":
                 return 2;
-            case "2" or "four" or "table for four":
+            case "3" or "4" or "three" or "four":
                 return 4;   
-            case "3" or "six" or "table for six":
+            case "5" or "6" or "five" or "six":
                 return 6;
             default:
                 return 0;
