@@ -2,13 +2,19 @@ static class AdminMenu
 {
     static public void AdminStart()
     {
+        // Accounts logic instance
+        AccountsLogic accL = null;
+        accL = new AccountsLogic();
+
         System.Console.WriteLine("Welcome to the Admin page!");
         System.Console.WriteLine("1. View all reservations");
         System.Console.WriteLine("2. Filter reservations");
-        // NIEUW (for menu items)
+        // NEW (for menu items)
         System.Console.WriteLine("3. View the selected menu items per reservation");
         System.Console.WriteLine("4. Update a reservation");
         System.Console.WriteLine("5. Delete a reservation");
+        // NEW (admin is able to create another admin account)
+        System.Console.WriteLine("8. Create a new admin account");
         System.Console.WriteLine("Q. Go back to the main menu");
 
         string choice = Console.ReadLine().ToLower();
@@ -28,6 +34,9 @@ static class AdminMenu
                 break;
             case "5":
                 DeleteReservation();
+                break;
+            case "8":
+                accL.CreateAdminAccount();
                 break;
             case "q":
                 Menu.Start();

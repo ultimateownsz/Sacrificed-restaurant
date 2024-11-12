@@ -34,175 +34,310 @@
         return null;
     }
 
-    public void CreateAccount()
+    public bool IsEmailValid(string email)
     {
-        bool checker = false;
-        string at = "@";
-        string dotCom = ".com";
+        return email.Contains("@") && email.Contains(".com");
+    }
 
-        while (!checker)
+    public bool IsPasswordValid(string password)
+    {
+        return password.Length <= 16 && password.Length >= 8;
+    }
+
+    public bool IsPhoneNumberValid(string phoneNumber)
+    {
+        return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
+    }
+
+    public AccountModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    {
+        return new AccountModel
         {
-            Console.WriteLine("Please, enter your first name: ");
-            string firstName = Console.ReadLine();
+            FirstName = firstName,
+            LastName = lastName,
+            EmailAddress = email,
+            Password = password,
+            PhoneNumber = Convert.ToInt32(phoneNumber),
+            IsAdmin = 0
+        };
+    }
 
-            Console.WriteLine("Please, enter your last name: ");
-            string lastName = Console.ReadLine();
+    public AccountModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    {
+        return new AccountModel
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            EmailAddress = email,
+            Password = password,
+            PhoneNumber = Convert.ToInt32(phoneNumber),
+            IsAdmin = 1
+        };
+    }
 
+    public void CreateUserAccount()
+    {
+        bool isInfoValid = false;
+        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
+
+        // Input collection with validation loops
+        Console.WriteLine("Please, enter your first name: ");
+        firstName = Console.ReadLine();
+
+        Console.WriteLine("Please, enter your last name: ");
+        lastName = Console.ReadLine();
+
+        // Loop until valid email is provided
+        while (true)
+        {
             Console.WriteLine("Please, enter your email address: ");
-            string email = Console.ReadLine();
-            while (!checker)
-            {
-                if (!email.Contains(at) || !email.Contains(dotCom))
-                {
-                    Console.WriteLine("Invalid email address, try again.");
-                    Console.WriteLine("Please, enter your email address: ");
-                    email = Console.ReadLine();
-                }
-                else
-                {
-                    checker = true;
-                }
-            }
+            email = Console.ReadLine();
+            if (IsEmailValid(email))
+                break;
+            Console.WriteLine("Invalid email address, try again!");
+        }
 
-            Console.WriteLine("Please, enter your password (Min: 8 characters | Max: 16: characters): ");
-            string password = Console.ReadLine();
-            while (!checker)
-            {
-                if (password.Length > 16 || password.Length < 8)
-                {
-                    Console.WriteLine("Invalid password, try again.");
-                    Console.WriteLine("Please, enter your password (Min: 8 characters | Max: 16: characters): ");
-                    password = Console.ReadLine();
-                }
-                else
-                {
-                    checker =  true;
-                }
-            }
+        // Loop until valid password is provided
+        while (true)
+        {
+            Console.WriteLine("Please, enter your password (Min: 8 characters | Max: 16 characters): ");
+            password = Console.ReadLine();
+            if (IsPasswordValid(password))
+                break;
+            Console.WriteLine("Invalid password, try again!");
+        }
 
+        // Loop until valid phone number is provided
+        while (true)
+        {
             Console.WriteLine("Please, enter your phone number (Must be 8 numbers): ");
-            string phoneNumber = Console.ReadLine();
-            int phoneOutput;
-            bool isPhoneValid = int.TryParse(phoneNumber, out phoneOutput) && phoneNumber.Length == 8;
-            while (!checker)
-            {
-                if (!isPhoneValid)
-                {
-                    Console.WriteLine("Invalid phone number, try again.");
-                    Console.WriteLine("Please, enter your phone number (Must be 8 numbers): ");
-                    phoneNumber = Console.ReadLine();
-                }
-                else
-                {
-                    checker =  true;
-                }
-            }
+            phoneNumber = Console.ReadLine();
+            if (IsPhoneNumberValid(phoneNumber))
+                break;
+            Console.WriteLine("Invalid phone number, try again!");
+        }
 
+        // Confirm details loop
+        while (!isInfoValid)
+        {
             Console.WriteLine("Your information: ");
             Console.WriteLine(" ");
-            Console.WriteLine(firstName);
-            Console.WriteLine(lastName);
-            Console.WriteLine(email);
-            Console.WriteLine(password);
-            Console.WriteLine(phoneNumber);
+            Console.WriteLine($"First Name: {firstName}");
+            Console.WriteLine($"Last Name: {lastName}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine(" ");
             Console.WriteLine("Are you sure this is correct? Y/N");
+            
             string choice = Console.ReadLine().ToUpper();
-
-            switch (choice)
+            
+            if (choice == "Y")
             {
-                case "Y":
-                    Console.WriteLine("You're account is succesfully registered!");
-                    checker = true;
-                    break;
-                case "N":
-                    Console.WriteLine("Choose which information you'd like to change: ");
-                    Console.WriteLine("(Type in: [1] = First Name [2] = Last Name [3] = Email [4] = Password [5] = Phone Number)");
-                    string info = Console.ReadLine();
-                    if (info == "1")
-                    {
-                        Console.WriteLine("Please, enter your new first name: ");
-                        string newFirstName = Console.ReadLine();
-                        firstName = newFirstName;
-                        Console.WriteLine("You're account is succesfully registered!");
-                        checker = true;
-                    }
-                    else if (info == "2")
-                    {
-                        Console.WriteLine("Please, enter new last name: ");
-                        string newLastName = Console.ReadLine();
-                        lastName = newLastName;
-                        Console.WriteLine("You're account is succesfully registered!");
-                        checker = true;
-                    }
-                    else if (info == "3")
-                    {
-                        Console.WriteLine("Please, enter your new email: ");
-                        string newEmail = Console.ReadLine();
-                        while (!checker)
-                        {
-                            if (!newEmail.Contains(at) || !newEmail.Contains(dotCom))
-                            {
-                                Console.WriteLine("Invalid email address, try again.");
-                                Console.WriteLine("Please, enter your email address: ");
-                                newEmail = Console.ReadLine();
-                            }
-                            else
-                            {
-                                checker = true;
-                            }
-                        }
-                        email = newEmail;
-                        Console.WriteLine("You're account is succesfully registered!");
-                        checker = true;
-                    }
-                    else if (info == "4")
-                    {
-                        Console.WriteLine("Please, enter your new password: ");
-                        string newPassword = Console.ReadLine();
-                        while (!checker)
-                        {
-                            if (newPassword.Length < 8 || newPassword.Length > 16)
-                            {
-                                Console.WriteLine("Invalid email address, try again.");
-                                Console.WriteLine("Please, enter your email address: ");
-                                newPassword = Console.ReadLine();
-                            }
-                            else
-                            {
-                                checker = true;
-                            }
-                        }
-                        password = newPassword;
-                        Console.WriteLine("You're account is succesfully registered!");
-                        checker = true;
-                    }
-                    else if (info == "5")
-                    {
-                        Console.WriteLine("Please, enter your new phone number: ");
-                        string newPhoneNumber = Console.ReadLine();
-                        isPhoneValid = int.TryParse(newPhoneNumber, out phoneOutput) && newPhoneNumber.Length == 8;
-                        while (!checker)
-                        {
-                            if (!isPhoneValid)
-                            {
-                                Console.WriteLine("Invalid email address, try again.");
-                                Console.WriteLine("Please, enter your email address: ");
-                                newPhoneNumber = Console.ReadLine();
-                            }
-                            else
-                            {
-                                checker = true;
-                            }
-                        }
-                        phoneNumber = newPhoneNumber;
-                        Console.WriteLine("You're account is succesfully registered!");
-                        checker = true;
-                    }
-                    break;
+                // Create account and write it to storage
+                var account = UserAccount(firstName, lastName, email, password, phoneNumber);
+                AccountsAccess.Write(account);
+                Console.WriteLine("Your account is successfully registered!");
+                isInfoValid = true; // Exit the confirmation loop
             }
-        AccountModel account = new AccountModel { FirstName = firstName, LastName = lastName, EmailAddress = email, Password = password, PhoneNumber = phoneNumber, IsAdmin = 0 };
-        AccountsAccess.Write(account);
+            else if (choice == "N")
+            {
+                // Prompt to update specific fields
+                Console.WriteLine("Choose which information you'd like to change:");
+                Console.WriteLine("(Type in: [1] = First Name, [2] = Last Name, [3] = Email, [4] = Password, [5] = Phone Number)");
+                
+                string info = Console.ReadLine();
+                switch (info)
+                {
+                    case "1":
+                        Console.WriteLine("Please, enter your new first name: ");
+                        firstName = Console.ReadLine();
+                        break;
+                    case "2":
+                        Console.WriteLine("Please, enter your new last name: ");
+                        lastName = Console.ReadLine();
+                        break;
+                    case "3":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new email address: ");
+                            string newEmail = Console.ReadLine();
+                            if (IsEmailValid(newEmail))
+                            {
+                                email = newEmail;
+                                break;
+                            }
+                            Console.WriteLine("Invalid email address, try again!");
+                        }
+                        break;
+                    case "4":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
+                            string newPassword = Console.ReadLine();
+                            if (IsPasswordValid(newPassword))
+                            {
+                                password = newPassword;
+                                break;
+                            }
+                            Console.WriteLine("Invalid password, try again!");
+                        }
+                        break;
+                    case "5":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new phone number (Must be 8 numbers): ");
+                            string newPhoneNumber = Console.ReadLine();
+                            if (IsPhoneNumberValid(newPhoneNumber))
+                            {
+                                phoneNumber = newPhoneNumber;
+                                break;
+                            }
+                            Console.WriteLine("Invalid phone number, try again!");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid selection, please choose a valid option.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+            }
+        }
+    }
+
+    public void CreateAdminAccount()
+    {
+        bool isInfoValid = false;
+        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
+
+        // Input collection with validation loops
+        Console.WriteLine("Please, enter your first name: ");
+        firstName = Console.ReadLine();
+
+        Console.WriteLine("Please, enter your last name: ");
+        lastName = Console.ReadLine();
+
+        // Loop until valid email is provided
+        while (true)
+        {
+            Console.WriteLine("Please, enter your email address: ");
+            email = Console.ReadLine();
+            if (IsEmailValid(email))
+                break;
+            Console.WriteLine("Invalid email address, try again!");
+        }
+
+        // Loop until valid password is provided
+        while (true)
+        {
+            Console.WriteLine("Please, enter your password (Min: 8 characters | Max: 16 characters): ");
+            password = Console.ReadLine();
+            if (IsPasswordValid(password))
+                break;
+            Console.WriteLine("Invalid password, try again!");
+        }
+
+        // Loop until valid phone number is provided
+        while (true)
+        {
+            Console.WriteLine("Please, enter your phone number (Must be 8 numbers): ");
+            phoneNumber = Console.ReadLine();
+            if (IsPhoneNumberValid(phoneNumber))
+                break;
+            Console.WriteLine("Invalid phone number, try again!");
+        }
+
+        // Confirm details loop
+        while (!isInfoValid)
+        {
+            Console.WriteLine("Your information: ");
+            Console.WriteLine(" ");
+            Console.WriteLine($"First Name: {firstName}");
+            Console.WriteLine($"Last Name: {lastName}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
+            Console.WriteLine(" ");
+            Console.WriteLine("Are you sure this is correct? Y/N");
+            
+            string choice = Console.ReadLine().ToUpper();
+            
+            if (choice == "Y")
+            {
+                // Create account and write it to storage
+                var account = AdminAccount(firstName, lastName, email, password, phoneNumber);
+                AccountsAccess.Write(account);
+                Console.WriteLine("Your account is successfully registered!");
+                isInfoValid = true; // Exit the confirmation loop
+            }
+            else if (choice == "N")
+            {
+                // Prompt to update specific fields
+                Console.WriteLine("Choose which information you'd like to change:");
+                Console.WriteLine("(Type in: [1] = First Name, [2] = Last Name, [3] = Email, [4] = Password, [5] = Phone Number)");
+                
+                string info = Console.ReadLine();
+                switch (info)
+                {
+                    case "1":
+                        Console.WriteLine("Please, enter your new first name: ");
+                        firstName = Console.ReadLine();
+                        break;
+                    case "2":
+                        Console.WriteLine("Please, enter your new last name: ");
+                        lastName = Console.ReadLine();
+                        break;
+                    case "3":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new email address: ");
+                            string newEmail = Console.ReadLine();
+                            if (IsEmailValid(newEmail))
+                            {
+                                email = newEmail;
+                                break;
+                            }
+                            Console.WriteLine("Invalid email address, try again!");
+                        }
+                        break;
+                    case "4":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
+                            string newPassword = Console.ReadLine();
+                            if (IsPasswordValid(newPassword))
+                            {
+                                password = newPassword;
+                                break;
+                            }
+                            Console.WriteLine("Invalid password, try again!");
+                        }
+                        break;
+                    case "5":
+                        while (true)
+                        {
+                            Console.WriteLine("Please, enter your new phone number (Must be 8 numbers): ");
+                            string newPhoneNumber = Console.ReadLine();
+                            if (IsPhoneNumberValid(newPhoneNumber))
+                            {
+                                phoneNumber = newPhoneNumber;
+                                break;
+                            }
+                            Console.WriteLine("Invalid phone number, try again!");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid selection, please choose a valid option.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+            }
         }
     }
 }

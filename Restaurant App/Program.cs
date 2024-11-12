@@ -13,10 +13,10 @@ class Program
     // {
 
 
-    //     // AccountModel admin = new AccountModel(1, "Admin", "User", "admin@example.com", "admin123", 123456789, 1);
+    //     // AccountModel admin = new AccountModel("Admin", "User", "admin@example.com", "admin123", 123456789, 1);
     //     // AccountsAccess.Write(admin);
 
-    //     // AccountModel user = new AccountModel(2, "User", "userName", "user@example.com", "user123", 987654321, 0);
+    //     // AccountModel user = new AccountModel("User", "userName", "user@example.com", "user123", 987654321, 0);
     //     // AccountsAccess.Write(user);
     //     // AccountsAccess.Delete(1);
     //     // AccountsAccess.Delete(2);
