@@ -10,7 +10,7 @@ class Program
         
         // Start the calendar navigation to test the calendar and reservation functionality
         // MakingReservations.CalendarNavigation();
-        AdminMenu.AdminStart();
+        Menu.Start();
         
         Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
     }
