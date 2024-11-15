@@ -5,11 +5,6 @@ public class ReservationLogic
     public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0);
     public static Int64 Userid { get; private set; }
 
-    public ReservationLogic()
-    {
-        // Could do something here
-
-    }
     
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
@@ -86,5 +81,10 @@ public class ReservationLogic
             ReservationAccess.Delete(id);
             return true;
         }
+    }
+
+    public List<ReservationModel> GetUserReservatoion()
+    {
+        return ReservationAccess.GetByUserID();
     }
 }
