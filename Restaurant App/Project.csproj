@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<Content Include="DataSources/*">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="DataSources/*">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
   </ItemGroup>
 
