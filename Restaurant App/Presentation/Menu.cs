@@ -1,6 +1,3 @@
-using System;
-using Presentation;
-
 static class Menu
 {
     static public void Start()
@@ -8,13 +5,15 @@ static class Menu
         Console.WriteLine("Enter [1] to login: ");
         Console.WriteLine("Enter [2] to register a new account: ");
         Console.WriteLine("Enter [3] to exit the program: ");
-        AccountModel acc = null;
-        AccountsLogic accL = null;
-        string input = Console.ReadLine();
+        
+        AccountModel? acc = null;
+        AccountsLogic? accL = null;
+        
+        string? input = Console.ReadLine();
 
         if (input == "1")
         {
-            AccountModel loggedInAccount = acc = UserLogin.Start();
+            AccountModel? loggedInAccount = acc = UserLogin.Start();
             if (loggedInAccount != null)
             {
                 if (loggedInAccount.IsAdmin == 1)
@@ -45,11 +44,11 @@ static class Menu
 
     
 
-    private static void ShowUserMenu(AccountModel acc)
+    private static void ShowUserMenu(AccountModel? acc)
     {
         Console.WriteLine("Welcome to the User menu.");
         Console.WriteLine("Enter 1 to enter the reservation menu");
-        string input = Console.ReadLine();
+        string? input = Console.ReadLine();
         if (input == "1" && acc is not null)
         {
             UserLogin.Start();

@@ -31,7 +31,7 @@ public static class ProductsAccess
         _connection.Close();
     }
 
-    public static ProductModel GetById(long productID)
+    public static ProductModel? GetById(long productID)
     {
         // query all columns from product table
         string sql = $"SELECT * FROM {Table} WHERE productID = @ProductId";
@@ -49,7 +49,7 @@ public static class ProductsAccess
         return _connection.Query<ProductModel>(sql, new { ProductIds = productIds });
     }
 
-    public static ProductModel GetByName(string productName)
+    public static ProductModel? GetByName(string productName)
     {
         string sql = $"SELECT 1 FROM {Table} WHERE productName = @ProductName";
         return _connection.QueryFirstOrDefault<ProductModel>(sql, new { ProductName = productName });

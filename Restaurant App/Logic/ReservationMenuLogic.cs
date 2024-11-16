@@ -10,13 +10,13 @@ public class ReservationMenuLogic
 
     }
 
-    public string GetCurrentMenu()
+    public string? GetCurrentMenu()
     {
         CurrentTheme = ThemesAccess.GetById(1);
-        return CurrentTheme.ThemeName;
+        return CurrentTheme?.ThemeName;
     }
 
-    public List<ProductModel> GetProductsInMenu()
+    public List<ProductModel>? GetProductsInMenu()
     {
         if(CurrentTheme != null)
         {

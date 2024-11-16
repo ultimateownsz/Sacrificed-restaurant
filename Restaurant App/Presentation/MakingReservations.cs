@@ -1,5 +1,3 @@
-
-using System;
 using Logic;
 
 
@@ -22,7 +20,7 @@ namespace Presentation
                 Console.WriteLine("2. Remove reservation");
                 Console.WriteLine("3. Exit");
 
-                string input = Console.ReadLine().ToLower();
+                string? input = Console.ReadLine()?.ToLower();
 
                 if  (input == "1" || input == "make reservation")
                 {
@@ -48,7 +46,7 @@ namespace Presentation
     {
         //Ask the date of the reservation
         //Checks if the date is within a month
-        string date;
+        string? date;
         while (true)
         {
             Console.WriteLine("Please enter your desired date d/m/y");
@@ -69,7 +67,7 @@ namespace Presentation
         
         //Ask the user for the reservation amount
         Console.WriteLine("Please enter the number of guests between 1 and 6");
-        string reservationAmount = Console.ReadLine();
+        string? reservationAmount = Console.ReadLine();
         while(Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
         {
             Console.WriteLine("Please enter a number between 1 and 6");
@@ -269,7 +267,7 @@ namespace Presentation
             while (running)
             {
                 DisplayCalendar(currentDate);
-                string input = Console.ReadLine().ToLower();
+                string? input = Console.ReadLine()?.ToLower();
 
                 switch (input)
                 {

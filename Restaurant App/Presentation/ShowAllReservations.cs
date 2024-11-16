@@ -2,12 +2,12 @@ public static class ShowAllReservations
 {
     public static void Show()
     {
-        string filterChoice;
+        string? filterChoice;
 
         while (true)
         {
             Console.WriteLine("Do you want to filter reservations by month? (Y/N)");
-            filterChoice = Console.ReadLine().ToLower();
+            filterChoice = Console.ReadLine()?.ToLower();
 
             if (filterChoice == "y" || filterChoice == "n")
             {
@@ -26,10 +26,10 @@ public static class ShowAllReservations
             while (true)
             {
                 Console.Write("Enter month (MM): ");
-                string monthInput = Console.ReadLine();
+                string? monthInput = Console.ReadLine();
 
                 Console.Write("Enter year (YYYY): ");
-                string yearInput = Console.ReadLine();
+                string? yearInput = Console.ReadLine();
 
                 if (IsValidMonthYear(monthInput, yearInput, out int month, out int year))
                 {
@@ -63,12 +63,12 @@ public static class ShowAllReservations
         AdminMenu.AdminStart();
     }
 
-    private static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
+    private static bool IsValidMonthYear(string? monthInput, string? yearInput, out int month, out int year)
     {
         month = 0;
         year = 0;
 
-        return monthInput.Length == 2 && yearInput.Length == 4
+        return monthInput?.Length == 2 && yearInput?.Length == 4
             && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
             && month >= 1 && month <= 12
             && year >= 2024 && year <= DateTime.Now.Year;
@@ -81,7 +81,7 @@ public static class ShowAllReservations
         Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
 
         var menuItems = ReservationAdminLogic.GetMenuItemsForReservation((int)reservation.ID);
-        string theme = GetThemeByReservation((int)reservation.ID);
+        string? theme = GetThemeByReservation((int)reservation.ID);
 
         if (!string.IsNullOrEmpty(theme))
         {
@@ -106,7 +106,7 @@ public static class ShowAllReservations
         }
     }
 
-    private static string GetThemeByReservation(int reservationID)
+    private static string? GetThemeByReservation(int reservationID)
     {
         var menuItems = ReservationAdminLogic.GetMenuItemsForReservation(reservationID);
 

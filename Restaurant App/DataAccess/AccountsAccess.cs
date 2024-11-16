@@ -19,14 +19,14 @@ public static class AccountsAccess
 
 
     //NIET aanpassen
-    public static AccountModel GetById(int userID)
+    public static AccountModel? GetById(int userID)
     {
         string sql = $"SELECT * FROM {Table} WHERE userID = @UserID";
         return _connection.QueryFirstOrDefault<AccountModel>(sql, new { UserID = userID });
     }
 
     //NIET aanpassen
-    public static AccountModel GetByEmail(string email)
+    public static AccountModel? GetByEmail(string email)
     {
         string sql = $"SELECT * FROM {Table} WHERE email = @EmailAddress";
         return _connection.QueryFirstOrDefault<AccountModel>(sql, new { EmailAddress = email });

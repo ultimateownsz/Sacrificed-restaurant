@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-using System.Collections.Generic;
 
 public static class ReservationAccess
 {
@@ -37,14 +36,14 @@ public static class ReservationAccess
         return _connection.Query<ReservationModel>(sql, new { Month = month, Year = year }).AsList();
     }
 
-    public static string GetThemeByMenuID(int menuID)
+    public static string? GetThemeByMenuID(int menuID)
     {
         string sql = "SELECT theme FROM Menu WHERE menuID = @MenuID";
         return _connection.QueryFirstOrDefault<string>(sql, new { MenuID = menuID });
     }
 
 
-    public static ReservationModel GetByReservationID(int reservationID)
+    public static ReservationModel? GetByReservationID(int reservationID)
     {
         string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE reservationID = @ReservationID";
         return _connection.QueryFirstOrDefault<ReservationModel>(sql, new { ReservationID = reservationID });

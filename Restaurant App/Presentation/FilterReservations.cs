@@ -16,7 +16,7 @@ public static class FilterReservations
             Console.WriteLine("Q. Go back to Admin Menu");
             Console.WriteLine("");
 
-            string filterChoice = Console.ReadLine().ToLower();
+            string? filterChoice = Console.ReadLine()?.ToLower();
 
             if (filterChoice == "q")
             {

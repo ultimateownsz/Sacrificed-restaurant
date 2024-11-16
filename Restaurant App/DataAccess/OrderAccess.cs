@@ -15,13 +15,13 @@ public static class OrderAccess
         _connection.Execute(sql, Order);
     }
 
-    public static OrderModel GetById(int orderID)
+    public static OrderModel? GetById(int orderID)
     {
         string sql = $"SELECT * FROM {Table} WHERE orderID = @OrderID";
         return _connection.QueryFirstOrDefault<OrderModel>(sql, new { OrderID = orderID });
     }
 
-    public static OrderModel GetByEmail(string reservationID)
+    public static OrderModel? GetByEmail(string reservationID)
     {
         string sql = $"SELECT * FROM {Table} WHERE email = @ReservationID";
         return _connection.QueryFirstOrDefault<OrderModel>(sql, new { ReservationID = reservationID });

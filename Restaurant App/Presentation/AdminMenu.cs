@@ -3,7 +3,7 @@ static class AdminMenu
     public static void AdminStart()
     {
         // Accounts logic instance
-        AccountsLogic accL = null;
+        AccountsLogic? accL = null;
         accL = new AccountsLogic();
 
         System.Console.WriteLine(" ");
@@ -19,7 +19,7 @@ static class AdminMenu
         System.Console.WriteLine("Q. Go back to the main menu");
         System.Console.WriteLine(" ");
 
-        string choice = Console.ReadLine().ToLower();
+        string? choice = Console.ReadLine()?.ToLower();
         switch (choice)
         {
             case "1":

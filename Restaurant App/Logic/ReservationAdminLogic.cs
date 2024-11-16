@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 public static class ReservationAdminLogic
 {
     public static List<ReservationModel> GetAllReservations()
@@ -12,12 +10,12 @@ public static class ReservationAdminLogic
         return ReservationAccess.GetReservationsByMonthYear(month, year);
     }
 
-    public static string GetThemeByMenuID(int menuID)
+    public static string? GetThemeByMenuID(int menuID)
     {
         return ReservationAccess.GetThemeByMenuID(menuID);
     }
 
-    public static ReservationModel GetReservationByID(int reservationID)
+    public static ReservationModel? GetReservationByID(int reservationID)
     {
         return ReservationAccess.GetByReservationID(reservationID);
     }

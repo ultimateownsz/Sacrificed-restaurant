@@ -10,7 +10,7 @@ public static class UpdateReservation
         {
             Console.WriteLine("");
             Console.Write("Enter the Reservation ID you want to update (or Q to go back): ");
-            string input = Console.ReadLine().ToLower();
+            string? input = Console.ReadLine()?.ToLower();
 
             if (input == "q")
             {
@@ -70,7 +70,7 @@ public static class UpdateReservation
         {
             Console.WriteLine("");
             Console.Write("Enter new Reservation Date (DD/MM/YYYY) or press Enter to keep current: ");
-            string newDateInput = Console.ReadLine();
+            string? newDateInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newDateInput))
             {
                 Console.WriteLine("Reservation Date not updated.");
@@ -105,7 +105,7 @@ public static class UpdateReservation
         {
             Console.WriteLine("");
             Console.Write("Enter new Table Choice (2, 4, or 6) or press Enter to keep current: ");
-            string newTableChoiceInput = Console.ReadLine();
+            string? newTableChoiceInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newTableChoiceInput))
             {
                 Console.WriteLine("Table Choice not updated.");
@@ -127,7 +127,7 @@ public static class UpdateReservation
         {
             Console.WriteLine("");
             Console.Write("Enter new number of people (Reservation Amount) or press Enter to keep current: ");
-            string newAmountInput = Console.ReadLine();
+            string? newAmountInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newAmountInput))
             {
                 Console.WriteLine("Reservation Amount not updated.");

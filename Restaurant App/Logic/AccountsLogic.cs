@@ -6,14 +6,14 @@
         
     }
 
-    public AccountModel GetById(int id)
+    public AccountModel? GetById(int id)
     {
         return AccountsAccess.GetById(id);
     }
 
-    public AccountModel? CheckLogin(string email, string password)
+    public AccountModel? CheckLogin(string? email, string? password)
     {
-        AccountModel acc = AccountsAccess.GetByEmail(email);
+        AccountModel? acc = AccountsAccess.GetByEmail(email ?? "");
 
         if (acc != null && acc.Password == password)
         {
@@ -34,22 +34,25 @@
         return null;
     }
 
-    public bool IsEmailValid(string email)
+    public bool IsEmailValid(string? email)
     {
+        if (email == null)
+            return false;
+
         return email.Contains("@") && email.Contains(".com");
     }
 
-    public bool IsPasswordValid(string password)
+    public bool IsPasswordValid(string? password)
     {
-        return password.Length <= 16 && password.Length >= 8;
+        return password?.Length <= 16 && password.Length >= 8;
     }
 
-    public bool IsPhoneNumberValid(string phoneNumber)
+    public bool IsPhoneNumberValid(string? phoneNumber)
     {
         return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
     }
 
-    public AccountModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public AccountModel UserAccount(string? firstName, string? lastName, string? email, string? password, string? phoneNumber)
     {
         return new AccountModel
         {
@@ -62,7 +65,7 @@
         };
     }
 
-    public AccountModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public AccountModel AdminAccount(string? firstName, string? lastName, string? email, string? password, string? phoneNumber)
     {
         return new AccountModel
         {
@@ -78,7 +81,7 @@
     public void CreateUserAccount()
     {
         bool isInfoValid = false;
-        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
+        string? firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
 
         // Input collection with validation loops
         Console.WriteLine("Please, enter your first name: ");
@@ -130,7 +133,7 @@
             Console.WriteLine(" ");
             Console.WriteLine("Are you sure this is correct? Y/N");
             
-            string choice = Console.ReadLine().ToUpper();
+            string? choice = Console.ReadLine()?.ToUpper();
             
             if (choice == "Y")
             {
@@ -146,7 +149,7 @@
                 Console.WriteLine("Choose which information you'd like to change:");
                 Console.WriteLine("(Type in: [1] = First Name, [2] = Last Name, [3] = Email, [4] = Password, [5] = Phone Number)");
                 
-                string info = Console.ReadLine();
+                string? info = Console.ReadLine();
                 switch (info)
                 {
                     case "1":
@@ -161,7 +164,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new email address: ");
-                            string newEmail = Console.ReadLine();
+                            string? newEmail = Console.ReadLine();
                             if (IsEmailValid(newEmail))
                             {
                                 email = newEmail;
@@ -174,7 +177,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
-                            string newPassword = Console.ReadLine();
+                            string? newPassword = Console.ReadLine();
                             if (IsPasswordValid(newPassword))
                             {
                                 password = newPassword;
@@ -187,7 +190,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new phone number (Must be 8 numbers): ");
-                            string newPhoneNumber = Console.ReadLine();
+                            string? newPhoneNumber = Console.ReadLine();
                             if (IsPhoneNumberValid(newPhoneNumber))
                             {
                                 phoneNumber = newPhoneNumber;
@@ -211,7 +214,7 @@
     public void CreateAdminAccount()
     {
         bool isInfoValid = false;
-        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
+        string? firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
 
         // Input collection with validation loops
         Console.WriteLine("Please, enter your first name: ");
@@ -263,7 +266,7 @@
             Console.WriteLine(" ");
             Console.WriteLine("Are you sure this is correct? Y/N");
             
-            string choice = Console.ReadLine().ToUpper();
+            string? choice = Console.ReadLine()?.ToUpper();
             
             if (choice == "Y")
             {
@@ -279,7 +282,7 @@
                 Console.WriteLine("Choose which information you'd like to change:");
                 Console.WriteLine("(Type in: [1] = First Name, [2] = Last Name, [3] = Email, [4] = Password, [5] = Phone Number)");
                 
-                string info = Console.ReadLine();
+                string? info = Console.ReadLine();
                 switch (info)
                 {
                     case "1":
@@ -294,7 +297,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new email address: ");
-                            string newEmail = Console.ReadLine();
+                            string? newEmail = Console.ReadLine();
                             if (IsEmailValid(newEmail))
                             {
                                 email = newEmail;
@@ -307,7 +310,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
-                            string newPassword = Console.ReadLine();
+                            string? newPassword = Console.ReadLine();
                             if (IsPasswordValid(newPassword))
                             {
                                 password = newPassword;
@@ -320,7 +323,7 @@
                         while (true)
                         {
                             Console.WriteLine("Please, enter your new phone number (Must be 8 numbers): ");
-                            string newPhoneNumber = Console.ReadLine();
+                            string? newPhoneNumber = Console.ReadLine();
                             if (IsPhoneNumberValid(newPhoneNumber))
                             {
                                 phoneNumber = newPhoneNumber;

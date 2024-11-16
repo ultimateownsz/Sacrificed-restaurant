@@ -1,13 +1,13 @@
 ﻿public class AccountModel
 {
     // private static int _accountCounter = 1;
-    public Int64 UserID { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string EmailAddress { get; set; }
-    public string Password { get; set; }
-    public Int64 PhoneNumber { get; set; }
-    public Int64 IsAdmin { get; set; }
+    public Int64? UserID { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? EmailAddress { get; set; }
+    public string? Password { get; set; }
+    public Int64? PhoneNumber { get; set; }
+    public Int64? IsAdmin { get; set; }
 
     public AccountModel()
     {

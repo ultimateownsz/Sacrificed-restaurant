@@ -52,19 +52,19 @@ public static class ThemesAccess
         _connection.Execute(sql, new { ThemeName = themeName });
     }
 
-    public static ThemeMenuModel GetById(long menuID)
+    public static ThemeMenuModel? GetById(long menuID)
     {
         string sql = $"SELECT * FROM {Table} WHERE menuID = @MenuId";
         return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { MenuId = menuID });
     }
 
-    public static ThemeMenuModel GetById(string themeName)
+    public static ThemeMenuModel? GetById(string themeName)
     {
         string sql = $"SELECT * FROM {Table} WHERE theme = @ThemeName";
         return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { Theme = themeName });
     }
 
-    public static ThemeMenuModel GetByName(string themeName)
+    public static ThemeMenuModel? GetByName(string themeName)
     {
         string sql = $"SELECT * FROM {Table} WHERE theme = @ThemeName";
         return _connection.QueryFirstOrDefault<ThemeMenuModel>(sql, new { Theme = themeName });
