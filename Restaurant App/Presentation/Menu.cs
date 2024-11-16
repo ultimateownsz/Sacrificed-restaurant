@@ -3,15 +3,30 @@ using Presentation;
 
 static class Menu
 {
-    //static private T2 ReverseLookup<T, T2>(Dictionary<T, T2> dict, T2 target)
-    //{
-    //    if ta
-    //    foreach ((T key, T2 value) in dict)
-    //    {
-    //        if (value is target)
-    //            return value;
-    //    }
-    //}
+    static private Tuple<T?, int> ReverseLookup<T, T2>(Dictionary<T, T2> dict, T2 target)
+    {
+        int i = 0;
+        foreach ((T key, T2 value) in dict)
+        {
+            if (value.Equals(target))
+                return new(key, i);
+            
+            i++;
+        }
+        
+        // may cause errors
+        return new(default(T), 0);
+    }
+
+    static private Index Next(int size, int current, bool reverse = false)
+    {
+        current += (reverse) ? -1 : 1;
+        
+        if (current >= size) current = 0;
+        if (current < 0) current = size - 1;
+
+        return current;
+    }
 
     static public void Start()
     {
@@ -27,17 +42,26 @@ static class Menu
 
         while (true)
         {
+            Console.Clear();
             foreach ((string text, bool selected) in selection)
             {
                 Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
                 Console.WriteLine(text, Console.ForegroundColor);
             }
 
+            var current = ReverseLookup<string, bool>(selection, true);
             switch (Console.ReadKey().Key)
             {
+                case ConsoleKey.DownArrow:   
+                    
+                    selection[current.Item1] = false;
+                    selection[selection.ElementAt(Next(selection.Count, current.Item2)).Key] = true;
+                    break;
 
-                case ConsoleKey.DownArrow:
-                    ; ;
+                case ConsoleKey.UpArrow:
+
+                    selection[current.Item1] = false;
+                    selection[selection.ElementAt(Next(selection.Count, current.Item2, true)).Key] = true;
                     break;
             }
         }
