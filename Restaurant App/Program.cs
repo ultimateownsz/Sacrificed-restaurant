@@ -5,10 +5,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        // REMOVED because It's invisible
-        //Console.WriteLine("Welcome to the Reservation System");
-        //Console.WriteLine("Starting Calendar Navigation...");
-        
+        Console.WriteLine("Welcome to the Reservation System");
+        Console.WriteLine("Starting Calendar Navigation...");
+
         // Start the calendar navigation to test the calendar and reservation functionality
         // MakingReservations.CalendarNavigation();
         Menu.Start();
