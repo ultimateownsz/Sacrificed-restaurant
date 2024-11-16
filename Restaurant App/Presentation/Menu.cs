@@ -3,44 +3,81 @@ using Presentation;
 
 static class Menu
 {
+    //static private T2 ReverseLookup<T, T2>(Dictionary<T, T2> dict, T2 target)
+    //{
+    //    if ta
+    //    foreach ((T key, T2 value) in dict)
+    //    {
+    //        if (value is target)
+    //            return value;
+    //    }
+    //}
+
     static public void Start()
     {
-        Console.WriteLine("Enter [1] to login: ");
-        Console.WriteLine("Enter [2] to register a new account: ");
-        Console.WriteLine("Enter [3] to exit the program: ");
-        AccountModel acc = null;
-        AccountsLogic accL = null;
-        string input = Console.ReadLine();
+        AccountModel? acc = null;
+        AccountsLogic? accL = null;
 
-        if (input == "1")
+        Dictionary<string, bool> selection = new()
         {
-            AccountModel loggedInAccount = acc = UserLogin.Start();
-            if (loggedInAccount != null)
+            {"Login", true},
+            {"Register", false},
+            {"Exit", false},
+        };
+
+        while (true)
+        {
+            foreach ((string text, bool selected) in selection)
             {
-                if (loggedInAccount.IsAdmin == 1)
-                {
-                    AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
-                }
-                else
-                {
-                    ShowUserMenu(acc);  // directs to User menu if the account is a regular user
-                }
+                Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
+                Console.WriteLine(text, Console.ForegroundColor);
+            }
+
+            switch (Console.ReadKey().Key)
+            {
+
+                case ConsoleKey.DownArrow:
+                    ; ;
+                    break;
             }
         }
-        else if (input == "2")
-        {
-            accL = new AccountsLogic();
-            accL.CreateUserAccount();
-        }
-        else if (input == "3")
-        {
-            Console.WriteLine("Exiting the program...");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            Start();  // restart the menu if input is invalid
-        }
+
+
+        //while (true)
+        //{
+        //    // register input without having to press enter
+        //    switch (Console.ReadKey().ToString())
+        //    {
+        //        case "l":
+
+        //            AccountModel loggedInAccount = acc = UserLogin.Start();
+        //            if (loggedInAccount != null)
+        //            {
+        //                if (loggedInAccount.IsAdmin == 1)
+        //                {
+        //                    AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
+        //                }
+        //                else
+        //                {
+        //                    ShowUserMenu(acc);  // directs to User menu if the account is a regular user
+        //                }
+        //            }
+        //            break;
+
+        //        case "r":
+
+        //            accL = new AccountsLogic();
+        //            accL.CreateUserAccount();
+
+        //            break;
+
+        //        case "e":
+        //            return;
+
+        //        default:
+        //            continue;
+        //    }
+        //}
     }
 
     
