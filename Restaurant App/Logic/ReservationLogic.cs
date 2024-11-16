@@ -9,7 +9,7 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
-    public Int64 SaveReservation(string date, string reservationAmount, Int64 userId)
+    public Int64 SaveReservation(DateTime date, string reservationAmount, Int64 userId)
     {   
         if (CurrentReservation != null)
         {
@@ -25,13 +25,9 @@ public class ReservationLogic
     }
 
     //Converts the date from string to Int64 and saves it into CurrentReservation
-    public Int64 ConvertDate(string date)
+    public Int64 ConvertDate(DateTime date)
     {
-        date = date.Replace("/", "");
-        date = date.Replace("-", "");
-        date = date.Replace(" ", "");
-        Int64 convertedDate = Convert.ToInt64(date);
-        return convertedDate;
+        return DateTime.Parse(date.ToString()).ToFileTimeUtc();
     }
 
     //Converts the tableChoice from string to Int64 and saves it into CurrentReservation
@@ -83,8 +79,8 @@ public class ReservationLogic
         }
     }
 
-    public List<ReservationModel> GetUserReservatoion()
+    public List<ReservationModel> GetUserReservatoions(int userID)
     {
-        return ReservationAccess.GetByUserID();
+        return ReservationAccess.GetByUserID(userID);
     }
 }
