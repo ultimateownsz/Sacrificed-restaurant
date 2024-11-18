@@ -8,16 +8,17 @@ static class Menu
         Console.WriteLine("Enter [1] to login: ");
         Console.WriteLine("Enter [2] to register a new account: ");
         Console.WriteLine("Enter [3] to exit the program: ");
+        
         AccountModel acc = null;
         AccountsLogic accL = null;
         string input = Console.ReadLine();
 
         if (input == "1")
         {
-            AccountModel loggedInAccount = acc = UserLogin.Start();
-            if (loggedInAccount != null)
+            acc = UserLogin.Start();
+            if (acc != null)
             {
-                if (loggedInAccount.IsAdmin == 1)
+                if (acc.IsAdmin == 1)
                 {
                     AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
                 }
@@ -43,16 +44,16 @@ static class Menu
         }
     }
 
-    
-
     private static void ShowUserMenu(AccountModel acc)
     {
         Console.WriteLine("Welcome to the User menu.");
         Console.WriteLine("Enter 1 to enter the reservation menu");
+        Console.WriteLine("Enter 'q' to quit");
+
         string input = Console.ReadLine();
         if (input == "1" && acc is not null)
         {
-            UserLogin.Start();
+            MakingReservations.CalendarNavigation();  // Start calendar navigation to select a date
         }
         else if (input == "1" && acc is null)
         {

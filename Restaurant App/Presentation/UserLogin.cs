@@ -15,7 +15,7 @@ static class UserLogin
         if (acc != null)
         {
             Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);
-            Console.WriteLine("Your email is: " + acc.EmailAddress);
+            //Console.WriteLine("Your email is: " + acc.EmailAddress);
             return acc;
         }
         else
