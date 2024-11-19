@@ -87,7 +87,7 @@ static class ThemeMenuManager
                 {
                     ScheduledYear = year,
                     ScheduledMonth = month,
-                    ThemeName = "Not scheduled"
+                    ThemeName = ""
                 };
             }
 
@@ -137,7 +137,7 @@ static class ThemeMenuManager
             theme.ScheduledYear = scheduledYear;
             theme.ScheduledMonth = scheduledMonth;
 
-            // Check if a theme already exists in the database
+            // Check if a theme already exists
             var existingTheme = ThemesAccess.GetById(theme.MenuId);
 
             if (existingTheme != null)
@@ -153,6 +153,7 @@ static class ThemeMenuManager
                 // Add a new theme
                 if (!ThemesAccess.Write(theme))
                 {
+                    Console.WriteLine("Failed to add the new theme to the database.");
                     return false;
                 }
             }
