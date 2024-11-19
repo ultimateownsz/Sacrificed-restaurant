@@ -23,22 +23,22 @@ static class ThemeView
             Console.Clear();
             DisplayAllThemes();
 
-            int month = InputValidator.GetValidMonth("Enter the month (1-12): ");
-            int year = InputValidator.GetValidYear("Enter the year (YYYY): ", DateTime.Now.Year);
+            int month = InputValidator.GetValidMonth("\nEnter the month (1-12): ");
+            int year = InputValidator.GetValidYear("\nEnter the year (YYYY): ", DateTime.Now.Year);
 
             // check if there is a theme planned
             var existingTheme = ThemeMenuManager.ThemeScheduledByYear.ContainsKey(year)
                 ? ThemeMenuManager.ThemeScheduledByYear[year].FirstOrDefault(t => t.ScheduledMonth == month)
                 : null;
 
-            if (existingTheme != null && existingTheme.ThemeName != "Not scheduled")
+            if (existingTheme == null || existingTheme.ThemeName == "Not scheduled")
             {
                 // no theme exists, ask to add a new one
-                Console.WriteLine($"\nNo theme exists for {ThemeMenuManager.GetMonthName(month)} {year}: '{existingTheme.ThemeName}'.");
+                Console.WriteLine($"\nNo theme exists for {ThemeMenuManager.GetMonthName(month)} {year}.");
                 string addTheme = InputValidator.GetValidString("\nDo you want to create a new theme? (y/n) ");
-                if (addTheme == "y" || addTheme == "yes")
+                if (addTheme.ToLower() == "y" || addTheme.ToLower() == "yes")
                 {
-                    string newThemeName = InputValidator.GetValidString("Enter the theme name: ");
+                    string newThemeName = InputValidator.GetValidString("\nEnter the theme name: ");
                     var newTheme = new ThemeMenuModel
                     {
                         ThemeName = newThemeName,
@@ -60,20 +60,23 @@ static class ThemeView
             }
             else
             {
-                // A theme exists, prompt to update it
+                // A theme already exists, prompt to update it
                 Console.WriteLine($"\nA theme already exists for {ThemeMenuManager.GetMonthName(month)} {year}: '{existingTheme.ThemeName}'.");
                 
-                string UpdateTheme = InputValidator.GetValidString("Do you want to update the theme name? (y/n): ");
+                string UpdateTheme = InputValidator.GetValidString("\nDo you want to update the theme name? (y/n): ");
 
-                if (UpdateTheme == "y" || UpdateTheme == "yes")
+                if (UpdateTheme.ToLower() == "y" || UpdateTheme.ToLower() == "yes")
                 {
-                    string newThemeName = InputValidator.GetValidString("Enter the new theme name: ");
+                    string newThemeName = InputValidator.GetValidString("\nEnter the new theme name: ");
                     existingTheme.ThemeName = newThemeName;
                     existingTheme.ScheduledMonth = month; // Update the month
 
+                    // pass the existingTheme to the logic layer method for updating
                     if (ThemeMenuManager.AddOrUpdateTheme(existingTheme, year, month))
                     {
                         Console.WriteLine("\nTheme updated successfully.");
+                        Console.Clear();
+                        DisplayAllThemes();
                     }
                     else
                     {
@@ -84,7 +87,7 @@ static class ThemeView
 
             // Ask the user if they want to manage another theme
             string retry = InputValidator.GetValidString("\nDo you want to manage another theme? (y/n): ");
-            if (retry != "y" && retry != "yes")
+            if (retry.ToLower() != "y" && retry.ToLower() != "yes")
             {
                 break;
             }
@@ -99,8 +102,8 @@ static class ThemeView
     {
         DisplayAllThemes();
 
-        int scheduledMonth = InputValidator.GetValidMonth("Enter the month of the theme to delete (1-12) ");
-        int scheduledYear = InputValidator.GetValidYear("Enter the year of the theme to delete (YYYY): ", DateTime.Now.Year);
+        int scheduledMonth = InputValidator.GetValidMonth("\nEnter the month of the theme to delete (1-12) ");
+        int scheduledYear = InputValidator.GetValidYear("\nEnter the year of the theme to delete (YYYY): ", DateTime.Now.Year);
 
         var theme = ThemeMenuManager.ThemeScheduledByYear.ContainsKey(scheduledYear)
             ? ThemeMenuManager.ThemeScheduledByYear[scheduledYear].FirstOrDefault(t => t.ScheduledMonth == scheduledMonth)
