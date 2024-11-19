@@ -87,7 +87,7 @@ static class ThemeMenuManager
                 {
                     ScheduledYear = year,
                     ScheduledMonth = month,
-                    ThemeName = "Not scheduled"
+                    ThemeName = ""
                 };
             }
 
@@ -124,78 +124,48 @@ static class ThemeMenuManager
         };
     }
 
-    // Checks if a theme can be added for a future month
-    public static bool ValidateToAddTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
+    public static bool AddOrUpdateTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
     {
-        if (!IsFutureDate(scheduledYear, scheduledMonth))
+        try
         {
-            return false;
-        }
+            if (theme == null)
+            {
+                throw new ArgumentNullException(nameof(theme));
+            }
 
-        if (ThemeScheduledByYear.ContainsKey(scheduledYear) &&
-            ThemeScheduledByYear[scheduledYear].Any(t => t.ScheduledMonth == scheduledMonth))
-        {
-            return false;
-        }
+            // Set the year and month
+            theme.ScheduledYear = scheduledYear;
+            theme.ScheduledMonth = scheduledMonth;
 
-        return true;
-    }
+            // Check if a theme already exists
+            var existingTheme = ThemesAccess.GetById(theme.MenuId);
 
-    // Add a theme to the database
-    public static void AddTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
-    {
-        if (!IsFutureDate(scheduledYear, scheduledMonth))
-        {
-            return;
-        }
+            if (existingTheme != null)
+            {
+                // Update the existing theme
+                if (!ThemesAccess.UpdateTheme(theme))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Add a new theme
+                if (!ThemesAccess.Write(theme))
+                {
+                    Console.WriteLine("Failed to add the new theme to the database.");
+                    return false;
+                }
+            }
 
-        // Prevent adding a theme if it's already scheduled for the month and year
-        if (ThemeScheduledByYear.ContainsKey(scheduledYear) &&
-            ThemeScheduledByYear[scheduledYear].Any(t => t.ScheduledMonth == scheduledMonth))
-        {
-            return;
-        }
-
-        // Store scheduling information temporarily in the dict
-        if (!ThemeScheduledByYear.ContainsKey(scheduledYear))
-        {
-            ThemeScheduledByYear[scheduledYear] = new List<ThemeMenuModel>();
-        }
-
-        theme.ScheduledYear = scheduledYear;
-        theme.ScheduledMonth = scheduledMonth;
-        ThemeScheduledByYear[scheduledYear].Add(theme);
-
-        // Save to the database
-        ThemesAccess.AddTheme(new ThemeMenuModel { ThemeName = theme.ThemeName, MenuId = theme.MenuId });
-    }
-
-    // Edit an existing theme
-    public static bool UpdateTheme(ThemeMenuModel newTheme, int scheduledYear, int scheduledMonth)
-    {
-        if (!IsFutureDate(scheduledYear, scheduledMonth))
-        {
-            return false;
-        }
-
-        if (!ThemeScheduledByYear.ContainsKey(scheduledYear) ||
-            !ThemeScheduledByYear[scheduledYear].Any(t => t.ScheduledMonth == scheduledMonth))
-        {
-            AddTheme(newTheme, scheduledYear, scheduledMonth);
+            // Synchronize the dictionary with the database
+            UpdateThemeSchedule(DateTime.Now.Year, DateTime.Now.Month, ThemesAccess.GetAllThemes().ToList());
             return true;
         }
-
-        var existingTheme = ThemeScheduledByYear[scheduledYear]
-            .FirstOrDefault(t => t.ScheduledMonth == scheduledMonth);
-
-        if (existingTheme != null)
+        catch (Exception)
         {
-            existingTheme.ThemeName = newTheme.ThemeName;
-            newTheme.MenuId = existingTheme.MenuId;
-
-            return ThemesAccess.UpdateTheme(newTheme);
+            return false;
         }
-        return false;
     }
 
     public static bool IsFutureDate(int year, int month)
