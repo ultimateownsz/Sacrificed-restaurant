@@ -34,7 +34,7 @@ static class ThemeView
             if (existingTheme != null && existingTheme.ThemeName != "Not scheduled")
             {
                 // no theme exists, ask to add a new one
-                Console.WriteLine($"\nNo theme exists for {ThemeMenuManager.GetMonthName(month)} {year}: '{existingTheme.ThemeName}' exists.");
+                Console.WriteLine($"\nNo theme exists for {ThemeMenuManager.GetMonthName(month)} {year}: '{existingTheme.ThemeName}'.");
                 string addTheme = InputValidator.GetValidString("\nDo you want to create a new theme? (y/n) ");
                 if (addTheme == "y" || addTheme == "yes")
                 {
@@ -49,6 +49,8 @@ static class ThemeView
                     if (ThemeMenuManager.AddOrUpdateTheme(newTheme, year, month))
                     {
                         Console.WriteLine("\nTheme updated succesfully.");
+                        Console.Clear();
+                        DisplayAllThemes();
                     }
                     else
                     {
