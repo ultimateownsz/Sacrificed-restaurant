@@ -8,16 +8,16 @@ public static class RegisterAdminAccount
         accL = new AccountsLogic();
 
         // Input collection with validation loops
-        Console.WriteLine("Please, enter your first name: ");
+        Console.Write("Please, enter your first name: ");
         firstName = Console.ReadLine();
 
-        Console.WriteLine("Please, enter your last name: ");
+        Console.Write("Please, enter your last name: ");
         lastName = Console.ReadLine();
 
         // Loop until valid email is provided
         while (true)
         {
-            Console.WriteLine("Please, enter your email address: ");
+            Console.Write("Please, enter your email address: ");
             email = Console.ReadLine();
             if (accL.IsEmailValid(email))
                 break;
@@ -27,7 +27,7 @@ public static class RegisterAdminAccount
         // Loop until valid password is provided
         while (true)
         {
-            Console.WriteLine("Please, enter your password (Min: 8 characters | Max: 16 characters): ");
+            Console.Write("Please, enter your password (Min: 8 characters | Max: 16 characters): ");
             password = Console.ReadLine();
             if (accL.IsPasswordValid(password))
                 break;
@@ -37,7 +37,7 @@ public static class RegisterAdminAccount
         // Loop until valid phone number is provided
         while (true)
         {
-            Console.WriteLine("Please, enter your phone number (Must be 8 numbers): ");
+            Console.Write("Please, enter your phone number (Must be 8 numbers): ");
             phoneNumber = Console.ReadLine();
             if (accL.IsPhoneNumberValid(phoneNumber))
                 break;
@@ -55,7 +55,7 @@ public static class RegisterAdminAccount
             Console.WriteLine($"Password: {password}");
             Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine(" ");
-            Console.WriteLine("Are you sure this is correct? Y/N");
+            Console.Write("Are you sure this is correct? Y/N: ");
             
             string choice = Console.ReadLine().ToUpper();
             
@@ -78,17 +78,17 @@ public static class RegisterAdminAccount
                 switch (info)
                 {
                     case "1":
-                        Console.WriteLine("Please, enter your new first name: ");
+                        Console.Write("Please, enter your new first name: ");
                         firstName = Console.ReadLine();
                         break;
                     case "2":
-                        Console.WriteLine("Please, enter your new last name: ");
+                        Console.Write("Please, enter your new last name: ");
                         lastName = Console.ReadLine();
                         break;
                     case "3":
                         while (true)
                         {
-                            Console.WriteLine("Please, enter your new email address: ");
+                            Console.Write("Please, enter your new email address: ");
                             string newEmail = Console.ReadLine();
                             if (accL.IsEmailValid(newEmail))
                             {
@@ -101,7 +101,7 @@ public static class RegisterAdminAccount
                     case "4":
                         while (true)
                         {
-                            Console.WriteLine("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
+                            Console.Write("Please, enter your new password (Min: 8 characters | Max: 16 characters): ");
                             string newPassword = Console.ReadLine();
                             if (accL.IsPasswordValid(newPassword))
                             {
@@ -114,7 +114,7 @@ public static class RegisterAdminAccount
                     case "5":
                         while (true)
                         {
-                            Console.WriteLine("Please, enter your new phone number (Must be 8 numbers): ");
+                            Console.Write("Please, enter your new phone number (Must be 8 numbers): ");
                             string newPhoneNumber = Console.ReadLine();
                             if (accL.IsPhoneNumberValid(newPhoneNumber))
                             {
