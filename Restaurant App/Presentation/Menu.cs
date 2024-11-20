@@ -52,7 +52,7 @@ static class Menu
         string input = Console.ReadLine();
         if (input == "1" && acc is not null)
         {
-            MakingReservations.MakingReservation(acc);
+            MakingReservations.CalendarNavigation();
         }
         else if (input == "1" && acc is null)
         {
