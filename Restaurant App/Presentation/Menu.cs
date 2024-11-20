@@ -1,46 +1,58 @@
-using System;
 using Presentation;
+using Project.Presentation;
 
 static class Menu
 {
     static public void Start()
     {
-        Console.WriteLine("Enter [1] to login: ");
-        Console.WriteLine("Enter [2] to register a new account: ");
-        Console.WriteLine("Enter [3] to exit the program: ");
         
-        AccountModel acc = null;
-        AccountsLogic accL = null;
-        string input = Console.ReadLine();
+        // initialization
+        AccountModel? acc = null;
+        AccountsLogic? accL = null;
 
-        if (input == "1")
+        while (true)
         {
-            acc = UserLogin.Start();
-            if (acc != null)
+            
+            // put here for consistent terminal cleaning
+            string? input = SelectionMenu.Show(["login", "register", "exit"]);
+            Console.Clear();
+            
+            switch (input)
             {
-                if (acc.IsAdmin == 1)
-                {
-                    AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
-                }
-                else
-                {
-                    ShowUserMenu(acc);  // directs to User menu if the account is a regular user
-                }
+                case "login":
+                    acc = UserLogin.Start();
+                    if (acc != null)
+                    {
+                        if (acc.IsAdmin == 1)
+                        {
+                            AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
+                        }
+                        else
+                        {
+                            ShowUserMenu(acc);  // directs to User menu if the account is a regular user
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    break;
+
+                case "register":
+                    accL = new AccountsLogic();
+                    accL.CreateUserAccount();
+                    break;
+
+                case "exit":
+                    return;
+
+                default:
+                    continue;
             }
-        }
-        else if (input == "2")
-        {
-            accL = new AccountsLogic();
-            accL.CreateUserAccount();
-        }
-        else if (input == "3")
-        {
-            Console.WriteLine("Exiting the program...");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            Start();  // restart the menu if input is invalid
+
+            // valid input has been provided at this point
+            break;
         }
     }
 
