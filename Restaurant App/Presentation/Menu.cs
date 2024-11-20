@@ -53,7 +53,7 @@ static class Menu
         string input = Console.ReadLine();
         if (input == "1" && acc is not null)
         {
-            MakingReservations.CalendarNavigation();  // Start calendar navigation to select a date
+            MakingReservations.MakingReservation(acc);
         }
         else if (input == "1" && acc is null)
         {

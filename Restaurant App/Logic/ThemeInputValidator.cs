@@ -1,6 +1,6 @@
 // the presentation layer uses this class to validate the input of the user
 
-public static class InputValidator
+public static class ThemeInputValidator
 {
     public static long GetValidLong(string prompt, long minValue = 0)
     {
