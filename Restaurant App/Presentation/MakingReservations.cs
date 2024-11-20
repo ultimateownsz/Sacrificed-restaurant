@@ -15,58 +15,57 @@ namespace Presentation
 
         public static void ReservationMenu(AccountModel acc)
         {
-            while (true)
+            List<string> menuOptions = ["Make reservation", "View reservation"];
+            int menuIndex = 0;
+            bool inMenu = true;
+
+            while (inMenu)
             {
-                Console.WriteLine("Welcome to the reservation page");
-                Console.WriteLine("1. Make reservation");
-                Console.WriteLine("2. Remove reservation");
-                Console.WriteLine("3. Exit");
-
-                string input = Console.ReadLine().ToLower();
-
-                if  (input == "1" || input == "make reservation")
+                Console.Clear();
+                for (int j = 0; j < menuOptions.Count; j++)
                 {
-                    CalendarNavigation(acc);
-                }
-
-                else if (input == "2" || input == "remove reservation")
-                {
-                    Console.WriteLine("Please enter the reservation code(id)");
-                    int removeID = Convert.ToInt32(Console.ReadLine());
-                    
-                    if(reservationLogic.RemoveReservation(removeID) == true)
-                        Console.WriteLine("The reservation has been cancelled");
+                    if (j == menuIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"> {menuOptions[j]}"); // Highlight selected item
+                        Console.ResetColor();
+                    }
                     else
-                        Console.WriteLine("Invalid ID, reservation has not been cancelled");
+                    {
+                        Console.WriteLine($"  {menuOptions[j]}");
+                    }
                 }
-                else
-                    return;
+                
+                var key = Console.ReadKey(intercept: true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (menuIndex > 0) menuIndex--; // Move up
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (menuIndex < menuOptions.Count - 1) menuIndex++; // Move down
+                        break;
+                    case ConsoleKey.Enter: // Process the selected reservation
+                        Console.Clear();
+                        inMenu = false;
+                        break; // Exit loop
+                    case ConsoleKey.Escape: // Exit without selection
+                        Menu.Start();
+                        break;
+                }
             }
-    }
+            if(menuOptions[menuIndex] == "Make reservation")
+            {
+                CalendarNavigation(acc);
+            }
+            else
+            {
+                UserOverViewReservation(acc);
+            }
+        }
 
     public static void MakingReservation(AccountModel acc, DateTime date)
-    {
-        // //Ask the date of the reservation
-        // //Checks if the date is within a month
-        // string date;
-        // while (true)
-        // {
-        //     Console.WriteLine("Please enter your desired date d/m/y");
-        //     date = Console.ReadLine();
-        //     DateTime currentDate = DateTime.Now;
-        //     DateTime desiredDate = Convert.ToDateTime(date);
-        //     if(desiredDate > currentDate.AddDays(30))
-        //     {
-        //         Console.WriteLine("The desired date is more than 30 days from the current date, please try again");
-        //     }
-        //     else if(desiredDate < currentDate)
-        //     {
-        //         Console.WriteLine("The desired date is lower than today's date, please try again");
-        //     }
-        //     else
-        //         break;
-        // }
-        
+    {   
         //Ask the user for the reservation amount
         Console.WriteLine("Please enter the number of guests between 1 and 6");
         string reservationAmount = Console.ReadLine();
@@ -232,116 +231,166 @@ namespace Presentation
             Console.WriteLine("============================");
         }
 
-    // public static void UserOverViewReservation()
-    // {
-    //     reservationLogic.GetUserReservatoions
-    // }
-
-    // public static void DeleteReservation()
-    // {
-
-    // }
-
-        public static void DisplayCalendar(DateTime currentDate, int selectedDay)
+    public static void UserOverViewReservation(AccountModel acc)
+    {
+        List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
+        int reservationIndex = 0;
+        if (userReservations == null || userReservations.Count == 0)
+        {
+            Console.WriteLine("You have no reservations.");
+            Console.ReadKey();
+            return;
+        }
+        while (true)
         {
             Console.Clear();
-            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
-
-            // Display calendar days layout
-            Console.WriteLine("Mo Tu We Th Fr Sa Su");
-            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-            int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
-
-            // Adjust for 0-based index for Monday start
-            startDay = startDay == 0 ? 6 : startDay - 1;
-
-            // Print spaces for the first week
-            for (int i = 0; i < startDay; i++)
-                Console.Write("   ");
-
-            for (int day = 1; day <= daysInMonth; day++)
+            Console.WriteLine($"Here are your Reservations {acc.FirstName}:");
+            for (int j = 0; j < userReservations.Count; j++)
             {
-                if (day == selectedDay)
+                if (j == reservationIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write($"{day,2} ");
+                    Console.WriteLine($"> Reservation:{userReservations[j].Date}"); // Highlight selected item
                     Console.ResetColor();
                 }
                 else
                 {
-                    Console.Write($"{day,2} ");
-                }
-
-                if ((day + startDay) % 7 == 0) Console.WriteLine();
-            }
-
-            Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
-        }
-
-        public static void CalendarNavigation(AccountModel acc)
-        {
-            DateTime currentDate = DateTime.Now;
-            int selectedDay = currentDate.Day;
-            bool running = true;
-
-            while (running)
-            {
-                DisplayCalendar(currentDate, selectedDay);
-                var key = Console.ReadKey(intercept: true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.LeftArrow:
-                        if (selectedDay > 1) selectedDay--;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        if (selectedDay < DateTime.DaysInMonth(currentDate.Year, currentDate.Month)) selectedDay++;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (selectedDay - 7 > 0)
-                            selectedDay -= 7;
-                        else
-                            selectedDay = 1; // Jump to start if moving up goes out of bounds
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (selectedDay + 7 <= DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
-                            selectedDay += 7;
-                        else
-                            selectedDay = DateTime.DaysInMonth(currentDate.Year, currentDate.Month); // Jump to end if moving down goes out of bounds
-                        break;
-                    case ConsoleKey.P: // Previous month
-                        currentDate = currentDate.AddMonths(-1);
-                        selectedDay = Math.Min(selectedDay, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)); // Adjust selected day if new month has fewer days
-                        break;
-                    case ConsoleKey.N: // Next month
-                        currentDate = currentDate.AddMonths(1);
-                        selectedDay = Math.Min(selectedDay, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)); // Adjust selected day if new month has fewer days
-                        break;
-                    case ConsoleKey.Enter: // Select date
-                        DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
-                        MakingReservation(acc, selectedDate);
-                        running = false;
-                        return;
-                    case ConsoleKey.Q: // Quit
-                        running = false;
-                        return;
-                    default:
-                        Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
-                        break;
+                    Console.WriteLine($"  Reservation:{userReservations[j].Date}");
                 }
             }
-        }
-
-        public static void ShowAvailableTables(DateTime selectedDate)
-        {
-            var availableTables = calendarLogic.GetAvailableTables(selectedDate);
-            Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
-            foreach (var table in availableTables)
+            
+            var key = Console.ReadKey(intercept: true);
+            switch (key.Key)
             {
-                Console.WriteLine($" - {table}");
-            }
-            Console.WriteLine("\nPress any key to return to the calendar...");
-            Console.ReadKey();
+                case ConsoleKey.UpArrow:
+                    if (reservationIndex > 0) reservationIndex--; // Move up
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (reservationIndex < userReservations.Count - 1) reservationIndex++; // Move down
+                    break;
+                case ConsoleKey.Enter:
+                    // Process the selected reservation
+                    Console.Clear();
+                    Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
+                    Console.WriteLine("Press any key to return...");
+                    ReservationMenu(acc);
+                    // DeleteReservation()
+                    Console.ReadKey();
+                    return; // Exit loop
+                case ConsoleKey.Escape:// Exit without selection
+                    ReservationMenu(acc);
+                    return;
+                }
         }
     }
+
+    public static void DeleteReservation()
+    {
+
+    }
+
+    public static void DisplayCalendar(DateTime currentDate, int selectedDay)
+    {
+        Console.Clear();
+        Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
+
+        // Display calendar days layout
+        Console.WriteLine("Mo Tu We Th Fr Sa Su");
+        int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+        int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
+
+        // Adjust for 0-based index for Monday start
+        startDay = startDay == 0 ? 6 : startDay - 1;
+
+        // Print spaces for the first week
+        for (int i = 0; i < startDay; i++)
+            Console.Write("   ");
+
+        for (int day = 1; day <= daysInMonth; day++)
+        {
+            if (day == selectedDay)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"{day,2} ");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.Write($"{day,2} ");
+            }
+
+            if ((day + startDay) % 7 == 0) Console.WriteLine();
+        }
+
+        Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
+    }
+
+    public static void CalendarNavigation(AccountModel acc)
+    {
+        DateTime currentDate = DateTime.Now;
+        int selectedDay = currentDate.Day;
+        bool running = true;
+
+        while (running)
+        {
+            DisplayCalendar(currentDate, selectedDay);
+            var key = Console.ReadKey(intercept: true);
+
+            switch (key.Key)
+            {
+                case ConsoleKey.LeftArrow:
+                    if (selectedDay > 1) selectedDay--;
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (selectedDay < DateTime.DaysInMonth(currentDate.Year, currentDate.Month)) selectedDay++;
+                    break;
+                case ConsoleKey.UpArrow:
+                    if (selectedDay - 7 > 0)
+                        selectedDay -= 7;
+                    else
+                        selectedDay = 1; // Jump to start if moving up goes out of bounds
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (selectedDay + 7 <= DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
+                        selectedDay += 7;
+                    else
+                        selectedDay = DateTime.DaysInMonth(currentDate.Year, currentDate.Month); // Jump to end if moving down goes out of bounds
+                    break;
+                case ConsoleKey.P: // Previous month
+                    currentDate = currentDate.AddMonths(-1);
+                    selectedDay = Math.Min(selectedDay, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)); // Adjust selected day if new month has fewer days
+                    break;
+                case ConsoleKey.N: // Next month
+                    currentDate = currentDate.AddMonths(1);
+                    selectedDay = Math.Min(selectedDay, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)); // Adjust selected day if new month has fewer days
+                    break;
+                case ConsoleKey.Enter: // Select date
+                    DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+                    //ShowAvailableTables(selectedDate);
+                    MakingReservation(acc, selectedDate);
+                    running = false;
+                    break;
+                case ConsoleKey.Q: // Quit
+                    running = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                    break;
+            }
+        }
+    }
+
+    public static void ShowAvailableTables(DateTime selectedDate)
+    {
+        var availableTables = calendarLogic.GetAvailableTables(selectedDate);
+        Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
+        foreach (var table in availableTables)
+        {
+            Console.WriteLine($" - {table}");
+        }
+        Console.WriteLine("\nPress any key to return to the calendar...");
+        Console.ReadKey();
+    }
 }
+}
+

@@ -57,7 +57,17 @@ public class ReservationLogic
     public Int64 ReservationAmount(string reservationAmount)
     {
         Int64 convertedAmount = Convert.ToInt64(reservationAmount);
-        return convertedAmount;
+        switch (reservationAmount.ToLower())
+        {
+            case "1" or "2" or "one" or "two":
+                return 2;
+            case "3" or "4" or "three" or "four":
+                return 4;   
+            case "5" or "6" or "five" or "six":
+                return 6;
+            default:
+                return 0;
+        };
     }
 
     //This is used to get a specific reservation from the database based on the given ID
