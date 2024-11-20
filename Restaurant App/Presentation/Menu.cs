@@ -43,7 +43,7 @@ static class Menu
                 case "register":
                     accL = new AccountsLogic();
                     accL.CreateUserAccount();
-                    break;
+                    continue;
 
                 case "exit":
                     return;
