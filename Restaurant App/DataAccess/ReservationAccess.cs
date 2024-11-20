@@ -10,14 +10,15 @@ public static class ReservationAccess
 
     public static void Write(ReservationModel reservation)
     {
-        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
+        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID, tableID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID, @TableID)";
         _connection.Execute(sql, new
         {
             ReservationID = reservation.ID,
             Date = reservation.Date,
             TableChoice = reservation.TableChoice,
             ReservationAmount = reservation.ReservationAmount,
-            UserID = reservation.UserID
+            UserID = reservation.UserID,
+            TableID = reservation.TabelID
         });
     }
 
