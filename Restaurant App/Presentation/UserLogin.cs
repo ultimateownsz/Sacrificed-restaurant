@@ -8,8 +8,11 @@ static class UserLogin
     {
         Console.Clear();
         Console.WriteLine("LOGIN\n");
-        Console.Write("mail: ");
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("mail: ", Console.ForegroundColor);
         
+        Console.ForegroundColor = ConsoleColor.White;
         return Console.ReadLine();
     }
 
@@ -18,8 +21,11 @@ static class UserLogin
         Console.Clear();
         Console.WriteLine("LOGIN\n");
         Console.WriteLine($"mail: {email}");
-        Console.Write($"pass: ");
+        
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write($"pass: ", Console.ForegroundColor);
 
+        Console.ForegroundColor = ConsoleColor.White;
         return Console.ReadLine();
     }
 
@@ -38,7 +44,16 @@ static class UserLogin
         }
         else
         {
-            Console.WriteLine("No account found with that email and password");
+            Console.Clear();
+            Console.WriteLine("LOGIN\n");
+            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"mail: {email}", Console.ForegroundColor);
+            Console.WriteLine($"pass: {password}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid credentials, returning...");
+
             return null;
         }
     }
