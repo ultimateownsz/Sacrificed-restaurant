@@ -14,7 +14,7 @@ static class Menu
         {
             
             // put here for consistent terminal cleaning
-            string? input = SelectionMenu.Show(["login", "register", "exit"]);
+            string? input = SelectionMenu.Show(["login", "register", "exit"], "MAIN MENU\n\n");
             Console.Clear();
             
             switch (input)
@@ -30,6 +30,7 @@ static class Menu
                         else
                         {
                             ShowUserMenu(acc);  // directs to User menu if the account is a regular user
+                            continue;
                         }
                     }
                     else
@@ -58,27 +59,20 @@ static class Menu
 
     private static void ShowUserMenu(AccountModel acc)
     {
-        Console.WriteLine("Welcome to the User menu.");
-        Console.WriteLine("Enter 1 to enter the reservation menu");
-        Console.WriteLine("Enter 'q' to quit");
+        while (true)
+        {
+            switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
+            {
+                case "reserve":
+                    MakingReservations.CalendarNavigation();
+                    break;
 
-        string input = Console.ReadLine();
-        if (input == "1" && acc is not null)
-        {
-            MakingReservations.CalendarNavigation();  // Start calendar navigation to select a date
-        }
-        else if (input == "1" && acc is null)
-        {
-            Console.WriteLine("Please log in first");
-        }
-        else if (input == "q")
-        {
-            return;
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            ShowUserMenu(acc);  // restart the menu if input is invalid
+                case "logout":
+                    return;
+
+                default:
+                    break;
+            }
         }
     }
 }
