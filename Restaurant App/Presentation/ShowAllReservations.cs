@@ -31,7 +31,7 @@ public static class ShowAllReservations
                 Console.Write("Enter year (YYYY): ");
                 string yearInput = Console.ReadLine();
 
-                if (IsValidMonthYear(monthInput, yearInput, out int month, out int year))
+                if (ReservationLogic.IsValidMonthYear(monthInput, yearInput, out int month, out int year))
                 {
                     reservations = ReservationAdminLogic.GetReservationsByMonthYear(month, year);
                     break;
@@ -63,16 +63,7 @@ public static class ShowAllReservations
         AdminMenu.AdminStart();
     }
 
-    private static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
-    {
-        month = 0;
-        year = 0;
 
-        return monthInput.Length == 2 && yearInput.Length == 4
-            && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
-            && month >= 1 && month <= 12
-            && year >= 2024 && year <= DateTime.Now.Year;
-    }
 
     static void DisplayReservationDetails(ReservationModel reservation)
     {
@@ -81,7 +72,7 @@ public static class ShowAllReservations
         Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
 
         var menuItems = ReservationAdminLogic.GetMenuItemsForReservation((int)reservation.ID);
-        string theme = GetThemeByReservation((int)reservation.ID);
+        string theme = ReservationLogic.GetThemeByReservation((int)reservation.ID);
 
         if (!string.IsNullOrEmpty(theme))
         {
@@ -106,16 +97,5 @@ public static class ShowAllReservations
         }
     }
 
-    private static string GetThemeByReservation(int reservationID)
-    {
-        var menuItems = ReservationAdminLogic.GetMenuItemsForReservation(reservationID);
 
-        if (menuItems != null && menuItems.Count > 0)
-        {
-            int menuID = (int)menuItems.First().MenuID; // Explicit cast from long to int
-            return ReservationAdminLogic.GetThemeByMenuID(menuID);
-        }
-
-        return string.Empty;
-    }
 }
