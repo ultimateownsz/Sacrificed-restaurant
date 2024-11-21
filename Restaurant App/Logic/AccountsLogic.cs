@@ -2,18 +2,18 @@
 
 public class AccountsLogic
 {
-    public AccountModel? CurrentAccount { get; private set; }
+    public static AccountModel? CurrentAccount { get; private set; }
     public AccountsLogic()
     {
         
     }
 
-    public AccountModel GetById(int id)
+    public static AccountModel GetById(int id)
     {
         return AccountsAccess.GetById(id);
     }
 
-    public AccountModel? CheckLogin(string email, string password)
+    public static AccountModel? CheckLogin(string email, string password)
     {
         AccountModel acc = AccountsAccess.GetByEmail(email);
 
@@ -36,22 +36,22 @@ public class AccountsLogic
         return null;
     }
 
-    public bool IsEmailValid(string email)
+    public static bool IsEmailValid(string email)
     {
         return email.Contains("@") && email.Contains(".com");
     }
 
-    public bool IsPasswordValid(string password)
+    public static bool IsPasswordValid(string password)
     {
         return password.Length <= 16 && password.Length >= 8;
     }
 
-    public bool IsPhoneNumberValid(string phoneNumber)
+    public static bool IsPhoneNumberValid(string phoneNumber)
     {
         return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
     }
 
-    public AccountModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public static AccountModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
         return new AccountModel
         {
@@ -64,7 +64,7 @@ public class AccountsLogic
         };
     }
 
-    public AccountModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public static AccountModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
         return new AccountModel
         {
@@ -77,11 +77,12 @@ public class AccountsLogic
         };
     }
 
-    public void CreateUserAccount()
+    public static void CreateUserAccount()
     {
         bool isInfoValid = false;
         string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
 
+        Console.Clear();
         Console.WriteLine("Please enter the following information:\n");
 
         // Input collection with validation loops
@@ -227,7 +228,7 @@ public class AccountsLogic
         }
     }
 
-    public void CreateAdminAccount()
+    public static void CreateAdminAccount()
     {
         bool isInfoValid = false;
         string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
