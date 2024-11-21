@@ -38,8 +38,7 @@ static class AdminMenu
                     ThemeView.SetOrUpdateTheme();
                     break;
                 case "back":
-                    Menu.Start();
-                    break;
+                    return;
             }
         }
     }
