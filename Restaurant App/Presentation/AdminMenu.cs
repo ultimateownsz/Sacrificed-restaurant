@@ -6,6 +6,7 @@ static class AdminMenu
     {
 
         // admin panel not operational
+        Console.Clear();
         Console.WriteLine("The admin panel isn't operational currently");
         Thread.Sleep(1000);
         return;
