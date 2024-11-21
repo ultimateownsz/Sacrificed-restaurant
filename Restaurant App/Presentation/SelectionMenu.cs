@@ -3,12 +3,16 @@
 namespace Project.Presentation;
 internal class SelectionMenu: SelectionMenuLogic
 {
-    public static string? Show(List<string> options)
+    public static string? Show(List<string> options, string banner = "")
     {   
         Dictionary<string, bool> selection = ConstructSelection(options);
         while (true)
         {
+            
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(banner, Console.ForegroundColor);
+            
             foreach ((string text, bool selected) in selection)
             {
                 Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
