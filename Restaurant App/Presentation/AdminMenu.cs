@@ -1,50 +1,47 @@
+using Project.Presentation;
+
 static class AdminMenu
 {
     public static void AdminStart()
     {
-        // Accounts logic instance
-        AccountsLogic accL = null;
-        accL = new AccountsLogic();
 
-        System.Console.WriteLine(" ");
-        System.Console.WriteLine("Welcome to the Admin page!");
-        System.Console.WriteLine("1. View all reservations");
-        System.Console.WriteLine("2. Filter reservations");
-        System.Console.WriteLine("3. Update a reservation");
-        System.Console.WriteLine("4. Delete a reservation");
-        // NEW (admin is able to create another admin account)
-        System.Console.WriteLine("5. Create a new admin account");
-        System.Console.WriteLine("6. Update themes by month and year");
-        System.Console.WriteLine("Q. Go back to the main menu");
-        System.Console.WriteLine(" ");
+        // admin panel not operational
+        Console.WriteLine("The admin panel isn't operational currently");
+        Thread.Sleep(1000);
+        return;
 
-        string choice = Console.ReadLine().ToLower();
-        switch (choice)
+        List<string> options = [
+            "reservation view",
+            "reservation filter",
+            "reservation update",
+            "reservation delete",
+            "create admin account",
+            "update themes",
+            "back"
+            ];
+
+        switch (SelectionMenu.Show(options, "ADMIN MENU\n\n"))
         {
-            case "1":
+            case "reservation view":
                 ShowAllReservations.Show();
                 break;
-            case "2":
+            case "reservation filter":
                 FilterReservations.Show();
                 break;
-            case "3":
+            case "reservation update":
                 UpdateReservation.Show();
                 break;
-            case "4":
+            case "reservation delete":
                 DeleteReservation.Show();
                 break;
-            case "5":
-                AccountsLogic.CreateAdminAccount();
+            case "create admin account":
+                RegisterUser.CreateAdminAccount();
                 break;
-            case "6":
+            case "update themes":
                 ThemeView.SetOrUpdateTheme();
                 break;
-            case "q":
+            case "back":
                 Menu.Start();
-                break;
-            default:
-                Console.WriteLine("Invalid input. Try again.");
-                AdminStart();
                 break;
         }
     }
