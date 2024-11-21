@@ -34,7 +34,7 @@ static class AdminMenu
                 DeleteReservation.Show();
                 break;
             case "5":
-                accL.CreateAdminAccount();
+                AccountsLogic.CreateAdminAccount();
                 break;
             case "6":
                 ThemeView.SetOrUpdateTheme();
