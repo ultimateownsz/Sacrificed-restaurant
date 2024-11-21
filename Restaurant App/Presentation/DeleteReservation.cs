@@ -8,13 +8,12 @@ public static class DeleteReservation
         // Loop until valid input is provided
         while (!isValid)
         {
-            Console.WriteLine("");
+            Console.Clear();
             Console.Write("(Q)uit or reservation code: ");
             string input = Console.ReadLine().ToLower();
 
             if (input == "q")
             {
-                AdminMenu.AdminStart();
                 return;
             }
 
@@ -28,7 +27,8 @@ public static class DeleteReservation
                     // Delete the reservation from the system
                     ReservationAdminLogic.DeleteReservation(reservationID);
                     Console.WriteLine("Reservation deleted successfully.");
-                    isValid = true;  // Mark input as valid and exit the loop
+                    Console.Write("\nPress enter to continue..."); Console.ReadKey();
+                    return;
                 }
                 else
                 {
@@ -39,8 +39,8 @@ public static class DeleteReservation
             {
                 Console.WriteLine("Invalid Reservation ID format. Please try again.");
             }
-        }
 
-        Show();
+            Console.Write("\nPress enter to continue..."); Console.ReadKey();
+        }
     }
 }
