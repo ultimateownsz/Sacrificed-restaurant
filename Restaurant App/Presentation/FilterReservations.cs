@@ -13,9 +13,17 @@ public static class FilterReservations
             switch (SelectionMenu.Show(["ID", "date", "back"], "FILTER BY\n\n"))
             {
                 case "ID":
+                    
                     Console.Clear();
-                    Console.Write("Enter reservation ID: ");
-                    if (int.TryParse(Console.ReadLine(), out int reservationID))  // Try to parse the Reservation ID input
+                    Console.Write("(Q)uit or reservation ID: ");
+                    string? ID = Console.ReadLine();
+
+                    if (ID.ToLower() == "q")
+                    {
+                        continue;
+                    }
+
+                    if (int.TryParse(ID, out int reservationID))  // Try to parse the Reservation ID input
                     {
                         // Get reservation by ID from the business logic layer
                         var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
@@ -41,9 +49,18 @@ public static class FilterReservations
                     Console.Write("Press enter to continue..."); Console.ReadKey(); continue;
 
                 case "date":
+                    
                     Console.Clear();
-                    Console.Write("Enter date (DD/MM/YYYY): ");
-                    if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateParsed))  // Try to parse the date input
+                    Console.Write("(Q)uit or date (DD/MM/YYYY): ");
+                    string? date = Console.ReadLine();
+
+                    if (date.ToLower() == "q")
+                    {
+                        continue;
+                    }
+
+
+                    if (DateTime.TryParseExact(date, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateParsed))  // Try to parse the date input
                     {
                         // Convert parsed date to an integer format (01122024 for 01/12/2024)
                         int dateInt = int.Parse(dateParsed.ToString("ddMMyyyy"));
