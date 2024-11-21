@@ -204,6 +204,7 @@ internal class RegisterUser
         // Confirm details loop
         while (!isInfoValid)
         {
+            Console.Clear();
             Console.WriteLine("Your information: ");
             Console.WriteLine(" ");
             Console.WriteLine($"first name: {firstName}");
@@ -222,6 +223,7 @@ internal class RegisterUser
                 var account = AccountsLogic.AdminAccount(firstName, lastName, email, password, phoneNumber);
                 AccountsAccess.Write(account);
                 Console.WriteLine("Your account is successfully registered!");
+                Thread.Sleep(1000);
                 isInfoValid = true; // Exit the confirmation loop
             }
             else if (choice == "N")

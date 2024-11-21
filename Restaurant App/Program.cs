@@ -1,7 +1,4 @@
-﻿using System;
-using Presentation;
-
-class Program
+﻿class Program
 {
     static void Main(string[] args)
     {

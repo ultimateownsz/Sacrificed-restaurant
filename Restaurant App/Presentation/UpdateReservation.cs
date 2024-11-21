@@ -40,15 +40,17 @@ public static class UpdateReservation
                 }
                 else
                 {
-                    Console.WriteLine("Reservation not found. Try again.");
+                    Console.Clear();
+                    Console.WriteLine("Reservation not found. Please try again.");
                 }
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid Reservation ID format. Please try again.");
             }
         
-        Console.Write("\nPress enter to continue..."); Console.ReadKey(); return;
+        Console.Write("\nPress enter to continue..."); Console.ReadKey(); continue;
         
         }
     }

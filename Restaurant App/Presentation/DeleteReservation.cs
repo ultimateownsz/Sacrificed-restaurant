@@ -26,17 +26,20 @@ public static class DeleteReservation
                 {
                     // Delete the reservation from the system
                     ReservationAdminLogic.DeleteReservation(reservationID);
+                    Console.Clear();
                     Console.WriteLine("Reservation deleted successfully.");
                     Console.Write("\nPress enter to continue..."); Console.ReadKey();
                     return;
                 }
                 else
                 {
+                    Console.Clear();
                     Console.WriteLine("Reservation not found. Try again.");
                 }
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid Reservation ID format. Please try again.");
             }
 
