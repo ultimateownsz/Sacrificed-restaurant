@@ -1,3 +1,5 @@
+namespace Project.Presentation;
+
 public static class ShowAllReservations
 {
     public static void Show()
@@ -65,7 +67,7 @@ public static class ShowAllReservations
 
 
 
-    static void DisplayReservationDetails(ReservationModel reservation)
+    public static void DisplayReservationDetails(ReservationModel reservation)
     {
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
         Console.WriteLine("");
