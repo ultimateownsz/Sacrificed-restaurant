@@ -4,11 +4,12 @@ public static class ShowAllReservations
 {
     public static void Show()
     {
+
         string filterChoice;
 
         while (true)
         {
-            Console.WriteLine("Do you want to filter reservations by month? (Y/N)");
+            Console.WriteLine("\nDo you want to filter reservations by month? (Y/N)");
             filterChoice = Console.ReadLine().ToLower();
 
             if (filterChoice == "y" || filterChoice == "n")
@@ -27,10 +28,11 @@ public static class ShowAllReservations
         {
             while (true)
             {
-                Console.Write("Enter month (MM): ");
+                Console.Clear();
+                Console.Write("month (MM): ");
                 string monthInput = Console.ReadLine();
 
-                Console.Write("Enter year (YYYY): ");
+                Console.Write("year (YYYY): ");
                 string yearInput = Console.ReadLine();
 
                 if (ReservationLogic.IsValidMonthYear(monthInput, yearInput, out int month, out int year))
@@ -46,7 +48,8 @@ public static class ShowAllReservations
         }
         else
         {
-            Console.WriteLine("Showing all reservations");
+            Console.Clear();
+            Console.WriteLine("RESERVATIONS");
             reservations = ReservationAdminLogic.GetAllReservations();
         }
 
@@ -62,8 +65,11 @@ public static class ShowAllReservations
             }
         }
 
-        AdminMenu.AdminStart();
+        Console.WriteLine("\nPress enter to continue");
+        Console.ReadKey();
+        return;
     }
+
 
 
 
