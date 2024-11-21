@@ -9,7 +9,7 @@ public static class DeleteReservation
         while (!isValid)
         {
             Console.WriteLine("");
-            Console.Write("Enter the Reservation ID you want to delete (or Q to go back): ");
+            Console.Write("(Q)uit or reservation code: ");
             string input = Console.ReadLine().ToLower();
 
             if (input == "q")
