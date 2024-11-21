@@ -10,7 +10,7 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionMenu.Show(["login", "register", "exit"], "MAIN MENU\n\n"))
+            switch (SelectionMenu.Show(["login", "register\n", "exit"], "MAIN MENU\n\n"))
             {
                 case "login":
 
@@ -19,7 +19,7 @@ static class Menu
 
                     break;
 
-                case "register":
+                case "register\n":
                     
                     RegisterUser.CreateUserAccount();
                     continue;

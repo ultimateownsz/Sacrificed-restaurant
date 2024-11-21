@@ -10,7 +10,7 @@ public static class FilterReservations
         // Loop until the user provides valid input
         while (!isValid)
         {
-            switch (SelectionMenu.Show(["ID", "date", "back"], "FILTER BY\n\n"))
+            switch (SelectionMenu.Show(["ID", "date\n", "back"], "FILTER BY\n\n"))
             {
                 case "ID":
                     
@@ -48,7 +48,7 @@ public static class FilterReservations
                     }
                     Console.Write("Press enter to continue..."); Console.ReadKey(); continue;
 
-                case "date":
+                case "date\n":
                     
                     Console.Clear();
                     Console.Write("(Q)uit or date (DD/MM/YYYY): ");

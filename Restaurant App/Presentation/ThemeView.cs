@@ -23,7 +23,10 @@ static class ThemeView
             Console.Clear();
             DisplayAllThemes();
 
-            int month = ThemeInputValidator.GetValidMonth("\nEnter the month (1-12): ");
+            int? month = ThemeInputValidator.GetValidMonth("\n(Q)uit or month (1-12): ");
+            if (month == null)
+                return;
+
             int year = ThemeInputValidator.GetValidYear("\nEnter the year (YYYY): ", DateTime.Now.Year);
 
             // check if there is a theme planned
@@ -102,7 +105,7 @@ static class ThemeView
     {
         DisplayAllThemes();
 
-        int scheduledMonth = ThemeInputValidator.GetValidMonth("\nEnter the month of the theme to delete (1-12) ");
+        int? scheduledMonth = ThemeInputValidator.GetValidMonth("\nEnter the month of the theme to delete (1-12) ");
         int scheduledYear = ThemeInputValidator.GetValidYear("\nEnter the year of the theme to delete (YYYY): ", DateTime.Now.Year);
 
         var theme = ThemeMenuManager.ThemeScheduledByYear.ContainsKey(scheduledYear)

@@ -9,7 +9,7 @@
         // MakingReservations.CalendarNavigation();
 
         Menu.Start();
-        
+
         Console.Clear();
         Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
     }

@@ -104,7 +104,7 @@ static class ThemeMenuManager
         }
     }
 
-    public static string GetMonthName(int month)
+    public static string GetMonthName(int? month)
     {
         return month switch
         {
@@ -124,7 +124,7 @@ static class ThemeMenuManager
         };
     }
 
-    public static bool AddOrUpdateTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth)
+    public static bool AddOrUpdateTheme(ThemeMenuModel theme, int scheduledYear, int? scheduledMonth)
     {
         try
         {
