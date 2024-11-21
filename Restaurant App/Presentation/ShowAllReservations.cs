@@ -9,7 +9,8 @@ public static class ShowAllReservations
 
         while (true)
         {
-            Console.WriteLine("\nDo you want to filter reservations by month? (Y/N)");
+            Console.Clear();
+            Console.Write("Filter by month and year? (Y/N): ");
             filterChoice = Console.ReadLine().ToLower();
 
             if (filterChoice == "y" || filterChoice == "n")
@@ -28,11 +29,10 @@ public static class ShowAllReservations
         {
             while (true)
             {
-                Console.Clear();
-                Console.Write("month (MM): ");
+                Console.Write("\nMonth (MM): ");
                 string monthInput = Console.ReadLine();
 
-                Console.Write("year (YYYY): ");
+                Console.Write("Year (YYYY): ");
                 string yearInput = Console.ReadLine();
 
                 if (ReservationLogic.IsValidMonthYear(monthInput, yearInput, out int month, out int year))
@@ -42,7 +42,9 @@ public static class ShowAllReservations
                 }
                 else
                 {
-                    Console.WriteLine($"Invalid month or year format. Please try again. Ensure month is MM and year is between 2024 and {DateTime.Now.Year}.");
+                    Console.Clear();
+                    Console.WriteLine("Invalid month or year format, please try again. \n" +
+                                      $"(ensure month is month and year is between 2024 and {DateTime.Now.Year})");
                 }
             }
         }
@@ -55,7 +57,8 @@ public static class ShowAllReservations
 
         if (reservations.Count == 0)
         {
-            Console.WriteLine("No reservations found.");
+            Console.Clear();
+            Console.WriteLine("RESERVATIONS\n\nNo reservations found.");
         }
         else
         {

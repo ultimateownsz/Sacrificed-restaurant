@@ -1,3 +1,5 @@
+using Project.Presentation;
+
 public static class FilterReservations
 {
     public static void Show()
@@ -8,32 +10,15 @@ public static class FilterReservations
         // Loop until the user provides valid input
         while (!isValid)
         {
-            Console.WriteLine("");
-            Console.WriteLine("Enter filter criteria:");
-            Console.WriteLine("1. Filter by Reservation ID");
-            Console.WriteLine("2. Filter by Date");
-            // Console.WriteLine("3. Filter by User ID");
-            Console.WriteLine("Q. Go back to Admin Menu");
-            Console.WriteLine("");
-
-            string filterChoice = Console.ReadLine().ToLower();
-
-            if (filterChoice == "q")
+            switch (SelectionMenu.Show(["reservation ID", "date", "back"], "FILTER BY\n\n"))
             {
-                AdminMenu.AdminStart();
-                return;
-            }
-
-            // Process the user's choice based on the selected filter criteria
-            switch (filterChoice)
-            {
-                case "1":
-                    // Filter by Reservation ID
-                    Console.WriteLine("");
-                    Console.Write("Enter Reservation ID: ");
+                case "reservation ID":
+                    Console.Clear();
+                    Console.Write("Enter reservation ID: ");
                     if (int.TryParse(Console.ReadLine(), out int reservationID))  // Try to parse the Reservation ID input
                     {
                         // Get reservation by ID from the business logic layer
+                        Console.Clear();
                         var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
                         if (reservation != null)  // If reservation is found
                         {
@@ -48,13 +33,15 @@ public static class FilterReservations
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("Invalid Reservation ID format. Please try again.");
                     }
+                    Console.WriteLine("\nPress enter to continue...");
+                    Console.ReadKey();
                     break;
 
-                case "2":
-                    // Filter by Date
-                    Console.WriteLine("");
+                case "date":
+                    Console.Clear();
                     Console.Write("Enter Date (DD/MM/YYYY): ");
                     if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateParsed))  // Try to parse the date input
                     {
@@ -82,44 +69,9 @@ public static class FilterReservations
                     }
                     break;
 
-                // case "3":
-                //     // Filter by User ID
-                //     Console.WriteLine("");
-                //     Console.Write("Enter User ID: ");
-                //     if (int.TryParse(Console.ReadLine(), out int userID))  // Try to parse the User ID input
-                //     {
-                //         // Get reservations by User ID
-                //         var reservationsByUserID = ReservationAdminLogic.GetReservationsByUserID(userID);
-                //         if (reservationsByUserID.Count > 0)  // If reservations exist for the given User ID
-                //         {
-                //             // Display each reservation found for the selected User ID
-                //             foreach (var reservation in reservationsByUserID)
-                //             {
-                //                 DisplayReservationDetails(reservation);
-                //             }
-                //             isValid = true;  // Mark input as valid
-                //         }
-                //         else
-                //         {
-                //             // If no reservations are found for that User ID
-                //             Console.WriteLine("No reservations found for that User ID. Try again.");
-                //         }
-                //     }
-                //     else
-                //     {
-                //         // If the User ID is not in the correct format
-                //         Console.WriteLine("Invalid User ID format. Please try again.");
-                //     }
-                //     break;
-
-                default:
-                    // If the user enters an invalid choice
-                    Console.WriteLine("Invalid choice, please try again.");
-                    break;
+                case "back":
+                    return;
             }
-
-            // If input is invalid, the loop will continue asking for correct input
-            Show();
         }
     }
 
@@ -127,8 +79,6 @@ public static class FilterReservations
     {
         // Format the Date as dd/MM/yyyy from the stored integer representation
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
-
-        Console.WriteLine("");
 
         // Display the reservation details: ReservationID, Date, TableChoice, Number of People, UserID
         Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
