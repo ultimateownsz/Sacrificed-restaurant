@@ -21,7 +21,7 @@ static class Menu
 
                 case "register":
                     
-                    AccountsLogic.CreateUserAccount();
+                    RegisterUser.CreateUserAccount();
                     continue;
 
                 case "exit":
