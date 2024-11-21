@@ -28,7 +28,8 @@ public static class FilterReservations
                         }
                         else
                         {
-                            Console.WriteLine("No reservation found with that ID. Try again.");
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n\nNo reservations found.");
                         }
                     }
                     else
@@ -36,9 +37,7 @@ public static class FilterReservations
                         Console.Clear();
                         Console.WriteLine("Invalid Reservation ID format. Please try again.");
                     }
-                    Console.WriteLine("\nPress enter to continue...");
-                    Console.ReadKey();
-                    break;
+                    Console.Write("\nPress enter to continue..."); Console.ReadKey();  break;
 
                 case "date":
                     Console.Clear();
@@ -51,6 +50,8 @@ public static class FilterReservations
                         var reservationsByDate = ReservationAdminLogic.GetReservationsByDate(dateInt);
                         if (reservationsByDate.Count > 0)  // If reservations exist for the given date
                         {
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n");
                             // Display each reservation found for the selected date
                             foreach (var reservation in reservationsByDate)
                             {
@@ -60,14 +61,17 @@ public static class FilterReservations
                         }
                         else
                         {
-                            Console.WriteLine("No reservations found for that date. Try again.");
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n\nNo reservations found.");
                         }
+                        Console.Write("\nPress enter to continue..."); Console.ReadKey(); break;
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("Invalid Date format. Please use DD/MM/YYYY.");
+                        Console.Write("\nPress enter to continue..."); Console.ReadKey(); continue;
                     }
-                    break;
 
                 case "back":
                     return;
