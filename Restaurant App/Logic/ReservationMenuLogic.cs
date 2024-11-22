@@ -16,7 +16,7 @@ public class ReservationMenuLogic
         if(CurrentTheme is not null)
             return CurrentTheme.ThemeName;
         else
-            return "This month is not accessible";
+            return null;
     }
 
     public List<ProductModel> GetProductsInMenu()
