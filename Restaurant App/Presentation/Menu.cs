@@ -54,4 +54,10 @@ static class Menu
             }
         }
     }
+
+    public static void End()
+    {
+        Console.Clear();
+        Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
+    }
 }
