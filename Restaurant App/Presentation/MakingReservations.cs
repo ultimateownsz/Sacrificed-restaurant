@@ -68,7 +68,7 @@ namespace Presentation
         //Ask the user for the reservation amount
         Console.WriteLine("Please enter the number of guests between 1 and 6");
         string reservationAmount = Console.ReadLine();
-        while(Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
+        while(string.IsNullOrEmpty(reservationAmount) || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
         {
             Console.WriteLine("Please enter a number between 1 and 6");
             reservationAmount = Console.ReadLine();
@@ -84,7 +84,6 @@ namespace Presentation
 
         for (int i = 0; i < Convert.ToInt32(reservationAmount); i++)
         {
-            Console.WriteLine($"\nGuest {i + 1}, You can start your order");
 
             List<ProductModel> guestOrder = new List<ProductModel>();
             bool ordering = true;
@@ -98,6 +97,7 @@ namespace Presentation
                 while (choosingCategory)
                 {
                     Console.Clear();
+                    Console.WriteLine($"\nGuest {i + 1}, You can start your order");
                     Console.WriteLine("Choose a category:");
                     for (int j = 0; j < categories.Count; j++)
                     {
@@ -198,21 +198,32 @@ namespace Presentation
             allOrders.AddRange(guestOrder);
 
             // Proceed to the next guest after finishing their order
-            if(allOrders.Count == 0)
+            if(i++ == Convert.ToInt32(reservationAmount))
             {
-                Console.WriteLine("============================================");
-                Console.WriteLine("  Invalid order, you have ordered nothing  ");
-                Console.WriteLine("============================================");
-                Console.WriteLine("\nPress any key to continue to the next guest...");
+                Console.WriteLine("\nPress any key to continue");
                 Console.ReadKey();
-                return;
             }
             else
-                PrintReceipt(allOrders, reservationId);
+            {
                 Console.WriteLine("\nPress any key to continue to the next guest...");
                 Console.ReadKey();
-                return;
+            }
         }
+        if(allOrders.Count == 0)
+        {
+            Console.WriteLine("============================================");
+            Console.WriteLine("  Invalid order, you have ordered nothing  ");
+            Console.WriteLine("============================================");
+            Console.WriteLine("\nPress any key to go close the prompt");
+            Console.ReadKey();
+        }
+        else
+        {
+            PrintReceipt(allOrders, reservationId);
+            Console.WriteLine("\nPress any key to go close the receipt");
+            Console.ReadKey();
+        }
+        return;
     }
 
 
