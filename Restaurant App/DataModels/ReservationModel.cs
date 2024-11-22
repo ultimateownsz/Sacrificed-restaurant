@@ -5,6 +5,7 @@ public class ReservationModel
     public Int64 TableChoice { get; set; }
     public Int64 ReservationAmount { get; set; }
     public Int64 UserID { get; set; }
+    public Int64 TabelID { get; set; }
 
     public ReservationModel() { }
 
