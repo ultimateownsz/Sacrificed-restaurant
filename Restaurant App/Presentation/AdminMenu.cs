@@ -15,7 +15,6 @@ static class AdminMenu
         // NEW (admin is able to create another admin account)
         System.Console.WriteLine("5. Create a new admin account");
         System.Console.WriteLine("6. Update themes by month and year");
-        // System.Console.WriteLine("7. Add new themes");
         System.Console.WriteLine("Q. Go back to the main menu");
         System.Console.WriteLine(" ");
 
@@ -38,12 +37,8 @@ static class AdminMenu
                 accL.CreateAdminAccount();
                 break;
             case "6":
-                ThemeView.UpdateTheme();  // dit werkt ook
+                ThemeView.SetOrUpdateTheme();
                 break;
-            // er zit nu een kleine bug in het opslaan van thema's naar de database, dit heeft met een aantal dingen te maken, maar handmatig thema's aanmaken kan wel
-            // case "7":
-            //     ThemeView.AddTheme();
-            //     break;
             case "q":
                 Menu.Start();
                 break;

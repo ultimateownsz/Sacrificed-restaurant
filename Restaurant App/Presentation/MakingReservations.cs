@@ -1,16 +1,10 @@
-
 using System;
 using Logic;
-
 
 namespace Presentation
 {
     public static class MakingReservations
     {
-
-        static private ReservationLogic reservationLogic = new();
-        static private ReservationMenuLogic reservationMenuLogic = new();
-        static private OrderLogic orderLogic = new();
         private static CalendarLogic calendarLogic = new CalendarLogic();
 
         public static void ReservationMenu(AccountModel acc)

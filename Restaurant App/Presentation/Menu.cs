@@ -1,71 +1,78 @@
-using System;
 using Presentation;
+using Project.Presentation;
 
 static class Menu
 {
     static public void Start()
     {
-        Console.WriteLine("Enter [1] to login: ");
-        Console.WriteLine("Enter [2] to register a new account: ");
-        Console.WriteLine("Enter [3] to exit the program: ");
-        AccountModel acc = null;
-        AccountsLogic accL = null;
-        string input = Console.ReadLine();
+        
+        // initialization
+        AccountModel? acc = null;
+        AccountsLogic? accL = null;
 
-        if (input == "1")
+        while (true)
         {
-            AccountModel loggedInAccount = acc = UserLogin.Start();
-            if (loggedInAccount != null)
+            
+            // put here for consistent terminal cleaning
+            string? input = SelectionMenu.Show(["login", "register", "exit"], "MAIN MENU\n\n");
+            Console.Clear();
+            
+            switch (input)
             {
-                if (loggedInAccount.IsAdmin == 1)
-                {
-                    AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
-                }
-                else
-                {
-                    ShowUserMenu(acc);  // directs to User menu if the account is a regular user
-                }
+                case "login":
+                    acc = UserLogin.Start();
+                    if (acc != null)
+                    {
+                        if (acc.IsAdmin == 1)
+                        {
+                            AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
+                        }
+                        else
+                        {
+                            ShowUserMenu(acc);  // directs to User menu if the account is a regular user
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    break;
+
+                case "register":
+                    accL = new AccountsLogic();
+                    accL.CreateUserAccount();
+                    continue;
+
+                case "exit":
+                    return;
+
+                default:
+                    continue;
             }
-        }
-        else if (input == "2")
-        {
-            accL = new AccountsLogic();
-            accL.CreateUserAccount();
-        }
-        else if (input == "3")
-        {
-            Console.WriteLine("Exiting the program...");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            Start();  // restart the menu if input is invalid
+
+            // valid input has been provided at this point
+            break;
         }
     }
 
-    
-
     private static void ShowUserMenu(AccountModel acc)
     {
-        Console.WriteLine("Welcome to the User menu.");
-        Console.WriteLine("Enter 1 to enter the reservation menu");
-        string input = Console.ReadLine();
-        if (input == "1" && acc is not null)
+        while (true)
         {
-            MakingReservations.ReservationMenu(acc);
-        }
-        else if (input == "1" && acc is null)
-        {
-            Console.WriteLine("Please log in first");
-        }
-        else if (input == "q")
-        {
-            return;
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            ShowUserMenu(acc);  // restart the menu if input is invalid
+            switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
+            {
+                case "reserve":
+                    MakingReservations.CalendarNavigation();
+                    break;
+
+                case "logout":
+                    return;
+
+                default:
+                    break;
+            }
         }
     }
 }
