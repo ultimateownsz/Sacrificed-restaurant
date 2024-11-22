@@ -17,50 +17,51 @@ namespace Presentation
         {
             List<string> menuOptions = ["Make reservation", "View reservation"];
             int menuIndex = 0;
-            bool inMenu = true;
-
-            while (inMenu)
+            while(true)
             {
-                Console.Clear();
-                for (int j = 0; j < menuOptions.Count; j++)
+                bool inMenu = true;
+                while (inMenu)
                 {
-                    if (j == menuIndex)
+                    Console.Clear();
+                    for (int j = 0; j < menuOptions.Count; j++)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"> {menuOptions[j]}"); // Highlight selected item
-                        Console.ResetColor();
+                        if (j == menuIndex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"> {menuOptions[j]}"); // Highlight selected item
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  {menuOptions[j]}");
+                        }
                     }
-                    else
+                    
+                    var key = Console.ReadKey(intercept: true);
+                    switch (key.Key)
                     {
-                        Console.WriteLine($"  {menuOptions[j]}");
+                        case ConsoleKey.UpArrow:
+                            if (menuIndex > 0) menuIndex--; // Move up
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (menuIndex < menuOptions.Count - 1) menuIndex++; // Move down
+                            break;
+                        case ConsoleKey.Enter: // Process the selected reservation
+                            Console.Clear();
+                            inMenu = false;
+                            break; // Exit loop
+                        case ConsoleKey.Escape: // Exit without selection
+                            return;
                     }
                 }
-                
-                var key = Console.ReadKey(intercept: true);
-                switch (key.Key)
+                if(menuOptions[menuIndex] == "Make reservation")
                 {
-                    case ConsoleKey.UpArrow:
-                        if (menuIndex > 0) menuIndex--; // Move up
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (menuIndex < menuOptions.Count - 1) menuIndex++; // Move down
-                        break;
-                    case ConsoleKey.Enter: // Process the selected reservation
-                        Console.Clear();
-                        inMenu = false;
-                        break; // Exit loop
-                    case ConsoleKey.Escape: // Exit without selection
-                        Menu.Start();
-                        break;
+                    CalendarNavigation(acc);
                 }
-            }
-            if(menuOptions[menuIndex] == "Make reservation")
-            {
-                CalendarNavigation(acc);
-            }
-            else
-            {
-                UserOverViewReservation(acc);
+                else
+                {
+                    UserOverViewReservation(acc);
+                }
             }
         }
 
@@ -199,16 +200,20 @@ namespace Presentation
             allOrders.AddRange(guestOrder);
 
             // Proceed to the next guest after finishing their order
-            Console.WriteLine("\nPress any key to continue to the next guest...");
-            Console.ReadKey();
             if(allOrders.Count == 0)
             {
                 Console.WriteLine("============================================");
                 Console.WriteLine("  Invalid order, you have ordered nothing  ");
                 Console.WriteLine("============================================");
+                Console.WriteLine("\nPress any key to continue to the next guest...");
+                Console.ReadKey();
+                return;
             }
             else
                 PrintReceipt(allOrders, reservationId);
+                Console.WriteLine("\nPress any key to continue to the next guest...");
+                Console.ReadKey();
+                return;
         }
     }
 
@@ -235,13 +240,14 @@ namespace Presentation
     {
         List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
         int reservationIndex = 0;
+        bool inResMenu = true;
         if (userReservations == null || userReservations.Count == 0)
         {
             Console.WriteLine("You have no reservations.");
             Console.ReadKey();
             return;
         }
-        while (true)
+        while (inResMenu)
         {
             Console.Clear();
             Console.WriteLine($"Here are your Reservations {acc.FirstName}:");
@@ -258,7 +264,7 @@ namespace Presentation
                     Console.WriteLine($"  Reservation:{userReservations[j].Date}");
                 }
             }
-            
+
             var key = Console.ReadKey(intercept: true);
             switch (key.Key)
             {
@@ -272,22 +278,23 @@ namespace Presentation
                     // Process the selected reservation
                     Console.Clear();
                     Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
-                    Console.WriteLine("Press any key to return...");
-                    ReservationMenu(acc);
+                    Console.WriteLine("Press any key to return to the reservation menu...");
                     // DeleteReservation()
                     Console.ReadKey();
-                    return; // Exit loop
+                    inResMenu = false;
+                    break; // Exit loop
                 case ConsoleKey.Escape:// Exit without selection
-                    ReservationMenu(acc);
-                    return;
-                }
+                    inResMenu = false;
+                    break;
+            }
         }
+        return;
     }
 
-    public static void DeleteReservation()
-    {
+    // public static void DeleteReservation()
+    // {
 
-    }
+    // }
 
     public static void DisplayCalendar(DateTime currentDate, int selectedDay)
     {
