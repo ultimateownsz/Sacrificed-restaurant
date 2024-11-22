@@ -64,7 +64,7 @@ static class Menu
             switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
             {
                 case "reserve":
-                    MakingReservations.CalendarNavigation();
+                    MakingReservations.ReservationMenu(acc);
                     break;
 
                 case "logout":
