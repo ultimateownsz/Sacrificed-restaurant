@@ -40,6 +40,7 @@ static class Menu
     {
         while (true)
         {
+            Console.Clear();
             switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
             {
                 case "reserve":
