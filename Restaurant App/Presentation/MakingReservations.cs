@@ -80,7 +80,15 @@ namespace Presentation
         List<ProductModel> allOrders = new List<ProductModel>();
         
         Console.WriteLine("This month's theme is:");
-        Console.WriteLine($"{reservationMenuLogic.GetCurrentMenu()}");
+        if(reservationMenuLogic.GetCurrentMenu() is not null)
+            Console.WriteLine($"{reservationMenuLogic.GetCurrentMenu()}");
+        else
+        {
+            Console.WriteLine("This month is not accessible");
+            Console.WriteLine("Press any key to return to the reservation menu");
+            Console.ReadKey();
+            return;
+        }
 
         for (int i = 0; i < Convert.ToInt32(reservationAmount); i++)
         {

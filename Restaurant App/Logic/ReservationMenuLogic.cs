@@ -13,7 +13,10 @@ public class ReservationMenuLogic
     public string GetCurrentMenu()
     {
         CurrentTheme = ThemesAccess.GetById(1);
-        return CurrentTheme.ThemeName;
+        if(CurrentTheme is not null)
+            return CurrentTheme.ThemeName;
+        else
+            return "This month is not accessible";
     }
 
     public List<ProductModel> GetProductsInMenu()
