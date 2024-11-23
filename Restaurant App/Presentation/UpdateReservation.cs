@@ -1,3 +1,5 @@
+using Project.Presentation;
+
 public static class UpdateReservation
 {
     public static void Show()
@@ -9,7 +11,12 @@ public static class UpdateReservation
         while (!isValid)
         {
             Console.Clear();
-            Console.Write("(Q)uit or reservation ID: ");
+            foreach (var reservation in ReservationAdminLogic.GetAllReservations())
+            {
+                UpdateReservation.DisplayReservationDetails(reservation);
+            }
+
+            Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
             string input = Console.ReadLine().ToLower();
 
             if (input == "q")
@@ -55,7 +62,7 @@ public static class UpdateReservation
         }
     }
 
-    private static void DisplayReservationDetails(ReservationModel reservation)
+    public static void DisplayReservationDetails(ReservationModel reservation)
     {
         // Format the Date (stored as an integer) to dd/MM/yyyy format
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);

@@ -23,7 +23,7 @@ static class ThemeView
             Console.Clear();
             DisplayAllThemes();
 
-            int? month = ThemeInputValidator.GetValidMonth("\n(Q)uit or month (1-12): ");
+            int? month = ThemeInputValidator.GetValidMonth("\nEnter 'Q' to quit or month (1-12): ");
             if (month == null)
                 return;
 

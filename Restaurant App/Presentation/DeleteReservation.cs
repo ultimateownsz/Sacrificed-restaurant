@@ -1,3 +1,5 @@
+using Project.Presentation;
+
 public static class DeleteReservation
 {
     public static void Show()
@@ -9,7 +11,11 @@ public static class DeleteReservation
         while (!isValid)
         {
             Console.Clear();
-            Console.Write("(Q)uit or reservation code: ");
+            foreach (var reservation in ReservationAdminLogic.GetAllReservations())
+            {
+                UpdateReservation.DisplayReservationDetails(reservation);
+            }
+            Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
             string input = Console.ReadLine().ToLower();
 
             if (input == "q")

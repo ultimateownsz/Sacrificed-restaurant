@@ -74,7 +74,13 @@ public static class ShowAllReservations
     }
 
 
-
+    // this method follows the format for the previously implemented underneath 
+    public static void DisplayReservationHeader(ReservationModel reservation)
+    {
+        var r = reservation;
+        Console.WriteLine($"ReservationID: {r.ID}, Date: {r.Date}, Table Choice: {r.TableChoice}" +
+                          $", Number of People: {r.ReservationAmount}, UserID {r.UserID}");
+    }
 
     public static void DisplayReservationDetails(ReservationModel reservation)
     {

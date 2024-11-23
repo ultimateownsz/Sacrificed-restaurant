@@ -13,9 +13,15 @@ public static class FilterReservations
             switch (SelectionMenu.Show(["ID", "date\n", "back"], "FILTER BY\n\n"))
             {
                 case "ID":
-                    
+
+                    // display all reservation headers
                     Console.Clear();
-                    Console.Write("(Q)uit or reservation ID: ");
+                    foreach (var reservation in ReservationAdminLogic.GetAllReservations())
+                    {
+                        UpdateReservation.DisplayReservationDetails(reservation);
+                    }
+
+                    Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
                     string? ID = Console.ReadLine();
 
                     if (ID.ToLower() == "q")
@@ -51,7 +57,7 @@ public static class FilterReservations
                 case "date\n":
                     
                     Console.Clear();
-                    Console.Write("(Q)uit or date (DD/MM/YYYY): ");
+                    Console.Write("Enter 'Q' to quit or a date (DD/MM/YYYY): ");
                     string? date = Console.ReadLine();
 
                     if (date.ToLower() == "q")
