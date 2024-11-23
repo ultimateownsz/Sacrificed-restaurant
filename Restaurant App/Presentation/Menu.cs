@@ -1,48 +1,27 @@
 using Presentation;
+using Project.Logic;
 using Project.Presentation;
 
 static class Menu
 {
     static public void Start()
     {
-        
-        // initialization
-        AccountModel? acc = null;
-        AccountsLogic? accL = null;
 
         while (true)
         {
-            
-            // put here for consistent terminal cleaning
-            string? input = SelectionMenu.Show(["login", "register", "exit"], "MAIN MENU\n\n");
             Console.Clear();
-            
-            switch (input)
+            switch (SelectionMenu.Show(["login", "register\n", "exit"], "MAIN MENU\n\n"))
             {
                 case "login":
-                    acc = UserLogin.Start();
-                    if (acc != null)
-                    {
-                        if (acc.IsAdmin == 1)
-                        {
-                            AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
-                        }
-                        else
-                        {
-                            ShowUserMenu(acc);  // directs to User menu if the account is a regular user
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(1000);
+
+                    if (MenuLogic.Login() == "continue")
                         continue;
-                    }
+
                     break;
 
-                case "register":
-                    accL = new AccountsLogic();
-                    accL.CreateUserAccount();
+                case "register\n":
+                    
+                    RegisterUser.CreateUserAccount();
                     continue;
 
                 case "exit":
@@ -57,10 +36,11 @@ static class Menu
         }
     }
 
-    private static void ShowUserMenu(AccountModel acc)
+    public static void ShowUserMenu(AccountModel acc)
     {
         while (true)
         {
+            Console.Clear();
             switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
             {
                 case "reserve":
@@ -74,5 +54,11 @@ static class Menu
                     break;
             }
         }
+    }
+
+    public static void End()
+    {
+        Console.Clear();
+        Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
     }
 }

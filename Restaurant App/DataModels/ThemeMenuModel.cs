@@ -6,7 +6,7 @@ public class ThemeMenuModel
     public long MenuId { get; set; }
     public string ThemeName { get; internal set; }
     public int ScheduledYear { get; set; }  // temporary property for display purposes
-    public int ScheduledMonth { get; set; }  // temporary property for display purposes
+    public int? ScheduledMonth { get; set; }  // temporary property for display purposes
 
     public ThemeMenuModel()
     {

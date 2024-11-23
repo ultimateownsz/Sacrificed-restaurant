@@ -38,6 +38,7 @@ public static class ThemeInputValidator
         {
             Console.Write(prompt);
             string? input = Console.ReadLine();
+
             if (int.TryParse(input, out result) && result >= minYear)
             {
                 return result;
@@ -46,13 +47,17 @@ public static class ThemeInputValidator
         }
     }
 
-    public static int GetValidMonth(string prompt)
+    public static int? GetValidMonth(string prompt)
     {
         int result;
         while (true)
         {
             Console.Write(prompt);
             string? input = Console.ReadLine();
+
+            if (input == "q")
+                return null;
+
             if (int.TryParse(input, out result) && result >= 1 && result <= 12)
             {
                 return result;

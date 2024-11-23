@@ -1,3 +1,5 @@
+using Project.Presentation;
+
 public static class UpdateReservation
 {
     public static void Show()
@@ -8,8 +10,13 @@ public static class UpdateReservation
         // Loop until valid input is provided
         while (!isValid)
         {
-            Console.WriteLine("");
-            Console.Write("Enter the Reservation ID you want to update (or Q to go back): ");
+            Console.Clear();
+            foreach (var reservation in ReservationAdminLogic.GetAllReservations())
+            {
+                UpdateReservation.DisplayReservationDetails(reservation);
+            }
+
+            Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
             string input = Console.ReadLine().ToLower();
 
             if (input == "q")
@@ -25,7 +32,7 @@ public static class UpdateReservation
                 var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
                 if (reservation != null)  // If reservation exists
                 {
-                    Console.WriteLine("");
+                    Console.Clear();
                     Console.WriteLine("Current Reservation Details:");
                     DisplayReservationDetails(reservation);
 
@@ -35,25 +42,27 @@ public static class UpdateReservation
                     // Save the updated reservation to the database or system
                     ReservationAdminLogic.UpdateReservation(reservation);
 
-                    Console.WriteLine("");
-                    Console.WriteLine("Reservation updated successfully.");
+                    Console.WriteLine("\nReservation updated successfully.");
                     isValid = true;  // Mark input as valid and exit the loop
                 }
                 else
                 {
-                    Console.WriteLine("Reservation not found. Try again.");
+                    Console.Clear();
+                    Console.WriteLine("Reservation not found. Please try again.");
                 }
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid Reservation ID format. Please try again.");
             }
+        
+        Console.Write("\nPress enter to continue..."); Console.ReadKey(); continue;
+        
         }
-
-        Show();
     }
 
-    private static void DisplayReservationDetails(ReservationModel reservation)
+    public static void DisplayReservationDetails(ReservationModel reservation)
     {
         // Format the Date (stored as an integer) to dd/MM/yyyy format
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
@@ -68,8 +77,7 @@ public static class UpdateReservation
         DateTime newDate;
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new Reservation Date (DD/MM/YYYY) or press Enter to keep current: ");
+            Console.Write("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current: ");
             string newDateInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newDateInput))
             {
@@ -103,8 +111,7 @@ public static class UpdateReservation
         long newTableChoice;
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new Table Choice (2, 4, or 6) or press Enter to keep current: ");
+            Console.Write("\nEnter new Table Choice (2, 4, or 6) or press Enter to keep current: ");
             string newTableChoiceInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newTableChoiceInput))
             {
@@ -125,8 +132,7 @@ public static class UpdateReservation
         int newAmount;
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new number of people (Reservation Amount) or press Enter to keep current: ");
+            Console.Write("\nEnter new number of people (Reservation Amount) or press Enter to keep current: ");
             string newAmountInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newAmountInput))
             {

@@ -1,3 +1,5 @@
+using Project.Presentation;
+
 public static class FilterReservations
 {
     public static void Show()
@@ -8,55 +10,63 @@ public static class FilterReservations
         // Loop until the user provides valid input
         while (!isValid)
         {
-            Console.WriteLine("");
-            Console.WriteLine("Enter filter criteria:");
-            Console.WriteLine("1. Filter by Reservation ID");
-            Console.WriteLine("2. Filter by Date");
-            // Console.WriteLine("3. Filter by User ID");
-            Console.WriteLine("Q. Go back to Admin Menu");
-            Console.WriteLine("");
-
-            string filterChoice = Console.ReadLine().ToLower();
-
-            if (filterChoice == "q")
+            switch (SelectionMenu.Show(["ID", "date\n", "back"], "FILTER BY\n\n"))
             {
-                AdminMenu.AdminStart();
-                return;
-            }
+                case "ID":
 
-            // Process the user's choice based on the selected filter criteria
-            switch (filterChoice)
-            {
-                case "1":
-                    // Filter by Reservation ID
-                    Console.WriteLine("");
-                    Console.Write("Enter Reservation ID: ");
-                    if (int.TryParse(Console.ReadLine(), out int reservationID))  // Try to parse the Reservation ID input
+                    // display all reservation headers
+                    Console.Clear();
+                    foreach (var reservation in ReservationAdminLogic.GetAllReservations())
+                    {
+                        UpdateReservation.DisplayReservationDetails(reservation);
+                    }
+
+                    Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
+                    string? ID = Console.ReadLine();
+
+                    if (ID.ToLower() == "q")
+                    {
+                        continue;
+                    }
+
+                    if (int.TryParse(ID, out int reservationID))  // Try to parse the Reservation ID input
                     {
                         // Get reservation by ID from the business logic layer
                         var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
                         if (reservation != null)  // If reservation is found
                         {
                             // Display reservation details
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n");
                             DisplayReservationDetails(reservation);
-                            isValid = true;  // Mark input as valid
+                            Console.WriteLine();
                         }
                         else
                         {
-                            Console.WriteLine("No reservation found with that ID. Try again.");
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n\nNo reservations found.\n");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Invalid Reservation ID format. Please try again.");
+                        Console.Clear();
+                        Console.WriteLine("Invalid Reservation ID format. Please try again.\n");
                     }
-                    break;
+                    Console.Write("Press enter to continue..."); Console.ReadKey(); continue;
 
-                case "2":
-                    // Filter by Date
-                    Console.WriteLine("");
-                    Console.Write("Enter Date (DD/MM/YYYY): ");
-                    if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateParsed))  // Try to parse the date input
+                case "date\n":
+                    
+                    Console.Clear();
+                    Console.Write("Enter 'Q' to quit or a date (DD/MM/YYYY): ");
+                    string? date = Console.ReadLine();
+
+                    if (date.ToLower() == "q")
+                    {
+                        continue;
+                    }
+
+
+                    if (DateTime.TryParseExact(date, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateParsed))  // Try to parse the date input
                     {
                         // Convert parsed date to an integer format (01122024 for 01/12/2024)
                         int dateInt = int.Parse(dateParsed.ToString("ddMMyyyy"));
@@ -64,62 +74,33 @@ public static class FilterReservations
                         var reservationsByDate = ReservationAdminLogic.GetReservationsByDate(dateInt);
                         if (reservationsByDate.Count > 0)  // If reservations exist for the given date
                         {
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n");
                             // Display each reservation found for the selected date
                             foreach (var reservation in reservationsByDate)
                             {
                                 DisplayReservationDetails(reservation);
+                                Console.WriteLine();
                             }
                             isValid = true;  // Mark input as valid
                         }
                         else
                         {
-                            Console.WriteLine("No reservations found for that date. Try again.");
+                            Console.Clear();
+                            Console.WriteLine("RESERVATIONS\n\nNo reservations found.\n");
                         }
+                        Console.Write("Press enter to continue..."); Console.ReadKey(); break;
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("Invalid Date format. Please use DD/MM/YYYY.");
+                        Console.Write("\nPress enter to continue..."); Console.ReadKey(); continue;
                     }
-                    break;
 
-                // case "3":
-                //     // Filter by User ID
-                //     Console.WriteLine("");
-                //     Console.Write("Enter User ID: ");
-                //     if (int.TryParse(Console.ReadLine(), out int userID))  // Try to parse the User ID input
-                //     {
-                //         // Get reservations by User ID
-                //         var reservationsByUserID = ReservationAdminLogic.GetReservationsByUserID(userID);
-                //         if (reservationsByUserID.Count > 0)  // If reservations exist for the given User ID
-                //         {
-                //             // Display each reservation found for the selected User ID
-                //             foreach (var reservation in reservationsByUserID)
-                //             {
-                //                 DisplayReservationDetails(reservation);
-                //             }
-                //             isValid = true;  // Mark input as valid
-                //         }
-                //         else
-                //         {
-                //             // If no reservations are found for that User ID
-                //             Console.WriteLine("No reservations found for that User ID. Try again.");
-                //         }
-                //     }
-                //     else
-                //     {
-                //         // If the User ID is not in the correct format
-                //         Console.WriteLine("Invalid User ID format. Please try again.");
-                //     }
-                //     break;
-
-                default:
-                    // If the user enters an invalid choice
-                    Console.WriteLine("Invalid choice, please try again.");
-                    break;
+                case "back":
+                    return;
             }
-
-            // If input is invalid, the loop will continue asking for correct input
-            Show();
         }
     }
 
@@ -127,8 +108,6 @@ public static class FilterReservations
     {
         // Format the Date as dd/MM/yyyy from the stored integer representation
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
-
-        Console.WriteLine("");
 
         // Display the reservation details: ReservationID, Date, TableChoice, Number of People, UserID
         Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");

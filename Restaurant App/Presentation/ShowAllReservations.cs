@@ -1,12 +1,16 @@
+namespace Project.Presentation;
+
 public static class ShowAllReservations
 {
     public static void Show()
     {
+
         string filterChoice;
 
         while (true)
         {
-            Console.WriteLine("Do you want to filter reservations by month? (Y/N)");
+            Console.Clear();
+            Console.Write("Filter by month and year? (Y/N): ");
             filterChoice = Console.ReadLine().ToLower();
 
             if (filterChoice == "y" || filterChoice == "n")
@@ -25,32 +29,36 @@ public static class ShowAllReservations
         {
             while (true)
             {
-                Console.Write("Enter month (MM): ");
+                Console.Write("\nMonth (MM): ");
                 string monthInput = Console.ReadLine();
 
-                Console.Write("Enter year (YYYY): ");
+                Console.Write("Year (YYYY): ");
                 string yearInput = Console.ReadLine();
 
-                if (IsValidMonthYear(monthInput, yearInput, out int month, out int year))
+                if (ReservationLogic.IsValidMonthYear(monthInput, yearInput, out int month, out int year))
                 {
                     reservations = ReservationAdminLogic.GetReservationsByMonthYear(month, year);
                     break;
                 }
                 else
                 {
-                    Console.WriteLine($"Invalid month or year format. Please try again. Ensure month is MM and year is between 2024 and {DateTime.Now.Year}.");
+                    Console.Clear();
+                    Console.WriteLine("Invalid month or year format, please try again. \n" +
+                                      $"(ensure month is month and year is between 2024 and {DateTime.Now.Year})");
                 }
             }
         }
         else
         {
-            Console.WriteLine("Showing all reservations");
+            Console.Clear();
+            Console.WriteLine("RESERVATIONS");
             reservations = ReservationAdminLogic.GetAllReservations();
         }
 
         if (reservations.Count == 0)
         {
-            Console.WriteLine("No reservations found.");
+            Console.Clear();
+            Console.WriteLine("RESERVATIONS\n\nNo reservations found.");
         }
         else
         {
@@ -60,28 +68,28 @@ public static class ShowAllReservations
             }
         }
 
-        AdminMenu.AdminStart();
+        Console.WriteLine("\nPress enter to continue");
+        Console.ReadKey();
+        return;
     }
 
-    private static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
+
+    // this method follows the format for the previously implemented underneath 
+    public static void DisplayReservationHeader(ReservationModel reservation)
     {
-        month = 0;
-        year = 0;
-
-        return monthInput.Length == 2 && yearInput.Length == 4
-            && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
-            && month >= 1 && month <= 12
-            && year >= 2024 && year <= DateTime.Now.Year;
+        var r = reservation;
+        Console.WriteLine($"ReservationID: {r.ID}, Date: {r.Date}, Table Choice: {r.TableChoice}" +
+                          $", Number of People: {r.ReservationAmount}, UserID {r.UserID}");
     }
 
-    static void DisplayReservationDetails(ReservationModel reservation)
+    public static void DisplayReservationDetails(ReservationModel reservation)
     {
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
         Console.WriteLine("");
         Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
 
         var menuItems = ReservationAdminLogic.GetMenuItemsForReservation((int)reservation.ID);
-        string theme = GetThemeByReservation((int)reservation.ID);
+        string theme = ReservationLogic.GetThemeByReservation((int)reservation.ID);
 
         if (!string.IsNullOrEmpty(theme))
         {
@@ -106,16 +114,5 @@ public static class ShowAllReservations
         }
     }
 
-    private static string GetThemeByReservation(int reservationID)
-    {
-        var menuItems = ReservationAdminLogic.GetMenuItemsForReservation(reservationID);
 
-        if (menuItems != null && menuItems.Count > 0)
-        {
-            int menuID = (int)menuItems.First().MenuID; // Explicit cast from long to int
-            return ReservationAdminLogic.GetThemeByMenuID(menuID);
-        }
-
-        return string.Empty;
-    }
 }
