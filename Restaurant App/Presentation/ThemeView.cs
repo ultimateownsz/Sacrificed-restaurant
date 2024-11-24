@@ -29,10 +29,9 @@ static class ThemeView
 
             int year = ThemeInputValidator.GetValidYear("\nEnter the year (YYYY): ", DateTime.Now.Year);
 
-            // check if there is a theme planned
-            var existingTheme = ThemeMenuManager.ThemeScheduledByYear.ContainsKey(year)
-                ? ThemeMenuManager.ThemeScheduledByYear[year].FirstOrDefault(t => t.ScheduledMonth == month)
-                : null;
+            // // check if there is a theme planned
+            var key = (year, month ?? 0);
+            var existingTheme = ThemeMenuManager.GetThemeByYearAndMonth(key);            
 
             if (existingTheme == null || existingTheme.ThemeName == "Not scheduled")
             {
@@ -49,15 +48,20 @@ static class ThemeView
                         ScheduledMonth = month
                     };
 
-                    if (ThemeMenuManager.AddOrUpdateTheme(newTheme, year, month))
+                    bool isDuplicate;
+                    if (ThemeMenuManager.AddOrUpdateTheme(newTheme, year, month ?? 0, out isDuplicate))
                     {
                         Console.WriteLine("\nTheme updated succesfully.");
                         Console.Clear();
                         DisplayAllThemes();
                     }
+                    else if (isDuplicate)
+                    {
+                        Console.WriteLine($"\nA theme with the name '{newTheme.ThemeName}' already exists. Please choose a different name.");
+                    }
                     else
                     {
-                        Console.WriteLine("\nFailed to update the theme.");
+                        Console.WriteLine($"\nFailed to update the theme.");
                     }
                 }
             }
@@ -74,12 +78,17 @@ static class ThemeView
                     existingTheme.ThemeName = newThemeName;
                     existingTheme.ScheduledMonth = month; // Update the month
 
+                    bool isDuplicate;
                     // pass the existingTheme to the logic layer method for updating
-                    if (ThemeMenuManager.AddOrUpdateTheme(existingTheme, year, month))
+                    if (ThemeMenuManager.AddOrUpdateTheme(existingTheme, year, month ?? 0, out isDuplicate))
                     {
                         Console.WriteLine("\nTheme updated successfully.");
                         Console.Clear();
                         DisplayAllThemes();
+                    }
+                    else if (isDuplicate)
+                    {
+                        Console.WriteLine($"\nA theme with the name '{existingTheme.ThemeName}' already exists. Please choose a different name.");
                     }
                     else
                     {
@@ -108,11 +117,10 @@ static class ThemeView
         int? scheduledMonth = ThemeInputValidator.GetValidMonth("\nEnter the month of the theme to delete (1-12) ");
         int scheduledYear = ThemeInputValidator.GetValidYear("\nEnter the year of the theme to delete (YYYY): ", DateTime.Now.Year);
 
-        var theme = ThemeMenuManager.ThemeScheduledByYear.ContainsKey(scheduledYear)
-            ? ThemeMenuManager.ThemeScheduledByYear[scheduledYear].FirstOrDefault(t => t.ScheduledMonth == scheduledMonth)
-            : null;
+        var key = (scheduledYear, scheduledMonth ?? 0);
+        var theme = ThemeMenuManager.GetThemeByYearAndMonth(key);
 
-        if (theme != null)
+        if (theme != null && theme.ThemeName != "Not scheduled")
         {
             if (ThemeMenuManager.DeleteTheme(theme))
             {

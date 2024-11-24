@@ -2,7 +2,7 @@
 
 public class ThemeMenuModel
 {
-    private static long _nextId = 1;
+    // private static long _nextId = 1;
     public long MenuId { get; set; }
     public string ThemeName { get; internal set; }
     public int ScheduledYear { get; set; }  // temporary property for display purposes
@@ -10,15 +10,15 @@ public class ThemeMenuModel
 
     public ThemeMenuModel()
     {
-        SetMenuId();
+        // SetMenuId();
         ThemeName = "Default theme";
     }
 
     public ThemeMenuModel(string themeName)
     {
-        SetMenuId();
+        // SetMenuId();
         ThemeName = themeName;
     }
 
-    private void SetMenuId() => MenuId = _nextId++;
+    // private void SetMenuId() => MenuId = _nextId++;
 }
