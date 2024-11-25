@@ -2,15 +2,15 @@ public class ReservationLogic
 {
 
     //Static properties are shared across all instances of the class
-    public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0);
+    public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0, 0);
     public static Int64 Userid { get; private set; }
 
-    
+
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
     public Int64 SaveReservation(DateTime date, string reservationAmount, Int64 userId)
-    {   
+    {
         if (CurrentReservation != null)
         {
             CurrentReservation.Date = ConvertDate(date);
@@ -38,7 +38,7 @@ public class ReservationLogic
             case "1" or "2" or "one" or "two":
                 return 2;
             case "3" or "4" or "three" or "four":
-                return 4;   
+                return 4;
             case "5" or "6" or "five" or "six":
                 return 6;
             default:
@@ -62,7 +62,7 @@ public class ReservationLogic
             case "1" or "2" or "one" or "two":
                 return 2;
             case "3" or "4" or "three" or "four":
-                return 4;   
+                return 4;
             case "5" or "6" or "five" or "six":
                 return 6;
             default:
@@ -78,7 +78,7 @@ public class ReservationLogic
 
     public bool RemoveReservation(int id)
     {
-        if(ReservationAccess.GetByReservationID(id) == null)
+        if (ReservationAccess.GetByReservationID(id) == null)
         {
             return false;
         }

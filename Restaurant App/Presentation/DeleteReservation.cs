@@ -2,54 +2,43 @@ using Project.Presentation;
 
 public static class DeleteReservation
 {
-    public static void Show()
+    // Method to show the delete reservation interface and process the deletion
+    public static void Show(ReservationModel reservation)
     {
-        // Flag to control when the user has entered valid input
-        bool isValid = false;
+        // Confirm with the user if they are sure about deleting the reservation
+        Console.Clear();
+        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(reservation.UserID)}? (Y/N)");
 
-        // Loop until valid input is provided
-        while (!isValid)
+        string confirm = Console.ReadLine().ToLower();
+
+        if (confirm == "y")
         {
-            Console.Clear();
-            foreach (var reservation in ReservationAdminLogic.GetAllReservations())
-            {
-                UpdateReservation.DisplayReservationDetails(reservation);
-            }
-            Console.Write("\nEnter 'Q' to quit or a reservation ID: ");
-            string input = Console.ReadLine().ToLower();
+            // Attempt to delete the specific reservation
+            ReservationAdminLogic.DeleteReservation((int)reservation.ID);  // Cast to int for method compatibility
 
-            if (input == "q")
-            {
-                return;
-            }
-
-            // Check if the input can be parsed into an integer (Reservation ID)
-            if (int.TryParse(input, out int reservationID))
-            {
-                // Retrieve the reservation details by ID
-                var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
-                if (reservation != null)  // If reservation exists
-                {
-                    // Delete the reservation from the system
-                    ReservationAdminLogic.DeleteReservation(reservationID);
-                    Console.Clear();
-                    Console.WriteLine("Reservation deleted successfully.");
-                    Console.Write("\nPress enter to continue..."); Console.ReadKey();
-                    return;
-                }
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine("Reservation not found. Try again.");
-                }
-            }
-            else
-            {
-                Console.Clear();
-                Console.WriteLine("Invalid Reservation ID format. Please try again.");
-            }
-
-            Console.Write("\nPress enter to continue..."); Console.ReadKey();
+            Console.WriteLine("Reservation deleted successfully.");
         }
+        else
+        {
+            Console.WriteLine("Reservation deletion cancelled.");
+        }
+
+        // Wait for user input before going back to the reservation list
+        Console.WriteLine("Press any key to return to the reservation list.");
+        Console.ReadKey();
+
+        // Go back to ShowReservations after the action is completed
+        ShowReservations.Show();
+    }
+
+    // Helper method to get user full name based on UserID
+    private static string GetUserFullName(long userID)
+    {
+        var account = AccountsAccess.GetById((int)userID); // Fetch the account details
+        if (account != null)
+        {
+            return $"{account.FirstName} {account.LastName}";
+        }
+        return "Unknown User"; // Fallback in case no account is found
     }
 }

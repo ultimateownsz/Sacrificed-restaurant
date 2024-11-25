@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 public static class ReservationAdminLogic
 {
     public static List<ReservationModel> GetAllReservations()
@@ -24,7 +22,7 @@ public static class ReservationAdminLogic
 
     public static List<ReservationModel> GetReservationsByDate(int date)
     {
-        return ReservationAccess.GetByDate(date);
+        return ReservationAccess.GetReservationsByDate(date);
     }
 
     public static List<ReservationModel> GetReservationsByUserID(int userID)
@@ -45,5 +43,10 @@ public static class ReservationAdminLogic
     public static void DeleteReservation(int reservationID)
     {
         ReservationAccess.Delete(reservationID);
+    }
+
+    public static List<ReservationModel> GetReservationsByTableID(int tableID)
+    {
+        return ReservationAccess.GetByTableID(tableID: tableID);
     }
 }

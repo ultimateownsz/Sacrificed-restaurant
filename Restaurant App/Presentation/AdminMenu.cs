@@ -7,9 +7,6 @@ static class AdminMenu
 
         List<string> options = [
             "view",
-            "filter",
-            "update",
-            "delete\n",
             "create (admin account)",
             "update (themes)\n",
             "back"
@@ -20,16 +17,7 @@ static class AdminMenu
             switch (SelectionMenu.Show(options, "ADMIN MENU\n\n(reservations)\n"))
             {
                 case "view":
-                    ShowAllReservations.Show();
-                    break;
-                case "filter":
-                    FilterReservations.Show();
-                    break;
-                case "update":
-                    UpdateReservation.Show();
-                    break;
-                case "delete\n":
-                    DeleteReservation.Show();
+                    ShowReservations.Show();
                     break;
                 case "create (admin account)":
                     RegisterUser.CreateAdminAccount();
