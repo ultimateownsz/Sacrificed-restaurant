@@ -19,12 +19,8 @@ public static class ThemesAccess
         try
         {
             _connection.Open();
-            string sql = $"INSERT INTO {Table} (menuID, theme) VALUES (@MenuId, @ThemeName)";
-            _connection.Execute(sql, new
-            {
-                theme.MenuId,
-                theme.ThemeName
-            });
+            string sql = $"INSERT INTO {Table} (theme) VALUES (@ThemeName); SELECT last_insert_rowid();";
+            _connection.ExecuteScalar<long>(sql, new { theme.ThemeName });
             _connection.Close();
             return true;
         }
