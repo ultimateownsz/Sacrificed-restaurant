@@ -214,6 +214,7 @@ namespace Presentation
         if (userReservations == null || userReservations.Count == 0)
         {
             Console.WriteLine("You have no reservations.");
+            Console.WriteLine("Choose a reservations to cancel it.");
             Console.ReadKey();
             return;
         }
