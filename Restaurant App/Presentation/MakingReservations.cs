@@ -59,9 +59,9 @@ namespace Presentation
                 while (choosingProduct)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Guest {geustNumber}:");
+                    Console.WriteLine("Press escape to move on");
+                    Console.WriteLine($"Guest {geustNumber} Choose a product:");
                     Console.WriteLine($"Selected Category: {categories[z]}");
-                    Console.WriteLine("Choose a product:");
 
                     for (int k = 0; k < products.Count; k++)
                     {
