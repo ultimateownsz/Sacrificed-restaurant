@@ -68,10 +68,15 @@ namespace Presentation
         //Ask the user for the reservation amount
         Console.WriteLine("Please enter the number of guests between 1 and 6");
         string reservationAmount = Console.ReadLine();
-        while(string.IsNullOrEmpty(reservationAmount) || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
+        reservationAmount = reservationAmount.Replace(" ", "");
+        bool isDigit = reservationAmount.All(char.IsDigit);
+        while(string.IsNullOrEmpty(reservationAmount) || !isDigit || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
         {
+            Console.Clear();
+            Console.WriteLine("Invalid input");
             Console.WriteLine("Please enter a number between 1 and 6");
             reservationAmount = Console.ReadLine();
+            isDigit = reservationAmount.All(char.IsDigit);
         }
 
         Int64 reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.UserID);
@@ -101,11 +106,12 @@ namespace Presentation
                 // Category selection
                 int categoryIndex = 0;
                 bool choosingCategory = true;
+                int geustNumber = i + 1;
                 
                 while (choosingCategory)
                 {
                     Console.Clear();
-                    Console.WriteLine($"\nGuest {i + 1}, You can start your order");
+                    Console.WriteLine($"\nGuest {geustNumber}, You can start your order");
                     Console.WriteLine("Choose a category:");
                     for (int j = 0; j < categories.Count; j++)
                     {
@@ -206,7 +212,7 @@ namespace Presentation
             allOrders.AddRange(guestOrder);
 
             // Proceed to the next guest after finishing their order
-            if(i++ == Convert.ToInt32(reservationAmount))
+            if(i == Convert.ToInt32(reservationAmount))
             {
                 Console.WriteLine("\nPress any key to continue");
                 Console.ReadKey();
@@ -255,9 +261,9 @@ namespace Presentation
 
     public static void UserOverViewReservation(AccountModel acc)
     {
-        List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
         int reservationIndex = 0;
         bool inResMenu = true;
+        List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
         if (userReservations == null || userReservations.Count == 0)
         {
             Console.WriteLine("You have no reservations.");
@@ -270,6 +276,7 @@ namespace Presentation
             Console.WriteLine($"Here are your Reservations {acc.FirstName}:");
             for (int j = 0; j < userReservations.Count; j++)
             {
+                userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
                 if (j == reservationIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;

@@ -1,86 +1,98 @@
-// namespace Restaurant_App_Unittesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-// [TestClass]
-// public class AccountTests
-// {
-//     private AccountLogic accountService;
+namespace Restaurant_App_Unittesting
+{
+    [TestClass]
+    public class AccountTests
+    {
+        private AccountLogic accountService;
 
-//     [TestInitialize]
-//     public void Setup()
-//     {
-//         accountService = new AccountLogic();
-//     }
+        [TestInitialize]
+        public void Setup()
+        {
+            accountService = new AccountLogic();
+        }
 
-//     // Test for email validation
-//     [TestMethod]
-//     public void TestIsEmailValid_ValidEmail_ReturnsTrue()
-//     {
-//         Assert.IsTrue(accountService.IsEmailValid("test@example.com"));
-//         Assert.IsTrue(accountService.IsEmailValid("user@domain.com"));
-//     }
+        // Test for email validation
+        [TestMethod]
+        [DataRow("test@example.com", true)]       // Valid email
+        [DataRow("user@domain.com", true)]       // Valid email
+        [DataRow("noatsign.com", false)]         // Invalid email (missing @)
+        [DataRow("missingdot@domain", false)]    // Invalid email (missing . in domain)
+        public void TestIsEmailValid(string email, bool expectedResult)
+        {
+            bool result = accountService.IsEmailValid(email);
+            Assert.AreEqual(expectedResult, result);
+        }
 
-//     [TestMethod]
-//     public void TestIsEmailValid_InvalidEmail_ReturnsFalse()
-//     {
-//         Assert.IsFalse(accountService.IsEmailValid("noatsign.com"));
-//         Assert.IsFalse(accountService.IsEmailValid("missingdot@domain"));
-//     }
+        // Test for password validation
+        [TestMethod]
+        [DataRow("12345678", true)]              // Valid password length
+        [DataRow("1234567890123456", true)]      // Valid password length
+        [DataRow("1234567", false)]              // Too short
+        [DataRow("12345678901234567", false)]    // Too long
+        public void TestIsPasswordValid(string password, bool expectedResult)
+        {
+            bool result = accountService.IsPasswordValid(password);
+            Assert.AreEqual(expectedResult, result);
+        }
 
-//     // Test for password validation
-//     [TestMethod]
-//     public void TestIsPasswordValid_ValidPasswordLength_ReturnsTrue()
-//     {
-//         Assert.IsTrue(accountService.IsPasswordValid("12345678"));
-//         Assert.IsTrue(accountService.IsPasswordValid("1234567890123456"));
-//     }
+        // Test for phone number validation
+        [TestMethod]
+        [DataRow("12345678", true)]              // Valid phone number
+        [DataRow("1234abcd", false)]             // Invalid (contains letters)
+        [DataRow("123456789", false)]            // Too long
+        [DataRow("1234567", false)]              // Too short
+        public void TestIsPhoneNumberValid(string phoneNumber, bool expectedResult)
+        {
+            bool result = accountService.IsPhoneNumberValid(phoneNumber);
+            Assert.AreEqual(expectedResult, result);
+        }
 
-//     [TestMethod]
-//     public void TestIsPasswordValid_InvalidPasswordLength_ReturnsFalse()
-//     {
-//         Assert.IsFalse(accountService.IsPasswordValid("1234567"));  // Too short
-//         Assert.IsFalse(accountService.IsPasswordValid("12345678901234567"));  // Too long
-//     }
+        // Test for UserAccount creation
+        [TestMethod]
+        public void TestUserAccountCreation()
+        {
+            // Arrange
+            string firstName = "John";
+            string lastName = "Doe";
+            string email = "john.doe@example.com";
+            string password = "password123";
+            string phoneNumber = "12345678";
 
-//     // Test for phone number validation
-//     [TestMethod]
-//     public void TestIsPhoneNumberValid_ValidPhoneNumber_ReturnsTrue()
-//     {
-//         Assert.IsTrue(accountService.IsPhoneNumberValid("12345678"));
-//     }
+            // Act
+            var account = accountService.UserAccount(firstName, lastName, email, password, phoneNumber);
 
-//     [TestMethod]
-//     public void TestIsPhoneNumberValid_InvalidPhoneNumber_ReturnsFalse()
-//     {
-//         Assert.IsFalse(accountService.IsPhoneNumberValid("1234abcd"));  // Not a number
-//         Assert.IsFalse(accountService.IsPhoneNumberValid("123456789"));  // Too long
-//         Assert.IsFalse(accountService.IsPhoneNumberValid("1234567"));  // Too short
-//     }
+            // Assert
+            Assert.AreEqual(firstName, account.FirstName);
+            Assert.AreEqual(lastName, account.LastName);
+            Assert.AreEqual(email, account.EmailAddress);
+            Assert.AreEqual(password, account.Password);
+            Assert.AreEqual(12345678, account.PhoneNumber);
+            Assert.AreEqual(0, account.IsAdmin);  // Ensure it’s a user account (non-admin)
+        }
 
-//     // Test for UserAccount creation
-//     [TestMethod]
-//     public void TestUserAccountCreation_CreatesUserAccountWithCorrectDetails()
-//     {
-//         var account = accountService.UserAccount("John", "Doe", "john.doe@example.com", "password123", "12345678");
+        // Test for AdminAccount creation
+        [TestMethod]
+        public void TestAdminAccountCreation()
+        {
+            // Arrange
+            string firstName = "Jane";
+            string lastName = "Smith";
+            string email = "jane.smith@example.com";
+            string password = "securePass1";
+            string phoneNumber = "87654321";
 
-//         Assert.AreEqual("John", account.FirstName);
-//         Assert.AreEqual("Doe", account.LastName);
-//         Assert.AreEqual("john.doe@example.com", account.EmailAddress);
-//         Assert.AreEqual("password123", account.Password);
-//         Assert.AreEqual(12345678, account.PhoneNumber);
-//         Assert.AreEqual(0, account.IsAdmin);  // Ensure it’s a user account (non-admin)
-//     }
+            // Act
+            var account = accountService.AdminAccount(firstName, lastName, email, password, phoneNumber);
 
-//     // Test for AdminAccount creation
-//     [TestMethod]
-//     public void TestAdminAccountCreation_CreatesAdminAccountWithCorrectDetails()
-//     {
-//         var account = accountService.AdminAccount("Jane", "Smith", "jane.smith@example.com", "securePass1", "87654321");
-
-//         Assert.AreEqual("Jane", account.FirstName);
-//         Assert.AreEqual("Smith", account.LastName);
-//         Assert.AreEqual("jane.smith@example.com", account.EmailAddress);
-//         Assert.AreEqual("securePass1", account.Password);
-//         Assert.AreEqual(87654321, account.PhoneNumber);
-//         Assert.AreEqual(1, account.IsAdmin);  // Ensure it’s an admin account
-//     }
-// }
+            // Assert
+            Assert.AreEqual(firstName, account.FirstName);
+            Assert.AreEqual(lastName, account.LastName);
+            Assert.AreEqual(email, account.EmailAddress);
+            Assert.AreEqual(password, account.Password);
+            Assert.AreEqual(87654321, account.PhoneNumber);
+            Assert.AreEqual(1, account.IsAdmin);  // Ensure it’s an admin account
+        }
+    }
+}
