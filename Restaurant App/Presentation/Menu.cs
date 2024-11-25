@@ -41,10 +41,14 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionMenu.Show(["reserve", "logout"], "USER MENU\n\n"))
+            switch (SelectionMenu.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n"))
             {
                 case "reserve":
-                    MakingReservations.ReservationMenu(acc);
+                    MakingReservations.CalendarNavigation(acc);
+                    break;
+
+                case "view reservations":
+                    MakingReservations.UserOverViewReservation(acc);
                     break;
 
                 case "logout":
