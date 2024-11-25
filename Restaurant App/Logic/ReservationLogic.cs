@@ -2,15 +2,15 @@ public class ReservationLogic
 {
 
     //Static properties are shared across all instances of the class
-    public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0);
+    public static ReservationModel CurrentReservation { get; private set; } = new(0, 0, 0, 0, 0, 0);
     public static Int64 Userid { get; private set; }
 
-    
+
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
     public Int64 SaveReservation(DateTime date, string reservationAmount, Int64 userId)
-    {   
+    {
         if (CurrentReservation != null)
         {
             CurrentReservation.Date = ConvertDate(date);
@@ -38,7 +38,7 @@ public class ReservationLogic
             case "1" or "2" or "one" or "two":
                 return 2;
             case "3" or "4" or "three" or "four":
-                return 4;   
+                return 4;
             case "5" or "6" or "five" or "six":
                 return 6;
             default:
@@ -62,7 +62,7 @@ public class ReservationLogic
             case "1" or "2" or "one" or "two":
                 return 2;
             case "3" or "4" or "three" or "four":
-                return 4;   
+                return 4;
             case "5" or "6" or "five" or "six":
                 return 6;
             default:
@@ -78,7 +78,7 @@ public class ReservationLogic
 
     public bool RemoveReservation(int id)
     {
-        if(ReservationAccess.GetByReservationID(id) == null)
+        if (ReservationAccess.GetByReservationID(id) == null)
         {
             return false;
         }
@@ -92,5 +92,28 @@ public class ReservationLogic
     public List<ReservationModel> GetUserReservatoions(int userID)
     {
         return ReservationAccess.GetByUserID(userID);
+    }
+
+    public static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
+    {
+        month = 0;
+        year = 0;
+
+        return monthInput.Length == 2 && yearInput.Length == 4
+            && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
+            && month >= 1 && month <= 12
+            && year >= 2024 && year <= DateTime.Now.Year;
+    }
+    public static string GetThemeByReservation(int reservationID)
+    {
+        var menuItems = ReservationAdminLogic.GetMenuItemsForReservation(reservationID);
+
+        if (menuItems != null && menuItems.Count > 0)
+        {
+            int menuID = (int)menuItems.First().MenuID; // Explicit cast from long to int
+            return ReservationAdminLogic.GetThemeByMenuID(menuID);
+        }
+
+        return string.Empty;
     }
 }

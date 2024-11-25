@@ -13,6 +13,11 @@ namespace Presentation
 
         public static void ReservationMenu(AccountModel acc)
         {
+
+            Console.Clear();
+            Console.WriteLine("this feature is in development.\nPress enter to continue...");
+            Console.ReadKey(); return;
+
             List<string> menuOptions = ["Make reservation", "View reservation"];
             int menuIndex = 0;
             while(true)

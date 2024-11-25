@@ -35,7 +35,7 @@ static class UserLogin
         string? email = request_email();
         string? password = request_password(email);
 
-        AccountModel? acc = accountsLogic.CheckLogin(email, password);
+        AccountModel? acc = AccountsLogic.CheckLogin(email, password);
         if (acc != null)
         {
             //Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);

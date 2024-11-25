@@ -1,75 +1,45 @@
+using Project.Presentation;
+
 public static class UpdateReservation
 {
-    public static void Show()
+    public static void Show(ReservationModel reservation)
     {
-        // Flag to control when the user has entered valid input
-        bool isValid = false;
+        Console.Clear();
+        Console.WriteLine("Update Reservation Details");
+        Console.WriteLine("--------------------------");
 
-        // Loop until valid input is provided
-        while (!isValid)
-        {
-            Console.WriteLine("");
-            Console.Write("Enter the Reservation ID you want to update (or Q to go back): ");
-            string input = Console.ReadLine().ToLower();
+        // Display current reservation details
+        DisplayReservationDetails(reservation);
 
-            if (input == "q")
-            {
-                AdminMenu.AdminStart();
-                return;
-            }
+        // Proceed to update reservation
+        UpdateReservationDetails(reservation);
 
-            // Check if the input can be parsed into an integer (Reservation ID)
-            if (int.TryParse(input, out int reservationID))
-            {
-                // Retrieve the reservation details by ID
-                var reservation = ReservationAdminLogic.GetReservationByID(reservationID);
-                if (reservation != null)  // If reservation exists
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine("Current Reservation Details:");
-                    DisplayReservationDetails(reservation);
+        // Save updated reservation
+        ReservationAdminLogic.UpdateReservation(reservation);
 
-                    // Allow the admin to update the reservation details
-                    UpdateReservationDetails(reservation);
-
-                    // Save the updated reservation to the database or system
-                    ReservationAdminLogic.UpdateReservation(reservation);
-
-                    Console.WriteLine("");
-                    Console.WriteLine("Reservation updated successfully.");
-                    isValid = true;  // Mark input as valid and exit the loop
-                }
-                else
-                {
-                    Console.WriteLine("Reservation not found. Try again.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid Reservation ID format. Please try again.");
-            }
-        }
-
-        Show();
+        Console.WriteLine("\nReservation updated successfully.");
+        Console.WriteLine("Press any key to return.");
+        Console.ReadKey();
     }
 
-    private static void DisplayReservationDetails(ReservationModel reservation)
+    public static void DisplayReservationDetails(ReservationModel reservation)
     {
-        // Format the Date (stored as an integer) to dd/MM/yyyy format
+        // Format date and display reservation details
         DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
-
-        // Display the reservation details including the formatted date, table choice, number of people, and user ID
-        Console.WriteLine($"ReservationID: {reservation.ID}, Date: {formattedDate:dd/MM/yyyy}, Table Choice: {reservation.TableChoice}, Number of People: {reservation.ReservationAmount}, UserID: {reservation.UserID}");
+        Console.WriteLine($"Reservation ID: {reservation.ID}");
+        Console.WriteLine($"Date: {formattedDate:dd/MM/yyyy}");
+        Console.WriteLine($"Table number: {reservation.TableID}");
+        Console.WriteLine($"Number of People: {reservation.ReservationAmount}");
+        Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
-    // Method to handle updates to reservation details (Date, Reservation Amount, Table Choice)
     private static void UpdateReservationDetails(ReservationModel reservation)
     {
+        // Update reservation date
         DateTime newDate;
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new Reservation Date (DD/MM/YYYY) or press Enter to keep current: ");
+            Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
             string newDateInput = Console.ReadLine();
             if (string.IsNullOrEmpty(newDateInput))
             {
@@ -78,20 +48,18 @@ public static class UpdateReservation
             }
             else if (DateTime.TryParseExact(newDateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out newDate))
             {
-                // Check if the date is in the future and before the end of 2025
-                DateTime maxDate = new DateTime(2025, 12, 31);
                 if (newDate.Date < DateTime.Today)
                 {
                     Console.WriteLine("The date cannot be in the past. Please enter a future date.");
                 }
-                else if (newDate.Date > maxDate)
+                else if (newDate.Date > new DateTime(2025, 12, 31))
                 {
                     Console.WriteLine("The date cannot be after December 31, 2025. Please enter a valid date.");
                 }
                 else
                 {
-                    reservation.Date = int.Parse(newDate.ToString("ddMMyyyy"));
-                    break; // Valid date, exit the loop
+                    reservation.Date = long.Parse(newDate.ToString("ddMMyyyy")); // Store as long
+                    break;
                 }
             }
             else
@@ -100,83 +68,123 @@ public static class UpdateReservation
             }
         }
 
-        long newTableChoice;
+        // Update Table ID
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new Table Choice (2, 4, or 6) or press Enter to keep current: ");
-            string newTableChoiceInput = Console.ReadLine();
-            if (string.IsNullOrEmpty(newTableChoiceInput))
+            // Display table capacities
+            Console.WriteLine("\nTables:");
+            Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
+            Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
+            Console.WriteLine("6-person tables: 2, 3");
+
+            Console.WriteLine("\nEnter new Table number (1-15) or press Enter to keep current:");
+            string tableIdInput = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(tableIdInput))
             {
-                Console.WriteLine("Table Choice not updated.");
+                Console.WriteLine("Table ID not updated.");
                 break;
             }
-            else if (long.TryParse(newTableChoiceInput, out newTableChoice) && (newTableChoice == 2 || newTableChoice == 4 || newTableChoice == 6))
+            else if (int.TryParse(tableIdInput, out int tableID) && tableID >= 1 && tableID <= 15)
             {
-                reservation.TableChoice = newTableChoice;
-                break; // Valid table choice, exit the loop
+                // Check if the table is taken for the given date
+                if (IsTableTaken(reservation.Date, tableID))
+                {
+                    Console.WriteLine("This table is already reserved for the selected date. Please choose a different table.");
+                }
+                else
+                {
+                    // Assign the new table ID
+                    reservation.TableID = tableID;
+                    break;
+                }
             }
             else
             {
-                Console.WriteLine("Invalid table choice. Please choose a table with 2, 4, or 6 seats.");
+                Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
             }
         }
 
-        int newAmount;
+        // Update Reservation Amount
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter new number of people (Reservation Amount) or press Enter to keep current: ");
+            Console.WriteLine("\nEnter new number of guests (Reservation Amount) or press Enter to keep current:");
             string newAmountInput = Console.ReadLine();
+
             if (string.IsNullOrEmpty(newAmountInput))
             {
                 Console.WriteLine("Reservation Amount not updated.");
                 break;
             }
-            else if (int.TryParse(newAmountInput, out newAmount))
+            else if (int.TryParse(newAmountInput, out int newAmount))
             {
-                // Validate the number of people based on the table choice
-                if (reservation.TableChoice == 2)
+                // Validate the reservation amount based on the table ID
+                if (IsReservationAmountValid(reservation.TableID, newAmount))
                 {
-                    if (newAmount == 1 || newAmount == 2)
-                    {
-                        reservation.ReservationAmount = newAmount;
-                        break; // Valid amount, exit the loop
-                    }
-                    else
-                    {
-                        Console.WriteLine("For a table for 2, the number of people can only be 1 or 2.");
-                    }
+                    reservation.ReservationAmount = newAmount;
+                    break;
                 }
-                else if (reservation.TableChoice == 4)
+                else
                 {
-                    if (newAmount == 3 || newAmount == 4)
-                    {
-                        reservation.ReservationAmount = newAmount;
-                        break; // Valid amount, exit the loop
-                    }
-                    else
-                    {
-                        Console.WriteLine("For a table for 4, the number of people can only be 3 or 4.");
-                    }
-                }
-                else if (reservation.TableChoice == 6)
-                {
-                    if (newAmount == 5 || newAmount == 6)
-                    {
-                        reservation.ReservationAmount = newAmount;
-                        break; // Valid amount, exit the loop
-                    }
-                    else
-                    {
-                        Console.WriteLine("For a table for 6, the number of people can only be 5 or 6.");
-                    }
+                    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
                 }
             }
             else
             {
-                Console.WriteLine($"Invalid number of people. Please enter a valid number for table choice {reservation.TableChoice}.");
+                Console.WriteLine("Invalid input. Please enter a valid number.");
             }
         }
+    }
+
+    private static bool IsReservationAmountValid(long tableID, int reservationAmount)
+    {
+        // Check table ID categories and validate reservation amount
+        if (IsTwoPersonTable(tableID) && (reservationAmount == 1 || reservationAmount == 2))
+        {
+            return true;
+        }
+        else if (IsFourPersonTable(tableID) && (reservationAmount >= 3 && reservationAmount <= 4))
+        {
+            return true;
+        }
+        else if (IsSixPersonTable(tableID) && (reservationAmount >= 5 && reservationAmount <= 6))
+        {
+            return true;
+        }
+
+        // If none of the conditions are met, return false
+        return false;
+    }
+
+    // Helper methods for table categories
+    private static bool IsTwoPersonTable(long tableID)
+    {
+        return tableID == 1 || tableID == 4 || tableID == 5 || tableID == 8 || tableID == 9 || tableID == 11 || tableID == 12 || tableID == 15;
+    }
+
+    private static bool IsFourPersonTable(long tableID)
+    {
+        return tableID == 6 || tableID == 7 || tableID == 10 || tableID == 13 || tableID == 14;
+    }
+
+    private static bool IsSixPersonTable(long tableID)
+    {
+        return tableID == 2 || tableID == 3;
+    }
+
+    // Helper method to check if the table is already reserved for the given date
+    private static bool IsTableTaken(long reservationDate, long tableID)
+    {
+        int formattedDate = (int)reservationDate; // Convert long to int
+        var reservations = ReservationAccess.GetReservationsByDate(formattedDate);
+
+        foreach (var res in reservations)
+        {
+            if (res.TableID == tableID && res.ID != reservationDate) // Ignore the current reservation
+            {
+                return true; // Table is taken
+            }
+        }
+        return false; // Table is available
     }
 }

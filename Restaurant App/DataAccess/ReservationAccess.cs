@@ -10,29 +10,45 @@ public static class ReservationAccess
 
     public static void Write(ReservationModel reservation)
     {
-        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID)";
+        string sql = $"INSERT INTO {Table} (reservationID, date, tableChoice, reservationAmount, userID, tableID) VALUES (@ReservationID, @Date, @TableChoice, @ReservationAmount, @UserID, @TableID)";
         _connection.Execute(sql, new
         {
             ReservationID = reservation.ID,
             Date = reservation.Date,
             TableChoice = reservation.TableChoice,
             ReservationAmount = reservation.ReservationAmount,
-            UserID = reservation.UserID
+            UserID = reservation.UserID,
+            TableID = reservation.TableID
         });
     }
 
     public static List<ReservationModel> GetAllReservations()
     {
-        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table}";
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice,  
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table}";
         return _connection.Query<ReservationModel>(sql).AsList();
     }
 
     public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
     {
         string sql = $@"
-            SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice, 
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
             FROM {Table}
-            WHERE CAST(SUBSTR(date, 3, 2) AS INT) = @Month AND CAST(SUBSTR(date, 5, 4) AS INT) = @Year";
+            WHERE CAST(SUBSTR(date, 3, 2) AS INT) = @Month 
+              AND CAST(SUBSTR(date, 5, 4) AS INT) = @Year";
 
         return _connection.Query<ReservationModel>(sql, new { Month = month, Year = year }).AsList();
     }
@@ -43,49 +59,65 @@ public static class ReservationAccess
         return _connection.QueryFirstOrDefault<string>(sql, new { MenuID = menuID });
     }
 
-
     public static ReservationModel GetByReservationID(int reservationID)
     {
-        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE reservationID = @ReservationID";
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice, 
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table} 
+            WHERE reservationID = @ReservationID";
         return _connection.QueryFirstOrDefault<ReservationModel>(sql, new { ReservationID = reservationID });
     }
 
     public static List<ReservationModel> GetByUserID(int userID)
     {
-        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE userID = @UserID";
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice, 
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table} 
+            WHERE userID = @UserID";
         return _connection.Query<ReservationModel>(sql, new { UserID = userID }).AsList();
     }
 
-    public static List<ReservationModel> GetByDate(int date)
+    public static List<ReservationModel> GetByTableID(int tableID)
     {
-        string sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE date = @Date";
-        return _connection.Query<ReservationModel>(sql, new { Date = date }).AsList();
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice, 
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table} 
+            WHERE tableID = @TableID";
+
+        return _connection.Query<ReservationModel>(sql, new { TableID = tableID }).AsList();
     }
 
-    public static List<ReservationModel> GetFilteredReservations(int? reservationID = null, int? date = null, int? userID = null)
+    public static List<ReservationModel> GetReservationsByDate(int date)
     {
-        var sql = $"SELECT reservationID AS ID, date AS Date, tableChoice AS TableChoice, reservationAmount AS ReservationAmount, userID AS UserID FROM {Table} WHERE 1=1";
-        var parameters = new DynamicParameters();
-
-        if (reservationID.HasValue)
-        {
-            sql += " AND reservationID = @ReservationID";
-            parameters.Add("ReservationID", reservationID.Value);
-        }
-
-        if (date.HasValue)
-        {
-            sql += " AND date = @Date";
-            parameters.Add("Date", date.Value);
-        }
-
-        if (userID.HasValue)
-        {
-            sql += " AND userID = @UserID";
-            parameters.Add("UserID", userID.Value);
-        }
-
-        return _connection.Query<ReservationModel>(sql, parameters).AsList();
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice,  
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table} 
+            WHERE date = @Date";
+        return _connection.Query<ReservationModel>(sql, new { Date = date }).AsList();
     }
 
     public static List<ProductModel> GetMenuItemsByReservationID(int reservationID)
@@ -113,14 +145,23 @@ public static class ReservationAccess
         using (var connection = new SqliteConnection("Data Source=DataSources/project.db"))
         {
             connection.Open();
-            string sql = $"UPDATE {Table} SET date = @Date, tableChoice = @TableChoice, reservationAmount = @ReservationAmount, userID = @UserID WHERE reservationID = @ReservationID";
+            string sql = $@"
+                UPDATE {Table} 
+                SET 
+                    date = @Date, 
+                    tableChoice = @TableChoice,  
+                    reservationAmount = @ReservationAmount, 
+                    userID = @UserID,
+                    tableID = @TableID
+                WHERE reservationID = @ReservationID";
             connection.Execute(sql, new
             {
                 ReservationID = reservation.ID,
                 Date = reservation.Date,
                 TableChoice = reservation.TableChoice,
                 ReservationAmount = reservation.ReservationAmount,
-                UserID = reservation.UserID
+                UserID = reservation.UserID,
+                TableID = reservation.TableID
             });
         }
     }
