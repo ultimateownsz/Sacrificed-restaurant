@@ -295,11 +295,19 @@ namespace Presentation
                     // Process the selected reservation
                     Console.Clear();
                     Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
-                    Console.WriteLine("Press any key to return to the reservation menu...");
-                    // DeleteReservation()
+                    DeleteReservation(Convert.ToInt32(userReservations[reservationIndex].ID));
                     Console.ReadKey();
-                    inResMenu = false;
-                    break; // Exit loop
+                    Console.WriteLine("Press any key to return to the reservation over view menu or press escape to return to the reservation menu...");
+                    var key2 = Console.ReadKey();
+                    if(key2.Key == ConsoleKey.Escape)
+                    {
+                        inResMenu = false;
+                        break; // Exit loop
+                    }
+                    else
+                    {
+                        break;
+                    }
                 case ConsoleKey.Escape:// Exit without selection
                     inResMenu = false;
                     break;
@@ -308,10 +316,20 @@ namespace Presentation
         return;
     }
 
-    // public static void DeleteReservation()
-    // {
-
-    // }
+    public static void DeleteReservation(int resID)
+    {
+      if(reservationLogic.RemoveReservation(resID) is true)
+      {
+        reservationLogic.RemoveReservation(resID);
+        Console.WriteLine("This reservation has been removed");
+        return;
+      }
+      else
+      {
+        Console.WriteLine("Failed to remove reservation");
+        return;
+      }
+    }
 
     public static void DisplayCalendar(DateTime currentDate, int selectedDay)
     {
