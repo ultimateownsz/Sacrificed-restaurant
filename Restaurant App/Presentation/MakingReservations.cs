@@ -10,64 +10,6 @@ namespace Presentation
         static private OrderLogic orderLogic = new();
         private static CalendarLogic calendarLogic = new CalendarLogic();
 
-
-        public static void ReservationMenu(AccountModel acc)
-        {
-
-            Console.Clear();
-            Console.WriteLine("this feature is in development.\nPress enter to continue...");
-            Console.ReadKey(); return;
-
-            List<string> menuOptions = ["Make reservation", "View reservation"];
-            int menuIndex = 0;
-            while(true)
-            {
-                bool inMenu = true;
-                while (inMenu)
-                {
-                    Console.Clear();
-                    for (int j = 0; j < menuOptions.Count; j++)
-                    {
-                        if (j == menuIndex)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"> {menuOptions[j]}"); // Highlight selected item
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  {menuOptions[j]}");
-                        }
-                    }
-                    
-                    var key = Console.ReadKey(intercept: true);
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.UpArrow:
-                            if (menuIndex > 0) menuIndex--; // Move up
-                            break;
-                        case ConsoleKey.DownArrow:
-                            if (menuIndex < menuOptions.Count - 1) menuIndex++; // Move down
-                            break;
-                        case ConsoleKey.Enter: // Process the selected reservation
-                            Console.Clear();
-                            inMenu = false;
-                            break; // Exit loop
-                        case ConsoleKey.Escape: // Exit without selection
-                            return;
-                    }
-                }
-                if(menuOptions[menuIndex] == "Make reservation")
-                {
-                    CalendarNavigation(acc);
-                }
-                else
-                {
-                    UserOverViewReservation(acc);
-                }
-            }
-        }
-
     public static void MakingReservation(AccountModel acc, DateTime date)
     {   
         //Ask the user for the reservation amount
