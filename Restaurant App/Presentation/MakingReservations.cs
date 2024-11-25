@@ -28,7 +28,7 @@ namespace Presentation
 
         Int64 reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.UserID);
         OrderLogic orderLogic = new OrderLogic();
-        List<string> categories = new List<string> { "SideDishes", "MainDishes", "Dessert", "Alcoholic Beverages" };
+        List<string> categories = new List<string> { "Appetizers", "MainDishes", "Dessert", "Alcoholic Beverages" };
         List<ProductModel> allOrders = new List<ProductModel>();
         
         Console.WriteLine("This month's theme is:");
@@ -47,58 +47,20 @@ namespace Presentation
 
             List<ProductModel> guestOrder = new List<ProductModel>();
             bool ordering = true;
+            int geustNumber = i + 1;
             
-            while (ordering)
+            for (int z = 0; z < categories.Count; z++)
             {
-                // Category selection
-                int categoryIndex = 0;
-                bool choosingCategory = true;
-                int geustNumber = i + 1;
-                
-                while (choosingCategory)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"\nGuest {geustNumber}, You can start your order");
-                    Console.WriteLine("Choose a category:");
-                    for (int j = 0; j < categories.Count; j++)
-                    {
-                        if (j == categoryIndex)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"> {categories[j]}"); // Highlight selected item
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  {categories[j]}");
-                        }
-                    }
-                    
-                    // Read key input for category navigation
-                    var key = Console.ReadKey(intercept: true);
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.UpArrow:
-                            if (categoryIndex > 0) categoryIndex--; // Move up
-                            break;
-                        case ConsoleKey.DownArrow:
-                            if (categoryIndex < categories.Count - 1) categoryIndex++; // Move down
-                            break;
-                        case ConsoleKey.Enter:
-                            choosingCategory = false; // Category selected
-                            break;
-                    }
-                }
-                
                 // Product navigation within the selected category
-                List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[categoryIndex]);
+                List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]);
                 int productIndex = 0;
                 bool choosingProduct = true;
 
                 while (choosingProduct)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Selected Category: {categories[categoryIndex]}");
+                    Console.WriteLine($"Guest {geustNumber}:");
+                    Console.WriteLine($"Selected Category: {categories[z]}");
                     Console.WriteLine("Choose a product:");
 
                     for (int k = 0; k < products.Count; k++)
@@ -106,12 +68,12 @@ namespace Presentation
                         if (k == productIndex)
                         {
                             Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine($"> {products[k].ProductName}({products[k].Type}) - ${products[k].Price:F2}"); // Highlight selected item with price
+                            Console.WriteLine($"> {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}"); // Highlight selected item with price
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"  {products[k].ProductName}({products[k].Type}) - ${products[k].Price:F2}");
+                            Console.WriteLine($"  {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}");
                         }
                     }
                     
@@ -138,23 +100,16 @@ namespace Presentation
                             Console.WriteLine($"You selected {products[productIndex].ProductName} for ${products[productIndex].Price:F2}");
                             guestOrder.Add(products[productIndex]); // Add product to guest's order
                             orderLogic.SaveOrder(reservationId, products[productIndex].ProductId); // Save order to "database"
+                            ordering = false;
                             break;
                         case ConsoleKey.Escape:
                             choosingProduct = false; // Exit product selection
+                            ordering = false;
                             break;
                     }
                 }
-
-                if (!ordering) break;
-
-                // Ask if the user wants to add more products
-                Console.WriteLine("\nDo you want to order another product? (Y/N)");
-                var response = Console.ReadKey(intercept: true);
-                if (response.Key == ConsoleKey.N)
-                {
-                    ordering = false; // Exit ordering loop for this guest
-                }
             }
+            
 
             allOrders.AddRange(guestOrder);
 
@@ -196,12 +151,12 @@ namespace Presentation
 
             foreach (var product in guestOrder)
             {
-                Console.WriteLine($"{product.ProductName,-20} ${product.Price:F2}");
+                Console.WriteLine($"{product.ProductName,-20} €{product.Price:F2}");
                 totalAmount += product.Price;
             }
 
             Console.WriteLine("----------------------------");
-            Console.WriteLine($"Total Amount:         ${totalAmount:F2}");
+            Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
             Console.WriteLine($"Reservation code:      {reservationId}");
             Console.WriteLine("============================");
         }
@@ -275,7 +230,7 @@ namespace Presentation
     {
       if(reservationLogic.RemoveReservation(resID) is true)
       {
-        reservationLogic.RemoveReservation(resID);
+        // reservationLogic.RemoveReservation(resID);
         Console.WriteLine("This reservation has been removed");
         return;
       }
