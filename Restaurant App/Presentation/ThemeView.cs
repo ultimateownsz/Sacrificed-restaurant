@@ -47,7 +47,7 @@ static class ThemeView
                     var newTheme = new ThemeModel
                     {
                         Name = newThemeName,
-                        Month = month
+                        Month = month 
                     };
 
                     bool isDuplicate;
