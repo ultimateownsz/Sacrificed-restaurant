@@ -17,7 +17,7 @@ public static class DeleteReservation
             // Attempt to delete the specific reservation
             Access.Reservations.Delete(reservation.ID);
             Console.WriteLine("Reservation deleted successfully.");
-        }
+        } 
         else
         {
             Console.WriteLine("Reservation deletion cancelled.");
