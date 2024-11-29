@@ -1,3 +1,4 @@
+using Project;
 using Project.Presentation;
 
 static class AdminMenu
@@ -14,7 +15,7 @@ static class AdminMenu
 
         while (true)
         {
-            switch (SelectionMenu.Show(options, "ADMIN MENU\n\n(reservations)\n"))
+            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
             {
                 case "view":
                     ShowReservations.Show();

@@ -1,3 +1,4 @@
+using Project;
 using Project.Presentation;
 
 public static class UpdateReservation
@@ -15,7 +16,7 @@ public static class UpdateReservation
         UpdateReservationDetails(reservation);
 
         // Save updated reservation
-        ReservationAdminLogic.UpdateReservation(reservation);
+        Access.Reservations.Update(reservation);
 
         Console.WriteLine("\nReservation updated successfully.");
         Console.WriteLine("Press any key to return.");
@@ -25,11 +26,10 @@ public static class UpdateReservation
     public static void DisplayReservationDetails(ReservationModel reservation)
     {
         // Format date and display reservation details
-        DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString("D8"), "ddMMyyyy", null);
+        DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString(), "ddMMyyyy", null);
         Console.WriteLine($"Reservation ID: {reservation.ID}");
         Console.WriteLine($"Date: {formattedDate:dd/MM/yyyy}");
-        Console.WriteLine($"Table number: {reservation.TableID}");
-        Console.WriteLine($"Number of People: {reservation.ReservationAmount}");
+        Console.WriteLine($"Table number: {reservation.Place}");
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
@@ -58,7 +58,7 @@ public static class UpdateReservation
                 }
                 else
                 {
-                    reservation.Date = long.Parse(newDate.ToString("ddMMyyyy")); // Store as long
+                    reservation.Date = newDate; // Store as long
                     break;
                 }
             }
@@ -95,7 +95,7 @@ public static class UpdateReservation
                 else
                 {
                     // Assign the new table ID
-                    reservation.TableID = tableID;
+                    reservation.Place = tableID;
                     break;
                 }
             }
@@ -119,15 +119,15 @@ public static class UpdateReservation
             else if (int.TryParse(newAmountInput, out int newAmount))
             {
                 // Validate the reservation amount based on the table ID
-                if (IsReservationAmountValid(reservation.TableID, newAmount))
-                {
-                    reservation.ReservationAmount = newAmount;
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
-                }
+                //if (IsReservationAmountValid(reservation.Place, newAmount))
+                //{
+                //    reservation.ReservationAmount = newAmount;
+                //    break;
+                //}
+                //else
+                //{
+                //    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
+                //}
             }
             else
             {
@@ -173,14 +173,13 @@ public static class UpdateReservation
     }
 
     // Helper method to check if the table is already reserved for the given date
-    private static bool IsTableTaken(long reservationDate, long tableID)
+    private static bool IsTableTaken(DateTime? reservationDate, long tableID)
     {
-        int formattedDate = (int)reservationDate; // Convert long to int
-        var reservations = ReservationAccess.GetReservationsByDate(formattedDate);
+        var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
 
         foreach (var res in reservations)
         {
-            if (res.TableID == tableID && res.ID != reservationDate) // Ignore the current reservation
+            if (res.Place == tableID && res.Date != reservationDate) // Ignore the current reservation
             {
                 return true; // Table is taken
             }

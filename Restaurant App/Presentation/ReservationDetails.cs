@@ -1,3 +1,5 @@
+using Project;
+
 public static class ReservationDetails
 {
     public static void ShowDetails(ReservationModel reservation)
@@ -5,7 +7,7 @@ public static class ReservationDetails
         Console.Clear();
 
         // Fetch the account details for the user
-        var account = AccountsAccess.GetById((int)reservation.UserID);
+        var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
 
         // Ensure data exists
         if (account == null)
@@ -21,9 +23,8 @@ public static class ReservationDetails
         Console.WriteLine("-------------------");
         Console.WriteLine($"Name: {account.FirstName} {account.LastName}");
         Console.WriteLine();
-        Console.WriteLine($"Reservation Date: {FormatDate(reservation.Date)}");
-        Console.WriteLine($"Assigned Table number: {reservation.TableID}");
-        Console.WriteLine($"Number of People: {reservation.ReservationAmount}");
+        Console.WriteLine($"Reservation Date: {reservation.Date.ToString()}");
+        Console.WriteLine($"Assigned Table number: {reservation.Place}");
 
         Console.WriteLine("\nPress any key to return to the reservations list.");
         Console.ReadKey();

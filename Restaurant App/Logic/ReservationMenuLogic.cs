@@ -1,8 +1,10 @@
+using Project;
+
 public class ReservationMenuLogic
 {
 
     //Static properties are shared across all instances of the class
-    public static ThemeMenuModel? CurrentTheme { get; private set; }
+    public static ThemeModel? CurrentTheme { get; private set; }
 
     public ReservationMenuLogic()
     {
@@ -12,18 +14,18 @@ public class ReservationMenuLogic
 
     public string GetCurrentMenu()
     {
-        CurrentTheme = ThemesAccess.GetById(1);
+        CurrentTheme = Access.Themes.GetBy<int>("ID", 1);
         if(CurrentTheme is not null)
-            return CurrentTheme.ThemeName;
+            return CurrentTheme.Name;
         else
             return null;
     }
 
-    public List<ProductModel> GetProductsInMenu()
+    public IEnumerable<ProductModel> GetProductsInMenu()
     {
         if(CurrentTheme != null)
         {
-            List<ProductModel> products = ProductsAccess.GetByIds(new[] { CurrentTheme.MenuId }).ToList();
+            IEnumerable<ProductModel> products = Access.Products.GetAllBy<int?>("ID", CurrentTheme.ID);
             return products;
         }
         else

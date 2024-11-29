@@ -4,10 +4,10 @@ internal class MenuLogic
 
     public static string? Login()
     {
-        AccountModel? acc = UserLogin.Start();
+        UserModel? acc = UserLogin.Start();
         if (acc != null)
         {
-            if (acc.IsAdmin == 1)
+            if (acc.Admin == 1)
             {
                 AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
                 return "continue";

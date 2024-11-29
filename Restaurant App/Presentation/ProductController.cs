@@ -1,3 +1,5 @@
+using Project;
+
 public static class ProductController
 {
     public static void AddProduct(ProductModel product)
@@ -9,27 +11,27 @@ public static class ProductController
         
         if (ProductManager.AddProduct(product) == false)
         {
-            Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} already exists.");
+            Console.WriteLine($"Product: {product.Name}, with ID: {product.ID} already exists.");
         }
         else
         {
-            Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} added.");
+            Console.WriteLine($"Product: {product.Name}, with ID: {product.ID} added.");
         }
     }
 
-    public static void UpdateProductQuantity(ProductModel product, int newQuantity)
-    {
-        if (ProductManager.UpdateProductQuantity(product, newQuantity) == true)
-        {
-            Console.WriteLine($"Updated '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
-        }
-        else
-        {
-            Console.WriteLine($"Failed to update '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
-        }
-    }
+    //public static void UpdateProductQuantity(ProductModel product, int newQuantity)
+    //{
+    //    if (ProductManager.UpdateProductQuantity(product, newQuantity) == true)
+    //    {
+    //        Console.WriteLine($"Updated '{product.Name} (ID: {product.ID})");
+    //    }
+    //    else
+    //    {
+    //        Console.WriteLine($"Failed to update '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
+    //    }
+    //}
 
-    public static void DeleteProduct(long productId)
+    public static void DeleteProduct(int productId)
     {
         if (ProductManager.DeleteProduct(productId))
         {

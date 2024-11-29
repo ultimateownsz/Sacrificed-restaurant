@@ -70,7 +70,8 @@ internal class RegisterUser
             {
                 // Create account and write it to storage
                 var account = AccountsLogic.UserAccount(firstName, lastName, email, password, phoneNumber);
-                AccountsAccess.Write(account);
+                
+                Access.Users.Write(account);
                 Console.WriteLine("\nYour account is successfully registered!");
                 Thread.Sleep(1000); // so you can read the messages
                 isInfoValid = true; // Exit the confirmation loop
@@ -81,7 +82,7 @@ internal class RegisterUser
                 while (true)
                 {
                     string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionMenu.Show(["first name", "last name", "email", "password", "phone number"], banner))
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
                     {
                         case "first name":
                             Console.Clear();
@@ -221,7 +222,7 @@ internal class RegisterUser
             {
                 // Create account and write it to storage
                 var account = AccountsLogic.AdminAccount(firstName, lastName, email, password, phoneNumber);
-                AccountsAccess.Write(account);
+                Access.Users.Write(account);
                 Console.WriteLine("Your account is successfully registered!");
                 Thread.Sleep(1000);
                 isInfoValid = true; // Exit the confirmation loop
@@ -231,7 +232,7 @@ internal class RegisterUser
                 while (true)
                 {
                     string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionMenu.Show(["first name", "last name", "email", "password", "phone number"], banner))
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner))
                     {
                         case "first name":
                             Console.Clear();

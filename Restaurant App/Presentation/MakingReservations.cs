@@ -1,5 +1,5 @@
 using System;
-using Logic;
+using Project;
 
 namespace Presentation
 {
@@ -8,9 +8,9 @@ namespace Presentation
         static private ReservationLogic reservationLogic = new();
         static private ReservationMenuLogic reservationMenuLogic = new();
         static private OrderLogic orderLogic = new();
-        private static CalendarLogic calendarLogic = new CalendarLogic();
+        //private static CalendarLogic calendarLogic = new CalendarLogic();
 
-    public static void MakingReservation(AccountModel acc, DateTime date)
+    public static void MakingReservation(UserModel acc, DateTime date)
     {   
         //Ask the user for the reservation amount
         Console.WriteLine("Please enter the number of guests between 1 and 6");
@@ -26,9 +26,9 @@ namespace Presentation
             isDigit = reservationAmount.All(char.IsDigit);
         }
 
-        Int64 reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.UserID);
+        int? reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.ID);
         OrderLogic orderLogic = new OrderLogic();
-        List<string> categories = new List<string> { "Appetizers", "MainDishes", "Dessert", "Alcoholic Beverages" };
+        List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
         List<ProductModel> allOrders = new List<ProductModel>();
         
         Console.WriteLine("This month's theme is:");
@@ -49,10 +49,10 @@ namespace Presentation
             bool ordering = true;
             int geustNumber = i + 1;
             
-            for (int z = 0; z < categories.Count; z++)
+            for (int z = 0; z < categories.Count(); z++)
             {
                 // Product navigation within the selected category
-                List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]);
+                IEnumerable<ProductModel> products = Access.Products.GetAllBy<string>("Course", categories[z]);
                 int productIndex = 0;
                 bool choosingProduct = true;
 
@@ -63,17 +63,17 @@ namespace Presentation
                     Console.WriteLine($"Guest {geustNumber} Choose a product:");
                     Console.WriteLine($"Selected Category: {categories[z]}");
 
-                    for (int k = 0; k < products.Count; k++)
+                    for (int k = 0; k < products.Count(); k++)
                     {
                         if (k == productIndex)
                         {
                             Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine($"> {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}"); // Highlight selected item with price
+                            Console.WriteLine($"> {products.ElementAt(k).Name}({products.ElementAt(k).Course}) - €{products.ElementAt(k).Price:F2}"); // Highlight selected item with price
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"  {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}");
+                            Console.WriteLine($"  {products.ElementAt(k).Name}({products.ElementAt(k).Course}) - €{products.ElementAt(k).Price:F2}");
                         }
                     }
                     
@@ -93,13 +93,13 @@ namespace Presentation
                             if (productIndex > 0) productIndex--; // Move up
                             break;
                         case ConsoleKey.DownArrow:
-                            if (productIndex < products.Count - 1) productIndex++; // Move down
+                            if (productIndex < products.Count() - 1) productIndex++; // Move down
                             break;
                         case ConsoleKey.Enter:
                             choosingProduct = false; // Product selected
-                            Console.WriteLine($"You selected {products[productIndex].ProductName} for ${products[productIndex].Price:F2}");
-                            guestOrder.Add(products[productIndex]); // Add product to guest's order
-                            orderLogic.SaveOrder(reservationId, products[productIndex].ProductId); // Save order to "database"
+                            Console.WriteLine($"You selected {products.ElementAt(productIndex).Name} for ${products.ElementAt(productIndex).Price:F2}");
+                            guestOrder.Add(products.ElementAt(productIndex)); // Add product to guest's order
+                            orderLogic.SaveOrder(reservationId, products.ElementAt(productIndex).ID); // Save order to "database"
                             ordering = false;
                             break;
                         case ConsoleKey.Escape:
@@ -143,15 +143,15 @@ namespace Presentation
     }
 
 
-    public static void PrintReceipt(List<ProductModel> guestOrder, Int64 reservationId)
+    public static void PrintReceipt(List<ProductModel> guestOrder, int? reservationId)
         {
             Console.Clear();
             Console.WriteLine("===========Receipt===========");
-            decimal totalAmount = 0;
+            float? totalAmount = 0;
 
             foreach (var product in guestOrder)
             {
-                Console.WriteLine($"{product.ProductName,-20} €{product.Price:F2}");
+                Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
                 totalAmount += product.Price;
             }
 
@@ -161,12 +161,12 @@ namespace Presentation
             Console.WriteLine("============================");
         }
 
-    public static void UserOverViewReservation(AccountModel acc)
+    public static void UserOverViewReservation(UserModel acc)
     {
         int reservationIndex = 0;
         bool inResMenu = true;
-        List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
-        if (userReservations == null || userReservations.Count == 0)
+        IEnumerable<ReservationModel> userReservations = reservationLogic.GetUserReservations(Convert.ToInt32(acc.ID)); 
+        if (userReservations == null || userReservations.Count() == 0)
         {
             Console.WriteLine("You have no reservations.");
             Console.WriteLine("Choose a reservations to cancel it.");
@@ -177,18 +177,18 @@ namespace Presentation
         {
             Console.Clear();
             Console.WriteLine($"Here are your Reservations {acc.FirstName}:");
-            for (int j = 0; j < userReservations.Count; j++)
+            for (int j = 0; j < userReservations.Count(); j++)
             {
-                userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
+                userReservations = reservationLogic.GetUserReservations(Convert.ToInt32(acc.ID)); 
                 if (j == reservationIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"> Reservation:{userReservations[j].Date}"); // Highlight selected item
+                    Console.WriteLine($"> Reservation:{userReservations.ElementAt(j).Date}"); // Highlight selected item
                     Console.ResetColor();
                 }
                 else
                 {
-                    Console.WriteLine($"  Reservation:{userReservations[j].Date}");
+                    Console.WriteLine($"  Reservation:{userReservations.ElementAt(j).Date}");
                 }
             }
 
@@ -199,13 +199,13 @@ namespace Presentation
                     if (reservationIndex > 0) reservationIndex--; // Move up
                     break;
                 case ConsoleKey.DownArrow:
-                    if (reservationIndex < userReservations.Count - 1) reservationIndex++; // Move down
+                    if (reservationIndex < userReservations.Count() - 1) reservationIndex++; // Move down
                     break;
                 case ConsoleKey.Enter:
                     // Process the selected reservation
                     Console.Clear();
-                    Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
-                    DeleteReservation(Convert.ToInt32(userReservations[reservationIndex].ID));
+                    Console.WriteLine($"You selected Reservation on: {userReservations.ElementAt(reservationIndex).Date}");
+                    DeleteReservation(Convert.ToInt32(userReservations.ElementAt(reservationIndex).ID));
                     Console.ReadKey();
                     Console.WriteLine("Press any key to return to the reservation over view menu or press escape to return to the reservation menu...");
                     var key2 = Console.ReadKey();
@@ -277,7 +277,7 @@ namespace Presentation
         Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
     }
 
-    public static void CalendarNavigation(AccountModel acc)
+    public static void CalendarNavigation(UserModel acc)
     {
         DateTime currentDate = DateTime.Now;
         int selectedDay = currentDate.Day;
@@ -332,17 +332,17 @@ namespace Presentation
         }
     }
 
-    public static void ShowAvailableTables(DateTime selectedDate)
-    {
-        var availableTables = calendarLogic.GetAvailableTables(selectedDate);
-        Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
-        foreach (var table in availableTables)
-        {
-            Console.WriteLine($" - {table}");
-        }
-        Console.WriteLine("\nPress any key to return to the calendar...");
-        Console.ReadKey();
-    }
+    //public static void ShowAvailableTables(DateTime selectedDate)
+    //{
+    //    var availableTables = calendarLogic.GetAvailableTables(selectedDate);
+    //    Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
+    //    foreach (var table in availableTables)
+    //    {
+    //        Console.WriteLine($" - {table}");
+    //    }
+    //    Console.WriteLine("\nPress any key to return to the calendar...");
+    //    Console.ReadKey();
+    //}
 }
 }
 

@@ -1,14 +1,16 @@
+using Project;
+
 static class ProductView
 {
     // Display all products
     public static void DisplayAllProducts()
     {
-        List<ProductModel> products = ProductManager.GetAllProducts();
-        if (products.Count > 0)
+        IEnumerable<ProductModel> products = ProductManager.GetAllProducts();
+        if (products.Count() > 0)
         {
             foreach (var product in products)
             {
-                Console.WriteLine($"- Product: {product.ProductName}, quantity: {product.Quantity}");
+                Console.WriteLine($"- Product: {product.Name}");
             }
         }
         else
