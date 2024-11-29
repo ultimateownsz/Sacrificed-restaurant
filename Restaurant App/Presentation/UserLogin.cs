@@ -2,7 +2,7 @@ using System;
 using Project;
 static class UserLogin
 {
-    private static AccountsLogic accountsLogic = new AccountsLogic();
+    private static UserLogic userLogic = new UserLogic();
 
     private static string? request_email()
     {
@@ -35,7 +35,7 @@ static class UserLogin
         string? email = request_email();
         string? password = request_password(email);
 
-        UserModel? acc = AccountsLogic.CheckLogin(email, password);
+        UserModel? acc = UserLogic.CheckLogin(email, password);
         if (acc != null)
         {
             //Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);

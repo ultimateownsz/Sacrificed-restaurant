@@ -1,5 +1,4 @@
 ﻿using Project;
-using Project.Presentation;
 
 class Program
 {
