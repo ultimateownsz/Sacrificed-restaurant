@@ -59,5 +59,4 @@ static class ProductManager
         return Access.Products.GetAllBy<string>("Course", category);
     }
 
-
 }
