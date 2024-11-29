@@ -65,5 +65,5 @@ static class Menu
     {
         Console.Clear();
         Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
-    }
+    } 
 }
