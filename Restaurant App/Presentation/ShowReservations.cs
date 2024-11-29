@@ -36,7 +36,7 @@ public static class ShowReservations
             
             }).ToList();
 
-            int selectedIndex = 0;
+            int selectedIndex = 0; 
 
             while (true)
             {
