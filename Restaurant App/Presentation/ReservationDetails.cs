@@ -35,5 +35,5 @@ public static class ReservationDetails
         // Format the date from ddMMyyyy (e.g., 12122024) to dd/MM/yyyy
         string dateString = date.ToString("D8"); // Ensure it's 8 digits long
         return $"{dateString.Substring(0, 2)}/{dateString.Substring(2, 2)}/{dateString.Substring(4)}";
-    }
+    } 
 }
