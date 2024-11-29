@@ -99,4 +99,10 @@ public class DataAccess<T1> where T1 : IModel
         return _db.Query<T1>(query, new { value = value ?? default });
     }
 
+    public T1? Trace<T2>(T2 value)
+    {
+        // coming soon...
+        return default;
+    }
+
 }
