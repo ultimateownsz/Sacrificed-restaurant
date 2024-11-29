@@ -25,7 +25,7 @@ namespace Presentation
             reservationAmount = Console.ReadLine();
             isDigit = reservationAmount.All(char.IsDigit);
         }
-
+         
         int reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.ID);
         OrderLogic orderLogic = new OrderLogic();
         List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
