@@ -15,6 +15,6 @@ public class ProductModel: IModel
         Name = name;
         Price = price;
         Course = course;
-        ThemeID = themeID;
+        ThemeID = themeID; 
     }
 }
