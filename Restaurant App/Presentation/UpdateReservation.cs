@@ -21,7 +21,7 @@ public static class UpdateReservation
         Console.WriteLine("\nReservation updated successfully.");
         Console.WriteLine("Press any key to return.");
         Console.ReadKey();
-    }
+    } 
 
     public static void DisplayReservationDetails(ReservationModel reservation)
     {
