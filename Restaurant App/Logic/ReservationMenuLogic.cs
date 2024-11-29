@@ -9,7 +9,6 @@ public class ReservationMenuLogic
     public ReservationMenuLogic()
     {
         // Could do something here
-
     }
 
     public string GetCurrentMenu()
