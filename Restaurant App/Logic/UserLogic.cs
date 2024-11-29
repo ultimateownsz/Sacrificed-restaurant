@@ -11,7 +11,6 @@ public class UserLogic
 
     public static UserModel? GetById(int id)
     {
-        // return AccountsAccess.GetById(id); (poop)
         return Access.Users.GetBy<int>("ID", id);
     }
 
