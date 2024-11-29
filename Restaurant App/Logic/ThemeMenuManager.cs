@@ -93,7 +93,7 @@ static class ThemeMenuManager
     }
 
     // return falsew hether the failure was due to a duplicate theme name.
-    public static bool AddOrUpdateTheme(ThemeModel theme, int scheduledYear, int scheduledMonth, out bool isDuplicate)
+    public static bool AddOrUpdateTheme(ThemeModel theme, int scheduledMonth, out bool isDuplicate)
     {
         if (theme == null) throw new ArgumentNullException(nameof(theme));
 

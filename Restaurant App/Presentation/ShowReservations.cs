@@ -18,8 +18,7 @@ public static class ShowReservations
             }
 
             // Convert date to the required format (ddMMyyyy as integer)
-            int formattedDate = int.Parse(parsedDate.ToString("ddMMyyyy"));
-            var reservations = Access.Reservations.GetAllBy<int>("Date", formattedDate);
+            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
 
             if (reservations.Count() == 0)
             {

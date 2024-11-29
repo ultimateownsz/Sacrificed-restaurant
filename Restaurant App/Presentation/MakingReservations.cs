@@ -26,7 +26,7 @@ namespace Presentation
             isDigit = reservationAmount.All(char.IsDigit);
         }
 
-        int? reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.ID);
+        int reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.ID);
         OrderLogic orderLogic = new OrderLogic();
         List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
         List<ProductModel> allOrders = new List<ProductModel>();
@@ -143,7 +143,7 @@ namespace Presentation
     }
 
 
-    public static void PrintReceipt(List<ProductModel> guestOrder, int? reservationId)
+    public static void PrintReceipt(List<ProductModel> guestOrder, int reservationId)
         {
             Console.Clear();
             Console.WriteLine("===========Receipt===========");
@@ -205,8 +205,8 @@ namespace Presentation
                     // Process the selected reservation
                     Console.Clear();
                     Console.WriteLine($"You selected Reservation on: {userReservations.ElementAt(reservationIndex).Date}");
-                    DeleteReservation(Convert.ToInt32(userReservations.ElementAt(reservationIndex).ID));
-                    Console.ReadKey();
+                    // Why in the flying fuck would "view" = "delete?"
+                    //DeleteReservation(Convert.ToInt32(userReservations.ElementAt(reservationIndex).ID));
                     Console.WriteLine("Press any key to return to the reservation over view menu or press escape to return to the reservation menu...");
                     var key2 = Console.ReadKey();
                     if(key2.Key == ConsoleKey.Escape)
