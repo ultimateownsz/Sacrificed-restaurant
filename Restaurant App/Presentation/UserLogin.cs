@@ -2,7 +2,7 @@ using System;
 using Project;
 static class UserLogin
 {
-    private static UserLogic userLogic = new UserLogic();
+    private static UserLogic userLogic = new UserLogic(); 
 
     private static string? request_email()
     {
