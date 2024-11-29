@@ -12,5 +12,5 @@ public class RequestModel: IModel
         ID = id;
         ProductID = productID;
         ReservationID = reservationID;
-    }
+    } 
 }
