@@ -25,6 +25,6 @@ public class OrderLogic
 
     public int? GenerateNewOrderID()
     {
-        return null; 
+        return null;
     }
 }
