@@ -9,7 +9,7 @@ public class ReservationLogic
 
 
     //This function is called throught the presentation layer (MakingReservation.cs)
-    //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
+    //this function will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
     public int SaveReservation(DateTime date, string reservationAmount, int? userId)
     {
