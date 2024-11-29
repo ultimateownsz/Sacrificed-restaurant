@@ -14,5 +14,5 @@ public class ReservationModel: IModel
         Date = date;
         Place = place;
         UserID = userID;
-    }
+    } 
 }
