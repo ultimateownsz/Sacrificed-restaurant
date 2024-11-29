@@ -26,9 +26,8 @@ public static class UpdateReservation
     public static void DisplayReservationDetails(ReservationModel reservation)
     {
         // Format date and display reservation details
-        DateTime formattedDate = DateTime.ParseExact(reservation.Date.ToString(), "ddMMyyyy", null);
         Console.WriteLine($"Reservation ID: {reservation.ID}");
-        Console.WriteLine($"Date: {formattedDate:dd/MM/yyyy}");
+        Console.WriteLine($"Date: {reservation.Date}");
         Console.WriteLine($"Table number: {reservation.Place}");
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
