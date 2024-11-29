@@ -21,5 +21,5 @@ public class UserModel: IModel
         LastName = lastName;
         Password = password;
         FirstName = firstName;
-    }
+    } 
 }
