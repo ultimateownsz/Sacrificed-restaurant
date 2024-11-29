@@ -15,7 +15,7 @@ internal class SelectionLogic
             i++;
         }
 
-        return new(default(T1), 0);
+        return new(default, 0);
     }
 
     static protected Index Next(int size, int current, bool reverse = false)
