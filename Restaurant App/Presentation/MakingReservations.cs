@@ -29,7 +29,7 @@ namespace Presentation
 		// better..
 		List<string> options = new() { "1", "2", "3", "4", "5", "6" };
 		string banner = "How many guests will be coming?\n\n";
-        int reservationAmount = SelectionPresent.Show(options, banner, true).index + 1;
+        int reservationAmount = options.Count() - SelectionPresent.Show(options, banner, true).index;
 		 
 		int reservationId = reservationLogic.SaveReservation(date, acc.ID);
 		OrderLogic orderLogic = new OrderLogic();
