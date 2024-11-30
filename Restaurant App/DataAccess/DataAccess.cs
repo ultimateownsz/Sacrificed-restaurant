@@ -87,12 +87,6 @@ public class DataAccess<T1> where T1 : IModel
     }
 
     // high-level operations
-    public IEnumerable<T1?> Select<T2>(string? column)
-    {
-        string query = $"SELECT {column} FROM {_table}";
-        return _db.Query<T1>(query);
-    }
-
     public T1? GetBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";

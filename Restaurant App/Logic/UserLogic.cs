@@ -40,6 +40,12 @@ public class UserLogic
 
     public static bool IsEmailValid(string email)
     {
+        foreach (var mail in Access.Users.Read().Select(o => o.Email))
+        {
+            if (mail == email)
+                return false;
+        }
+         
         return email.Contains("@") && email.Contains(".com");
     }
 

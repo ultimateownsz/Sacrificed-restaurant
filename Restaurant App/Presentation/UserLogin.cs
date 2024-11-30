@@ -38,8 +38,6 @@ static class UserLogin
         UserModel? acc = UserLogic.CheckLogin(email?.ToLower(), password);
         if (acc != null)
         {
-            //Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);
-            //Console.WriteLine("Your email is: " + acc.EmailAddress);
             return acc;
         }
         else
