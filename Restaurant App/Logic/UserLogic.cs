@@ -14,7 +14,7 @@ public class UserLogic
         return Access.Users.GetBy<int>("ID", id);
     }
 
-    public static UserModel? CheckLogin(string email, string password)
+    public static UserModel? CheckLogin(string? email, string? password)
     {
         UserModel acc = Access.Users.GetBy<string>("Email", email);
 
