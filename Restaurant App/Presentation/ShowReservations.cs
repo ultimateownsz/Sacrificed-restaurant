@@ -81,7 +81,6 @@ public static class ShowReservations
                         break;
 
                     case ConsoleKey.Escape:
-                        AdminMenu.AdminStart(); // Return to the Admin Menu
                         return;
                 }
             }
@@ -90,10 +89,6 @@ public static class ShowReservations
 
     private static void ShowReservationOptions(ReservationModel reservation)
     {
-        Console.Clear();
-        Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
-        Console.WriteLine("Choose an action:");
-
         // List of possible actions
         string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
 
@@ -101,6 +96,10 @@ public static class ShowReservations
 
         while (true)
         {
+            Console.Clear(); // Refresh the options display
+            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
+            Console.WriteLine("Choose an action:");
+
             // Display actions with arrow key navigation and color highlighting
             for (int i = 0; i < actions.Length; i++)
             {
@@ -152,6 +151,7 @@ public static class ShowReservations
                         case 2: // Delete Reservation
                             // Call DeleteReservation.Show() with the selected reservation
                             DeleteReservation.Show(reservation);
+                            Console.ReadKey();
                             break;
 
                         case 3: // Cancel
@@ -163,9 +163,6 @@ public static class ShowReservations
                     return; // Exit the options and return to reservation list
             }
 
-            Console.Clear(); // Refresh the options display
-            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
-            Console.WriteLine("Choose an action:");
         }
     }
 

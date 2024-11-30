@@ -8,7 +8,8 @@ public static class DeleteReservation
     {
         // Confirm with the user if they are sure about deleting the reservation
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(reservation.ID)}? (Y/N)");
+        var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
+        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(account?.ID)}? (Y/N)");
 
         string confirm = Console.ReadLine().ToLower();
 
@@ -25,10 +26,6 @@ public static class DeleteReservation
 
         // Wait for user input before going back to the reservation list
         Console.WriteLine("Press any key to return to the reservation list.");
-        Console.ReadKey();
-
-        // Go back to ShowReservations after the action is completed
-        ShowReservations.Show();
     }
 
     // Helper method to get user full name based on UserID
