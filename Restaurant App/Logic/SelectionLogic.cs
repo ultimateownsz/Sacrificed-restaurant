@@ -28,7 +28,7 @@ internal class SelectionLogic
         return current;
     }
 
-    static protected Dictionary<string, bool> ToSelectable(List<string> options)
+    static protected Dictionary<string, bool> ToSelectable(List<string> options, bool reversed)
     {
         // transform list to dictionary with booleans
         // where the booleans are what's selected
@@ -37,7 +37,7 @@ internal class SelectionLogic
         {
             selection.Add(option, false);
         }
-        selection[options[0]] = true;
+        selection[options[(reversed) ? options.Count - 1 : 0]] = true;
 
         return selection;
     }

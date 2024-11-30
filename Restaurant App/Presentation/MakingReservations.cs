@@ -11,22 +11,27 @@ namespace Presentation
 		//private static CalendarLogic calendarLogic = new CalendarLogic();
 
 	public static void MakingReservation(UserModel acc, DateTime date)
-	{   
-		//Ask the user for the reservation amount
-		Console.WriteLine("Please enter the number of guests between 1 and 6");
-		string reservationAmount = Console.ReadLine();
-		reservationAmount = reservationAmount.Replace(" ", "");
-		bool isDigit = reservationAmount.All(char.IsDigit);
-		while(string.IsNullOrEmpty(reservationAmount) || !isDigit || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
-		{
-			Console.Clear();
-			Console.WriteLine("Invalid input");
-			Console.WriteLine("Please enter a number between 1 and 6");
-			reservationAmount = Console.ReadLine();
-			isDigit = reservationAmount.All(char.IsDigit);
-		}
+	{
+			//Ask the user for the reservation amount
+			//Console.WriteLine("Please enter the number of guests between 1 and 6");
+			//string reservationAmount = Console.ReadLine();
+			//reservationAmount = reservationAmount.Replace(" ", "");
+			//bool isDigit = reservationAmount.All(char.IsDigit);
+			//while(string.IsNullOrEmpty(reservationAmount) || !isDigit || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
+			//{
+			//	Console.Clear();
+			//	Console.WriteLine("Invalid input");
+			//	Console.WriteLine("Please enter a number between 1 and 6");
+			//	reservationAmount = Console.ReadLine();
+			//	isDigit = reservationAmount.All(char.IsDigit);
+			//}
+
+		// better..
+		List<string> options = new() { "1", "2", "3", "4", "5", "6" };
+		string banner = "How many guests will be coming?\n\n";
+        int reservationAmount = SelectionPresent.Show(options, banner, true).index + 1;
 		 
-		int reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.ID);
+		int reservationId = reservationLogic.SaveReservation(date, acc.ID);
 		OrderLogic orderLogic = new OrderLogic();
 		List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
 		List<ProductModel> allOrders = new List<ProductModel>();
