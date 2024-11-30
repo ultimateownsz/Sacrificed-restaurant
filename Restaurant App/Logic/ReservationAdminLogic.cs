@@ -1,52 +1,44 @@
+using Project;
+
 public static class ReservationAdminLogic
 {
-    public static List<ReservationModel> GetAllReservations()
+    public static IEnumerable<ReservationModel> GetAllReservations()
     {
-        return ReservationAccess.GetAllReservations();
+        return Access.Reservations.Read();
     }
 
-    public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
+    //public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
+    //{
+    //    return ReservationAccess.GetReservationsByMonthYear(month, year);
+    //}
+
+    //public static string GetThemeByMenuID(int menuID)
+    //{
+    //    return ReservationAccess.GetThemeByMenuID(menuID);
+    //}
+
+    public static ReservationModel? GetReservationByID(int reservationID)
     {
-        return ReservationAccess.GetReservationsByMonthYear(month, year);
+        return Access.Reservations.GetBy<int>("ID", reservationID);
     }
 
-    public static string GetThemeByMenuID(int menuID)
+    public static IEnumerable<ReservationModel?> GetReservationsByDate(int date)
     {
-        return ReservationAccess.GetThemeByMenuID(menuID);
+        return Access.Reservations.GetAllBy<int>("Date", date);
     }
 
-    public static ReservationModel GetReservationByID(int reservationID)
+    public static IEnumerable<ReservationModel?> GetReservationsByUserID(int userID)
     {
-        return ReservationAccess.GetByReservationID(reservationID);
+        return Access.Reservations.GetAllBy("UserID", userID);
     }
 
-    public static List<ReservationModel> GetReservationsByDate(int date)
-    {
-        return ReservationAccess.GetReservationsByDate(date);
-    }
+    //public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
+    //{
+    //    return ReservationAccess.GetMenuItemsByReservationID(reservationID);
+    //} 
 
-    public static List<ReservationModel> GetReservationsByUserID(int userID)
+    public static IEnumerable<ReservationModel?> GetReservationsByTableID(int tableID)
     {
-        return ReservationAccess.GetByUserID(userID);
-    }
-
-    public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
-    {
-        return ReservationAccess.GetMenuItemsByReservationID(reservationID);
-    }
-
-    public static void UpdateReservation(ReservationModel reservation)
-    {
-        ReservationAccess.Update(reservation);
-    }
-
-    public static void DeleteReservation(int reservationID)
-    {
-        ReservationAccess.Delete(reservationID);
-    }
-
-    public static List<ReservationModel> GetReservationsByTableID(int tableID)
-    {
-        return ReservationAccess.GetByTableID(tableID: tableID);
+        return Access.Reservations.GetAllBy<int>("Place", tableID);
     }
 }

@@ -1,10 +1,10 @@
-﻿using Project.Presentation;
+﻿using Project;
 
 class Program
 {
     static void Main(string[] args)
     {
         Menu.Start();
-        Menu.End();
+        Console.Clear();
     }
 }

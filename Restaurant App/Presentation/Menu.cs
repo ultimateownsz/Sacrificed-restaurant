@@ -2,6 +2,7 @@ using Presentation;
 using Project.Logic;
 using Project.Presentation;
 
+namespace Project;
 static class Menu
 {
     static public void Start()
@@ -10,7 +11,7 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionMenu.Show(["login", "register\n", "exit"], "MAIN MENU\n\n"))
+            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
             {
                 case "login":
 
@@ -36,12 +37,12 @@ static class Menu
         }
     }
 
-    public static void ShowUserMenu(AccountModel acc)
+    public static void ShowUserMenu(UserModel acc)
     {
         while (true)
         {
             Console.Clear();
-            switch (SelectionMenu.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n"))
+            switch (SelectionPresent.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n").text)
             {
                 case "reserve":
                     MakingReservations.CalendarNavigation(acc);
@@ -58,11 +59,5 @@ static class Menu
                     break;
             }
         }
-    }
-
-    public static void End()
-    {
-        Console.Clear();
-        Console.WriteLine("Thank you for using the Reservation System. Goodbye!");
     }
 }

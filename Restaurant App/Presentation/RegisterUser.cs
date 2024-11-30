@@ -25,7 +25,7 @@ internal class RegisterUser
         {
             Console.Write("email: ");
             email = Console.ReadLine();
-            if (AccountsLogic.IsEmailValid(email))
+            if (UserLogic.IsEmailValid(email))
                 break;
             Console.WriteLine("Invalid email address, try again!");
         }
@@ -35,7 +35,7 @@ internal class RegisterUser
         {
             Console.Write("password (8-16 characters): ");
             password = Console.ReadLine();
-            if (AccountsLogic.IsPasswordValid(password))
+            if (UserLogic.IsPasswordValid(password))
                 break;
             Console.WriteLine("Invalid password, try again!");
         }
@@ -45,7 +45,7 @@ internal class RegisterUser
         {
             Console.Write("phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
-            if (AccountsLogic.IsPhoneNumberValid(phoneNumber))
+            if (UserLogic.IsPhoneNumberValid(phoneNumber))
                 break;
             Console.WriteLine("Invalid phone number, try again!");
         }
@@ -69,8 +69,9 @@ internal class RegisterUser
             if (choice == "Y")
             {
                 // Create account and write it to storage
-                var account = AccountsLogic.UserAccount(firstName, lastName, email, password, phoneNumber);
-                AccountsAccess.Write(account);
+                var account = UserLogic.UserAccount(firstName, lastName, email, password, phoneNumber);
+                
+                Access.Users.Write(account);
                 Console.WriteLine("\nYour account is successfully registered!");
                 Thread.Sleep(1000); // so you can read the messages
                 isInfoValid = true; // Exit the confirmation loop
@@ -81,7 +82,7 @@ internal class RegisterUser
                 while (true)
                 {
                     string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionMenu.Show(["first name", "last name", "email", "password", "phone number"], banner))
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
                     {
                         case "first name":
                             Console.Clear();
@@ -101,7 +102,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("email address: ");
                                 string newEmail = Console.ReadLine();
-                                if (AccountsLogic.IsEmailValid(newEmail))
+                                if (UserLogic.IsEmailValid(newEmail))
                                 {
                                     email = newEmail;
                                     break;
@@ -116,7 +117,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("password (8-16 characters): ");
                                 string newPassword = Console.ReadLine();
-                                if (AccountsLogic.IsPasswordValid(newPassword))
+                                if (UserLogic.IsPasswordValid(newPassword))
                                 {
                                     password = newPassword;
                                     break;
@@ -131,7 +132,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("phone number (8 numbers): ");
                                 string newPhoneNumber = Console.ReadLine();
-                                if (AccountsLogic.IsPhoneNumberValid(newPhoneNumber))
+                                if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
                                 {
                                     phoneNumber = newPhoneNumber;
                                     break;
@@ -176,7 +177,7 @@ internal class RegisterUser
         {
             Console.Write("email: ");
             email = Console.ReadLine();
-            if (AccountsLogic.IsEmailValid(email))
+            if (UserLogic.IsEmailValid(email))
                 break;
             Console.WriteLine("Invalid email address, try again!");
         }
@@ -186,7 +187,7 @@ internal class RegisterUser
         {
             Console.WriteLine("password (8-16 characters): ");
             password = Console.ReadLine();
-            if (AccountsLogic.IsPasswordValid(password))
+            if (UserLogic.IsPasswordValid(password))
                 break;
             Console.WriteLine("Invalid password, try again!");
         }
@@ -196,7 +197,7 @@ internal class RegisterUser
         {
             Console.WriteLine("phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
-            if (AccountsLogic.IsPhoneNumberValid(phoneNumber))
+            if (UserLogic.IsPhoneNumberValid(phoneNumber))
                 break;
             Console.WriteLine("Invalid phone number, try again!");
         }
@@ -220,8 +221,8 @@ internal class RegisterUser
             if (choice == "Y")
             {
                 // Create account and write it to storage
-                var account = AccountsLogic.AdminAccount(firstName, lastName, email, password, phoneNumber);
-                AccountsAccess.Write(account);
+                var account = UserLogic.AdminAccount(firstName, lastName, email, password, phoneNumber);
+                Access.Users.Write(account);
                 Console.WriteLine("Your account is successfully registered!");
                 Thread.Sleep(1000);
                 isInfoValid = true; // Exit the confirmation loop
@@ -231,7 +232,7 @@ internal class RegisterUser
                 while (true)
                 {
                     string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionMenu.Show(["first name", "last name", "email", "password", "phone number"], banner))
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner))
                     {
                         case "first name":
                             Console.Clear();
@@ -251,7 +252,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("email address: ");
                                 string newEmail = Console.ReadLine();
-                                if (AccountsLogic.IsEmailValid(newEmail))
+                                if (UserLogic.IsEmailValid(newEmail))
                                 {
                                     email = newEmail;
                                     break;
@@ -266,7 +267,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("password (8-16 characters): ");
                                 string newPassword = Console.ReadLine();
-                                if (AccountsLogic.IsPasswordValid(newPassword))
+                                if (UserLogic.IsPasswordValid(newPassword))
                                 {
                                     password = newPassword;
                                     break;
@@ -281,7 +282,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("phone number (8 numbers): ");
                                 string newPhoneNumber = Console.ReadLine();
-                                if (AccountsLogic.IsPhoneNumberValid(newPhoneNumber))
+                                if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
                                 {
                                     phoneNumber = newPhoneNumber;
                                     break;

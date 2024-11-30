@@ -1,8 +1,8 @@
 using System;
-
+using Project;
 static class UserLogin
 {
-    private static AccountsLogic accountsLogic = new AccountsLogic();
+    private static UserLogic userLogic = new UserLogic(); 
 
     private static string? request_email()
     {
@@ -29,13 +29,13 @@ static class UserLogin
         return Console.ReadLine();
     }
 
-    public static AccountModel Start()
+    public static UserModel Start()
     {
 
         string? email = request_email();
         string? password = request_password(email);
 
-        AccountModel? acc = AccountsLogic.CheckLogin(email, password);
+        UserModel? acc = UserLogic.CheckLogin(email, password);
         if (acc != null)
         {
             //Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);

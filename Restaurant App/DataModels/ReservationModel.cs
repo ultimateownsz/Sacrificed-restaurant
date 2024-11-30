@@ -1,22 +1,18 @@
-public class ReservationModel
+﻿namespace Project;
+public class ReservationModel: IModel
 {
-    public Int64 ID { get; set; }
-    public Int64 Date { get; set; }
-    public Int64 TableChoice { get; set; }
-    public Int64 ReservationAmount { get; set; }
-    public Int64 UserID { get; set; }
-    public Int64 TableID { get; set; }
+    public int? ID { get; set; }
+    public DateTime? Date { get; set; }
+    public int? UserID { get; set; }
+    public int? Place { get; set; }
 
     public ReservationModel() { }
 
-    public ReservationModel(Int64 id, Int64 date, Int64 tableChoice, Int64 reservationAmount, Int64 userId, Int64 tableId)
+    public ReservationModel(DateTime? date, int? userID, int? place, int? id = null)
     {
         ID = id;
         Date = date;
-        TableChoice = tableChoice;
-        ReservationAmount = reservationAmount;
-        UserID = userId;
-        TableID = tableId;
-    }
-
+        Place = place;
+        UserID = userID;
+    } 
 }

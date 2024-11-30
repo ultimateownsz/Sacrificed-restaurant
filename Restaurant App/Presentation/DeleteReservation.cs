@@ -1,3 +1,4 @@
+using Project;
 using Project.Presentation;
 
 public static class DeleteReservation
@@ -7,17 +8,17 @@ public static class DeleteReservation
     {
         // Confirm with the user if they are sure about deleting the reservation
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(reservation.UserID)}? (Y/N)");
+        var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
+        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(account?.ID)}? (Y/N)");
 
         string confirm = Console.ReadLine().ToLower();
 
         if (confirm == "y")
         {
             // Attempt to delete the specific reservation
-            ReservationAdminLogic.DeleteReservation((int)reservation.ID);  // Cast to int for method compatibility
-
+            Access.Reservations.Delete(reservation.ID);
             Console.WriteLine("Reservation deleted successfully.");
-        }
+        } 
         else
         {
             Console.WriteLine("Reservation deletion cancelled.");
@@ -25,16 +26,12 @@ public static class DeleteReservation
 
         // Wait for user input before going back to the reservation list
         Console.WriteLine("Press any key to return to the reservation list.");
-        Console.ReadKey();
-
-        // Go back to ShowReservations after the action is completed
-        ShowReservations.Show();
     }
 
     // Helper method to get user full name based on UserID
-    private static string GetUserFullName(long userID)
+    private static string GetUserFullName(int? userID)
     {
-        var account = AccountsAccess.GetById((int)userID); // Fetch the account details
+        var account = Access.Users.GetBy<int?>("ID", userID);
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";

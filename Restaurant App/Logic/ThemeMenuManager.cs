@@ -1,59 +1,56 @@
 // This class handles all the logic for the themes, adding, deleting, and eventually activating themes
 
+using Project;
+
 static class ThemeMenuManager
 {
-    public static Dictionary<(int year, int month), ThemeMenuModel> ThemeSchedule = new();
+    public static Dictionary<int, ThemeModel> ThemeSchedule = new();
     
-    public static List<(int year, int month, string themeName)> GetMonthlyDisplay()
+    public static List<(int month, string themeName)> GetMonthlyDisplay()
     {
-        var displayData = new List<(int year, int month, string themeName)>();
-
-        int currentYear = DateTime.Now.Year;
+        var displayData = new List<(int month, string themeName)>();
         int startMonth = DateTime.Now.Month;
 
         for (int i = 0; i < 12; i++)
         {
-            var key = (currentYear, startMonth);
+            var key = startMonth;
             if (!ThemeSchedule.TryGetValue(key, out var theme))
             {
-                theme = new ThemeMenuModel
+                theme = new ThemeModel()
                 {
-                    ScheduledYear = currentYear,
-                    ScheduledMonth = startMonth,
-                    ThemeName = "Not scheduled"
+                    Month = startMonth,
+                    Name = "Not scheduled"
                 };
             }
             
-            displayData.Add((theme.ScheduledYear, theme.ScheduledMonth ?? 0, theme.ThemeName));
+            displayData.Add((theme.Month ?? 0, theme.Name)); 
 
             startMonth++;
             if (startMonth > 12)
             {
                 startMonth = 1;
-                currentYear++;
             }
         }
         return displayData;
     }
 
-    public static void UpdateThemeSchedule(int startYear, int startMonth, List<ThemeMenuModel> themes)
+    public static void UpdateThemeSchedule(int startYear, int startMonth, List<ThemeModel> themes)
     {
         foreach (var theme in themes)
         {
-            var key = (theme.ScheduledYear, theme.ScheduledMonth ?? 0);
+            var key = theme.Month ?? 0;
             ThemeSchedule[key] = theme;  // add or update
         }
 
         for (int i = 0; i < 12; i++)
         {
-            var key = (startYear, startMonth);
+            var key = startMonth;
             if (!ThemeSchedule.ContainsKey(key))
             {
-                ThemeSchedule[key] = new ThemeMenuModel
+                ThemeSchedule[key] = new ThemeModel()
                 {
-                    ScheduledYear = startYear,
-                    ScheduledMonth = startMonth,
-                    ThemeName = "Not scheduled"
+                    Month = startMonth,
+                    Name = "Not scheduled"
                 };
             }
 
@@ -66,7 +63,7 @@ static class ThemeMenuManager
         }
     }
 
-    public static ThemeMenuModel? GetThemeByYearAndMonth((int year, int month) key)
+    public static ThemeModel? GetThemeByYearAndMonth(int key)
     {
         if (ThemeSchedule.TryGetValue(key, out var theme))
         {
@@ -96,12 +93,12 @@ static class ThemeMenuManager
     }
 
     // return falsew hether the failure was due to a duplicate theme name.
-    public static bool AddOrUpdateTheme(ThemeMenuModel theme, int scheduledYear, int scheduledMonth, out bool isDuplicate)
+    public static bool AddOrUpdateTheme(ThemeModel theme, int scheduledMonth, out bool isDuplicate)
     {
         if (theme == null) throw new ArgumentNullException(nameof(theme));
 
         // check if the theme name already exists
-        if (ThemeSchedule.Values.Any(t => t.ThemeName.Equals(theme.ThemeName, StringComparison.OrdinalIgnoreCase)))
+        if (ThemeSchedule.Values.Any(t => t.Name.Equals(theme.Name, StringComparison.OrdinalIgnoreCase)))
         {
             isDuplicate = true;
             return false;  // return false due to duplicate theme
@@ -109,14 +106,14 @@ static class ThemeMenuManager
 
         isDuplicate = false;  // no duplicate found
         
-        var key = (theme.ScheduledYear, theme.ScheduledMonth ?? 0);
+        var key = (theme.Month ?? 0);
         if (ThemeSchedule.ContainsKey(key))
         {
-            if (!ThemesAccess.UpdateTheme(theme)) return false;
+            if (!Access.Themes.Update(theme)) return false;
         }
         else
         {
-            if (!ThemesAccess.Write(theme)) return false;
+            if (!Access.Themes.Write(theme)) return false;
         }
 
         ThemeSchedule[key] = theme;
@@ -129,14 +126,14 @@ static class ThemeMenuManager
         return year > currentDate.Year || (year == currentDate.Year && month >= currentDate.Month);
     }
 
-    public static bool DeleteTheme(ThemeMenuModel theme)
+    public static bool DeleteTheme(ThemeModel theme)
     {
         if (theme == null) throw new ArgumentNullException(nameof(theme));
 
-        var key = (theme.ScheduledYear, theme.ScheduledMonth ?? 0);
+        var key = theme.Month ?? 0;
         if (ThemeSchedule.Remove(key))
         {
-            ThemesAccess.DeleteTheme(theme.MenuId);
+            Access.Themes.Delete(theme.ID);
             return true;
         }
         return false;

@@ -1,28 +1,29 @@
 ﻿using Project.Presentation;
+using Project;
 
-public class AccountsLogic
+public class UserLogic
 {
-    public static AccountModel? CurrentAccount { get; private set; }
-    public AccountsLogic()
+    public static UserModel? CurrentAccount { get; private set; }
+    public UserLogic()
     {
         
     }
 
-    public static AccountModel GetById(int id)
+    public static UserModel? GetById(int id)
     {
-        return AccountsAccess.GetById(id);
+        return Access.Users.GetBy<int>("ID", id);
     }
 
-    public static AccountModel? CheckLogin(string email, string password)
+    public static UserModel? CheckLogin(string email, string password)
     {
-        AccountModel acc = AccountsAccess.GetByEmail(email);
+        UserModel acc = Access.Users.GetBy<string>("Email", email);
 
         if (acc != null && acc.Password == password)
         {
             CurrentAccount = acc;
 
             // tough to segment, badly designed.
-            if (acc.IsAdmin == 1)
+            if (acc.Admin == 1)
             {
                 Console.WriteLine("Logged in as Admin.");
             }
@@ -52,29 +53,29 @@ public class AccountsLogic
         return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
     }
 
-    public static AccountModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public static UserModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
-        return new AccountModel
+        return new UserModel
         {
             FirstName = firstName,
             LastName = lastName,
-            EmailAddress = email,
+            Email = email,
             Password = password,
-            PhoneNumber = Convert.ToInt32(phoneNumber),
-            IsAdmin = 0
+            Phone = phoneNumber,
+            Admin = 0
         };
     }
 
-    public static AccountModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
+    public static UserModel AdminAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
-        return new AccountModel
+        return new UserModel
         {
             FirstName = firstName,
             LastName = lastName,
-            EmailAddress = email,
+            Email = email,
             Password = password,
-            PhoneNumber = Convert.ToInt32(phoneNumber),
-            IsAdmin = 1
+            Phone = phoneNumber,
+            Admin = 1
         };
     }
 }

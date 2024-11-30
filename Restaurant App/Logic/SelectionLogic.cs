@@ -1,10 +1,10 @@
-﻿namespace Project.Logic;
-internal class SelectionMenuLogic
+﻿namespace Project;
+internal class SelectionLogic
 {
-    static protected Tuple<T?, int> ReverseLookup<T, T2>(Dictionary<T, T2> dict, T2 target) where T : notnull
+    static protected Tuple<T1?, int> ReverseLookup<T1, T2>(Dictionary<T1, T2> dict, T2 target) where T1 : notnull
     {
         int i = 0;
-        foreach ((T key, T2 value) in dict)
+        foreach ((T1 key, T2 value) in dict)
         {
             if (value == null)
                 continue;
@@ -15,9 +15,7 @@ internal class SelectionMenuLogic
             i++;
         }
 
-        // make the values exist,
-        // otherwise issues may arise
-        return new(default(T), 0);
+        return new(default, 0);
     }
 
     static protected Index Next(int size, int current, bool reverse = false)
@@ -30,8 +28,10 @@ internal class SelectionMenuLogic
         return current;
     }
 
-    static protected Dictionary<string, bool> ConstructSelection(List<string> options)
+    static protected Dictionary<string, bool> ToSelectable(List<string> options)
     {
+        // transform list to dictionary with booleans
+        // where the booleans are what's selected
         Dictionary<string, bool> selection = new();
         foreach (var option in options)
         {

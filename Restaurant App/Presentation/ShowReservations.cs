@@ -1,3 +1,5 @@
+using Project;
+
 public static class ShowReservations
 {
     public static void Show()
@@ -16,11 +18,9 @@ public static class ShowReservations
             }
 
             // Convert date to the required format (ddMMyyyy as integer)
-            int formattedDate = int.Parse(parsedDate.ToString("ddMMyyyy"));
+            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
 
-            var reservations = ReservationAccess.GetReservationsByDate(formattedDate);
-
-            if (reservations.Count == 0)
+            if (reservations.Count() == 0)
             {
                 Console.WriteLine("No reservations found for this date. Press any key to try another date.");
                 Console.ReadKey();
@@ -32,10 +32,11 @@ public static class ShowReservations
             {
                 Reservation = r,
                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                TableID = r.TableID // Table choice of the reservation
+                TableID = r.Place // Table choice of the reservation
+            
             }).ToList();
 
-            int selectedIndex = 0;
+            int selectedIndex = 0; 
 
             while (true)
             {
@@ -43,7 +44,7 @@ public static class ShowReservations
                 Console.WriteLine($"Reservations for {parsedDate:dd/MM/yyyy}:");
 
                 // Display reservations with highlight for the selected one
-                for (int i = 0; i < reservationDetails.Count; i++)
+                for (int i = 0; i < reservationDetails.Count(); i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -70,7 +71,7 @@ public static class ShowReservations
                         break;
 
                     case ConsoleKey.DownArrow:
-                        if (selectedIndex < reservationDetails.Count - 1)
+                        if (selectedIndex < reservationDetails.Count() - 1)
                             selectedIndex++;
                         break;
 
@@ -80,7 +81,6 @@ public static class ShowReservations
                         break;
 
                     case ConsoleKey.Escape:
-                        AdminMenu.AdminStart(); // Return to the Admin Menu
                         return;
                 }
             }
@@ -89,10 +89,6 @@ public static class ShowReservations
 
     private static void ShowReservationOptions(ReservationModel reservation)
     {
-        Console.Clear();
-        Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.TableChoice}");
-        Console.WriteLine("Choose an action:");
-
         // List of possible actions
         string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
 
@@ -100,6 +96,10 @@ public static class ShowReservations
 
         while (true)
         {
+            Console.Clear(); // Refresh the options display
+            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
+            Console.WriteLine("Choose an action:");
+
             // Display actions with arrow key navigation and color highlighting
             for (int i = 0; i < actions.Length; i++)
             {
@@ -151,6 +151,7 @@ public static class ShowReservations
                         case 2: // Delete Reservation
                             // Call DeleteReservation.Show() with the selected reservation
                             DeleteReservation.Show(reservation);
+                            Console.ReadKey();
                             break;
 
                         case 3: // Cancel
@@ -162,15 +163,12 @@ public static class ShowReservations
                     return; // Exit the options and return to reservation list
             }
 
-            Console.Clear(); // Refresh the options display
-            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.TableChoice}");
-            Console.WriteLine("Choose an action:");
         }
     }
 
-    private static string GetUserFullName(long userID)
+    private static string GetUserFullName(int? userID)
     {
-        var account = AccountsAccess.GetById((int)userID); // Fetch the account details
+        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";
