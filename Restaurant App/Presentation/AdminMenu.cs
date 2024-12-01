@@ -21,7 +21,7 @@ static class AdminMenu
                     ShowReservations.Show();
                     break;
                 case "create (admin account)":
-                    RegisterUser.CreateAdminAccount();
+                    RegisterUser.CreateAccount(true);
                     break;
                 case "update (themes)\n":
                     ThemeView.SetOrUpdateTheme();

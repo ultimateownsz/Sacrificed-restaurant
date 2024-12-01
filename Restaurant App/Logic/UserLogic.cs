@@ -14,7 +14,7 @@ public class UserLogic
         return Access.Users.GetBy<int>("ID", id);
     }
 
-    public static UserModel? CheckLogin(string email, string password)
+    public static UserModel? CheckLogin(string? email, string? password)
     {
         UserModel acc = Access.Users.GetBy<string>("Email", email);
 
@@ -40,6 +40,12 @@ public class UserLogic
 
     public static bool IsEmailValid(string email)
     {
+        foreach (var mail in Access.Users.Read().Select(o => o.Email))
+        {
+            if (mail == email)
+                return false;
+        }
+         
         return email.Contains("@") && email.Contains(".com");
     }
 

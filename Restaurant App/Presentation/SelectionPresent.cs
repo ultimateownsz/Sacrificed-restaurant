@@ -4,7 +4,7 @@ using System.Reflection;
 
 internal class SelectionPresent : SelectionLogic
 {
-    private static void _update(string banner, Dictionary<string, bool> selection)
+    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline)
     {
         Console.Clear();
         Console.ForegroundColor = ConsoleColor.White;
@@ -15,6 +15,7 @@ internal class SelectionPresent : SelectionLogic
             Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
             string prefix = (selected) ? "-> " : "";
 
+            if (oneline && !selected) continue;
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
         }
     }
@@ -22,6 +23,7 @@ internal class SelectionPresent : SelectionLogic
     private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection)
     {
         var current = ReverseLookup<string, bool>(selection, true);
+
         switch (Console.ReadKey().Key)
         {
             case ConsoleKey.DownArrow:
@@ -45,18 +47,19 @@ internal class SelectionPresent : SelectionLogic
         return null;
     }
 
-    public static dynamic Show(List<string> options, string banner = "")
+    public static dynamic Show(List<string> options, string banner = "", bool oneline = false)
     {
         Tuple<string?, int?>? selected;
-        Dictionary<string, bool> selection = ToSelectable(options);
+        if (oneline) options.Reverse();
+        
+        Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
         while (true)
         {
             // update screen
-            _update(banner, selection);
+            _update(banner, selection, oneline);
 
             // read user-input
-
             if ((selected = _read(selection)) != null)
             {
                 // iniitialize

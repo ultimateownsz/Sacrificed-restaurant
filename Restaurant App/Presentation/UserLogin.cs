@@ -16,7 +16,7 @@ static class UserLogin
         return Console.ReadLine();
     }
 
-    private static string? request_password(string email)
+    private static string? request_password(string? email)
     {
         Console.Clear();
         Console.WriteLine("LOGIN\n");
@@ -29,17 +29,15 @@ static class UserLogin
         return Console.ReadLine();
     }
 
-    public static UserModel Start()
+    public static UserModel? Start()
     {
 
         string? email = request_email();
         string? password = request_password(email);
 
-        UserModel? acc = UserLogic.CheckLogin(email, password);
+        UserModel? acc = UserLogic.CheckLogin(email?.ToLower(), password);
         if (acc != null)
         {
-            //Console.WriteLine("Welcome back " + acc.FirstName + " " + acc.LastName);
-            //Console.WriteLine("Your email is: " + acc.EmailAddress);
             return acc;
         }
         else
