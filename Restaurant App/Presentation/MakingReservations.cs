@@ -12,21 +12,40 @@ namespace Presentation
 
     public static void MakingReservation(AccountModel acc, DateTime date)
     {   
-        //Ask the user for the reservation amount
-        Console.WriteLine("Please enter the number of guests between 1 and 6");
-        string reservationAmount = Console.ReadLine();
-        reservationAmount = reservationAmount.Replace(" ", "");
-        bool isDigit = reservationAmount.All(char.IsDigit);
-        while(string.IsNullOrEmpty(reservationAmount) || !isDigit || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
+        TableSelection tableSelection = new TableSelection();
+        Console.WriteLine("Enter the number of guests for your reservation (1-6): ");
+        int guests = int.Parse(Console.ReadLine());
+
+        // Determine available tables based on number of guests
+        int[] availableTables = guests switch
         {
-            Console.Clear();
-            Console.WriteLine("Invalid input");
-            Console.WriteLine("Please enter a number between 1 and 6");
-            reservationAmount = Console.ReadLine();
-            isDigit = reservationAmount.All(char.IsDigit);
+            2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+            4 => new int[] { 6, 7, 10, 13, 14 },
+            6 => new int[] { 2, 3 },
+            _ => Array.Empty<int>()
+        };
+
+        if (availableTables.Length == 0)
+        {
+            Console.WriteLine("No available tables for this number of guests.");
+            return;
         }
 
-        Int64 reservationId = reservationLogic.SaveReservation(date, reservationAmount, acc.UserID);
+        Console.WriteLine("Use the arrow keys to select a table and press Enter to confirm.");
+        int selectedTable = tableSelection.SelectTable();
+
+        if (Array.Exists(availableTables, table => table == selectedTable))
+        {
+            Console.WriteLine($"Table {selectedTable} selected for {guests} guests.");
+            // Save reservation in database (mock example)
+            reservationLogic.SaveReservation(DateTime.Now, guests.ToString(), ReservationLogic.Userid);
+        }
+        else
+        {
+            Console.WriteLine("Invalid table selection. Please try again.");
+        }   
+
+        Int64 reservationId = reservationLogic.SaveReservation(date, guests.ToString(), acc.UserID);
         OrderLogic orderLogic = new OrderLogic();
         List<string> categories = new List<string> { "Appetizers", "MainDishes", "Dessert", "Alcoholic Beverages" };
         List<ProductModel> allOrders = new List<ProductModel>();
@@ -42,7 +61,7 @@ namespace Presentation
             return;
         }
 
-        for (int i = 0; i < Convert.ToInt32(reservationAmount); i++)
+        for (int i = 0; i < Convert.ToInt32(guests.ToString()); i++)
         {
 
             List<ProductModel> guestOrder = new List<ProductModel>();
@@ -114,7 +133,7 @@ namespace Presentation
             allOrders.AddRange(guestOrder);
 
             // Proceed to the next guest after finishing their order
-            if(i == Convert.ToInt32(reservationAmount))
+            if(i == guests)
             {
                 Console.WriteLine("\nPress any key to continue");
                 Console.ReadKey();
