@@ -36,16 +36,45 @@ namespace Presentation
         };
 
         private int cursorX = 3, cursorY = 6; // Start at table "1"
-
         public int SelectedTable { get; private set; }
 
-        public void ShowGrid()
+        public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
             Console.Clear();
-            foreach (var line in grid)
+            for (int y = 0; y < grid.Length; y++)
             {
-                Console.WriteLine(line);
+                for (int x = 0; x < grid[y].Length; x++)
+                {
+                    char currentChar = grid[y][x];
+                    
+                    if (char.IsDigit(currentChar))
+                    {
+                        int tableNumber = int.Parse(currentChar.ToString());
+
+                        // Determine color based on table availability
+                        if (Array.Exists(availableTables, table => table == tableNumber))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green; // Available tables in green
+                        }
+                        else if (Array.Exists(reservedTables, table => table == tableNumber))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red; // Reserved or unavailable tables in red
+                        }
+                        else
+                        {
+                            Console.ResetColor(); // Default color for other characters
+                        }
+                    }
+                    else
+                    {
+                        Console.ResetColor();
+                    }
+
+                    Console.Write(currentChar);
+                }
+                Console.WriteLine();
             }
+            Console.ResetColor();
             HighlightNumber();
         }
 
@@ -109,13 +138,12 @@ namespace Presentation
 
         public int SelectTable()
         {
-            Console.CursorVisible = false;
             ShowGrid();
+            Console.CursorVisible = false;
 
             while (true)
             {
                 var key = Console.ReadKey(true);
-
                 RemoveHighlight();
 
                 switch (key.Key)
