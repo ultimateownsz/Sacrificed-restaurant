@@ -45,11 +45,11 @@ namespace Presentation
             {
                 for (int x = 0; x < grid[y].Length; x++)
                 {
-                    char currentChar = grid[y][x];
-                    
-                    if (char.IsDigit(currentChar))
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number))
                     {
-                        int tableNumber = int.Parse(currentChar.ToString());
+                        int tableNumber = int.Parse(number);
+                        x += number.Length - 1; // Skip to the end of the number
 
                         // Determine color based on table availability
                         if (Array.Exists(availableTables, table => table == tableNumber))
@@ -64,13 +64,13 @@ namespace Presentation
                         {
                             Console.ResetColor(); // Default color for other characters
                         }
+                        Console.Write(number);
                     }
                     else
                     {
                         Console.ResetColor();
+                        Console.Write(grid[y][x]);
                     }
-
-                    Console.Write(currentChar);
                 }
                 Console.WriteLine();
             }
@@ -87,8 +87,11 @@ namespace Presentation
         private void RemoveHighlight()
         {
             string number = GetNumberAt(cursorX, cursorY);
-            Console.SetCursorPosition(cursorX, cursorY);
-            Console.Write(number);
+            if (!string.IsNullOrEmpty(number))
+            {
+                Console.SetCursorPosition(cursorX, cursorY);
+                Console.Write(number);
+            }
         }
 
         private string GetNumberAt(int x, int y)
@@ -110,7 +113,8 @@ namespace Presentation
             {
                 x += direction;
 
-                if (x >= 0 && x < grid[startY].Length && char.IsDigit(grid[startY][x]))
+                string number = GetNumberAt(x, startY);
+                if (!string.IsNullOrEmpty(number))
                 {
                     return (x, startY);
                 }
@@ -127,7 +131,8 @@ namespace Presentation
             {
                 y += direction;
 
-                if (y >= 0 && y < grid.Length && char.IsDigit(grid[y][startX]))
+                string number = GetNumberAt(startX, y);
+                if (!string.IsNullOrEmpty(number))
                 {
                     return (startX, y);
                 }
@@ -136,9 +141,9 @@ namespace Presentation
             return (startX, startY);
         }
 
-        public int SelectTable()
+        public int SelectTable(int[] availableTables, int[] reservedTables)
         {
-            ShowGrid();
+            ShowGrid(availableTables, reservedTables); // Ensure the grid is displayed before selection starts
             Console.CursorVisible = false;
 
             while (true)
@@ -169,12 +174,18 @@ namespace Presentation
                         cursorY = nextY;
                         break;
                     case ConsoleKey.Enter:
-                        SelectedTable = int.Parse(GetNumberAt(cursorX, cursorY));
-                        return SelectedTable;
+                        string selectedNumber = GetNumberAt(cursorX, cursorY);
+                        if (!string.IsNullOrEmpty(selectedNumber))
+                        {
+                            SelectedTable = int.Parse(selectedNumber);
+                            return SelectedTable;
+                        }
+                        break;
                     case ConsoleKey.Escape:
                         return -1;
                 }
 
+                ShowGrid(availableTables, reservedTables); // Redraw the grid on every key press
                 HighlightNumber();
             }
         }
