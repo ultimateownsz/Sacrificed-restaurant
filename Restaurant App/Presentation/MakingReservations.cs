@@ -37,8 +37,13 @@ namespace Presentation
         do
         {
             // Display table blueprint and allow table selection
-            selectedTable = tableSelection.SelectTable(availableTables, new int[] { });
+            selectedTable = tableSelection.SelectTable(availableTables, reservationLogic.GetReservedTablesByDate(date));
 
+            if (selectedTable == -1) // If "Back" is selected
+            {
+                CalendarNavigation(acc); // Go back to the date selection menu
+                return;
+            }
 
             if (!Array.Exists(availableTables, table => table == selectedTable))
             {

@@ -41,6 +41,8 @@ namespace Presentation
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
             Console.Clear();
+
+            // Display the grid
             for (int y = 0; y < grid.Length; y++)
             {
                 for (int x = 0; x < grid[y].Length; x++)
@@ -74,8 +76,12 @@ namespace Presentation
                 Console.WriteLine();
             }
             Console.ResetColor();
+
+            // Highlight the selected table
             HighlightNumber(availableTables, reservedTables);
         }
+
+
 
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
@@ -259,6 +265,10 @@ namespace Presentation
 
             while (true)
             {
+                Console.SetCursorPosition(0, grid.Length + 2); // Position below the grid
+                Console.ResetColor();
+                Console.WriteLine("(B)ack");
+
                 var key = Console.ReadKey(true);
                 RemoveHighlight();
 
@@ -291,10 +301,12 @@ namespace Presentation
                             if (!string.IsNullOrEmpty(selectedNumber))
                             {
                                 SelectedTable = int.Parse(selectedNumber);
-                                return SelectedTable;
+                                return SelectedTable; // Table selected
                             }
                             break;
-                        case ConsoleKey.Escape:
+                        case ConsoleKey.B: // Handle Back option
+                            return -1; // Special code for "Back"
+                        case ConsoleKey.Escape: // Optional escape handling
                             return -1;
                     }
 
@@ -319,6 +331,7 @@ namespace Presentation
                 ShowGrid(availableTables, reservedTables); // Redraw the grid
             }
         }
+
 
     }
 }

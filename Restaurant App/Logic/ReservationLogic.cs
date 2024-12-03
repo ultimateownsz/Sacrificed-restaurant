@@ -21,6 +21,16 @@ public class ReservationLogic
         return CurrentReservation.ID;
     }
 
+    public int[] GetReservedTablesByDate(int date)
+    {
+        // Fetch all reservations for the given date
+        List<ReservationModel> reservations = ReservationAccess.GetReservationsByDate(date);
+
+        // Extract the table IDs
+        return reservations.Select(r => (int)r.TableID).ToArray();
+    }
+
+
 
     public int ConvertDate(DateTime date)
     {

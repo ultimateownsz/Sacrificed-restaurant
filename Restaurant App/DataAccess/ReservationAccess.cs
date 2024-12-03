@@ -22,6 +22,24 @@ public static class ReservationAccess
         });
     }
 
+    public static List<ReservationModel> GetReservationsByDate(int date)
+    {
+        string sql = $@"
+            SELECT 
+                reservationID AS ID, 
+                date AS Date, 
+                tableChoice AS TableChoice,  
+                reservationAmount AS ReservationAmount, 
+                userID AS UserID,
+                tableID AS TableID
+            FROM {Table} 
+            WHERE date = @Date";
+
+        return _connection.Query<ReservationModel>(sql, new { Date = date }).AsList();
+    }
+
+
+
     public static List<ReservationModel> GetAllReservations()
     {
         string sql = $@"
@@ -103,21 +121,6 @@ public static class ReservationAccess
             WHERE tableID = @TableID";
 
         return _connection.Query<ReservationModel>(sql, new { TableID = tableID }).AsList();
-    }
-
-    public static List<ReservationModel> GetReservationsByDate(int date)
-    {
-        string sql = $@"
-            SELECT 
-                reservationID AS ID, 
-                date AS Date, 
-                tableChoice AS TableChoice,  
-                reservationAmount AS ReservationAmount, 
-                userID AS UserID,
-                tableID AS TableID
-            FROM {Table} 
-            WHERE date = @Date";
-        return _connection.Query<ReservationModel>(sql, new { Date = date }).AsList();
     }
 
     public static List<ProductModel> GetMenuItemsByReservationID(int reservationID)
