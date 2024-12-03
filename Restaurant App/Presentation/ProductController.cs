@@ -27,7 +27,7 @@ public static class ProductController
         {
             Console.WriteLine($"Failed to update '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
         }
-    }
+    } 
 
     public static void DeleteProduct(long productId)
     {
