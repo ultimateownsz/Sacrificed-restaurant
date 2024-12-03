@@ -49,11 +49,12 @@ namespace Presentation
                 return -1;
             }
 
-            var reservedTables = reservationLogic.GetReservationsByDate(selectedDate)
-                                                 .Select(r => r.Place)
-                                                 .Where(rt => rt.HasValue)
-                                                 .Select(rt => rt.Value)
-                                                 .ToArray();
+        var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
+                                                .Select(r => r.Place)
+                                                .Where(rt => rt.HasValue)
+                                                .Select(rt => rt.Value)
+                                                .ToArray();
+
 
             TableSelection tableSelection = new();
             return tableSelection.SelectTable(availableTables, reservedTables);

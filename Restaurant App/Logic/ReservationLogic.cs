@@ -24,12 +24,6 @@ public class ReservationLogic
         }
         return 0;
     }
-    
-    // GetById didnt work because date is a DateTime object
-    public List<ReservationModel> GetReservationsByDate(DateTime date)
-    {
-        return Access.Reservations.GetAllBy<DateTime>("Date", date).ToList();
-    }
 
 
     //Converts the date from string to Int64 and saves it into CurrentReservation
@@ -80,10 +74,10 @@ public class ReservationLogic
     }
 
     //This is used to get a specific reservation from the database based on the given ID
-    public ReservationModel GetById(int id)
-    {
-        return Access.Reservations.GetBy<int>("ID", id);
-    }
+    // public ReservationModel GetById(int id)
+    // {
+    //     return Access.Reservations.GetBy<int>("ID", id);
+    // }
 
     public bool RemoveReservation(int id)
     {
