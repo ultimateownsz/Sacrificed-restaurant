@@ -16,16 +16,16 @@ internal class RegisterUser
         Console.WriteLine("Please enter the following information:\n");
 
         // Input collection with validation loops
-        Console.Write("first name: ");
+        Console.Write("First name: ");
         firstName = Console.ReadLine();
 
-        Console.Write("last name: ");
+        Console.Write("Last name: ");
         lastName = Console.ReadLine();
 
         // Loop until valid email is provided
         while (true)
         {
-            Console.Write("email: ");
+            Console.Write("Email: ");
             email = Console.ReadLine();
             if (UserLogic.IsEmailValid(email))
                 break;
@@ -35,7 +35,7 @@ internal class RegisterUser
         // Loop until valid password is provided
         while (true)
         {
-            Console.Write("password (8-16 characters): ");
+            Console.Write("Password (8-16 characters): ");
             password = Console.ReadLine();
             if (UserLogic.IsPasswordValid(password))
                 break;
@@ -45,7 +45,7 @@ internal class RegisterUser
         // Loop until valid phone number is provided
         while (true)
         {
-            Console.Write("phone number (8 numbers): ");
+            Console.Write("Phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
             if (UserLogic.IsPhoneNumberValid(phoneNumber))
                 break;
@@ -56,113 +56,98 @@ internal class RegisterUser
         while (!isInfoValid)
         {
             Console.Clear();
-            Console.WriteLine("Your information: ");
-            Console.WriteLine(" ");
-            Console.WriteLine($"first name: {firstName}");
-            Console.WriteLine($"last name: {lastName}");
-            Console.WriteLine($"email: {email}");
-            Console.WriteLine($"password: {password}");
-            Console.WriteLine($"phone Number: {phoneNumber}");
-            Console.WriteLine(" ");
-            Console.WriteLine("Are you sure this is correct? Y/N");
+            string confirm_info = $"Your information:\n\nFirst name: {firstName}\nLast name: {lastName}\nEmail: {email}\nPassword: {password}\nPhone Number: {phoneNumber}\n\nAre you sure this information is correct?\n";
 
-            string choice = Console.ReadLine().ToUpper();
-
-            if (choice == "Y")
+            switch (SelectionPresent.Show(["Yes", "No"], confirm_info).text)
             {
-                // Create account and write it to storage
-                var account = new UserModel()
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Email = email,
-                        Password = password,
-                        Phone = phoneNumber,
-                        Admin = Convert.ToInt16(admin)
-                    };
+                case "Yes":
+                    // Create account and write it to storage
+                    var account = new UserModel()
+                        {
+                            FirstName = firstName,
+                            LastName = lastName,
+                            Email = email,
+                            Password = password,
+                            Phone = phoneNumber,
+                            Admin = Convert.ToInt16(admin)
+                        };
 
-                Access.Users.Write(account);
-                Console.WriteLine("\nYour account is successfully registered!");
-                Thread.Sleep(1000); // so you can read the messages
-                isInfoValid = true; // Exit the confirmation loop
-
-            }
-            else if (choice == "N")
-            {
-                while (true)
-                {
-                    string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
-                    {
-                        case "first name":
-                            Console.Clear();
-                            Console.Write("first name: ");
-                            firstName = Console.ReadLine();
-                            break;
-
-                        case "last name":
-                            Console.Clear();
-                            Console.Write("last name: ");
-                            lastName = Console.ReadLine();
-                            break;
-
-                        case "email":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("email address: ");
-                                string newEmail = Console.ReadLine();
-                                if (UserLogic.IsEmailValid(newEmail))
-                                {
-                                    email = newEmail;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid email address, try again!");
-                            }
-                            break;
-
-                        case "password":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("password (8-16 characters): ");
-                                string newPassword = Console.ReadLine();
-                                if (UserLogic.IsPasswordValid(newPassword))
-                                {
-                                    password = newPassword;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid password, try again!");
-                            }
-                            break;
-
-                        case "phone number":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("phone number (8 numbers): ");
-                                string newPhoneNumber = Console.ReadLine();
-                                if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
-                                {
-                                    phoneNumber = newPhoneNumber;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid phone number, try again!");
-                            }
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                    // valid input has been provided
+                    Access.Users.Write(account);
+                    isInfoValid = true; // Exit the confirmation loop
+                    Console.WriteLine("\nYour account is successfully registered!");
+                    Thread.Sleep(1000); // so you can read the messages
                     break;
-                }
 
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+                case "No":
+                    while (true)
+                    {
+                        string banner = "Choose which information you'd like to change:\n\n";
+                        switch (SelectionPresent.Show(["First name", "Last name", "Email", "Password", "Phone number"], banner).text)
+                        {
+                            case "First name":
+                                Console.Clear();
+                                Console.Write("First name: ");
+                                firstName = Console.ReadLine();
+                                break;
+
+                            case "Last name":
+                                Console.Clear();
+                                Console.Write("Last name: ");
+                                lastName = Console.ReadLine();
+                                break;
+
+                            case "Email":
+                                while (true)
+                                {
+                                    Console.Clear();
+                                    Console.Write("Email address: ");
+                                    string newEmail = Console.ReadLine();
+                                    if (UserLogic.IsEmailValid(newEmail))
+                                    {
+                                        email = newEmail;
+                                        break;
+                                    }
+                                    Console.WriteLine("Invalid email address, try again!");
+                                }
+                                break;
+
+                            case "Password":
+                                while (true)
+                                {
+                                    Console.Clear();
+                                    Console.Write("Password(8-16 characters): ");
+                                    string newPassword = Console.ReadLine();
+                                    if (UserLogic.IsPasswordValid(newPassword))
+                                    {
+                                        password = newPassword;
+                                        break;
+                                    }
+                                    Console.WriteLine("Invalid password, try again!");
+                                }
+                                break;
+
+                            case "Phone number":
+                                while (true)
+                                {
+                                    Console.Clear();
+                                    Console.Write("Phone number (8 numbers): ");
+                                    string newPhoneNumber = Console.ReadLine();
+                                    if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
+                                    {
+                                        phoneNumber = newPhoneNumber;
+                                        break;
+                                    }
+                                    Console.WriteLine("Invalid phone number, try again!");
+                                }
+                                break;
+
+                            default:
+                                continue;
+                        }
+                        // valid input has been provided
+                        break;
+                    }
+                break;
             }
         }
     }
