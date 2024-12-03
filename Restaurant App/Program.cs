@@ -1,5 +1,6 @@
 ﻿using Project.Presentation;
 
+
 class Program
 {
     static void Main(string[] args)
@@ -8,5 +9,6 @@ class Program
 
         Menu.Start();
         Menu.End();
+
     }
 }
