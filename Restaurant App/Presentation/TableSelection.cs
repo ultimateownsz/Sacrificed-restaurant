@@ -106,12 +106,15 @@ namespace Presentation
                 // Replace the second digit with a space if it's a two-digit number
                 if (number.Length == 2)
                 {
-                    Console.SetCursorPosition(cursorX + 1, cursorY);
-                    Console.Write(" ");
+                    Console.SetCursorPosition(cursorX + 1, cursorY); // Move to the second digit
+                    Console.Write(" "); // Replace the second digit with a space
                 }
             }
+
             Console.ResetColor();
         }
+
+
 
         private void RemoveHighlight()
         {
@@ -123,7 +126,7 @@ namespace Presentation
                 Console.SetCursorPosition(cursorX, cursorY);
                 Console.Write(number);
 
-                // Restore the second digit if it's a two-digit number
+                // Restore the second digit if it's a double-digit number
                 if (number.Length == 2)
                 {
                     Console.SetCursorPosition(cursorX + 1, cursorY);
@@ -131,6 +134,7 @@ namespace Presentation
                 }
             }
         }
+
 
         private string GetNumberAt(int x, int y)
         {
@@ -142,37 +146,69 @@ namespace Presentation
             }
             return number;
         }
+
+        //AFBLIJVEN! IK HEB 4 UUR GEDEBUGGED EN DIT WAS DE ENIGE OPLOSSING.
+        // A.F.B.L.I.J.V.E.N.
+        private (int, int) FindNextNumberInRowLeft(int startX, int startY)
+        {
+            int x = startX;
+
+            while (x >= 0)
+            {
+                x--; // Move left
+
+                if (x >= 0 && char.IsDigit(grid[startY][x]))
+                {
+                    // If we encounter the second digit of a two-digit number, move back to the first digit
+                    if (x > 0 && char.IsDigit(grid[startY][x - 1]))
+                    {
+                        x--; // Align to the first digit
+                    }
+                    return (x, startY); // Found a valid number
+                }
+            }
+
+            return (startX, startY); // No valid number, stay in place
+        }
+
         private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
         {
             int x = startX;
+            string currentNumber = GetNumberAt(startX, startY);
+
+            // If we're currently on a two-digit number, skip the second digit
+            if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2)
+            {
+                // Moving right: Skip past the two digits
+                if (direction == 1)
+                {
+                    x += currentNumber.Length; // Move past the two digits
+                }
+                // Moving left: Reset to the first digit of the current number
+                else if (direction == -1)
+                {
+                    x -= 1; // Ensure we're at the first digit
+                }
+            }
 
             while (x >= 0 && x < grid[startY].Length)
             {
                 x += direction;
 
-                // Moving right: Skip to the first digit of the next table
-                if (direction == 1 && x > 0 && x < grid[startY].Length &&
-                    char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x - 1]))
-                {
-                    continue; // Skip the second digit
-                }
-
-                // Moving left: Skip to the first digit of the previous table
-                if (direction == -1 && x + 1 < grid[startY].Length &&
-                    char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x + 1]))
-                {
-                    x--; // Move to the first digit
-                }
-
                 // Ensure the new position is valid
-                if (x >= 0 && x < grid[startY].Length && char.IsDigit(grid[startY][x]))
+                string nextNumber = GetNumberAt(x, startY);
+                if (!string.IsNullOrEmpty(nextNumber))
                 {
+                    // Moving left: Ensure we land on the first digit of a two-digit number
+                    if (direction == -1 && nextNumber.Length == 2)
+                    {
+                        x -= 1; // Align cursor to the first digit
+                    }
                     return (x, startY); // Found a valid digit
                 }
             }
 
-            // If no valid position is found, return the current position
-            return (startX, startY);
+            return (startX, startY); // No valid position found, stay in place
         }
 
 
@@ -192,23 +228,26 @@ namespace Presentation
                 }
 
                 // Scan horizontally to find the nearest valid digit
-                for (int offset = 0; offset <= 2; offset++)
+                for (int offset = -1; offset <= 1; offset++) // Check adjacent horizontal offsets
                 {
-                    if (startX - offset >= 0 && char.IsDigit(grid[y][startX - offset]))
+                    if (startX + offset >= 0 && startX + offset < grid[y].Length &&
+                        char.IsDigit(grid[y][startX + offset]))
                     {
-                        return (startX - offset, y);
-                    }
-                    if (startX + offset < grid[y].Length && char.IsDigit(grid[y][startX + offset]))
-                    {
-                        return (startX + offset, y);
+                        int targetX = startX + offset;
+
+                        // If landing on a two-digit number, align to the first digit
+                        if (targetX < grid[y].Length - 1 && char.IsDigit(grid[y][targetX + 1]))
+                        {
+                            return (targetX, y); // Align to the first digit
+                        }
+
+                        return (targetX, y); // Found a valid digit
                     }
                 }
             }
 
-            // If no valid position is found, return the current position
-            return (startX, startY);
+            return (startX, startY); // No valid table found, stay in place
         }
-
 
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
@@ -216,7 +255,6 @@ namespace Presentation
             ShowGrid(availableTables, reservedTables); // Display the grid
             Console.CursorVisible = false;
 
-            // Track the last valid position
             int lastX = cursorX, lastY = cursorY;
 
             while (true)
@@ -234,7 +272,7 @@ namespace Presentation
                             cursorY = nextY;
                             break;
                         case ConsoleKey.LeftArrow:
-                            (nextX, nextY) = FindNextNumberInRow(cursorX, cursorY, -1);
+                            (nextX, nextY) = FindNextNumberInRowLeft(cursorX, cursorY);
                             cursorX = nextX;
                             cursorY = nextY;
                             break;
@@ -274,9 +312,8 @@ namespace Presentation
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    // Handle any edge-case errors gracefully
                     cursorX = lastX;
-                    cursorY = lastY;
+                    cursorY = lastY; // Recover from any exceptions
                 }
 
                 ShowGrid(availableTables, reservedTables); // Redraw the grid
