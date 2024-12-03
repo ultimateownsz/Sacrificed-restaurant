@@ -41,10 +41,19 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionMenu.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n"))
+            switch (SelectionMenu.Show([ "reserve", "view reservations", "logout" ], "USER MENU\n\n"))
             {
                 case "reserve":
-                    MakingReservations.CalendarNavigation(acc);
+                    try
+                    {
+                        DateTime selectedDate = CalendarPresentation.Show(DateTime.Now); // Use the modular calendar
+                        MakingReservations.MakingReservation(acc, int.Parse(selectedDate.ToString("ddMMyyyy"))); // Pass the selected date
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("Date selection canceled. Returning to user menu...");
+                        Console.ReadKey();
+                    }
                     break;
 
                 case "view reservations":
