@@ -42,7 +42,7 @@ namespace Presentation
         {
             Console.Clear();
 
-            // Traverse the grid and apply color to tables dynamically
+            // Traverse the grid and apply color to table numbers only
             for (int y = 0; y < grid.Length; y++)
             {
                 for (int x = 0; x < grid[y].Length; x++)
@@ -61,57 +61,30 @@ namespace Presentation
                         }
                         else if (Array.Exists(reservedTables, table => table == tableNumber))
                         {
-                            color = ConsoleColor.Red; // Reserved or unavailable tables in red
+                            color = ConsoleColor.Red; // Reserved or unsuitable tables in red
                         }
                         else
                         {
-                            color = ConsoleColor.Red; // Unsuitable tables in red
+                            color = ConsoleColor.Red; // Default to red for unsuitable
                         }
 
-                        // Apply color to the entire table borders and number
-                        ColorTableBordersAndNumber(x, y, tableNumber, color);
+                        // Color the number
+                        Console.ForegroundColor = color;
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(number);
+                        Console.ResetColor();
                     }
                 }
             }
 
-            // Draw the full grid
+            // Draw the full grid without additional coloring
             for (int y = 0; y < grid.Length; y++)
             {
                 Console.SetCursorPosition(0, y);
                 Console.Write(grid[y]);
             }
 
-            // Reset color only after the entire grid is rendered
-            Console.ResetColor();
             HighlightNumber();
-        }
-
-        private void ColorTableBordersAndNumber(int numberX, int numberY, int tableNumber, ConsoleColor color)
-        {
-            // Locate the table's top-left corner by finding the nearest '+'
-            int startX = numberX, startY = numberY;
-            while (startX > 0 && grid[startY][startX] != '+') startX--;
-            while (startY > 0 && grid[startY][startX] != '+') startY--;
-
-            // Locate the table's bottom-right corner by finding the matching '+'
-            int endX = startX, endY = startY;
-            while (endY < grid.Length && grid[endY][endX] != '+' && endY < startY + 5) endY++;
-            while (endX < grid[endY].Length && grid[endY][endX] != '+' && endX < startX + 10) endX++;
-
-            // Apply color to borders and table ID only
-            Console.ForegroundColor = color;
-            for (int y = startY; y <= endY && y < Console.BufferHeight; y++)
-            {
-                for (int x = startX; x <= endX && x < Console.BufferWidth; x++)
-                {
-                    if (grid[y][x] == '+' || grid[y][x] == '-' || grid[y][x] == '|' || (x == numberX && y == numberY)) // Borders and table ID only
-                    {
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(grid[y][x]);
-                    }
-                }
-            }
-            Console.ResetColor();
         }
 
         private void HighlightNumber()
