@@ -11,23 +11,29 @@ namespace Presentation
         static private ReservationMenuLogic reservationMenuLogic = new();
         static private OrderLogic orderLogic = new();
 
-        public static void MakingReservation(UserModel acc)
+        public static void MakingReservation(UserModel acc, DateTime selectedDate)
         {
             // Step 1: Ask the user for the number of guests
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?\n\n";
             int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-            // Step 2: Display the calendar and let the user select a date
-            DateTime selectedDate = CalendarPresentation.Show(DateTime.Now);
+            // Step 2: Use TableSelection for table selection
+            int selectedTable = SelectTableUsingTableSelection(selectedDate, guests);
 
-            // Step 3: Select a table and proceed with the reservation
-            SelectTable(acc, selectedDate, guests);
+            if (selectedTable == -1)
+            {
+                Console.WriteLine("You chose to go back. Returning to the main menu...");
+                Console.ReadKey();
+                return; // Exit the process if the user goes back
+            }
+
+            // Step 3: Proceed to take orders
+            TakeOrders(selectedDate, acc, selectedTable, guests);
         }
 
-        public static void SelectTable(UserModel acc, DateTime selectedDate, int guests)
+        public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
         {
-            // Define available tables based on guest count
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -39,43 +45,25 @@ namespace Presentation
             if (availableTables.Length == 0)
             {
                 Console.WriteLine("No available tables for this number of guests.");
-                return;
+                Console.ReadKey();
+                return -1;
             }
 
-            // Allow the user to select a table
+            var reservedTables = reservationLogic.GetReservationsByDate(selectedDate)
+                                                 .Select(r => r.Place)
+                                                 .Where(rt => rt.HasValue)
+                                                 .Select(rt => rt.Value)
+                                                 .ToArray();
+
             TableSelection tableSelection = new();
-            int selectedTable;
-            do
-            {
-                Console.Clear();
-                Console.WriteLine($"Available tables for {guests} guests on {selectedDate:MMMM dd, yyyy}:");
-                selectedTable = tableSelection.SelectTable(availableTables, reservationLogic.GetReservedTablesByDate(selectedDate));
-
-                if (selectedTable == -1) // User chose to go back
-                {
-                    MakingReservation(acc); // Restart the reservation process
-                    return;
-                }
-
-                if (!Array.Exists(availableTables, table => table == selectedTable))
-                {
-                    Console.WriteLine($"Table {selectedTable} is not available. Please select a valid table.");
-                    Console.WriteLine("Press any key to try again...");
-                    Console.ReadKey();
-                }
-            } while (!Array.Exists(availableTables, table => table == selectedTable));
-
-            Console.WriteLine($"Table {selectedTable} selected for {guests} guests.");
-
-            // Save the reservation
-            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID, selectedTable);
-
-            // Proceed to take orders
-            TakeOrders(reservationId, guests);
+            return tableSelection.SelectTable(availableTables, reservedTables);
         }
 
-        public static void TakeOrders(int reservationId, int guests)
+        public static void TakeOrders(DateTime selectedDate, UserModel acc, int tableId, int guests)
         {
+            // Save the reservation
+            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID, tableId);
+
             List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
             List<ProductModel> allOrders = new List<ProductModel>();
 
@@ -93,11 +81,10 @@ namespace Presentation
             for (int i = 0; i < guests; i++)
             {
                 List<ProductModel> guestOrder = new();
-                bool ordering = true;
-
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]);
+                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
+
                     int productIndex = 0;
                     bool choosingProduct = true;
 
@@ -141,7 +128,6 @@ namespace Presentation
                 }
 
                 allOrders.AddRange(guestOrder);
-
                 Console.WriteLine("\nPress any key to continue to the next guest...");
                 Console.ReadKey();
             }

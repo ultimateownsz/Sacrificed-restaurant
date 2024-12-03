@@ -11,18 +11,26 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
-    public int SaveReservation(DateTime date, int? userId)
+    public int SaveReservation(DateTime date, int? userId, int tableId)
     {
         if (CurrentReservation != null)
         {
             CurrentReservation.Date = date;
             CurrentReservation.ID = null;
             CurrentReservation.UserID = userId;
+            CurrentReservation.Place = tableId; // Assign the table ID to the Place column
             Access.Reservations.Write(CurrentReservation);
-            return Access.Reservations.GetBy<DateTime>("Date", date).ID ?? 0;
+            return Access.Reservations.GetBy<DateTime>("Date", date)?.ID ?? 0;
         }
         return 0;
     }
+    
+    // GetById didnt work because date is a DateTime object
+    public List<ReservationModel> GetReservationsByDate(DateTime date)
+    {
+        return Access.Reservations.GetAllBy<DateTime>("Date", date).ToList();
+    }
+
 
     //Converts the date from string to Int64 and saves it into CurrentReservation
     public Int64 ConvertDate(DateTime date)
