@@ -10,7 +10,7 @@ namespace Presentation
         static private OrderLogic orderLogic = new();
         private static CalendarLogic calendarLogic = new CalendarLogic();
 
-    public static void MakingReservation(AccountModel acc, DateTime date)
+    public static void MakingReservation(AccountModel acc, int date)
     {
         TableSelection tableSelection = new TableSelection();
 
@@ -51,7 +51,7 @@ namespace Presentation
         Console.WriteLine($"Table {selectedTable} selected for {guests} guests.");
         
         // Save reservation in database
-        Int64 reservationId = reservationLogic.SaveReservation(date, guests.ToString(), acc.UserID);
+        Int64 reservationId = reservationLogic.SaveReservation(date, guests.ToString(), acc.UserID, selectedTable);
 
         // Proceed with the order process for each guest
         OrderLogic orderLogic = new OrderLogic();
@@ -341,8 +341,9 @@ namespace Presentation
                     break;
                 case ConsoleKey.Enter: // Select date
                     DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
-                    //ShowAvailableTables(selectedDate);
-                    MakingReservation(acc, selectedDate);
+                    int formattedDate = int.Parse(selectedDate.ToString("ddMMyyyy")); // Convert to integer
+                    MakingReservation(acc, formattedDate); // Correctly pass formatted date
+
                     running = false;
                     break;
                 case ConsoleKey.Q: // Quit
@@ -354,6 +355,7 @@ namespace Presentation
             }
         }
     }
+
 
     public static void ShowAvailableTables(DateTime selectedDate)
     {

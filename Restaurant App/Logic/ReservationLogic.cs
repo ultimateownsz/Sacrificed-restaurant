@@ -9,26 +9,25 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this fucntion will call all the other neccecary functions to make a new ReservationAccess instance
     //with all the info from the user
-    public Int64 SaveReservation(DateTime date, string reservationAmount, Int64 userId)
+    public Int64 SaveReservation(int date, string reservationAmount, Int64 userId, int tableID)
     {
-        if (CurrentReservation != null)
-        {
-            CurrentReservation.Date = ConvertDate(date);
-            CurrentReservation.TableChoice = TableChoice(reservationAmount);
-            CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
-            CurrentReservation.ID = GenerateNewReservationID();
-            CurrentReservation.UserID = userId;
-            ReservationAccess.Write(CurrentReservation);
-            return CurrentReservation.ID;
-        }
-        return 0;
+        CurrentReservation.Date = date; // Use the `int` date
+        CurrentReservation.TableChoice = TableChoice(reservationAmount);
+        CurrentReservation.ReservationAmount = ReservationAmount(reservationAmount);
+        CurrentReservation.ID = GenerateNewReservationID();
+        CurrentReservation.UserID = userId;
+        CurrentReservation.TableID = tableID;
+        ReservationAccess.Write(CurrentReservation);
+        return CurrentReservation.ID;
     }
 
-    //Converts the date from string to Int64 and saves it into CurrentReservation
-    public Int64 ConvertDate(DateTime date)
+
+    public int ConvertDate(DateTime date)
     {
-        return DateTime.Parse(date.ToString()).ToFileTimeUtc();
+        // Convert the date to an integer in the format ddMMyyyy
+        return int.Parse(date.ToString("ddMMyyyy"));
     }
+
 
     //Converts the tableChoice from string to Int64 and saves it into CurrentReservation
     public Int64 TableChoice(string tableChoice)
