@@ -4,7 +4,7 @@ namespace Presentation
 {
     public class CalendarPresentation
     {
-        public static DateTime Show(DateTime initialDate)
+        public static DateTime Show(DateTime initialDate) // Modular
         {
             DateTime currentDate = initialDate;
             int selectedDay = currentDate.Day;
