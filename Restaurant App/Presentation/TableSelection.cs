@@ -77,44 +77,58 @@ namespace Presentation
             HighlightNumber(availableTables, reservedTables);
         }
 
-    private void HighlightNumber(int[] availableTables, int[] reservedTables)
-    {
-        string number = GetNumberAt(cursorX, cursorY);
-        if (!string.IsNullOrEmpty(number))
+        private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
-            int tableNumber = int.Parse(number);
-            // Determine the color of the X based on the table's availability
-            if (Array.Exists(availableTables, table => table == tableNumber))
+            string number = GetNumberAt(cursorX, cursorY);
+
+            if (!string.IsNullOrEmpty(number))
             {
-                Console.ForegroundColor = ConsoleColor.Green; // Available
+                int tableNumber = int.Parse(number);
+
+                // Determine the color of the X based on the table's availability
+                if (Array.Exists(availableTables, table => table == tableNumber))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green; // Available
+                }
+                else if (Array.Exists(reservedTables, table => table == tableNumber))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red; // Reserved
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
+                }
+
+                // Highlight the first digit with "X"
+                Console.SetCursorPosition(cursorX, cursorY);
+                Console.Write("X");
+
+                // Replace the second digit with a space if it's a two-digit number
+                if (number.Length == 2)
+                {
+                    Console.SetCursorPosition(cursorX + 1, cursorY);
+                    Console.Write(" ");
+                }
             }
-            else if (Array.Exists(reservedTables, table => table == tableNumber))
-            {
-                Console.ForegroundColor = ConsoleColor.Red; // Reserved
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
-            }
-        }
-        else
-        {
             Console.ResetColor();
         }
-
-        Console.SetCursorPosition(cursorX, cursorY);
-        Console.Write("X"); // Draw the highlighted X
-        Console.ResetColor();
-    }
-
 
         private void RemoveHighlight()
         {
             string number = GetNumberAt(cursorX, cursorY);
+
             if (!string.IsNullOrEmpty(number))
             {
+                // Restore the original table number
                 Console.SetCursorPosition(cursorX, cursorY);
                 Console.Write(number);
+
+                // Restore the second digit if it's a two-digit number
+                if (number.Length == 2)
+                {
+                    Console.SetCursorPosition(cursorX + 1, cursorY);
+                    Console.Write(number[1]);
+                }
             }
         }
 
@@ -128,105 +142,146 @@ namespace Presentation
             }
             return number;
         }
-
-    private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
-    {
-        int x = startX;
-
-        while (x >= 0 && x < grid[startY].Length)
+        private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
         {
-            x += direction;
+            int x = startX;
 
-            // Adjust for double-digit tables when moving left
-            if (direction == -1 && x > 0 && char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x - 1]))
+            while (x >= 0 && x < grid[startY].Length)
             {
-                x--; // Move to the first digit of the double-digit table
-            }
+                x += direction;
 
-            string number = GetNumberAt(x, startY);
-            if (!string.IsNullOrEmpty(number))
-            {
-                return (x, startY);
-            }
-        }
-
-        return (startX, startY);
-    }
-
-
-    private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
-    {
-        int y = startY;
-
-        while (y >= 0 && y < grid.Length)
-        {
-            y += direction;
-
-            // Scan horizontally to find the nearest valid number
-            for (int offset = 0; offset <= 2; offset++)
-            {
-                // Check left and right from the current X position
-                if (startX - offset >= 0 && char.IsDigit(grid[y][startX - offset]))
+                // Moving right: Skip to the first digit of the next table
+                if (direction == 1 && x > 0 && x < grid[startY].Length &&
+                    char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x - 1]))
                 {
-                    return (startX - offset, y);
+                    continue; // Skip the second digit
                 }
-                if (startX + offset < grid[y].Length && char.IsDigit(grid[y][startX + offset]))
+
+                // Moving left: Skip to the first digit of the previous table
+                if (direction == -1 && x + 1 < grid[startY].Length &&
+                    char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x + 1]))
                 {
-                    return (startX + offset, y);
+                    x--; // Move to the first digit
+                }
+
+                // Ensure the new position is valid
+                if (x >= 0 && x < grid[startY].Length && char.IsDigit(grid[startY][x]))
+                {
+                    return (x, startY); // Found a valid digit
                 }
             }
+
+            // If no valid position is found, return the current position
+            return (startX, startY);
         }
 
-        return (startX, startY); // If no valid number is found, return the current position
-    }
+
+
+        private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
+        {
+            int y = startY;
+
+            while (y >= 0 && y < grid.Length)
+            {
+                y += direction;
+
+                // Prevent out-of-bound access
+                if (y < 0 || y >= grid.Length)
+                {
+                    break;
+                }
+
+                // Scan horizontally to find the nearest valid digit
+                for (int offset = 0; offset <= 2; offset++)
+                {
+                    if (startX - offset >= 0 && char.IsDigit(grid[y][startX - offset]))
+                    {
+                        return (startX - offset, y);
+                    }
+                    if (startX + offset < grid[y].Length && char.IsDigit(grid[y][startX + offset]))
+                    {
+                        return (startX + offset, y);
+                    }
+                }
+            }
+
+            // If no valid position is found, return the current position
+            return (startX, startY);
+        }
+
 
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
-            ShowGrid(availableTables, reservedTables); // Ensure the grid is displayed before selection starts
+            ShowGrid(availableTables, reservedTables); // Display the grid
             Console.CursorVisible = false;
+
+            // Track the last valid position
+            int lastX = cursorX, lastY = cursorY;
 
             while (true)
             {
                 var key = Console.ReadKey(true);
                 RemoveHighlight();
 
-                switch (key.Key)
+                try
                 {
-                    case ConsoleKey.RightArrow:
-                        (int nextX, int nextY) = FindNextNumberInRow(cursorX + GetNumberAt(cursorX, cursorY).Length, cursorY, 1);
-                        cursorX = nextX;
-                        cursorY = nextY;
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        (nextX, nextY) = FindNextNumberInRow(cursorX - 1, cursorY, -1);
-                        cursorX = nextX;
-                        cursorY = nextY;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY + 1, 1);
-                        cursorX = nextX;
-                        cursorY = nextY;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY - 1, -1);
-                        cursorX = nextX;
-                        cursorY = nextY;
-                        break;
-                    case ConsoleKey.Enter:
-                        string selectedNumber = GetNumberAt(cursorX, cursorY);
-                        if (!string.IsNullOrEmpty(selectedNumber))
-                        {
-                            SelectedTable = int.Parse(selectedNumber);
-                            return SelectedTable;
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        return -1;
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.RightArrow:
+                            (int nextX, int nextY) = FindNextNumberInRow(cursorX, cursorY, 1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            (nextX, nextY) = FindNextNumberInRow(cursorX, cursorY, -1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, 1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, -1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.Enter:
+                            string selectedNumber = GetNumberAt(cursorX, cursorY);
+                            if (!string.IsNullOrEmpty(selectedNumber))
+                            {
+                                SelectedTable = int.Parse(selectedNumber);
+                                return SelectedTable;
+                            }
+                            break;
+                        case ConsoleKey.Escape:
+                            return -1;
+                    }
+
+                    // Reset to the last valid position if out of bounds
+                    if (cursorX < 0 || cursorX >= grid[0].Length || cursorY < 0 || cursorY >= grid.Length || string.IsNullOrEmpty(GetNumberAt(cursorX, cursorY)))
+                    {
+                        cursorX = lastX;
+                        cursorY = lastY;
+                    }
+                    else
+                    {
+                        lastX = cursorX;
+                        lastY = cursorY; // Update the last valid position
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    // Handle any edge-case errors gracefully
+                    cursorX = lastX;
+                    cursorY = lastY;
                 }
 
-                ShowGrid(availableTables, reservedTables); // Redraw the grid on every key press
+                ShowGrid(availableTables, reservedTables); // Redraw the grid
             }
         }
+
     }
 }
