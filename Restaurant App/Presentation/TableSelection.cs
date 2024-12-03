@@ -41,8 +41,6 @@ namespace Presentation
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
             Console.Clear();
-
-            // Traverse the grid and apply color to table numbers only
             for (int y = 0; y < grid.Length; y++)
             {
                 for (int x = 0; x < grid[y].Length; x++)
@@ -53,45 +51,62 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1; // Skip to the end of the number
 
-                        // Determine the table's color based on availability
-                        ConsoleColor color = ConsoleColor.Gray;
+                        // Determine color based on table availability
                         if (Array.Exists(availableTables, table => table == tableNumber))
                         {
-                            color = ConsoleColor.Green; // Available tables in green
-                        }
-                        else if (Array.Exists(reservedTables, table => table == tableNumber))
-                        {
-                            color = ConsoleColor.Red; // Reserved or unsuitable tables in red
+                            Console.ForegroundColor = ConsoleColor.Green; // Available tables in green
                         }
                         else
                         {
-                            color = ConsoleColor.Red; // Default to red for unsuitable
+                            // Tables not available for this guest count, or reserved
+                            Console.ForegroundColor = Array.Exists(reservedTables, table => table == tableNumber) 
+                                ? ConsoleColor.Red 
+                                : ConsoleColor.Red; // Unsuitable or reserved in red
                         }
-
-                        // Color the number
-                        Console.ForegroundColor = color;
-                        Console.SetCursorPosition(x, y);
                         Console.Write(number);
+                    }
+                    else
+                    {
                         Console.ResetColor();
+                        Console.Write(grid[y][x]);
                     }
                 }
+                Console.WriteLine();
             }
-
-            // Draw the full grid without additional coloring
-            for (int y = 0; y < grid.Length; y++)
-            {
-                Console.SetCursorPosition(0, y);
-                Console.Write(grid[y]);
-            }
-
-            HighlightNumber();
+            Console.ResetColor();
+            HighlightNumber(availableTables, reservedTables);
         }
 
-        private void HighlightNumber()
+    private void HighlightNumber(int[] availableTables, int[] reservedTables)
+    {
+        string number = GetNumberAt(cursorX, cursorY);
+        if (!string.IsNullOrEmpty(number))
         {
-            Console.SetCursorPosition(cursorX, cursorY);
-            Console.Write("X");
+            int tableNumber = int.Parse(number);
+            // Determine the color of the X based on the table's availability
+            if (Array.Exists(availableTables, table => table == tableNumber))
+            {
+                Console.ForegroundColor = ConsoleColor.Green; // Available
+            }
+            else if (Array.Exists(reservedTables, table => table == tableNumber))
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // Reserved
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
+            }
         }
+        else
+        {
+            Console.ResetColor();
+        }
+
+        Console.SetCursorPosition(cursorX, cursorY);
+        Console.Write("X"); // Draw the highlighted X
+        Console.ResetColor();
+    }
+
 
         private void RemoveHighlight()
         {
@@ -114,41 +129,57 @@ namespace Presentation
             return number;
         }
 
-        private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
+    private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
+    {
+        int x = startX;
+
+        while (x >= 0 && x < grid[startY].Length)
         {
-            int x = startX;
+            x += direction;
 
-            while (x >= 0 && x < grid[startY].Length)
+            // Adjust for double-digit tables when moving left
+            if (direction == -1 && x > 0 && char.IsDigit(grid[startY][x]) && char.IsDigit(grid[startY][x - 1]))
             {
-                x += direction;
-
-                string number = GetNumberAt(x, startY);
-                if (!string.IsNullOrEmpty(number))
-                {
-                    return (x, startY);
-                }
+                x--; // Move to the first digit of the double-digit table
             }
 
-            return (startX, startY);
+            string number = GetNumberAt(x, startY);
+            if (!string.IsNullOrEmpty(number))
+            {
+                return (x, startY);
+            }
         }
 
-        private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
+        return (startX, startY);
+    }
+
+
+    private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
+    {
+        int y = startY;
+
+        while (y >= 0 && y < grid.Length)
         {
-            int y = startY;
+            y += direction;
 
-            while (y >= 0 && y < grid.Length)
+            // Scan horizontally to find the nearest valid number
+            for (int offset = 0; offset <= 2; offset++)
             {
-                y += direction;
-
-                string number = GetNumberAt(startX, y);
-                if (!string.IsNullOrEmpty(number))
+                // Check left and right from the current X position
+                if (startX - offset >= 0 && char.IsDigit(grid[y][startX - offset]))
                 {
-                    return (startX, y);
+                    return (startX - offset, y);
+                }
+                if (startX + offset < grid[y].Length && char.IsDigit(grid[y][startX + offset]))
+                {
+                    return (startX + offset, y);
                 }
             }
-
-            return (startX, startY);
         }
+
+        return (startX, startY); // If no valid number is found, return the current position
+    }
+
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
@@ -195,7 +226,6 @@ namespace Presentation
                 }
 
                 ShowGrid(availableTables, reservedTables); // Redraw the grid on every key press
-                HighlightNumber();
             }
         }
     }
