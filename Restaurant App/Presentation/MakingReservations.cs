@@ -1,5 +1,7 @@
 using System;
-using Logic;
+using System.Collections.Generic;
+using System.Linq;
+using Project;
 
 namespace Presentation
 {
@@ -9,14 +11,23 @@ namespace Presentation
         static private ReservationMenuLogic reservationMenuLogic = new();
         static private OrderLogic orderLogic = new();
 
-        public static void MakingReservation(AccountModel acc, int date)
+        public static void MakingReservation(UserModel acc)
         {
-            TableSelection tableSelection = new TableSelection();
+            // Step 1: Ask the user for the number of guests
+            List<string> options = new() { "1", "2", "3", "4", "5", "6" };
+            string banner = "How many guests will be coming?\n\n";
+            int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-            Console.WriteLine("Enter the number of guests for your reservation (1-6): ");
-            int guests = int.Parse(Console.ReadLine());
+            // Step 2: Display the calendar and let the user select a date
+            DateTime selectedDate = CalendarPresentation.Show(DateTime.Now);
 
-            // Determine available tables based on number of guests
+            // Step 3: Select a table and proceed with the reservation
+            SelectTable(acc, selectedDate, guests);
+        }
+
+        public static void SelectTable(UserModel acc, DateTime selectedDate, int guests)
+        {
+            // Define available tables based on guest count
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -31,24 +42,24 @@ namespace Presentation
                 return;
             }
 
-            Console.WriteLine("Use the arrow keys to navigate the table blueprint and press Enter to select a table.");
+            // Allow the user to select a table
+            TableSelection tableSelection = new();
             int selectedTable;
             do
             {
-                // Display table blueprint and allow table selection
-                selectedTable = tableSelection.SelectTable(availableTables, reservationLogic.GetReservedTablesByDate(date));
+                Console.Clear();
+                Console.WriteLine($"Available tables for {guests} guests on {selectedDate:MMMM dd, yyyy}:");
+                selectedTable = tableSelection.SelectTable(availableTables, reservationLogic.GetReservedTablesByDate(selectedDate));
 
-            if (selectedTable == -1) // If "Back" is selected
-            {
-                DateTime selectedDate = CalendarPresentation.Show(DateTime.Now); // Get selected date
-                int formattedDate = int.Parse(selectedDate.ToString("ddMMyyyy"));
-                MakingReservation(acc, formattedDate); // Pass the formatted date to continue reservation
-                return;
-            }
+                if (selectedTable == -1) // User chose to go back
+                {
+                    MakingReservation(acc); // Restart the reservation process
+                    return;
+                }
 
                 if (!Array.Exists(availableTables, table => table == selectedTable))
                 {
-                    Console.WriteLine($"Table {selectedTable} is not available for {guests} guests. Please select a valid table.");
+                    Console.WriteLine($"Table {selectedTable} is not available. Please select a valid table.");
                     Console.WriteLine("Press any key to try again...");
                     Console.ReadKey();
                 }
@@ -56,12 +67,16 @@ namespace Presentation
 
             Console.WriteLine($"Table {selectedTable} selected for {guests} guests.");
 
-            // Save reservation in database
-            Int64 reservationId = reservationLogic.SaveReservation(date, guests.ToString(), acc.UserID, selectedTable);
+            // Save the reservation
+            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID, selectedTable);
 
-            // Proceed with the order process for each guest
-            OrderLogic orderLogic = new OrderLogic();
-            List<string> categories = new List<string> { "Appetizers", "MainDishes", "Dessert", "Alcoholic Beverages" };
+            // Proceed to take orders
+            TakeOrders(reservationId, guests);
+        }
+
+        public static void TakeOrders(int reservationId, int guests)
+        {
+            List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
             List<ProductModel> allOrders = new List<ProductModel>();
 
             Console.WriteLine("This month's theme is:");
@@ -77,13 +92,11 @@ namespace Presentation
 
             for (int i = 0; i < guests; i++)
             {
-                List<ProductModel> guestOrder = new List<ProductModel>();
+                List<ProductModel> guestOrder = new();
                 bool ordering = true;
-                int guestNumber = i + 1;
 
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    // Product navigation within the selected category
                     List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]);
                     int productIndex = 0;
                     bool choosingProduct = true;
@@ -91,49 +104,37 @@ namespace Presentation
                     while (choosingProduct)
                     {
                         Console.Clear();
-                        Console.WriteLine("Press escape to move on.");
-                        Console.WriteLine($"Guest {guestNumber}, choose a product:");
-                        Console.WriteLine($"Selected Category: {categories[z]}");
-
+                        Console.WriteLine($"Guest {i + 1}, choose a product for {categories[z]}:");
                         for (int k = 0; k < products.Count; k++)
                         {
                             if (k == productIndex)
                             {
                                 Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine($"> {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}"); // Highlight selected item with price
+                                Console.WriteLine($"> {products[k].Name} - €{products[k].Price:F2}");
                                 Console.ResetColor();
                             }
                             else
                             {
-                                Console.WriteLine($"  {products[k].ProductName}({products[k].Type}) - €{products[k].Price:F2}");
+                                Console.WriteLine($"  {products[k].Name} - €{products[k].Price:F2}");
                             }
                         }
 
-                        // Read key input for product navigation
                         var key = Console.ReadKey(intercept: true);
-                        if (key.Key == ConsoleKey.Q)
-                        {
-                            // Skip to the next guest
-                            choosingProduct = false;
-                            ordering = false;
-                            break;
-                        }
-
                         switch (key.Key)
                         {
                             case ConsoleKey.UpArrow:
-                                if (productIndex > 0) productIndex--; // Move up
+                                if (productIndex > 0) productIndex--;
                                 break;
                             case ConsoleKey.DownArrow:
-                                if (productIndex < products.Count - 1) productIndex++; // Move down
+                                if (productIndex < products.Count - 1) productIndex++;
                                 break;
                             case ConsoleKey.Enter:
-                                choosingProduct = false; // Product selected
-                                guestOrder.Add(products[productIndex]); // Add product to guest's order
-                                orderLogic.SaveOrder(reservationId, products[productIndex].ProductId); // Save order to "database"
+                                guestOrder.Add(products[productIndex]);
+                                orderLogic.SaveOrder(reservationId, products[productIndex].ID);
+                                choosingProduct = false;
                                 break;
                             case ConsoleKey.Escape:
-                                choosingProduct = false; // Exit product selection
+                                choosingProduct = false;
                                 break;
                         }
                     }
@@ -141,145 +142,31 @@ namespace Presentation
 
                 allOrders.AddRange(guestOrder);
 
-                // Proceed to the next guest after finishing their order
-                if (i == guests - 1)
-                {
-                    Console.WriteLine("\nPress any key to continue.");
-                    Console.ReadKey();
-                }
-                else
-                {
-                    Console.WriteLine("\nPress any key to continue to the next guest...");
-                    Console.ReadKey();
-                }
-            }
-
-            if (allOrders.Count == 0)
-            {
-                Console.WriteLine("============================================");
-                Console.WriteLine("  Invalid order, you have ordered nothing  ");
-                Console.WriteLine("============================================");
-                Console.WriteLine("\nPress any key to close the prompt.");
+                Console.WriteLine("\nPress any key to continue to the next guest...");
                 Console.ReadKey();
             }
-            else
-            {
-                PrintReceipt(allOrders, reservationId);
-                Console.WriteLine("\nPress any key to close the receipt.");
-                Console.ReadKey();
-            }
-            return;
+
+            PrintReceipt(allOrders, reservationId);
         }
 
+        public static void PrintReceipt(List<ProductModel> orders, int reservationId)
+        {
+            Console.Clear();
+            Console.WriteLine("=========== Receipt ===========");
+            decimal totalAmount = 0;
 
-        public static void PrintReceipt(List<ProductModel> guestOrder, Int64 reservationId)
+            foreach (var product in orders)
             {
-                Console.Clear();
-                Console.WriteLine("===========Receipt===========");
-                decimal totalAmount = 0;
+                Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
 
-                foreach (var product in guestOrder)
-                {
-                    Console.WriteLine($"{product.ProductName,-20} €{product.Price:F2}");
-                    totalAmount += product.Price;
-                }
-
-                Console.WriteLine("----------------------------");
-                Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
-                Console.WriteLine($"Reservation code:      {reservationId}");
-                Console.WriteLine("============================");
+                // Convert nullable float to decimal, treat null as 0
+                totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
 
-        public static void UserOverViewReservation(AccountModel acc)
-        {
-            int reservationIndex = 0;
-            bool inResMenu = true;
-            List<ReservationModel> userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
-            if (userReservations == null || userReservations.Count == 0)
-            {
-                Console.WriteLine("You have no reservations.");
-                Console.WriteLine("Choose a reservations to cancel it.");
-                Console.ReadKey();
-                return;
-            }
-            while (inResMenu)
-            {
-                Console.Clear();
-                Console.WriteLine($"Here are your Reservations {acc.FirstName}:");
-                for (int j = 0; j < userReservations.Count; j++)
-                {
-                    userReservations = reservationLogic.GetUserReservatoions(Convert.ToInt32(acc.UserID)); 
-                    if (j == reservationIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"> Reservation:{userReservations[j].Date}"); // Highlight selected item
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"  Reservation:{userReservations[j].Date}");
-                    }
-                }
-
-                var key = Console.ReadKey(intercept: true);
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        if (reservationIndex > 0) reservationIndex--; // Move up
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (reservationIndex < userReservations.Count - 1) reservationIndex++; // Move down
-                        break;
-                    case ConsoleKey.Enter:
-                        // Process the selected reservation
-                        Console.Clear();
-                        Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
-                        DeleteReservation(Convert.ToInt32(userReservations[reservationIndex].ID));
-                        Console.ReadKey();
-                        Console.WriteLine("Press any key to return to the reservation over view menu or press escape to return to the reservation menu...");
-                        var key2 = Console.ReadKey();
-                        if(key2.Key == ConsoleKey.Escape)
-                        {
-                            inResMenu = false;
-                            break; // Exit loop
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    case ConsoleKey.Escape:// Exit without selection
-                        inResMenu = false;
-                        break;
-                }
-            }
-            return;
-        }
-
-        public static void DeleteReservation(int resID)
-        {
-        if(reservationLogic.RemoveReservation(resID) is true)
-        {
-            // reservationLogic.RemoveReservation(resID);
-            Console.WriteLine("This reservation has been removed");
-            return;
-        }
-        else
-        {
-            Console.WriteLine("Failed to remove reservation");
-            return;
-        }
-        }
-        public static void ShowAvailableTables(DateTime selectedDate, CalendarLogic calendarLogic)
-        {
-            var availableTables = calendarLogic.GetAvailableTables(selectedDate);
-            Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
-            foreach (var table in availableTables)
-            {
-                Console.WriteLine($" - {table}");
-            }
-            Console.WriteLine("\nPress any key to return...");
-            Console.ReadKey();
+            Console.WriteLine("----------------------------");
+            Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
+            Console.WriteLine($"Reservation ID:        {reservationId}");
+            Console.WriteLine("============================");
         }
     }
 }
-

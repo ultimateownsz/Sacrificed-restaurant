@@ -1,9 +1,8 @@
 using System;
-using Logic;
 
 namespace Presentation
 {
-    public class CalendarPresentation : CalendarLogic
+    public class CalendarPresentation
     {
         public static DateTime Show(DateTime initialDate)
         {
