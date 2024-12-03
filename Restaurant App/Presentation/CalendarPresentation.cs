@@ -8,7 +8,7 @@ namespace Presentation
         {
             DateTime currentDate = initialDate;
             int selectedDay = currentDate.Day;
-            bool running = true;
+            bool running = true; 
 
             while (running)
             {
