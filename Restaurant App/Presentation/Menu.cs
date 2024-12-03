@@ -63,8 +63,8 @@ static class Menu
                 default:
                     Console.WriteLine("Invalid selection. Please try again.");
                     Console.ReadKey();
-                    break;
+                    break; //
             }
         }
-    }
+    } 
 }
