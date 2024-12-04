@@ -170,7 +170,6 @@ namespace Presentation
 	{
 		int reservationIndex = 0;
 		bool inResMenu = true;
-		ReservationModel reservation = new ReservationModel(); // reservation instance
 		IEnumerable<ReservationModel> userReservations = reservationLogic.GetUserReservations(Convert.ToInt32(acc.ID)); 
 		if (userReservations == null || userReservations.Count() == 0)
 		{
@@ -214,7 +213,7 @@ namespace Presentation
 					switch (SelectionPresent.Show(["Update the reservation"]).text)
 					{
 						case "Update the reservation":
-							UpdateReservation.Show(reservation, false);
+							UpdateReservation.Show(userReservations.ElementAt(reservationIndex), false);
 							break;
 					}
 					// Why in the flying fuck would "view" = "delete?"

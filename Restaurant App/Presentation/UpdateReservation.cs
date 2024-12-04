@@ -27,9 +27,6 @@ public static class UpdateReservation
         // Save updated reservation
         Access.Reservations.Update(reservation);
 
-        Console.WriteLine("\nReservation updated successfully.");
-        Console.WriteLine("Press any key to return.");
-        Console.ReadKey();
     } 
 
     public static void DisplayReservationDetails(ReservationModel reservation)
@@ -55,10 +52,16 @@ public static class UpdateReservation
                         case "Date":
                             Console.Clear();
                             UpdateReservationDate(reservation);
+                            Console.WriteLine("\nReservation updated successfully.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
                             break;
                         case "Tabel number":
                             Console.Clear();
                             UpdateTableID(reservation);
+                            Console.WriteLine("\nReservation updated successfully.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
                             break;
                         case "Cancel":
                             return;
@@ -84,14 +87,23 @@ public static class UpdateReservation
                         case "Date":
                             Console.Clear();
                             UpdateReservationDate(reservation);
+                            Console.WriteLine("\nReservation updated successfully.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
                             break;
                         case "Tabel number":
                             Console.Clear();
                             UpdateTableID(reservation);
+                            Console.WriteLine("\nReservation updated successfully.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
                             break;
                         case "Number of guests":
                             Console.Clear();
                             UdpateReservationAmount(reservation);
+                            Console.WriteLine("\nReservation updated successfully.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
                             break;
                         case "Cancel":
                             return;
