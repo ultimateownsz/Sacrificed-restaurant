@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using Project;
 using Project.Presentation;
 
 public static class UpdateReservation
 {
-    public static void Show(ReservationModel reservation)
+    public static void Show(ReservationModel reservation) // NOTE: add modularity for admin and user
     {
         Console.Clear();
         Console.WriteLine("Update Reservation Details");
@@ -32,7 +34,41 @@ public static class UpdateReservation
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
-    private static void UpdateReservationDetails(ReservationModel reservation)
+    public static void UpdateReservationDetails(ReservationModel reservation)
+    {
+        // bool isValid = false;
+        string confirmUpdate = "Would you like to update your reservation details?\n\n";
+        string confirmChoice = "Which detail would you like to update?\n\n";
+        while (true)
+        {
+            switch (SelectionPresent.Show(["Yes", "No"], confirmUpdate).text)
+            {
+                case "Yes":
+                    switch (SelectionPresent.Show(["Date", "Table number", "Number of guests", "Cancel"], confirmChoice).text)
+                    {
+                        case "Date":
+                            Console.Clear();
+                            UpdateReservationDate(reservation);
+                            break;
+                        case "Tabel number":
+                            Console.Clear();
+                            UpdateTableID(reservation);
+                            break;
+                        case "Number of guests":
+                            Console.Clear();
+                            UdpateReservationAmount(reservation);
+                            break;
+                        case "Cancel":
+                            return;
+                    }
+                    break;
+                case "No":
+                    return;
+            }
+        }
+    }
+
+    private static void UpdateReservationDate(ReservationModel reservation)
     {
         // Update reservation date
         DateTime newDate;
@@ -66,7 +102,10 @@ public static class UpdateReservation
                 Console.WriteLine("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
             }
         }
-
+    }
+    
+    private static void UpdateTableID(ReservationModel reservation)
+    {
         // Update Table ID
         while (true)
         {
@@ -103,7 +142,10 @@ public static class UpdateReservation
                 Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
             }
         }
+    }
 
+    private static void UdpateReservationAmount(ReservationModel reservation)
+    {
         // Update Reservation Amount
         while (true)
         {
