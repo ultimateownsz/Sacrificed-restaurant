@@ -11,25 +11,48 @@ namespace Presentation
         static private ReservationMenuLogic reservationMenuLogic = new();
         static private OrderLogic orderLogic = new();
 
-        public static void MakingReservation(UserModel acc, DateTime selectedDate)
+        public static void MakingReservation(UserModel acc)
         {
-            // Step 1: Ask the user for the number of guests
-            List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\nUse UP and DOWN arrowkeys\n\n";
-            int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
-
-            // Step 2: Use TableSelection for table selection
-            int selectedTable = SelectTableUsingTableSelection(selectedDate, guests);
-
-            if (selectedTable == -1)
+            while (true) // Loop to allow returning to the calendar
             {
-                Console.ReadKey();
-                return; // Exit the process if the user goes back
-            }
+                // Step 1: Display the calendar and let the user select a date
+                DateTime selectedDate = CalendarPresent.Show(DateTime.Now);
 
-            // Step 3: Proceed to take orders
-            TakeOrders(selectedDate, acc, selectedTable, guests);
+                // Step 2: Ask the user for the number of guests
+                List<string> options = new() { "1", "2", "3", "4", "5", "6" };
+                string banner = "How many guests will be coming?\n\n";
+                int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
+
+                // Step 3: Use TableSelection for table selection
+                TableSelection tableSelection = new();
+                int[] availableTables = guests switch
+                {
+                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                    5 or 6 => new int[] { 2, 3 },
+                    _ => Array.Empty<int>()
+                };
+                var reservedTables = Access.Reservations
+                                        .GetAllBy<DateTime>("Date", selectedDate)
+                                        .Where(r => r?.Place != null)
+                                        .Select(r => r!.Place!.Value)
+                                        .ToArray();
+
+                int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+
+                // Step 4: Check if the user pressed Back
+                if (selectedTable == -1)
+                {
+                    Console.WriteLine("Returning to the calendar...");
+                    continue; // Restart the process, allowing the user to select a new date
+                }
+
+                // Step 5: Proceed to take orders
+                TakeOrders(selectedDate, acc, selectedTable, guests);
+                break; // Exit the loop if the reservation is completed
+            }
         }
+
 
         public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
         {

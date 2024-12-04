@@ -44,31 +44,29 @@ static class Menu
                 case "reserve":
                     try
                     {
-                        // Step 1: Select a date using CalendarPresentation
-                        DateTime selectedDate = CalendarPresent.Show(DateTime.Now);
-                        
-                        // Step 2: Pass the selected date to MakingReservations
-                        MakingReservations.MakingReservation(acc, selectedDate);
+                        // Directly call MakingReservation without calendar in Menu
+                        MakingReservations.MakingReservation(acc);
                     }
-                    
                     catch (OperationCanceledException)
                     {
-                        Console.WriteLine("Date selection canceled. Returning to user menu...");
+                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
                         Console.ReadKey();
                     }
                     break;
 
-                case "logout":
-                    return;
                 case "view reservations":
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
+                case "logout":
+                    return;
+
                 default:
                     Console.WriteLine("Invalid selection. Please try again.");
                     Console.ReadKey();
-                    break; //
+                    break;
             }
         }
-    } 
+    }
+
 }

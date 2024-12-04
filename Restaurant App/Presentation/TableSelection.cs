@@ -271,11 +271,11 @@ namespace Presentation
 
                 var key = Console.ReadKey(true);
 
-                // Handle the "Back" case immediately
                 if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                 {
-                    return -1; // Return to the previous menu
+                    return -1; // Return to the previous menu (calendar in this case)
                 }
+
 
                 RemoveHighlight();
 
@@ -307,7 +307,20 @@ namespace Presentation
                             string selectedNumber = GetNumberAt(cursorX, cursorY);
                             if (!string.IsNullOrEmpty(selectedNumber))
                             {
-                                SelectedTable = int.Parse(selectedNumber);
+                                int tableNumber = int.Parse(selectedNumber);
+
+                                // Check if the selected table is unavailable
+                                if (!Array.Exists(availableTables, table => table == tableNumber) ||
+                                    Array.Exists(reservedTables, table => table == tableNumber))
+                                {
+                                    Console.SetCursorPosition(0, grid.Length + 3); // Print below the grid
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
+                                    Console.ResetColor();
+                                    continue; // Let the user select another table
+                                }
+
+                                SelectedTable = tableNumber;
                                 return SelectedTable; // Table selected
                             }
                             break;
@@ -334,6 +347,7 @@ namespace Presentation
                 ShowGrid(availableTables, reservedTables); // Redraw the grid
             }
         }
+
 
 
 
