@@ -270,6 +270,13 @@ namespace Presentation
                 Console.WriteLine("(B)ack");
 
                 var key = Console.ReadKey(true);
+
+                // Handle the "Back" case immediately
+                if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                {
+                    return -1; // Return to the previous menu
+                }
+
                 RemoveHighlight();
 
                 try
@@ -304,10 +311,6 @@ namespace Presentation
                                 return SelectedTable; // Table selected
                             }
                             break;
-                        case ConsoleKey.B: // Handle Back option
-                            return -1; // Special code for "Back"
-                        case ConsoleKey.Escape: // Optional escape handling
-                            return -1;
                     }
 
                     // Reset to the last valid position if out of bounds
@@ -331,6 +334,7 @@ namespace Presentation
                 ShowGrid(availableTables, reservedTables); // Redraw the grid
             }
         }
+
 
 
     }

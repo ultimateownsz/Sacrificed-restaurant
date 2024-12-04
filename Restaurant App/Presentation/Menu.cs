@@ -50,6 +50,7 @@ static class Menu
                         // Step 2: Pass the selected date to MakingReservations
                         MakingReservations.MakingReservation(acc, selectedDate);
                     }
+                    
                     catch (OperationCanceledException)
                     {
                         Console.WriteLine("Date selection canceled. Returning to user menu...");
@@ -59,6 +60,9 @@ static class Menu
 
                 case "logout":
                     return;
+                case "view reservations":
+                    MakingReservations.UserOverViewReservation(acc);
+                    break;
 
                 default:
                     Console.WriteLine("Invalid selection. Please try again.");
