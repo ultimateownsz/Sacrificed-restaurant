@@ -2,20 +2,24 @@ using Project;
 
 static class ThemeView
 {
-    public static void DisplayAllThemes()
+    public static void YearAndMonthInputs()
     {
-        Console.Clear();
-
-        var monthlyThemes = ThemeMenuManager.GetMonthlyDisplay();
-
-        Console.WriteLine("{0,-12} {1}", "Month", "Theme");
-        Console.WriteLine(new string('-', 42));
-
-        foreach (var theme in monthlyThemes)
+        int year = ThemeInputValidator.ValidateYear();
+        
+        string banner = "Select Month\n\n";            
+        List<string> options = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthName(m)).ToList();
+        int month;
+        do
         {
-            string monthName = ThemeMenuManager.GetMonthName(theme.month);
-            Console.WriteLine("{0,-12}: theme - '{1}'", monthName, theme.themeName);
-        }
+            month = options.Count() - SelectionPresent.Show(options, banner, true).index;
+
+            if (DateTime.Now.Month > month && DateTime.Now.Year == year)
+            {
+                Console.WriteLine("Invalid input. Please enter a month that is not in the past.");
+                Console.ReadKey();
+            }
+        } while (DateTime.Now.Month > month && DateTime.Now.Year == year);
+
     }
 
     public static void SetOrUpdateTheme()
@@ -23,14 +27,11 @@ static class ThemeView
         do
         {
             Console.Clear();
-            DisplayAllThemes();
+            YearAndMonthInputs();
 
             int? month = ThemeInputValidator.GetValidMonth("\nEnter 'Q' to quit or month (1-12): ");
             if (month == null)
                 return;
-
-            // removed because fuck that
-            //int year = ThemeInputValidator.GetValidYear("\nEnter the year (YYYY): ", DateTime.Now.Year);
 
             // // check if there is a theme planned
             var key = month ?? 0;
@@ -55,7 +56,7 @@ static class ThemeView
                     {
                         Console.WriteLine("\nTheme updated succesfully.");
                         Console.Clear();
-                        DisplayAllThemes();
+                        YearAndMonthInputs();
                     }
                     else if (isDuplicate)
                     {
@@ -86,7 +87,7 @@ static class ThemeView
                     {
                         Console.WriteLine("\nTheme updated successfully.");
                         Console.Clear();
-                        DisplayAllThemes();
+                        YearAndMonthInputs();
                     }
                     else if (isDuplicate)
                     {
@@ -114,7 +115,7 @@ static class ThemeView
 
     public static void DeleteTheme()
     {
-        DisplayAllThemes();
+        YearAndMonthInputs();
 
         int? scheduledMonth = ThemeInputValidator.GetValidMonth("\nEnter the month of the theme to delete (1-12) ");
         //int scheduledYear = ThemeInputValidator.GetValidYear("\nEnter the year of the theme to delete (YYYY): ", DateTime.Now.Year);

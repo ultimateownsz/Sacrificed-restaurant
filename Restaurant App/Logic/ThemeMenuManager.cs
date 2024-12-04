@@ -76,18 +76,18 @@ static class ThemeMenuManager
     {
         return month switch
         {
-            1 => "January",
-            2 => "February",
-            3 => "March",
-            4 => "April",
-            5 => "May",
-            6 => "June",
-            7 => "July",
-            8 => "August",
-            9 => "September",
-            10 => "October",
-            11 => "November",
-            12 => "December",
+            1 => $"January - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            2 => $"February - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            3 => $"March - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            4 => $"April - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            5 => $"May - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            6 => $"June - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            7 => $"July - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            8 => $"August - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            9 => $"September - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            10 => $"October - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            11 => $"November - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
+            12 => $"December - {GetThemeByYearAndMonth(month ?? 0)?.Name ?? "no theme"}",
             _ => "Invalid month"
         };
     }

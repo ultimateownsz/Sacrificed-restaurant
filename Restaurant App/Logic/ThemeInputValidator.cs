@@ -31,19 +31,31 @@ public static class ThemeInputValidator
         }
     }
 
-    public static int GetValidYear(string prompt, int minYear)
+    public static int ValidateYear()
     {
         int result;
+        int minYear = DateTime.Now.Year;
         while (true)
         {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
+            Console.Clear();
 
-            if (int.TryParse(input, out result) && result >= minYear)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Enter year: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            var year = Console.ReadLine();
+
+            if (int.TryParse(year, out result) && result >= minYear)
             {
                 return result;
             }
-            Console.WriteLine($"Invalid input. Please enter a year greater than or equal to {minYear}.");
+            
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter year: {year}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid year...");
+            Console.ReadKey();
         }
     }
 
