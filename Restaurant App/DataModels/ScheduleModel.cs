@@ -12,7 +12,7 @@ public class ScheduleModel : IModel
             if (Year == null || Month == null)
                 return null;
 
-            return new DateTime(Year ?? 0, Month ?? 0, 0);
+            return new DateTime(year:Year ?? 0, month:Month ?? 0, day:1);
         }
     }
 
