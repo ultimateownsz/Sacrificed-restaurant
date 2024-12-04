@@ -7,26 +7,30 @@ static class AdminMenu
     {
 
         List<string> options = [
-            "view",
-            "create (admin account)",
-            "update (themes)\n",
-            "back"
+            "View reservations by date",
+            "Create (admin account)",
+            "Delete (accounts)",
+            "Update (themes)\n",
+            "Back"
             ];
 
         while (true) 
         {
-            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
+            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
             {
-                case "view":
+                case "View reservations by date":
                     ShowReservations.Show();
                     break;
-                case "create (admin account)":
+                case "Create (admin account)":
                     RegisterUser.CreateAccount(true);
                     break;
-                case "update (themes)\n":
+                case "Delete (accounts)":
+                //  todo: @Dyl4n01 is hiermee bezig
+                    break;
+                case "Update (themes)\n":
                     ThemeView.SetOrUpdateTheme();
                     break;
-                case "back":
+                case "Back":
                     return;
             }
         }
