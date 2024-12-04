@@ -36,7 +36,7 @@ namespace Project.Logic
             var options = accounts.Select(FormatAccount).ToList();
             if (currentPage > 0) options.Add("<< Previous Page");
             if (currentPage < totalPages - 1) options.Add("Next Page >>");
-            options.Add("Back"); // Changed "Cancel" to "Back"
+            options.Add("Back");
             return options;
         }
 
