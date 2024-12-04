@@ -9,7 +9,7 @@ static class AdminMenu
         List<string> options = [
             "View reservations by date",
             "Create (admin account)",
-            "Delete (accounts)",
+            "Delete (accounts) (TODO)",
             "Update (themes)\n",
             "Back"
             ];
