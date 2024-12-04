@@ -23,7 +23,6 @@ namespace Presentation
 
             if (selectedTable == -1)
             {
-                Console.WriteLine("You chose to go back. Returning to the main menu...");
                 Console.ReadKey();
                 return; // Exit the process if the user goes back
             }

@@ -12,7 +12,7 @@ namespace Presentation
 
             while (running)
             {
-                DisplayCalendar(currentDate, selectedDay); // Call inherited method
+                DisplayCalendar(currentDate, selectedDay);
 
                 var key = Console.ReadKey(intercept: true);
                 switch (key.Key)
