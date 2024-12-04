@@ -5,7 +5,7 @@ using Project.Presentation;
 
 public static class UpdateReservation
 {
-    public static void Show(ReservationModel reservation) // NOTE: add modularity for admin and user
+    public static void Show(ReservationModel reservation, bool admin) // Adding modularity for admin and user
     {
         Console.Clear();
         Console.WriteLine("Update Reservation Details");
@@ -15,7 +15,14 @@ public static class UpdateReservation
         DisplayReservationDetails(reservation);
 
         // Proceed to update reservation
-        UpdateReservationDetails(reservation);
+        if (admin)
+        {
+            UpdateReservationAdmin(reservation);
+        }
+        else
+        {
+            UpdateReservationUser(reservation);
+        }
 
         // Save updated reservation
         Access.Reservations.Update(reservation);
@@ -34,9 +41,37 @@ public static class UpdateReservation
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
-    public static void UpdateReservationDetails(ReservationModel reservation)
+    public static void UpdateReservationAdmin(ReservationModel reservation)
     {
-        // bool isValid = false;
+        string confirmUpdate = "Would you like to update your reservation details?\n\n";
+        string confirmChoice = "Which detail would you like to update?\n\n";
+        while (true)
+        {
+            switch (SelectionPresent.Show(["Yes", "No"], confirmUpdate).text)
+            {
+                case "Yes":
+                    switch (SelectionPresent.Show(["Date", "Table number", "Cancel"], confirmChoice).text)
+                    {
+                        case "Date":
+                            Console.Clear();
+                            UpdateReservationDate(reservation);
+                            break;
+                        case "Tabel number":
+                            Console.Clear();
+                            UpdateTableID(reservation);
+                            break;
+                        case "Cancel":
+                            return;
+                    }
+                    break;
+                case "No":
+                    return;
+            }
+        }
+    }
+
+    public static void UpdateReservationUser(ReservationModel reservation)
+    {
         string confirmUpdate = "Would you like to update your reservation details?\n\n";
         string confirmChoice = "Which detail would you like to update?\n\n";
         while (true)

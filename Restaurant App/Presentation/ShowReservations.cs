@@ -144,7 +144,7 @@ public static class ShowReservations
                             break;
 
                         case 1: // Update Reservation
-                            UpdateReservation.Show(reservation);
+                            UpdateReservation.Show(reservation, true); // Boolean to check for admin
                             Console.ReadKey();
                             break;
 
