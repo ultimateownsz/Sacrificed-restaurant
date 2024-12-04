@@ -2,7 +2,7 @@ using System;
 
 namespace Presentation
 {
-    public class CalendarPresentation
+    public class CalendarPresent
     {
         public static DateTime Show(DateTime initialDate) // Modular
         {
