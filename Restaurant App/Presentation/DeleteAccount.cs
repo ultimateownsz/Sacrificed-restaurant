@@ -1,6 +1,6 @@
 using Project;
 using Project.Presentation;
-using System.Linq; // Ensure LINQ is available
+using System.Linq;
 
 internal class DeleteAccount
 {
@@ -40,13 +40,13 @@ internal class DeleteAccount
             // Add navigation options
             if (currentPage > 0) options.Add("<< Previous Page");
             if (currentPage < totalPages - 1) options.Add("Next Page >>");
-            options.Add("Back"); // Changed "Cancel" to "Back"
+            options.Add("Back");
 
             // Use SelectionPresent to navigate
             var selection = SelectionPresent.Show(options, "Select an account to delete:\n");
             string selectedText = selection.text;
 
-            if (selectedText == "Back") // Changed from "Cancel" to "Back"
+            if (selectedText == "Back")
                 return;
 
             if (selectedText == "Next Page >>")
