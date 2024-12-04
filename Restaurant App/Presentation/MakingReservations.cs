@@ -15,7 +15,7 @@ namespace Presentation
         {
             // Step 1: Ask the user for the number of guests
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
+            string banner = "How many guests will be coming?\nUse UP and DOWN arrowkeys\n\n";
             int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
             // Step 2: Use TableSelection for table selection
