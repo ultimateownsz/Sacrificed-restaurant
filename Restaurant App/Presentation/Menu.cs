@@ -11,21 +11,21 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
+            switch (SelectionPresent.Show(["Login", "Register\n", "Exit"], "MAIN MENU\n\n").text)
             {
-                case "login":
+                case "Login":
 
                     if (MenuLogic.Login() == "continue")
                         continue;
 
                     break;
 
-                case "register\n":
+                case "Register\n":
                     
                     RegisterUser.CreateAccount();
                     continue;
 
-                case "exit":
+                case "Exit":
                     return;
 
                 default:
@@ -42,17 +42,17 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n").text)
+            switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
             {
-                case "reserve":
+                case "Make a reservation":
                     MakingReservations.CalendarNavigation(acc);
                     break;
 
-                case "view reservations":
+                case "View reservations":
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
-                case "logout":
+                case "Logout":
                     return;
 
                 default:

@@ -6,6 +6,7 @@ public static class ShowReservations
     {
         while (true)
         {
+            // TODO: Add a Calendar to select dates instead of typing it out
             Console.Clear();
             Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
 
@@ -98,7 +99,7 @@ public static class ShowReservations
         {
             Console.Clear(); // Refresh the options display
             Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
-            Console.WriteLine("Choose an action:");
+            Console.WriteLine("Choose a action:\n");
 
             // Display actions with arrow key navigation and color highlighting
             for (int i = 0; i < actions.Length; i++)

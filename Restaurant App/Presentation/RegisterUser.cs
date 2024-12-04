@@ -16,16 +16,16 @@ internal class RegisterUser
         Console.WriteLine("Please enter the following information:\n");
 
         // Input collection with validation loops
-        Console.Write("first name: ");
+        Console.Write("First name: ");
         firstName = Console.ReadLine();
 
-        Console.Write("last name: ");
+        Console.Write("Last name: ");
         lastName = Console.ReadLine();
 
         // Loop until valid email is provided
         while (true)
         {
-            Console.Write("email: ");
+            Console.Write("Email: ");
             email = Console.ReadLine();
             if (UserLogic.IsEmailValid(email))
                 break;
@@ -35,7 +35,7 @@ internal class RegisterUser
         // Loop until valid password is provided
         while (true)
         {
-            Console.Write("password (8-16 characters): ");
+            Console.Write("Password (8-16 characters): ");
             password = Console.ReadLine();
             if (UserLogic.IsPasswordValid(password))
                 break;
@@ -45,7 +45,7 @@ internal class RegisterUser
         // Loop until valid phone number is provided
         while (true)
         {
-            Console.Write("phone number (8 numbers): ");
+            Console.Write("Phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
             if (UserLogic.IsPhoneNumberValid(phoneNumber))
                 break;
@@ -58,11 +58,11 @@ internal class RegisterUser
             Console.Clear();
             Console.WriteLine("Your information: ");
             Console.WriteLine(" ");
-            Console.WriteLine($"first name: {firstName}");
-            Console.WriteLine($"last name: {lastName}");
-            Console.WriteLine($"email: {email}");
-            Console.WriteLine($"password: {password}");
-            Console.WriteLine($"phone Number: {phoneNumber}");
+            Console.WriteLine($"First name: {firstName}");
+            Console.WriteLine($"Last name: {lastName}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine(" ");
             Console.WriteLine("Are you sure this is correct? Y/N");
 
@@ -92,25 +92,25 @@ internal class RegisterUser
                 while (true)
                 {
                     string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
+                    switch (SelectionPresent.Show(["First name", "Last name", "Email", "Password", "Phone number"], banner).text)
                     {
-                        case "first name":
+                        case "First name":
                             Console.Clear();
-                            Console.Write("first name: ");
+                            Console.Write("First name: ");
                             firstName = Console.ReadLine();
                             break;
 
-                        case "last name":
+                        case "Last name":
                             Console.Clear();
-                            Console.Write("last name: ");
+                            Console.Write("Last name: ");
                             lastName = Console.ReadLine();
                             break;
 
-                        case "email":
+                        case "Email":
                             while (true)
                             {
                                 Console.Clear();
-                                Console.Write("email address: ");
+                                Console.Write("Email address: ");
                                 string newEmail = Console.ReadLine();
                                 if (UserLogic.IsEmailValid(newEmail))
                                 {
@@ -121,11 +121,11 @@ internal class RegisterUser
                             }
                             break;
 
-                        case "password":
+                        case "Password":
                             while (true)
                             {
                                 Console.Clear();
-                                Console.Write("password (8-16 characters): ");
+                                Console.Write("Password (8-16 characters): ");
                                 string newPassword = Console.ReadLine();
                                 if (UserLogic.IsPasswordValid(newPassword))
                                 {
@@ -136,11 +136,11 @@ internal class RegisterUser
                             }
                             break;
 
-                        case "phone number":
+                        case "Phone number":
                             while (true)
                             {
                                 Console.Clear();
-                                Console.Write("phone number (8 numbers): ");
+                                Console.Write("Phone number (8 numbers): ");
                                 string newPhoneNumber = Console.ReadLine();
                                 if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
                                 {
