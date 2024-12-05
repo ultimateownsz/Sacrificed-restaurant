@@ -22,11 +22,18 @@ namespace Project.Logic
         // Method to handle account deletion confirmation and deletion
         public static bool ConfirmAndDelete(UserModel account)
         {
-            Console.WriteLine($"\nAre you sure you want to delete {account.FirstName} {account.LastName}? (y/n)");
-            if (Console.ReadKey(true).Key == ConsoleKey.Y)
+            // Use SelectionPresent for confirmation
+            var options = new List<string> { "Yes", "No" };
+            var selection = SelectionPresent.Show(
+                options,
+                $"\nAre you sure you want to delete the account: {account.FirstName} {account.LastName}?\n"
+            );
+
+            if (selection.text == "Yes")
             {
                 return UserLogic.DeleteUserAccount(account.ID.Value);
             }
+
             return false;
         }
 
@@ -50,7 +57,6 @@ namespace Project.Logic
             var selectedAccount = accountsToDisplay.FirstOrDefault(acc => FormatAccount(acc) == options.First());
             if (selectedAccount?.ID != null && ConfirmAndDelete(selectedAccount))
             {
-                Console.WriteLine("Account deleted successfully.");
                 return true;
             }
             else
