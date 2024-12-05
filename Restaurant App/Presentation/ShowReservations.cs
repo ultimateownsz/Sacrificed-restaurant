@@ -4,27 +4,35 @@ public static class ShowReservations
 {
     public static void Show()
     {
-        int placeID = 1;
+        // int placeID = 1;
         string banner = "Choose a sort reservation you would like to view\n\n";
 
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            // Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            System.Console.WriteLine("Enter the email of the client:");
 
-            var dateInput = Console.ReadLine();
-            if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
-            {
-                Console.WriteLine("Invalid date format. Press any key to try again.");
-                Console.ReadKey();
-                continue;
-            }
+            // var dateInput = Console.ReadLine();
+            // if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
+            // {
+            //     Console.WriteLine("Invalid date format. Press any key to try again.");
+            //     Console.ReadKey();
+            //     continue;
+            // }
+
+            var accountInput = Console.ReadLine();
 
             // Convert date to the required format (ddMMyyyy as integer)
-            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
+            // var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
+
+            var userReservations = Access.Reservations.GetAllBy<string?>("UserID", accountInput)
+                                                .Where(r => r != null)
+                                                .Cast<ReservationModel>()
+                                                .ToList();
 
             // Fetch user names and table choices for reservations
-            var reservationDetails = reservations.Select(r => new
+            var reservationDetails = userReservations.Select(r => new
             {
                 Reservation = r,
                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
