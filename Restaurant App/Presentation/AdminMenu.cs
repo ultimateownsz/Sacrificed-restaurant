@@ -13,7 +13,7 @@ static class AdminMenu
             "back"
             ];
 
-        while (true) 
+        while (true)
         {
             switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
             {

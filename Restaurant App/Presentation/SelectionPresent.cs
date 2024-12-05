@@ -72,4 +72,59 @@ internal class SelectionPresent : SelectionLogic
             }
         }
     }
+
+    public static bool EscapeKeyPressedWithConfirmation()
+    {
+        if (Console.IsInputRedirected)
+        {
+            int nextChar = Console.In.Peek(); // Controleer of er invoer beschikbaar is
+            if (nextChar != -1) // -1 betekent EOF
+            {
+                var key = (ConsoleKey)Console.Read(); // Lees een char als ConsoleKey
+
+                if (key == ConsoleKey.Escape)
+                {
+                    var confirmation = SelectionPresent.Show(
+                        new List<string> { "yes", "no" },
+                        "Are you sure you want to exit?\n\n"
+                    );
+
+                    if (confirmation.text == "yes")
+                    {
+                        Console.WriteLine("\nExiting program...");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    //     var key = Console.ReadKey(intercept: true);
+    //     if (key.Key == ConsoleKey.Escape)
+    //     {
+    //         var confirmation = SelectionPresent.Show(
+    //             new List<string> { "yes", "no" }, 
+    //             "Are you sure you want to exit?\n\n"
+    //         );
+
+    //         if (confirmation.text == "yes")
+    //         {
+    //             Console.WriteLine("\nExiting program...");
+    //             return true;
+    //         }
+    //         else
+    //         {
+    //             // Console.WriteLine("\nReturning to menu...");
+    //             Console.Clear();
+    //             return false;
+    //         }
+    //     }
+    //     return false;
+    // }
 }

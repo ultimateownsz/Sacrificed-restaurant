@@ -10,29 +10,34 @@ static class Menu
 
         while (true)
         {
-            Console.Clear();
-            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
+            // Console.Clear();
+            if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
+            
+            var userChoice = SelectionPresent.Show(
+                ["login", "register\n", "exit"],
+                "MAIN MENU\n\n").text;
+            switch (userChoice)
             {
                 case "login":
-
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     if (MenuLogic.Login() == "continue")
                         continue;
 
                     break;
 
                 case "register\n":
-                    
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     RegisterUser.CreateAccount();
                     continue;
 
                 case "exit":
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     return;
 
                 default:
                     continue;
             }
 
-            // valid input has been provided at this point
             break;
         }
     }
@@ -41,18 +46,25 @@ static class Menu
     {
         while (true)
         {
+            if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
             Console.Clear();
-            switch (SelectionPresent.Show(["reserve", "view reservations", "logout"], "USER MENU\n\n").text)
+            var userChoice = SelectionPresent.Show(
+                ["reserve", "view reservations", "logout"],
+                "USER MENU\n\n").text;
+            switch (userChoice)
             {
                 case "reserve":
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     MakingReservations.CalendarNavigation(acc);
                     break;
 
                 case "view reservations":
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
                 case "logout":
+                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     return;
 
                 default:
