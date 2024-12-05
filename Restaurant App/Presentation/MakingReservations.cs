@@ -136,6 +136,12 @@ namespace Presentation
                     // Process the selected reservation
                     Console.Clear();
                     Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
+					switch (SelectionPresent.Show(["Update the reservation"]).text)
+					{
+						case "Update the reservation":
+							UpdateReservation.Show(userReservations.ElementAt(reservationIndex), false);
+							break;
+					}
                     Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the main menu...");
                     var key2 = Console.ReadKey();
 
