@@ -1,11 +1,11 @@
 using Project;
 
-static class ProductView
+static class ProductDetails
 {
     // Display all products
     public static void DisplayAllProducts()
     {
-        IEnumerable<ProductModel> products = ProductManager.GetAllProducts();
+        IEnumerable<ProductModel> products = ProductLogic.GetAllProducts();
         if (products.Count() > 0)
         {
             foreach (var product in products)

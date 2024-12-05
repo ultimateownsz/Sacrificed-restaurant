@@ -2,7 +2,7 @@
 
 using Project;
 
-static class ProductManager
+static class ProductLogic
 {
     public static bool AddProduct(ProductModel product)
     {
