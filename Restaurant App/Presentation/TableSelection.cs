@@ -16,11 +16,11 @@ namespace Presentation
             {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
             {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
             {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'÷',' ',' ','5',' ','|',' ',' ',' ',' ',' ',' ','C','|',' ','6',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','7',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ','|',' ','8',' ',' ','÷',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
+            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
+            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
+            {'÷',' ',' ','5',' ','|',' ',' ',' ',' ',' ',' ',' ','C','|',' ','6',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','7',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ','|',' ','8',' ',' ','÷',},
+            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
+            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
             {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
             {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
             {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
@@ -28,19 +28,23 @@ namespace Presentation
             {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
             {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
             {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ','1','2',' ','|',' ',' ',' ',' ',' ',' ','C','|',' ','1','3',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','4',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ','|',' ','1','5',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ','/',' ',' ','\\',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
+            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
+            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
+            {'|',' ','1','2',' ','|',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','3',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','4',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ','|',' ','1','5',' ','|',},
+            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
+            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ','/',' ',' ','\\',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'}
         };
 
-private int cursorX = 3, cursorY = 6; // Start at table "1"
+        private Dictionary<int, (int x, int y)> tableLocations = new();
+        private int currentTableId = 1; // Always start on table 1
         public int SelectedTable { get; private set; }
 
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
+            // Dynamically find table locations before rendering the grid
+            FindTableLocations();
+
             Console.Clear();
 
             // Display the grid
@@ -48,69 +52,55 @@ private int cursorX = 3, cursorY = 6; // Start at table "1"
             {
                 for (int x = 0; x < grid.GetLength(1); x++)
                 {
-                    char currentChar = grid[y, x];
-                    if (char.IsDigit(currentChar))
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number))
                     {
-                        int tableNumber = int.Parse(GetNumberAt(x, y));
-                        
-                        // Determine color based on table availability
-                        if (Array.Exists(availableTables, table => table == tableNumber))
+                        int tableNumber = int.Parse(number);
+
+                        // Highlight the current table with "X "
+                        if (tableNumber == currentTableId)
                         {
-                            Console.ForegroundColor = ConsoleColor.Green; // Available
-                        }
-                        else if (Array.Exists(reservedTables, table => table == tableNumber))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red; // Reserved
+                            Console.ForegroundColor = GetTableColor(availableTables, reservedTables, tableNumber);
+                            Console.Write("X ");
+                            x += number.Length - 1; // Skip over multi-digit numbers
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Red; // Unavailable
+                            Console.ForegroundColor = GetTableColor(availableTables, reservedTables, tableNumber);
+                            Console.Write(number);
+                            x += number.Length - 1; // Skip over multi-digit numbers
                         }
-
-                        Console.Write(tableNumber);
-
-                        // Adjust the x position for multi-digit numbers
-                        x += GetNumberAt(x, y).Length - 1;
                     }
                     else
                     {
                         Console.ResetColor();
-                        Console.Write(currentChar);
+                        Console.Write(grid[y, x]);
                     }
                 }
                 Console.WriteLine();
             }
 
             Console.ResetColor();
-
-            HighlightNumber(availableTables, reservedTables);
         }
 
-        private void HighlightNumber(int[] availableTables, int[] reservedTables)
+        private void FindTableLocations()
         {
-            string number = GetNumberAt(cursorX, cursorY);
+            tableLocations.Clear(); // Clear previous locations
 
-            if (!string.IsNullOrEmpty(number))
+            for (int y = 0; y < grid.GetLength(0); y++)
             {
-                int tableNumber = int.Parse(number);
-
-                // Determine color for highlighting
-                if (Array.Exists(availableTables, table => table == tableNumber))
+                for (int x = 0; x < grid.GetLength(1); x++)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green; // Available
+                    if (char.IsDigit(grid[y, x]))
+                    {
+                        string number = GetNumberAt(x, y);
+                        if (int.TryParse(number, out int tableNumber))
+                        {
+                            tableLocations[tableNumber] = (x, y);
+                            x += number.Length - 1; // Skip to the end of the number
+                        }
+                    }
                 }
-                else if (Array.Exists(reservedTables, table => table == tableNumber))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red; // Reserved
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red; // Unavailable
-                }
-
-                Console.SetCursorPosition(cursorX, cursorY);
-                Console.Write("X");
-                Console.ResetColor();
             }
         }
 
@@ -125,97 +115,102 @@ private int cursorX = 3, cursorY = 6; // Start at table "1"
             return number;
         }
 
-        private void RemoveHighlight()
+        private ConsoleColor GetTableColor(int[] availableTables, int[] reservedTables, int tableNumber)
         {
-            string number = GetNumberAt(cursorX, cursorY);
-
-            if (!string.IsNullOrEmpty(number))
-            {
-                Console.SetCursorPosition(cursorX, cursorY);
-                Console.Write(number);
-
-                if (number.Length == 2)
-                {
-                    Console.SetCursorPosition(cursorX + 1, cursorY);
-                    Console.Write(number[1]);
-                }
-            }
-        }
-
-        private (int, int) FindNextPosition(int directionX, int directionY)
-        {
-            int x = cursorX, y = cursorY;
-
-            while (y >= 0 && y < grid.GetLength(0))
-            {
-                y += directionY;
-                x += directionX;
-
-                if (x >= 0 && x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
-                {
-                    return (x, y);
-                }
-            }
-
-            return (cursorX, cursorY);
+            if (Array.Exists(availableTables, table => table == tableNumber))
+                return ConsoleColor.Green; // Available
+            if (Array.Exists(reservedTables, table => table == tableNumber))
+                return ConsoleColor.Red; // Reserved
+            return ConsoleColor.Red; // Unavailable
         }
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             ShowGrid(availableTables, reservedTables);
+
             Console.CursorVisible = false;
 
             while (true)
             {
                 Console.SetCursorPosition(0, grid.GetLength(0) + 2);
+                Console.ResetColor();
                 Console.WriteLine("(B)ack");
 
                 var key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                 {
-                    return -1;
+                    return -1; // Return to the previous menu
                 }
 
-                RemoveHighlight();
+                int previousTableId = currentTableId;
 
                 switch (key.Key)
                 {
                     case ConsoleKey.RightArrow:
-                        (cursorX, cursorY) = FindNextPosition(1, 0);
+                        currentTableId = FindNextTable(previousTableId, 1, 0);
                         break;
                     case ConsoleKey.LeftArrow:
-                        (cursorX, cursorY) = FindNextPosition(-1, 0);
+                        currentTableId = FindNextTable(previousTableId, -1, 0);
                         break;
                     case ConsoleKey.DownArrow:
-                        (cursorX, cursorY) = FindNextPosition(0, 1);
+                        currentTableId = FindNextTable(previousTableId, 0, 1);
                         break;
                     case ConsoleKey.UpArrow:
-                        (cursorX, cursorY) = FindNextPosition(0, -1);
+                        currentTableId = FindNextTable(previousTableId, 0, -1);
                         break;
                     case ConsoleKey.Enter:
-                        string selectedNumber = GetNumberAt(cursorX, cursorY);
-                        if (!string.IsNullOrEmpty(selectedNumber))
+                        if (Array.Exists(availableTables, table => table == currentTableId) &&
+                            !Array.Exists(reservedTables, table => table == currentTableId))
                         {
-                            int tableNumber = int.Parse(selectedNumber);
-
-                            if (!Array.Exists(availableTables, table => table == tableNumber) ||
-                                Array.Exists(reservedTables, table => table == tableNumber))
-                            {
-                                Console.SetCursorPosition(0, grid.GetLength(0) + 3);
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
-                                Console.ResetColor();
-                                continue;
-                            }
-
-                            SelectedTable = tableNumber;
+                            SelectedTable = currentTableId;
                             return SelectedTable;
                         }
-                        break;
+                        Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Table {currentTableId} is unavailable. Please select another table.");
+                        Console.ResetColor();
+                        continue;
                 }
 
                 ShowGrid(availableTables, reservedTables);
+            }
+        }
+
+        private int FindNextTable(int currentTableId, int directionX, int directionY)
+        {
+            if (!tableLocations.ContainsKey(currentTableId))
+            {
+                return currentTableId;
+            }
+
+            (int currentX, int currentY) = tableLocations[currentTableId];
+
+            while (true)
+            {
+                int newX = currentX + directionX;
+                int newY = currentY + directionY;
+
+                if (newX < 0 || newY < 0 || newY >= grid.GetLength(0) || newX >= grid.GetLength(1))
+                {
+                    return currentTableId; // Out of bounds, return the current table ID
+                }
+
+                string number = GetNumberAt(newX, newY);
+
+                // Check if it's a double-digit number
+                if (int.TryParse(number, out int nextTableId))
+                {
+                    // If double-digit, ensure both digits are part of the same number
+                    if (number.Length == 2 && newX + 1 < grid.GetLength(1) && grid[newY, newX + 1] == number[1])
+                    {
+                        return nextTableId;
+                    }
+                    return nextTableId;
+                }
+
+                currentX = newX;
+                currentY = newY;
             }
         }
     }
