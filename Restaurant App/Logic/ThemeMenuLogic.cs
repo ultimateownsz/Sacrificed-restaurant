@@ -2,7 +2,7 @@
 
 using Project;
 
-static class ThemeMenuManager
+static class ThemeMenuLogic
 {
     public static Dictionary<int, ThemeModel> ThemeSchedule = new();
     
