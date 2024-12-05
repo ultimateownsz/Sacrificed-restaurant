@@ -10,6 +10,8 @@ internal class SelectionPresent : SelectionLogic
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
+        Console.WriteLine("Use the arrow keys to navigate and press 'Enter' to select an action.\n");
+
         foreach ((string text, bool selected) in selection)
         {
             Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
@@ -53,6 +55,7 @@ internal class SelectionPresent : SelectionLogic
         if (oneline) options.Reverse();
         
         Dictionary<string, bool> selection = ToSelectable(options, oneline);
+
 
         while (true)
         {
