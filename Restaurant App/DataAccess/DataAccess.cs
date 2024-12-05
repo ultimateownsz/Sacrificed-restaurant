@@ -17,8 +17,10 @@ public class DataAccess<T1> where T1 : IModel
     {
         Type T2 when T2 == typeof(UserModel) => "User",
         Type T2 when T2 == typeof(ThemeModel) => "Theme",
+        Type T2 when T2 == typeof(PlaceModel) => "Place",
         Type T2 when T2 == typeof(RequestModel) => "Request",
         Type T2 when T2 == typeof(ProductModel) => "Product",
+        Type T2 when T2 == typeof(ScheduleModel) => "Schedule",
         Type T2 when T2 == typeof(ReservationModel) => "Reservation",
         _ => ""
     };
