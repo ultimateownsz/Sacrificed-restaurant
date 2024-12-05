@@ -6,10 +6,6 @@ public static class ShowReservations
     {
         while (true)
         {
-            if (SelectionPresent.EscapeKeyPressedWithConfirmation())
-            {
-                return;
-            }
             // Console.Clear();
             Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
 

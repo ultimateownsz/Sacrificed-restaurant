@@ -10,6 +10,9 @@ internal class SelectionPresent : SelectionLogic
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
+        if (!string.IsNullOrEmpty(banner))
+        // Console.WriteLine(banner);
+
         foreach ((string text, bool selected) in selection)
         {
             Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
@@ -23,6 +26,9 @@ internal class SelectionPresent : SelectionLogic
     private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection)
     {
         var current = ReverseLookup<string, bool>(selection, true);
+
+        var key = Console.ReadKey(intercept: true).Key;
+        Console.WriteLine($"Key pressed: {key}"); // Debugging
 
         switch (Console.ReadKey().Key)
         {
@@ -42,6 +48,10 @@ internal class SelectionPresent : SelectionLogic
 
                 Console.ForegroundColor = ConsoleColor.White;
                 return new(current.Item1, current.Item2);
+            
+            case ConsoleKey.Escape:
+
+                return null;
         }
 
         return null;
@@ -59,8 +69,15 @@ internal class SelectionPresent : SelectionLogic
             // update screen
             _update(banner, selection, oneline);
 
+            if (EscapeKeyIsPressed())
+            {
+                Console.WriteLine("Escape pressed, exiting...");
+                return null;
+            }
+
             // read user-input
-            if ((selected = _read(selection)) != null)
+            selected = _read(selection);
+            if (selected != null)
             {
                 // iniitialize
                 dynamic dynamicHandle = new ExpandoObject();
@@ -73,58 +90,39 @@ internal class SelectionPresent : SelectionLogic
         }
     }
 
-    public static bool EscapeKeyPressedWithConfirmation()
+    public static dynamic HandleEscape(Func<dynamic>? action)
     {
-        if (Console.IsInputRedirected)
+        // if escape is pressed handle the escape func
+        if (EscapeKeyIsPressed())
         {
-            int nextChar = Console.In.Peek(); // Controleer of er invoer beschikbaar is
-            if (nextChar != -1) // -1 betekent EOF
-            {
-                var key = (ConsoleKey)Console.Read(); // Lees een char als ConsoleKey
-
-                if (key == ConsoleKey.Escape)
-                {
-                    var confirmation = SelectionPresent.Show(
-                        new List<string> { "yes", "no" },
-                        "Are you sure you want to exit?\n\n"
-                    );
-
-                    if (confirmation.text == "yes")
-                    {
-                        Console.WriteLine("\nExiting program...");
-                        return true;
-                    }
-                    else
-                    {
-                        Console.Clear();
-                        return false;
-                    }
-                }
-            }
+            Console.WriteLine("Escape pressed, returning to previous menu.");  // debugging message
+            return null;
         }
-        return false;
+
+        if (action == null)
+        {
+            Console.WriteLine("No action provided to HandleEscape");  // debugging message
+        }
+
+        return action.Invoke();
     }
 
-    //     var key = Console.ReadKey(intercept: true);
-    //     if (key.Key == ConsoleKey.Escape)
-    //     {
-    //         var confirmation = SelectionPresent.Show(
-    //             new List<string> { "yes", "no" }, 
-    //             "Are you sure you want to exit?\n\n"
-    //         );
+    private static bool EscapeKeyIsPressed()
+    {
+        if (!Console.KeyAvailable) return false;
 
-    //         if (confirmation.text == "yes")
-    //         {
-    //             Console.WriteLine("\nExiting program...");
-    //             return true;
-    //         }
-    //         else
-    //         {
-    //             // Console.WriteLine("\nReturning to menu...");
-    //             Console.Clear();
-    //             return false;
-    //         }
-    //     }
-    //     return false;
-    // }
+        var keyInfo = Console.ReadKey(intercept: true);
+        Console.WriteLine($"Key pressed: {keyInfo.Key}");
+        if (keyInfo.Key == ConsoleKey.Escape)
+        {
+            var confirmation = SelectionPresent.Show(
+                new List<string> { "yes", "no" },
+                "Are you sure you want to exit?\n]\n"
+            );
+
+            return confirmation.text == "yes";
+        }
+        Console.Clear();
+        return false;
+    }
 }

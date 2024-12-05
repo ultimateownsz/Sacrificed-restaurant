@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Presentation;
 using Project.Logic;
 using Project.Presentation;
@@ -7,38 +8,43 @@ static class Menu
 {
     static public void Start()
     {
-
         while (true)
         {
-            // Console.Clear();
-            if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
-            
-            var userChoice = SelectionPresent.Show(
-                ["login", "register\n", "exit"],
-                "MAIN MENU\n\n").text;
+            var userChoiceResult = SelectionPresent.Show(
+                    new List<string> { "login", "register", "exit" },
+                    "MAIN MENU\n\n"
+            );
+
+            if (userChoiceResult == null)
+            {
+                Console.WriteLine("Returning to the previous menu...");
+                return;
+            }
+
+            var userChoice = userChoiceResult.text;
+
             switch (userChoice)
             {
                 case "login":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
-                    if (MenuLogic.Login() == "continue")
-                        continue;
-
+                    SelectionPresent.HandleEscape(() => MenuLogic.Login());
+                    // MenuLogic.Login();
                     break;
 
-                case "register\n":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
-                    RegisterUser.CreateAccount();
-                    continue;
+                case "register":
+                    SelectionPresent.HandleEscape(() => 
+                    {
+                        RegisterUser.CreateAccount();
+                        return null;
+                    });
+                    // RegisterUser.CreateAccount();
+                    break;
 
                 case "exit":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
                     return;
 
                 default:
-                    continue;
+                    break;
             }
-
-            break;
         }
     }
 
@@ -46,25 +52,33 @@ static class Menu
     {
         while (true)
         {
-            if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
             Console.Clear();
-            var userChoice = SelectionPresent.Show(
-                ["reserve", "view reservations", "logout"],
-                "USER MENU\n\n").text;
-            switch (userChoice)
+            var userChoice = SelectionPresent.HandleEscape(() => SelectionPresent.Show(
+                new List<string> { "reserve", "view reservations", "logout" },
+                "USER MENU\n\n"
+                )
+            );
+
+            if (userChoice == null)
+            {
+                Console.WriteLine("Returning to the previous menu...");
+                return;
+            }
+
+            switch (userChoice.text)
             {
                 case "reserve":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
+                   
                     MakingReservations.CalendarNavigation(acc);
                     break;
 
                 case "view reservations":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
+                    
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
                 case "logout":
-                    if (SelectionPresent.EscapeKeyPressedWithConfirmation()) return;
+                    Console.WriteLine("Logging out...");
                     return;
 
                 default:
