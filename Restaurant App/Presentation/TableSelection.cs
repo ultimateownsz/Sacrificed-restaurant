@@ -36,18 +36,13 @@ namespace Presentation
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'}
         };
 
-        private Dictionary<int, (int x, int y)> tableLocations = new();
-        private int currentTableId = 1; // Always start on table 1
+        private int cursorX = 3, cursorY = 6; // Start at table "1"
         public int SelectedTable { get; private set; }
 
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
-            // Dynamically find table locations before rendering the grid
-            FindTableLocations();
-
             Console.Clear();
 
-            // Display the grid
             for (int y = 0; y < grid.GetLength(0); y++)
             {
                 for (int x = 0; x < grid.GetLength(1); x++)
@@ -56,28 +51,19 @@ namespace Presentation
                     if (!string.IsNullOrEmpty(number))
                     {
                         int tableNumber = int.Parse(number);
+                        x += number.Length - 1;
 
-                        // Highlight the current table
-                        if (tableNumber == currentTableId)
+                        if (Array.Exists(availableTables, table => table == tableNumber))
                         {
-                            if (IsDoubleDigitNumber(x, y, number))
-                            {
-                                Console.ForegroundColor = GetTableColor(availableTables, reservedTables, tableNumber);
-                                Console.Write("X ");
-                                x++; // Skip the second digit of the double-digit number
-                            }
-                            else // Single-digit
-                            {
-                                Console.ForegroundColor = GetTableColor(availableTables, reservedTables, tableNumber);
-                                Console.Write("X");
-                            }
+                            Console.ForegroundColor = ConsoleColor.Green;
                         }
                         else
                         {
-                            Console.ForegroundColor = GetTableColor(availableTables, reservedTables, tableNumber);
-                            Console.Write(number);
-                            x += number.Length - 1; // Skip over multi-digit numbers
+                            Console.ForegroundColor = Array.Exists(reservedTables, table => table == tableNumber)
+                                ? ConsoleColor.Red
+                                : ConsoleColor.Red;
                         }
+                        Console.Write(number);
                     }
                     else
                     {
@@ -87,35 +73,67 @@ namespace Presentation
                 }
                 Console.WriteLine();
             }
+            Console.ResetColor();
+            HighlightNumber(availableTables,
+            reservedTables);
+        }
+
+        private void HighlightNumber(int[] availableTables, int[] reservedTables)
+        {
+            string number = GetNumberAt(cursorX, cursorY);
+
+            if (!string.IsNullOrEmpty(number))
+            {
+                int tableNumber = int.Parse(number);
+
+                if (Array.Exists(availableTables, table => table == tableNumber))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else if (Array.Exists(reservedTables, table => table == tableNumber))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+
+                Console.SetCursorPosition(cursorX, cursorY);
+                Console.Write("X");
+
+                if (number.Length == 2)
+                {
+                    Console.SetCursorPosition(cursorX + 1, cursorY);
+                    Console.Write(" ");
+                }
+            }
 
             Console.ResetColor();
         }
 
-        private void FindTableLocations()
+        private void RemoveHighlight()
         {
-            tableLocations.Clear(); // Clear previous locations
+            string number = GetNumberAt(cursorX, cursorY);
 
-            for (int y = 0; y < grid.GetLength(0); y++)
+            if (!string.IsNullOrEmpty(number))
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
+                Console.SetCursorPosition(cursorX, cursorY);
+                Console.Write(number);
+
+                if (number.Length == 2)
                 {
-                    if (char.IsDigit(grid[y, x]))
-                    {
-                        string number = GetNumberAt(x, y);
-                        if (int.TryParse(number, out int tableNumber))
-                        {
-                            tableLocations[tableNumber] = (x, y);
-                            x += number.Length - 1; // Skip to the end of the number
-                        }
-                    }
+                    Console.SetCursorPosition(cursorX + 1, cursorY);
+                    Console.Write(number[1]);
                 }
             }
         }
 
         private string GetNumberAt(int x, int y)
         {
-            string number = "";
+            if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
 
+            string number = "";
             while (x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
             {
                 number += grid[y, x];
@@ -125,38 +143,73 @@ namespace Presentation
             return number;
         }
 
-        private bool IsDoubleDigitNumber(int x, int y, string number)
+
+        private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
         {
-            if (number.Length == 1)
+            int x = startX;
+
+            // If we're currently on a two-digit number, skip the second digit when moving right
+            string currentNumber = GetNumberAt(startX, startY);
+            if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2 && direction == 1)
             {
-                // Check for a second digit to the right
-                if (x + 1 < grid.GetLength(1) && char.IsDigit(grid[y, x + 1]))
+                x += currentNumber.Length; // Move past the current two-digit number
+            }
+
+            while (x >= 0 && x < grid.GetLength(1))
+            {
+                x += direction;
+
+                string nextNumber = GetNumberAt(x, startY);
+                if (!string.IsNullOrEmpty(nextNumber))
                 {
-                    return true;
-                }
-                // Check for a first digit to the left
-                if (x - 1 >= 0 && char.IsDigit(grid[y, x - 1]))
-                {
-                    return true;
+                    // Always align to the first digit of a double-digit number
+                    if (nextNumber.Length == 2 && direction == -1)
+                    {
+                        x -= 1; // Move back to the first digit
+                    }
+                    return (x, startY); // Found a valid number
                 }
             }
-            return number.Length == 2; // Already confirmed as double-digit
+
+            return (startX, startY); // Return the original position if no number is found
         }
 
-        private ConsoleColor GetTableColor(int[] availableTables, int[] reservedTables, int tableNumber)
+
+        private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
         {
-            if (Array.Exists(availableTables, table => table == tableNumber))
-                return ConsoleColor.Green; // Available
-            if (Array.Exists(reservedTables, table => table == tableNumber))
-                return ConsoleColor.Red; // Reserved
-            return ConsoleColor.Red; // Unavailable
+            int y = startY;
+
+            while (y >= 0 && y < grid.GetLength(0))
+            {
+                y += direction;
+
+                if (y < 0 || y >= grid.GetLength(0)) break;
+
+                for (int offset = -1; offset <= 1; offset++)
+                {
+                    int x = startX + offset;
+
+                    if (x >= 0 && x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
+                    {
+                        if (x < grid.GetLength(1) - 1 && char.IsDigit(grid[y, x + 1]))
+                        {
+                            return (x, y);
+                        }
+
+                        return (x, y);
+                    }
+                }
+            }
+
+            return (startX, startY);
         }
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             ShowGrid(availableTables, reservedTables);
-
             Console.CursorVisible = false;
+
+            int lastX = cursorX, lastY = cursorY;
 
             while (true)
             {
@@ -168,77 +221,76 @@ namespace Presentation
 
                 if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                 {
-                    return -1; // Return to the previous menu
+                    return -1;
                 }
 
-                int previousTableId = currentTableId;
+                RemoveHighlight();
 
-                switch (key.Key)
+                try
                 {
-                    case ConsoleKey.RightArrow:
-                        currentTableId = FindNextTable(previousTableId, 1, 0);
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        currentTableId = FindNextTable(previousTableId, -1, 0);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        currentTableId = FindNextTable(previousTableId, 0, 1);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        currentTableId = FindNextTable(previousTableId, 0, -1);
-                        break;
-                    case ConsoleKey.Enter:
-                        if (Array.Exists(availableTables, table => table == currentTableId) &&
-                            !Array.Exists(reservedTables, table => table == currentTableId))
-                        {
-                            SelectedTable = currentTableId;
-                            return SelectedTable;
-                        }
-                        Console.SetCursorPosition(0, grid.GetLength(0) + 3);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Table {currentTableId} is unavailable. Please select another table.");
-                        Console.ResetColor();
-                        continue;
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.RightArrow:
+                            (int nextX, int nextY) = FindNextNumberInRow(cursorX, cursorY, 1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            (nextX, nextY) = FindNextNumberInRow(cursorX, cursorY, -1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, 1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, -1);
+                            cursorX = nextX;
+                            cursorY = nextY;
+                            break;
+                        case ConsoleKey.Enter:
+                            string selectedNumber = GetNumberAt(cursorX, cursorY);
+                            if (!string.IsNullOrEmpty(selectedNumber))
+                            {
+                                int tableNumber = int.Parse(selectedNumber);
+
+                                if (!Array.Exists(availableTables, table => table == tableNumber) ||
+                                    Array.Exists(reservedTables, table => table == tableNumber))
+                                {
+                                    Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
+                                    Console.ResetColor();
+                                    continue;
+                                }
+
+                                SelectedTable = tableNumber;
+                                return SelectedTable;
+                            }
+                            break;
+                    }
+
+                    if (cursorX < 0 || cursorX >= grid.GetLength(1) || cursorY < 0 || cursorY >= grid.GetLength(0) ||
+                        string.IsNullOrEmpty(GetNumberAt(cursorX, cursorY)))
+                    {
+                        cursorX = lastX;
+                        cursorY = lastY;
+                    }
+                    else
+                    {
+                        lastX = cursorX;
+                        lastY = cursorY;
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    cursorX = lastX;
+                    cursorY = lastY;
                 }
 
                 ShowGrid(availableTables, reservedTables);
-            }
-        }
-
-        private int FindNextTable(int currentTableId, int directionX, int directionY)
-        {
-            if (!tableLocations.ContainsKey(currentTableId))
-            {
-                return currentTableId;
-            }
-
-            (int currentX, int currentY) = tableLocations[currentTableId];
-
-            while (true)
-            {
-                int newX = currentX + directionX;
-                int newY = currentY + directionY;
-
-                if (newX < 0 || newY < 0 || newY >= grid.GetLength(0) || newX >= grid.GetLength(1))
-                {
-                    return currentTableId; // Out of bounds, return the current table ID
-                }
-
-                string number = GetNumberAt(newX, newY);
-
-                if (int.TryParse(number, out int nextTableId))
-                {
-                    // Handle double-digit numbers
-                    if (IsDoubleDigitNumber(newX, newY, number))
-                    {
-                        return nextTableId; // Double-digit number
-                    }
-
-                    return nextTableId; // Single-digit number
-                }
-
-                currentX = newX;
-                currentY = newY;
             }
         }
     }
