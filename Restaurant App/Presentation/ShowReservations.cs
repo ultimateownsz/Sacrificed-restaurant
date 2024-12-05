@@ -4,6 +4,9 @@ public static class ShowReservations
 {
     public static void Show()
     {
+        int placeID = 1;
+        string banner = "Choose a sort reservation you would like to view\n\n";
+
         while (true)
         {
             Console.Clear();
@@ -20,13 +23,6 @@ public static class ShowReservations
             // Convert date to the required format (ddMMyyyy as integer)
             var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
 
-            if (reservations.Count() == 0)
-            {
-                Console.WriteLine("No reservations found for this date. Press any key to try another date.");
-                Console.ReadKey();
-                continue;
-            }
-
             // Fetch user names and table choices for reservations
             var reservationDetails = reservations.Select(r => new
             {
@@ -36,54 +32,100 @@ public static class ShowReservations
             
             }).ToList();
 
-            int selectedIndex = 0; 
+            // int selectedIndex = 0;
+            var pastReservations = reservationDetails.Where(r => r.Reservation.Date.HasValue && r.Reservation.Date.Value < DateTime.Now).ToList();
+            var futureReservations = reservationDetails.Where(r => r.Reservation.Date.HasValue && r.Reservation.Date.Value >= DateTime.Now).ToList();
 
-            while (true)
+            switch (SelectionPresent.Show(["Past Reservations", "Future Reservations", "Cancel"], banner).text)
             {
-                Console.Clear();
-                Console.WriteLine($"Reservations for {parsedDate:dd/MM/yyyy}:");
-
-                // Display reservations with highlight for the selected one
-                for (int i = 0; i < reservationDetails.Count(); i++)
-                {
-                    if (i == selectedIndex)
+                case "Past Reservations":
+                    if (pastReservations.Count == 0)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow; // Highlight selected
-                        Console.WriteLine($"-> {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+                        Console.WriteLine("No past reservations found. Press any key to return");
+                        Console.ReadKey();
+                        break;
                     }
-                    else
+                    var pastOptions = pastReservations.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
+                    var selectedPast = SelectionPresent.Show(pastOptions, "PAST RESERVATIONS\n\n").text;
+
+                    if (pastOptions.Contains(selectedPast))
                     {
-                        Console.ResetColor(); // Default color for others
-                        Console.WriteLine($"  {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+                        int pastIndex = pastOptions.IndexOf(selectedPast);
+                        if (pastIndex >= 0 && pastIndex > pastReservations.Count)
+                        {
+                            ShowReservationOptions(pastReservations[pastIndex].Reservation);
+                        }
                     }
-                }
-
-                Console.ResetColor(); // Reset any lingering color changes
-                Console.WriteLine("\nUse arrow keys to navigate. Press Enter to select, or Esc to go back to the Admin Menu.");
-
-                var key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        if (selectedIndex > 0)
-                            selectedIndex--;
+                    break;
+                case "Future Reservations":
+                    if (pastReservations.Count == 0)
+                    {
+                        Console.WriteLine("No past reservations found. Press any key to return");
+                        Console.ReadKey();
                         break;
+                    }
+                    var futureOptions = futureReservations.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
+                    var selectedFuture = SelectionPresent.Show(futureOptions, "FUTURE RESERVATIONS\n\n").text;
 
-                    case ConsoleKey.DownArrow:
-                        if (selectedIndex < reservationDetails.Count() - 1)
-                            selectedIndex++;
-                        break;
-
-                    case ConsoleKey.Enter:
-                        // Show options for the selected reservation
-                        ShowReservationOptions(reservationDetails[selectedIndex].Reservation);
-                        break;
-
-                    case ConsoleKey.Escape:
-                        return;
-                }
+                    if (futureOptions.Contains(selectedFuture))
+                    {
+                        int futureIndex = futureOptions.IndexOf(selectedFuture);
+                        if (futureIndex >= 0 && futureIndex > pastReservations.Count)
+                        {
+                            ShowReservationOptions(futureReservations[futureIndex].Reservation);
+                        }
+                    }
+                    break;
+                case "Cancel":
+                    return;
             }
+
+            // while (true)
+            // {
+            //     Console.Clear();
+            //     Console.WriteLine($"Reservations for {parsedDate:dd/MM/yyyy}:");
+
+            //     // Display reservations with highlight for the selected one
+            //     for (int i = 0; i < reservationDetails.Count(); i++)
+            //     {
+            //         if (i == selectedIndex)
+            //         {
+            //             Console.ForegroundColor = ConsoleColor.Yellow; // Highlight selected
+            //             Console.WriteLine($"-> {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+            //         }
+            //         else
+            //         {
+            //             Console.ResetColor(); // Default color for others
+            //             Console.WriteLine($"  {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+            //         }
+            //     }
+
+            //     Console.ResetColor(); // Reset any lingering color changes
+            //     Console.WriteLine("\nUse arrow keys to navigate. Press Enter to select, or Esc to go back to the Admin Menu.");
+
+            //     var key = Console.ReadKey(true);
+
+            //     switch (key.Key)
+            //     {
+            //         case ConsoleKey.UpArrow:
+            //             if (selectedIndex > 0)
+            //                 selectedIndex--;
+            //             break;
+
+            //         case ConsoleKey.DownArrow:
+            //             if (selectedIndex < reservationDetails.Count() - 1)
+            //                 selectedIndex++;
+            //             break;
+
+            //         case ConsoleKey.Enter:
+            //             // Show options for the selected reservation
+            //             ShowReservationOptions(reservationDetails[selectedIndex].Reservation);
+            //             break;
+
+            //         case ConsoleKey.Escape:
+            //             return;
+            //     }
+            // }
         }
     }
 
