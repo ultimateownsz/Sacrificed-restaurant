@@ -37,6 +37,7 @@ static class ThemeMenuManager
     //     return displayData;
     // }
 
+    // this method updates the theme name
     public static void UpdateThemeSchedule(int month, int year, string themeName)
     {
         ScheduleModel? scheduleItem = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
@@ -62,7 +63,8 @@ static class ThemeMenuManager
         }
     }
 
-    public static ThemeModel? GetThemeIDByYearAndMonth(int month, int year)
+    // this method gets all the Theme model attatched to a schedule
+    public static ThemeModel? GetThemeByYearAndMonth(int month, int year)
     {
         
         ScheduleModel? item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
@@ -76,22 +78,23 @@ static class ThemeMenuManager
         }
     }
 
+    // this method generates the months names and gets the themes names next to them, its used to make the lost for the selection menu
     public static string GetMonthThemeName(int? month, int year)
     {
         return month switch
         {
-            1 =>  $"January   -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            2 =>  $"February  -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            3 =>  $"March     -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            4 =>  $"April     -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            5 =>  $"May       -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            6 =>  $"June      -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            7 =>  $"July      -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            8 =>  $"August    -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            9 =>  $"September -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            10 => $"October   -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            11 => $"November  -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            12 => $"December  -  {GetThemeIDByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            1 =>  $"January   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            2 =>  $"February  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            3 =>  $"March     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            4 =>  $"April     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            5 =>  $"May       -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            6 =>  $"June      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            7 =>  $"July      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            8 =>  $"August    -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            9 =>  $"September -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            10 => $"October   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            11 => $"November  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            12 => $"December  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
             _ => "Invalid month"
         };
     }
@@ -130,6 +133,7 @@ static class ThemeMenuManager
     //     return year > currentDate.Year || (year == currentDate.Year && month >= currentDate.Month);
     // }
 
+    // this method is used to delete themes that are attached to a schedule
     public static bool DeleteMonthTheme(int month, int year)
     {
         var item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
