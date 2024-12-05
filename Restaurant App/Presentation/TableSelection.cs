@@ -86,31 +86,40 @@ namespace Presentation
             {
                 int tableNumber = int.Parse(number);
 
+                // Debug: Print the table ID
+                Console.SetCursorPosition(0, grid.GetLength(0) + 4); // Position below the grid
+                Console.ResetColor();
+                Console.WriteLine($"DEBUG: Highlighting Table {tableNumber} at ({cursorX}, {cursorY})");
+
+                // Determine the color of the X based on the table's availability
                 if (Array.Exists(availableTables, table => table == tableNumber))
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Green; // Available
                 }
                 else if (Array.Exists(reservedTables, table => table == tableNumber))
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Red; // Reserved
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
                 }
 
+                // Highlight the first digit with "X"
                 Console.SetCursorPosition(cursorX, cursorY);
                 Console.Write("X");
 
+                // Replace the second digit with a space if it's a two-digit number
                 if (number.Length == 2)
                 {
-                    Console.SetCursorPosition(cursorX + 1, cursorY);
-                    Console.Write(" ");
+                    Console.SetCursorPosition(cursorX + 1, cursorY); // Move to the second digit
+                    Console.Write(" "); // Replace the second digit with a space
                 }
             }
 
             Console.ResetColor();
         }
+
 
         private void RemoveHighlight()
         {
