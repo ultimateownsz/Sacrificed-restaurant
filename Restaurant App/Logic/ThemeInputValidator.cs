@@ -17,33 +17,57 @@ public static class ThemeInputValidator
         }
     }
 
-    public static string GetValidString(string prompt)
+    public static string GetValidString()
     {
         while (true)
         {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Enter theme name: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            var themeName = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(themeName) && !themeName.Any(char.IsDigit))
             {
-                return input;
+                return themeName;
             }
-            Console.WriteLine("Invalid input. Please enter a non empty string.");
+            
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid them name...");
+            Console.ReadKey();
         }
     }
 
-    public static int GetValidYear(string prompt, int minYear)
+    public static int ValidateYear()
     {
         int result;
+        int minYear = DateTime.Now.Year;
         while (true)
         {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
+            Console.Clear();
 
-            if (int.TryParse(input, out result) && result >= minYear)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Enter year: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            var year = Console.ReadLine();
+
+            if (int.TryParse(year, out result) && result >= minYear)
             {
                 return result;
             }
-            Console.WriteLine($"Invalid input. Please enter a year greater than or equal to {minYear}.");
+            
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter year: {year}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid year...");
+            Console.ReadKey();
         }
     }
 
