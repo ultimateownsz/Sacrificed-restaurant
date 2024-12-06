@@ -13,44 +13,43 @@ namespace Presentation
 
         public static void MakingReservation(UserModel acc)
         {
-            while (true) // Allow returning to the calendar
+            while (true) // Loop to allow returning to the calendar
             {
-                // Step 1: Select a date
+                // Step 1: Display the calendar and let the user select a date
                 DateTime selectedDate = CalendarPresent.Show(DateTime.Now);
 
-                // Step 2: Get the number of guests
+                // Step 2: Ask the user for the number of guests
                 List<string> options = new() { "1", "2", "3", "4", "5", "6" };
                 string banner = "How many guests will be coming?\n\n";
                 int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-                // Step 3: Select a table
-                int selectedTable = SelectTableUsingTableSelection(selectedDate, guests);
+                // Step 3: Use TableSelection for table selection
+                TableSelection tableSelection = new();
+                int[] availableTables = guests switch
+                {
+                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                    5 or 6 => new int[] { 2, 3 },
+                    _ => Array.Empty<int>()
+                };
+                var reservedTables = Access.Reservations
+                                        .GetAllBy<DateTime>("Date", selectedDate)
+                                        .Where(r => r?.Place != null)
+                                        .Select(r => r!.Place!.Value)
+                                        .ToArray();
 
-                // Ensure valid table selection
+                int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+
+                // Step 4: Check if the user pressed Back
                 if (selectedTable == -1)
                 {
-                    Console.WriteLine("Returning to the menu...");
-                    break; // Exit back to the menu
+                    Console.WriteLine("Returning to the calendar...");
+                    continue; // Restart the process, allowing the user to select a new date
                 }
 
-                Console.WriteLine($"DEBUG: Selected table {selectedTable}");
-
-                // Step 4: Create reservation immediately after table selection
-                int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
-
-                // Handle reservation failure
-                if (reservationId == 0)
-                {
-                    Console.WriteLine("Failed to create a reservation. Please try again.");
-                    continue; // Restart the process if reservation creation fails
-                }
-
-                Console.WriteLine($"DEBUG: Reservation created with ID={reservationId}");
-
-                // Step 5: Proceed to meal selection
-                TakeOrders(selectedDate, acc, reservationId, guests);
-                Console.WriteLine("DEBUG: Completed meal selection");
-                break; // Exit after completing the reservation
+                // Step 5: Proceed to take orders
+                TakeOrders(selectedDate, acc, selectedTable, guests);
+                break; // Exit the loop if the reservation is completed
             }
         }
 
@@ -159,112 +158,83 @@ namespace Presentation
         return;
     }
 
-    public static void TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
-    {
-        Console.WriteLine($"DEBUG: Entering TakeOrders with ReservationID={reservationId}");
 
-        // Check if reservation ID is valid
-        if (reservationId == 0)
+
+        public static void TakeOrders(DateTime selectedDate, UserModel acc, int tableId, int guests)
         {
-            Console.WriteLine("DEBUG: Invalid reservation ID. Exiting TakeOrders.");
-            return;
-        }
+            // Save the reservation
+            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID, tableId);
 
-        List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
-        List<ProductModel> allOrders = new List<ProductModel>();
+            List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
+            List<ProductModel> allOrders = new List<ProductModel>();
 
-        Console.WriteLine("This month's theme is:");
-        var reservationMenuLogic = new ReservationMenuLogic(); // Create an instance
-        var theme = reservationMenuLogic.GetCurrentMenu(); // Call the method
-
-        if (theme is not null)
-        {
-            Console.WriteLine($"{theme}");
-        }
-        else
-        {
-            Console.WriteLine("This month is not accessible.");
-            Console.WriteLine("Press any key to return to the reservation menu.");
-            Console.ReadKey();
-            return;
-        }
-
-
-        for (int i = 0; i < guests; i++)
-        {
-            Console.WriteLine($"DEBUG: Starting order for Guest {i + 1}");
-            List<ProductModel> guestOrder = new List<ProductModel>();
-
-            for (int z = 0; z < categories.Count; z++)
+            Console.WriteLine("This month's theme is:");
+            if (reservationMenuLogic.GetCurrentMenu() is not null)
+                Console.WriteLine($"{reservationMenuLogic.GetCurrentMenu()}");
+            else
             {
-                var products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
-                int productIndex = 0;
-                bool choosingProduct = true;
-
-                while (choosingProduct)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"Guest {i + 1}, choose a product for {categories[z]}:");
-                    for (int k = 0; k < products.Count; k++)
-                    {
-                        if (k == productIndex)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine($"> {products[k].Name} - €{products[k].Price:F2}");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  {products[k].Name} - €{products[k].Price:F2}");
-                        }
-                    }
-
-                    var key = Console.ReadKey(intercept: true);
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.UpArrow:
-                            if (productIndex > 0) productIndex--;
-                            break;
-                        case ConsoleKey.DownArrow:
-                            if (productIndex < products.Count - 1) productIndex++;
-                            break;
-                        case ConsoleKey.Enter:
-                            var selectedProduct = products[productIndex];
-
-                            if (selectedProduct.ID == null || !ProductManager.DoesProductExist(selectedProduct.ID.Value))
-                            {
-                                Console.WriteLine("The selected product does not exist. Please try again.");
-                                Console.ReadKey();
-                                break;
-                            }
-
-                            guestOrder.Add(selectedProduct);
-                            var orderLogic = new OrderLogic(); // Create an instance
-                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
-                            {
-                                Console.WriteLine("Failed to save the order. Please try again.");
-                                Console.ReadKey();
-                                break;
-                            }
-
-
-                            choosingProduct = false;
-                            break;
-                        case ConsoleKey.Escape:
-                            choosingProduct = false;
-                            break;
-                    }
-                }
+                Console.WriteLine("This month is not accessible.");
+                Console.WriteLine("Press any key to return to the reservation menu.");
+                Console.ReadKey();
+                return;
             }
 
-            allOrders.AddRange(guestOrder);
-            Console.WriteLine("\nPress any key to continue to the next guest...");
-            Console.ReadKey();
+            for (int i = 0; i < guests; i++)
+            {
+                List<ProductModel> guestOrder = new();
+                for (int z = 0; z < categories.Count; z++)
+                {
+                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
+
+                    int productIndex = 0;
+                    bool choosingProduct = true;
+
+                    while (choosingProduct)
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"Guest {i + 1}, choose a product for {categories[z]}:");
+                        for (int k = 0; k < products.Count; k++)
+                        {
+                            if (k == productIndex)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine($"> {products[k].Name} - €{products[k].Price:F2}");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"  {products[k].Name} - €{products[k].Price:F2}");
+                            }
+                        }
+
+                        var key = Console.ReadKey(intercept: true);
+                        switch (key.Key)
+                        {
+                            case ConsoleKey.UpArrow:
+                                if (productIndex > 0) productIndex--;
+                                break;
+                            case ConsoleKey.DownArrow:
+                                if (productIndex < products.Count - 1) productIndex++;
+                                break;
+                            case ConsoleKey.Enter:
+                                guestOrder.Add(products[productIndex]);
+                                orderLogic.SaveOrder(reservationId, products[productIndex].ID);
+                                choosingProduct = false;
+                                break;
+                            case ConsoleKey.Escape:
+                                choosingProduct = false;
+                                break;
+                        }
+                    }
+                }
+
+                allOrders.AddRange(guestOrder);
+                Console.WriteLine("\nPress any key to continue to the next guest...");
+                Console.ReadKey();
+            }
+
+            PrintReceipt(allOrders, reservationId);
         }
-
-        PrintReceipt(allOrders, reservationId);
-    }
-
 
         public static void PrintReceipt(List<ProductModel> orders, int reservationId)
         {
