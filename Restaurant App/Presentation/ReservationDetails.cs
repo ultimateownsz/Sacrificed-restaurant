@@ -24,7 +24,7 @@ public static class ReservationDetails
         Console.WriteLine($"Name: {account.FirstName} {account.LastName}");
         Console.WriteLine();
         Console.WriteLine($"Reservation Date: {reservation.Date.ToString()}");
-        Console.WriteLine($"Assigned Table number: {reservation.Place}");
+        Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
 
         Console.WriteLine("\nPress any key to return to the reservations list.");
         Console.ReadKey();
