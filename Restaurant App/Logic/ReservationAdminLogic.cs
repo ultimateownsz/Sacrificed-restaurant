@@ -41,4 +41,17 @@ public static class ReservationAdminLogic
     {
         return Access.Reservations.GetAllBy<int>("Place", tableID);
     }
+
+    public static List<ReservationModel> GetReservationsByDate(DateTime date)
+    {
+        var potentialReservations = Access.Reservations.GetAll();
+        if (potentialReservations == null || !potentialReservations.Any())
+        {
+            return new List<ReservationModel>();
+        }
+
+        return potentialReservations
+            .Where(r => r.Date.HasValue && r.Date.Value.Date == date.Date)
+            .ToList();
+    }
 }
