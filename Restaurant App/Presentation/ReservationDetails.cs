@@ -1,4 +1,5 @@
 using Project;
+using Project.Presentation;
 
 public static class ReservationDetails
 {
@@ -15,6 +16,7 @@ public static class ReservationDetails
             Console.WriteLine("Unable to retrieve user details.");
             Console.WriteLine("Press any key to return to the reservations list.");
             Console.ReadKey();
+            ShowReservations.ShowReservationOptions(reservation);
             return;
         }
 
@@ -28,6 +30,7 @@ public static class ReservationDetails
 
         Console.WriteLine("\nPress any key to return to the reservations list.");
         Console.ReadKey();
+        ShowReservations.ShowReservationOptions(reservation);
     }
 
     private static string FormatDate(long date)
