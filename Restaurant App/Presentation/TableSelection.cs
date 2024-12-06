@@ -78,6 +78,32 @@ namespace Presentation
             reservedTables);
         }
 
+        private void FlashHighlight(int tableNumber, int x, int y)
+        {
+            for (int i = 0; i < 3; i++) // Flash 3 times (1.5 seconds total)
+            {
+                // Display the table number
+                Console.SetCursorPosition(x, y);
+                Console.ResetColor();
+                Console.Write(tableNumber);
+                Thread.Sleep(500); // Wait for 0.5 seconds
+
+                // Display the "X"
+                Console.SetCursorPosition(x, y);
+                Console.ForegroundColor = ConsoleColor.Yellow; // Use yellow for the "X" to make it noticeable
+                Console.Write("X");
+                Console.ResetColor();
+                Thread.Sleep(500); // Wait for 0.5 seconds
+            }
+
+            // Ensure the "X" remains visible at the end
+            Console.SetCursorPosition(x, y);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("X");
+            Console.ResetColor();
+}
+
+
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
             string number = GetNumberAt(cursorX, cursorY);
@@ -89,6 +115,8 @@ namespace Presentation
                 // Debug: Print the table ID
                 Console.SetCursorPosition(0, grid.GetLength(0) + 4); // Position below the grid
                 Console.ResetColor();
+                Console.WriteLine($"DEBUG: Highlighting Table {tableNumber} at ({cursorX}, {cursorY})");
+
                 // Determine the color of the X based on the table's availability
                 if (Array.Exists(availableTables, table => table == tableNumber))
                 {
@@ -103,20 +131,13 @@ namespace Presentation
                     Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
                 }
 
-                // Highlight the first digit with "X"
-                Console.SetCursorPosition(cursorX, cursorY);
-                Console.Write("X");
-
-                // Replace the second digit with a space if it's a two-digit number
-                if (number.Length == 2)
-                {
-                    Console.SetCursorPosition(cursorX + 1, cursorY); // Move to the second digit
-                    Console.Write(" "); // Replace the second digit with a space
-                }
+                // Flash the current position
+                FlashHighlight(tableNumber, cursorX, cursorY);
             }
 
             Console.ResetColor();
         }
+
 
 
         private void RemoveHighlight()
