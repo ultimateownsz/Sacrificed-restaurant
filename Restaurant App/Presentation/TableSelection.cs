@@ -153,15 +153,36 @@ namespace Presentation
         }
 
 
+        private bool IsDoubleDigit(int x, int y)
+        {
+            if (x < 0 || x >= grid.GetLength(1) || y < 0 || y >= grid.GetLength(0))
+                return false;
+
+            // Check if the current character and its neighbor form a two-digit number
+            if (char.IsDigit(grid[y, x]) && x + 1 < grid.GetLength(1) && char.IsDigit(grid[y, x + 1]))
+                return true;
+
+            // Check if the current character is the second digit of a two-digit number
+            if (char.IsDigit(grid[y, x]) && x - 1 >= 0 && char.IsDigit(grid[y, x - 1]))
+                return true;
+
+            return false;
+        }
+
+
+
         private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
         {
             int x = startX;
 
-            // If we're currently on a two-digit number, skip the second digit when moving right
-            string currentNumber = GetNumberAt(startX, startY);
-            if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2 && direction == 1)
+            if (direction == -1 && IsDoubleDigit(startX, startY))
             {
-                x += currentNumber.Length; // Move past the current two-digit number
+                // If moving left and part of a double-digit number, align to the first digit
+                string currentNumber = GetNumberAt(startX, startY);
+                if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2)
+                {
+                    x -= 1; // Move to the first digit of the current number
+                }
             }
 
             while (x >= 0 && x < grid.GetLength(1))
@@ -171,10 +192,10 @@ namespace Presentation
                 string nextNumber = GetNumberAt(x, startY);
                 if (!string.IsNullOrEmpty(nextNumber))
                 {
-                    // Always align to the first digit of a double-digit number
-                    if (nextNumber.Length == 2 && direction == -1)
+                    if (direction == -1 && IsDoubleDigit(x, startY))
                     {
-                        x -= 1; // Move back to the first digit
+                        // Align to the first digit if moving left
+                        x -= 1;
                     }
                     return (x, startY); // Found a valid number
                 }
@@ -182,7 +203,6 @@ namespace Presentation
 
             return (startX, startY); // Return the original position if no number is found
         }
-
 
         private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
         {
