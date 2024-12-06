@@ -11,16 +11,16 @@ public class ReservationLogic
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
             //with all the info from the user
-    public int SaveReservation(DateTime date, int userId, int placeID)
+    public int SaveReservation(DateTime date, int userId, int placeId)
     {
-        Console.WriteLine($"DEBUG: Attempting to save reservation with Date={date}, UserID={userId}, TableID={placeID}");
+        Console.WriteLine($"DEBUG: Attempting to save reservation with Date={date}, UserID={userId}, TableID={placeId}");
         Thread.Sleep(3000);
 
         var reservation = new ReservationModel
         {
             Date = date,
             UserID = userId,
-            PlaceID = placeID
+            PlaceID = placeId
         };
 
         if (Access.Reservations.Write(reservation))
