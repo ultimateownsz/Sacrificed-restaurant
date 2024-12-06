@@ -4,175 +4,128 @@ public static class ShowReservations
 {
     public static void Show()
     {
+        DateTime parsedDate = DateTime.MinValue;
+
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations, or press Escape (Esc) to go back:");
 
-            var dateInput = Console.ReadLine();
-            if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
-            {
-                Console.WriteLine("Invalid date format. Press any key to try again.");
-                Console.ReadKey();
-                continue;
-            }
-
-            // Convert date to the required format (ddMMyyyy as integer)
-            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
-
-            if (reservations.Count() == 0)
-            {
-                Console.WriteLine("No reservations found for this date. Press any key to try another date.");
-                Console.ReadKey();
-                continue;
-            }
-
-            // Fetch user names and table choices for reservations
-            var reservationDetails = reservations.Select(r => new
-            {
-                Reservation = r,
-                UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                TableID = r.Place // Table choice of the reservation
-            
-            }).ToList();
-
-            int selectedIndex = 0; 
+            string dateInput = string.Empty;
 
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine($"Reservations for {parsedDate:dd/MM/yyyy}:");
+                ConsoleKeyInfo key = Console.ReadKey(true); 
 
-                // Display reservations with highlight for the selected one
-                for (int i = 0; i < reservationDetails.Count(); i++)
+                if (key.Key == ConsoleKey.Escape)
                 {
-                    if (i == selectedIndex)
+                    return; 
+                }
+
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out parsedDate))
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow; // Highlight selected
-                        Console.WriteLine($"-> {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+                        break;
                     }
                     else
                     {
-                        Console.ResetColor(); // Default color for others
-                        Console.WriteLine($"  {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
+                        Console.WriteLine("\nInvalid date format. Press any key to try again or press Escape to go back.");
+                        dateInput = string.Empty;
+                        continue;
                     }
                 }
 
-                Console.ResetColor(); // Reset any lingering color changes
-                Console.WriteLine("\nUse arrow keys to navigate. Press Enter to select, or Esc to go back to the Admin Menu.");
-
-                var key = Console.ReadKey(true);
-
-                switch (key.Key)
+                if (key.Key == ConsoleKey.Backspace && dateInput.Length > 0)
                 {
-                    case ConsoleKey.UpArrow:
-                        if (selectedIndex > 0)
-                            selectedIndex--;
-                        break;
-
-                    case ConsoleKey.DownArrow:
-                        if (selectedIndex < reservationDetails.Count() - 1)
-                            selectedIndex++;
-                        break;
-
-                    case ConsoleKey.Enter:
-                        // Show options for the selected reservation
-                        ShowReservationOptions(reservationDetails[selectedIndex].Reservation);
-                        break;
-
-                    case ConsoleKey.Escape:
-                        return;
+                    dateInput = dateInput.Substring(0, dateInput.Length - 1);
+                    Console.Write("\b \b");
                 }
+                else if (key.Key != ConsoleKey.Backspace)
+                {
+                    dateInput += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+
+            var reservations = ReservationAdminLogic.GetReservationsByDate(parsedDate);
+
+            if (!reservations.Any())
+            {
+                Console.WriteLine("\nNo reservations found for this date. Press any key to try another date.");
+                Console.ReadKey();
+                continue;
+            }
+
+            var reservationDetails = reservations.Select(r => new
+            {
+                Reservation = r,
+                UserName = GetUserFullName(r.UserID),
+                TableID = r.Place,
+                ReservationID = r.ID
+            }).ToList();
+
+            var options = reservationDetails.Select(r =>
+                $"{r.UserName} - Table {r.TableID} (Reservation ID: {r.ReservationID})"
+            ).ToList();
+
+            options.Add("Back");
+
+            var selection = SelectionPresent.Show(
+                options,
+                $"Reservations for {parsedDate:dd/MM/yyyy}:\nUse arrow keys to navigate and press Enter to select.\n"
+            );
+
+            if (selection.text == "Back")
+            {
+                break;
+            }
+
+            var selectedReservation = reservationDetails
+                .FirstOrDefault(r => $"{r.UserName} - Table {r.TableID} (Reservation ID: {r.ReservationID})" == selection.text);
+
+            if (selectedReservation != null)
+            {
+                ShowReservationOptions(selectedReservation.Reservation);
             }
         }
     }
 
-    private static void ShowReservationOptions(ReservationModel reservation)
+    public static void ShowReservationOptions(ReservationModel reservation)
     {
-        // List of possible actions
-        string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
+        var actions = new List<string> { "View Details", "Update Reservation", "Delete Reservation", "Back" };
 
-        int currentActionIndex = 0;
+        var selection = SelectionPresent.Show(
+            actions,
+            $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}\nChoose an action:\n"
+        );
 
-        while (true)
+        switch (selection.text)
         {
-            Console.Clear(); // Refresh the options display
-            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
-            Console.WriteLine("Choose an action:");
+            case "View Details":
+                ReservationDetails.ShowDetails(reservation);
+                Console.ReadKey();
+                break;
 
-            // Display actions with arrow key navigation and color highlighting
-            for (int i = 0; i < actions.Length; i++)
-            {
-                if (i == currentActionIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow; // Highlight the selected option
-                    Console.WriteLine($"-> {actions[i]}");
-                }
-                else
-                {
-                    Console.ResetColor(); // Reset color for non-selected options
-                    Console.WriteLine($"  {actions[i]}");
-                }
-            }
+            case "Update Reservation":
+                UpdateReservation.Show(reservation);
+                Console.ReadKey();
+                break;
 
-            // Capture key input for navigation and action selection
-            var key = Console.ReadKey(true);
+            case "Delete Reservation":
+                DeleteReservation.Show(reservation);
+                Console.ReadKey();
+                break;
 
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (currentActionIndex > 0)
-                    {
-                        currentActionIndex--;
-                    }
-                    break;
-
-                case ConsoleKey.DownArrow:
-                    if (currentActionIndex < actions.Length - 1)
-                    {
-                        currentActionIndex++;
-                    }
-                    break;
-
-                case ConsoleKey.Enter:
-                    Console.ResetColor();
-                    switch (currentActionIndex)
-                    {
-                        case 0: // View Details
-                            ReservationDetails.ShowDetails(reservation);
-                            Console.ReadKey();
-                            break;
-
-                        case 1: // Update Reservation
-                            UpdateReservation.Show(reservation);
-                            Console.ReadKey();
-                            break;
-
-                        case 2: // Delete Reservation
-                            // Call DeleteReservation.Show() with the selected reservation
-                            DeleteReservation.Show(reservation);
-                            Console.ReadKey();
-                            break;
-
-                        case 3: // Cancel
-                            return; // Return to the reservation list
-                    }
-                    break;
-
-                case ConsoleKey.Escape:
-                    return; // Exit the options and return to reservation list
-            }
-
+            case "Back":
+                return;
         }
     }
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
-        if (account != null)
-        {
-            return $"{account.FirstName} {account.LastName}";
-        }
-        return "Unknown User"; // Fallback in case no account is found
+        var account = Access.Users.GetBy<int?>("ID", userID); 
+        return account != null ? $"{account.FirstName} {account.LastName}" : "Unknown User";
     }
 }
+
