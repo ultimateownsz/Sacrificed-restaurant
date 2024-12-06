@@ -20,8 +20,6 @@ namespace Presentation
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?\n\n";
             int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
-            Console.WriteLine($"Guests {guests}");
-            Thread.Sleep(3000);
             // Step 3: Use TableSelection for table selection
             TableSelection tableSelection = new();
             int[] availableTables = guests switch
@@ -38,8 +36,7 @@ namespace Presentation
                                         .ToArray();
 
             int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
-            Console.WriteLine($"Selected table {selectedTable}");
-            Thread.Sleep(3000);
+
 
             // Step 4: Check if the user pressed Back
             if (selectedTable == -1)
