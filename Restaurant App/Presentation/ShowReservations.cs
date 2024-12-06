@@ -10,35 +10,35 @@ public static class ShowReservations
         while (true)
         {
             Console.Clear();
-            // Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
-            System.Console.WriteLine("Enter the email of the client:");
+            Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            // System.Console.WriteLine("Enter the email of the client:");
 
-            // var dateInput = Console.ReadLine();
-            // if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
-            // {
-            //     Console.WriteLine("Invalid date format. Press any key to try again.");
-            //     Console.ReadKey();
-            //     continue;
-            // }
-
-            var accountInput = Console.ReadLine();
-
-            var userAccount = Access.Users.GetBy<string>("Email", accountInput);
-            if (userAccount == null)
+            var dateInput = Console.ReadLine();
+            if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
             {
-                System.Console.WriteLine($"No user found with this email: {accountInput}");
+                Console.WriteLine("Invalid date format. Press any key to try again.");
+                Console.ReadKey();
+                continue;
             }
 
-            // Convert date to the required format (ddMMyyyy as integer)
-            // var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
+            // var accountInput = Console.ReadLine();
 
-            var userReservations = Access.Reservations.GetAllBy<int?>("UserID", userAccount.ID)
-                                                .Where(r => r != null)
-                                                .Cast<ReservationModel>()
-                                                .ToList();
+            // var userAccount = Access.Users.GetBy<string>("Email", accountInput);
+            // if (userAccount == null)
+            // {
+            //     System.Console.WriteLine($"No user found with this email: {accountInput}");
+            // }
+
+            // Convert date to the required format (ddMMyyyy as integer)
+            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
+
+            // var userReservations = Access.Reservations.GetAllBy<int?>("UserID", userAccount.ID)
+            //                                     .Where(r => r != null)
+            //                                     .Cast<ReservationModel>()
+            //                                     .ToList();
 
             // Fetch user names and table choices for reservations
-            var reservationDetails = userReservations.Select(r => new
+            var reservationDetails = reservations.Select(r => new
             {
                 Reservation = r,
                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
@@ -68,13 +68,14 @@ public static class ShowReservations
                         if (pastIndex >= 0 && pastIndex > pastReservations.Count)
                         {
                             ShowReservationOptions(pastReservations[pastIndex].Reservation);
+                            break;
                         }
                     }
                     break;
                 case "Future Reservations":
                     if (futureReservations.Count == 0)
                     {
-                        Console.WriteLine("No past reservations found. Press any key to return");
+                        Console.WriteLine("No current reservations found. Press any key to return");
                         Console.ReadKey();
                         break;
                     }
@@ -87,6 +88,7 @@ public static class ShowReservations
                         if (futureIndex >= 0 && futureIndex > futureReservations.Count)
                         {
                             ShowReservationOptions(futureReservations[futureIndex].Reservation);
+                            break;
                         }
                     }
                     break;
