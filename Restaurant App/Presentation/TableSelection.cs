@@ -341,6 +341,14 @@ namespace Presentation
 
             Console.ResetColor();
         }
+
+        private void ResetConsoleToDefault()
+        {
+            Console.ResetColor(); // Reset any active colors
+            Console.Clear(); // Clear the entire console to remove lingering text
+            Console.SetCursorPosition(0, 0); // Reset the cursor to the top-left position
+        }
+
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             ShowGrid(availableTables, reservedTables);
@@ -360,12 +368,15 @@ namespace Presentation
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
+                        // Cancel all tasks and clean up
                         if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
                         {
                             flashCancellationTokenSource.Cancel(); // Stop flashing
                             flashCancellationTokenSource.Dispose();
                             flashCancellationTokenSource = null; // Prevent further access
                         }
+
+                        ResetConsoleToDefault(); // Reset colors and clean up screen
                         return -1;
                     }
 
@@ -411,6 +422,7 @@ namespace Presentation
                                     flashCancellationTokenSource = null; // Prevent further access
                                 }
 
+                                ResetConsoleToDefault(); // Reset colors and clean up screen
                                 return SelectedTable;
                             }
                             break;
@@ -436,15 +448,19 @@ namespace Presentation
             }
             finally
             {
+                // Ensure flashing task is stopped and console is reset
                 if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
                 {
-                    flashCancellationTokenSource.Cancel(); // Stop flashing when exiting
+                    flashCancellationTokenSource.Cancel();
                     flashCancellationTokenSource.Dispose();
                     flashCancellationTokenSource = null; // Prevent further access
                 }
+
+                ResetConsoleToDefault(); // Reset colors and clean up screen
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
+
 
 
 
