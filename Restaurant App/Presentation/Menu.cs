@@ -55,7 +55,8 @@ static class Menu
                     break;
 
                 case "view reservations":
-                    MakingReservations.UserOverViewReservation(acc);
+                    // MakingReservations.UserOverViewReservation(acc);
+                    FuturePastResrvations.Show(acc, false);
                     break;
 
                 case "logout":
