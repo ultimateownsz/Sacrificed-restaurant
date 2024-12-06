@@ -44,7 +44,7 @@ namespace Presentation
                         selectedDay = Math.Min(selectedDay, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)); // Adjust selected day if new month has fewer days
                         break;
                     case ConsoleKey.Enter: // Select date
-                        return new DateTime(currentDate.Year, currentDate.Month, selectedDay); // Return the selected date
+                        return new DateTime(currentDate.Year, currentDate.Month, selectedDay); // Return the selected date immediately
                     case ConsoleKey.Q: // Quit
                         throw new OperationCanceledException("User canceled calendar navigation.");
                     default:

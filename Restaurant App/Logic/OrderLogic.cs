@@ -15,7 +15,8 @@ public class OrderLogic
     public bool SaveOrder(int reservationId, int productId)
     {
         // Validate reservation ID
-        if (Access.Reservations.GetBy<int>("ID", reservationId) == null)
+        var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
+        if (reservation == null)
         {
             Console.WriteLine($"Reservation ID {reservationId} does not exist.");
             return false;
@@ -28,12 +29,25 @@ public class OrderLogic
             return false;
         }
 
-        // Save the order
-        return Access.Orders.Write(new OrderModel
+        // Create a new RequestModel for the order
+        var request = new RequestModel
         {
             ReservationID = reservationId,
             ProductID = productId
-        });
+        };
+
+        // Instantiate RequestAccess to save the request
+        var requestAccess = new RequestAccess();
+
+        // Save the order using RequestAccess
+        if (!requestAccess.Write(request))
+        {
+            Console.WriteLine("Failed to save the order.");
+            return false;
+        }
+
+        Console.WriteLine("Order saved successfully.");
+        return true;
     }
 
 
