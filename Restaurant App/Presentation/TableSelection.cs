@@ -5,6 +5,7 @@ namespace Presentation
     public class TableSelection
     {        
 
+        private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
         private char[,] grid = {
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',},
             {'|',' ',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ','|',},
@@ -78,34 +79,33 @@ namespace Presentation
             reservedTables);
         }
 
-        private void FlashHighlight(int tableNumber, int x, int y)
+        private async Task FlashHighlightAsync(int tableNumber, int x, int y)
         {
-            for (int i = 0; i < 3; i++) // Flash 3 times (1.5 seconds total)
+            var token = flashCancellationTokenSource.Token;
+
+            while (!token.IsCancellationRequested)
             {
                 // Display the table number
                 Console.SetCursorPosition(x, y);
                 Console.ResetColor();
                 Console.Write(tableNumber);
-                Thread.Sleep(500); // Wait for 0.5 seconds
+                await Task.Delay(500); // Wait for 0.5 seconds
 
                 // Display the "X"
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = ConsoleColor.Yellow; // Use yellow for the "X" to make it noticeable
                 Console.Write("X");
                 Console.ResetColor();
-                Thread.Sleep(500); // Wait for 0.5 seconds
+                await Task.Delay(500); // Wait for 0.5 seconds
             }
-
-            // Ensure the "X" remains visible at the end
-            Console.SetCursorPosition(x, y);
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("X");
-            Console.ResetColor();
-}
-
+        }
 
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
+            // Cancel the previous flashing task
+            flashCancellationTokenSource.Cancel();
+            flashCancellationTokenSource = new CancellationTokenSource();
+
             string number = GetNumberAt(cursorX, cursorY);
 
             if (!string.IsNullOrEmpty(number))
@@ -131,8 +131,8 @@ namespace Presentation
                     Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
                 }
 
-                // Flash the current position
-                FlashHighlight(tableNumber, cursorX, cursorY);
+                // Start flashing in the background
+                _ = FlashHighlightAsync(tableNumber, cursorX, cursorY);
             }
 
             Console.ResetColor();
@@ -265,27 +265,28 @@ namespace Presentation
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             ShowGrid(availableTables, reservedTables);
-            Console.CursorVisible = false;
+            Console.CursorVisible = false; // Hide the cursor
 
             int lastX = cursorX, lastY = cursorY;
 
-            while (true)
+            try
             {
-                Console.SetCursorPosition(0, grid.GetLength(0) + 2);
-                Console.ResetColor();
-                Console.WriteLine("(B)ack");
-
-                var key = Console.ReadKey(true);
-
-                if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                while (true)
                 {
-                    return -1;
-                }
+                    Console.SetCursorPosition(0, grid.GetLength(0) + 2);
+                    Console.ResetColor();
+                    Console.WriteLine("(B)ack");
 
-                RemoveHighlight();
+                    var key = Console.ReadKey(true);
 
-                try
-                {
+                    if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                    {
+                        flashCancellationTokenSource.Cancel(); // Stop flashing
+                        return -1;
+                    }
+
+                    RemoveHighlight();
+
                     switch (key.Key)
                     {
                         case ConsoleKey.RightArrow:
@@ -325,6 +326,7 @@ namespace Presentation
                                 }
 
                                 SelectedTable = tableNumber;
+                                flashCancellationTokenSource.Cancel(); // Stop flashing
                                 return SelectedTable;
                             }
                             break;
@@ -341,15 +343,16 @@ namespace Presentation
                         lastX = cursorX;
                         lastY = cursorY;
                     }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    cursorX = lastX;
-                    cursorY = lastY;
-                }
 
-                ShowGrid(availableTables, reservedTables);
+                    ShowGrid(availableTables, reservedTables);
+                }
+            }
+            finally
+            {
+                flashCancellationTokenSource.Cancel(); // Stop flashing when exiting
+                Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
+
     }
 }
