@@ -52,6 +52,19 @@ namespace Presentation
                         
                         }).ToList();
 
+                        var pastOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
+                        var selectedPast = SelectionPresent.Show(pastOptions, "PAST RESERVATIONS\n\n").text;
+
+                        if (pastOptions.Contains(selectedPast))
+                        {
+                            int pastIndex = pastOptions.IndexOf(selectedPast);
+                            if (pastIndex >= 0 && pastIndex > reservationDetails.Count)
+                            {
+                                ShowReservations.ShowReservationOptions(reservationDetails[pastIndex].Reservation);
+                                break;
+                            }
+                        }
+
                         break;
                     case "Future Reservations":
                         Console.Clear();
@@ -79,6 +92,20 @@ namespace Presentation
                             TableID = r.Place // Table choice of the reservation
                         
                         }).ToList();
+
+                        var futureOptions = futureDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
+                        var selectedFuture = SelectionPresent.Show(futureOptions, "FUTURE/CURRENT RESERVATIONS").text;
+
+                        if (futureOptions.Contains(selectedFuture))
+                        {
+                            int futureIndex = futureOptions.IndexOf(selectedFuture);
+                            if (futureIndex >= 0 && futureIndex > futureDetails.Count)
+                            {
+                                ShowReservations.ShowReservationOptions(futureDetails[futureIndex].Reservation);
+                                break;
+                            }
+                        }
+
                         break;
                     case "Cancel":
                         return;

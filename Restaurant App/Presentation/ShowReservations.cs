@@ -148,7 +148,7 @@ public static class ShowReservations
         }
     // }
 
-    private static void ShowReservationOptions(ReservationModel reservation)
+    public static void ShowReservationOptions(ReservationModel reservation)
     {
         // List of possible actions
         string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
