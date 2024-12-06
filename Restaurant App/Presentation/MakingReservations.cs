@@ -34,8 +34,8 @@ namespace Presentation
                 };
                 var reservedTables = Access.Reservations
                                         .GetAllBy<DateTime>("Date", selectedDate)
-                                        .Where(r => r?.Place != null)
-                                        .Select(r => r!.Place!.Value)
+                                        .Where(r => r?.PlaceID != null)
+                                        .Select(r => r!.PlaceID!.Value)
                                         .ToArray();
 
                 int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
@@ -72,7 +72,7 @@ namespace Presentation
             }
 
         var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
-                                                .Select(r => r.Place)
+                                                .Select(r => r.PlaceID)
                                                 .Where(rt => rt.HasValue)
                                                 .Select(rt => rt.Value)
                                                 .ToArray();
