@@ -344,10 +344,10 @@ namespace Presentation
 
         private void ResetConsoleToDefault()
         {
-            Console.ResetColor(); // Reset any active colors
-            Console.Clear(); // Clear the entire console to remove lingering text
-            Console.SetCursorPosition(0, 0); // Reset the cursor to the top-left position
+            Console.ResetColor();
+            Console.Clear();
         }
+
 
         private void EnsureConsoleSize()
         {
@@ -367,6 +367,16 @@ namespace Presentation
             }
 
             Console.Clear();
+        }
+
+        private void StopFlashing()
+        {
+            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+            {
+                flashCancellationTokenSource.Cancel();
+                flashCancellationTokenSource.Dispose();
+                flashCancellationTokenSource = null; // Prevent further access
+            }
         }
 
 
@@ -390,15 +400,9 @@ namespace Presentation
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
-                        if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
-                        {
-                            flashCancellationTokenSource.Cancel(); // Stop flashing
-                            flashCancellationTokenSource.Dispose();
-                            flashCancellationTokenSource = null; // Prevent further access
-                        }
-
+                        StopFlashing(); // Ensure flashing stops
                         ResetConsoleToDefault(); // Reset colors and clean up screen
-                        return -1;
+                        return -1; // Return -1 to indicate cancellation
                     }
 
                     int nextX = cursorX, nextY = cursorY;
@@ -419,37 +423,37 @@ namespace Presentation
                             break;
                         case ConsoleKey.Enter:
                             string selectedNumber = GetNumberAt(cursorX, cursorY);
-                            if (!string.IsNullOrEmpty(selectedNumber))
+
+                            if (string.IsNullOrEmpty(selectedNumber))
                             {
-                                int tableNumber = int.Parse(selectedNumber);
-
-                                if (!Array.Exists(availableTables, table => table == tableNumber) ||
-                                    Array.Exists(reservedTables, table => table == tableNumber))
-                                {
-                                    // Display the error message
-                                    Console.SetCursorPosition(0, grid.GetLength(0) + 3);
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
-                                    Console.ResetColor();
-                                    continue;
-                                }
-
-                                SelectedTable = tableNumber;
-
-                                // Cancel and dispose of flashing task
-                                if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
-                                {
-                                    flashCancellationTokenSource.Cancel();
-                                    flashCancellationTokenSource.Dispose();
-                                    flashCancellationTokenSource = null; // Prevent further access
-                                }
-
-                                ResetConsoleToDefault(); // Reset colors and clean up screen
-                                return SelectedTable;
+                                Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Invalid table. Please select a valid table.");
+                                Console.ResetColor();
+                                continue; // Retry selection
                             }
-                            break;
+
+                            int tableNumber = int.Parse(selectedNumber);
+
+                            if (!Array.Exists(availableTables, table => table == tableNumber) ||
+                                Array.Exists(reservedTables, table => table == tableNumber))
+                            {
+                                // Display the error message
+                                Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            SelectedTable = tableNumber;
+
+                            StopFlashing(); // Stop flashing task
+                            ResetConsoleToDefault(); // Reset colors and clean up screen
+                            return SelectedTable; // Return the valid table number
                     }
 
+                    // Ensure valid cursor movement
                     if (nextX < 0 || nextX >= grid.GetLength(1) || nextY < 0 || nextY >= grid.GetLength(0) ||
                         string.IsNullOrEmpty(GetNumberAt(nextX, nextY)))
                     {
@@ -474,14 +478,7 @@ namespace Presentation
             }
             finally
             {
-                // Ensure flashing task is stopped and console is reset
-                if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
-                {
-                    flashCancellationTokenSource.Cancel();
-                    flashCancellationTokenSource.Dispose();
-                    flashCancellationTokenSource = null; // Prevent further access
-                }
-
+                StopFlashing(); // Stop flashing and reset tasks
                 ResetConsoleToDefault(); // Reset colors and clean up screen
                 Console.CursorVisible = true; // Restore the cursor visibility
             }

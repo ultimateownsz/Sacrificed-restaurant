@@ -13,6 +13,8 @@ public class ReservationLogic
             //with all the info from the user
     public int SaveReservation(DateTime date, int userId, int tableId)
     {
+        Console.WriteLine($"DEBUG: Attempting to save reservation with Date={date}, UserID={userId}, TableID={tableId}");
+
         var reservation = new ReservationModel
         {
             Date = date,
@@ -20,16 +22,16 @@ public class ReservationLogic
             Place = tableId
         };
 
-        Console.WriteLine("DEBUG: Saving reservation");
         if (Access.Reservations.Write(reservation))
         {
-            Console.WriteLine($"DEBUG: Reservation saved with ID {reservation.ID}");
-            return reservation.ID ?? 0;
+            Console.WriteLine($"DEBUG: Reservation saved with ID={reservation.ID}");
+            return reservation.ID ?? 0; // Return the generated ID
         }
 
         Console.WriteLine("DEBUG: Reservation save failed");
-        return 0; // Return 0 if saving fails
+        return 0; // Return 0 if the reservation failed
     }
+
 
 
     //Converts the date from string to Int64 and saves it into CurrentReservation

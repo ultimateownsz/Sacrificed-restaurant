@@ -15,8 +15,6 @@ namespace Presentation
         {
             while (true) // Allow returning to the calendar
             {
-                Console.WriteLine("DEBUG: Entering MakingReservation");
-
                 // Step 1: Select a date
                 DateTime selectedDate = CalendarPresent.Show(DateTime.Now);
 
@@ -25,28 +23,36 @@ namespace Presentation
                 string banner = "How many guests will be coming?\n\n";
                 int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-                Console.WriteLine($"DEBUG: Selected {guests} guests");
-
                 // Step 3: Select a table
                 int selectedTable = SelectTableUsingTableSelection(selectedDate, guests);
 
+                // Ensure valid table selection
                 if (selectedTable == -1)
                 {
-                    Console.WriteLine("DEBUG: User pressed Back or Escape");
                     Console.WriteLine("Returning to the menu...");
                     break; // Exit back to the menu
                 }
 
-                Console.WriteLine($"DEBUG: Selected Table {selectedTable}");
+                Console.WriteLine($"DEBUG: Selected table {selectedTable}");
 
-                // Step 4: Take orders
-                TakeOrders(selectedDate, acc, selectedTable, guests);
-                Console.WriteLine("DEBUG: Completed TakeOrders");
+                // Step 4: Create reservation immediately after table selection
+                int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
+
+                // Handle reservation failure
+                if (reservationId == 0)
+                {
+                    Console.WriteLine("Failed to create a reservation. Please try again.");
+                    continue; // Restart the process if reservation creation fails
+                }
+
+                Console.WriteLine($"DEBUG: Reservation created with ID={reservationId}");
+
+                // Step 5: Proceed to meal selection
+                TakeOrders(selectedDate, acc, reservationId, guests);
+                Console.WriteLine("DEBUG: Completed meal selection");
                 break; // Exit after completing the reservation
             }
         }
-
-
 
 
         public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
@@ -153,30 +159,24 @@ namespace Presentation
         return;
     }
 
-    public static void TakeOrders(DateTime selectedDate, UserModel acc, int tableId, int guests)
+    public static void TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
     {
-        Console.WriteLine("DEBUG: Entering TakeOrders");
+        Console.WriteLine($"DEBUG: Entering TakeOrders with ReservationID={reservationId}");
 
-        // Save the reservation
-        var reservationLogic = new ReservationLogic();
-        int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID ?? 0, tableId);
-
-        // Validate reservation ID
+        // Check if reservation ID is valid
         if (reservationId == 0)
         {
-            Console.WriteLine("DEBUG: Failed to create a reservation");
-            Console.WriteLine("Failed to create a reservation. Please try again.");
-            return; // Exit if reservation creation fails
+            Console.WriteLine("DEBUG: Invalid reservation ID. Exiting TakeOrders.");
+            return;
         }
 
-        Console.WriteLine($"DEBUG: Reservation created with ID {reservationId}");
-
-        // Initialize categories for meal selection
         List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
         List<ProductModel> allOrders = new List<ProductModel>();
 
         Console.WriteLine("This month's theme is:");
-        var theme = reservationMenuLogic.GetCurrentMenu();
+        var reservationMenuLogic = new ReservationMenuLogic(); // Create an instance
+        var theme = reservationMenuLogic.GetCurrentMenu(); // Call the method
+
         if (theme is not null)
         {
             Console.WriteLine($"{theme}");
@@ -189,13 +189,12 @@ namespace Presentation
             return;
         }
 
-        // Loop through each guest to take orders
+
         for (int i = 0; i < guests; i++)
         {
             Console.WriteLine($"DEBUG: Starting order for Guest {i + 1}");
             List<ProductModel> guestOrder = new List<ProductModel>();
 
-            // Loop through each category for the guest
             for (int z = 0; z < categories.Count; z++)
             {
                 var products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
@@ -232,8 +231,7 @@ namespace Presentation
                         case ConsoleKey.Enter:
                             var selectedProduct = products[productIndex];
 
-                            // Validate the product ID before saving
-                            if (selectedProduct?.ID == null || !ProductManager.DoesProductExist(selectedProduct.ID.Value))
+                            if (selectedProduct.ID == null || !ProductManager.DoesProductExist(selectedProduct.ID.Value))
                             {
                                 Console.WriteLine("The selected product does not exist. Please try again.");
                                 Console.ReadKey();
@@ -241,12 +239,14 @@ namespace Presentation
                             }
 
                             guestOrder.Add(selectedProduct);
+                            var orderLogic = new OrderLogic(); // Create an instance
                             if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                             {
                                 Console.WriteLine("Failed to save the order. Please try again.");
                                 Console.ReadKey();
                                 break;
                             }
+
 
                             choosingProduct = false;
                             break;
@@ -263,8 +263,8 @@ namespace Presentation
         }
 
         PrintReceipt(allOrders, reservationId);
-        Console.WriteLine("DEBUG: Completed TakeOrders");
     }
+
 
         public static void PrintReceipt(List<ProductModel> orders, int reservationId)
         {
