@@ -23,10 +23,16 @@ public static class ShowReservations
 
             var accountInput = Console.ReadLine();
 
+            var userAccount = Access.Users.GetBy<string>("Email", accountInput);
+            if (userAccount == null)
+            {
+                System.Console.WriteLine($"No user found with this email: {accountInput}");
+            }
+
             // Convert date to the required format (ddMMyyyy as integer)
             // var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
 
-            var userReservations = Access.Reservations.GetAllBy<string?>("UserID", accountInput)
+            var userReservations = Access.Reservations.GetAllBy<int?>("UserID", userAccount.ID)
                                                 .Where(r => r != null)
                                                 .Cast<ReservationModel>()
                                                 .ToList();
@@ -66,19 +72,19 @@ public static class ShowReservations
                     }
                     break;
                 case "Future Reservations":
-                    if (pastReservations.Count == 0)
+                    if (futureReservations.Count == 0)
                     {
                         Console.WriteLine("No past reservations found. Press any key to return");
                         Console.ReadKey();
                         break;
                     }
                     var futureOptions = futureReservations.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
-                    var selectedFuture = SelectionPresent.Show(futureOptions, "FUTURE RESERVATIONS\n\n").text;
+                    var selectedFuture = SelectionPresent.Show(futureOptions, "CURRENT RESERVATIONS\n\n").text;
 
                     if (futureOptions.Contains(selectedFuture))
                     {
                         int futureIndex = futureOptions.IndexOf(selectedFuture);
-                        if (futureIndex >= 0 && futureIndex > pastReservations.Count)
+                        if (futureIndex >= 0 && futureIndex > futureReservations.Count)
                         {
                             ShowReservationOptions(futureReservations[futureIndex].Reservation);
                         }
