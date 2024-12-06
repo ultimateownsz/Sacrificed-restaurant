@@ -349,8 +349,30 @@ namespace Presentation
             Console.SetCursorPosition(0, 0); // Reset the cursor to the top-left position
         }
 
+        private void EnsureConsoleSize()
+        {
+            const int requiredWidth = 80; // Example width
+            const int requiredHeight = 30; // Example height
+
+            while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Your console is too small to display the table blueprint.");
+                Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
+                Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+                Console.ResetColor();
+                Console.WriteLine("Please resize your console window and press Enter to continue...");
+                Console.ReadLine();
+            }
+
+            Console.Clear();
+        }
+
+
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
+            EnsureConsoleSize(); // Ensure the console size is adequate
             ShowGrid(availableTables, reservedTables);
             Console.CursorVisible = false; // Hide the cursor
 
@@ -368,7 +390,6 @@ namespace Presentation
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
-                        // Cancel all tasks and clean up
                         if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
                         {
                             flashCancellationTokenSource.Cancel(); // Stop flashing
@@ -405,6 +426,7 @@ namespace Presentation
                                 if (!Array.Exists(availableTables, table => table == tableNumber) ||
                                     Array.Exists(reservedTables, table => table == tableNumber))
                                 {
+                                    // Display the error message
                                     Console.SetCursorPosition(0, grid.GetLength(0) + 3);
                                     Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
@@ -436,6 +458,10 @@ namespace Presentation
                     }
                     else
                     {
+                        // Clear error message when navigating
+                        Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                        Console.Write(new string(' ', Console.WindowWidth)); // Clear the error line
+
                         UpdateTableHighlight(lastX, lastY, nextX, nextY, availableTables, reservedTables); // Partial update
                         lastX = nextX;
                         lastY = nextY;
@@ -460,10 +486,6 @@ namespace Presentation
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
-
-
-
-
 
     }
 }
