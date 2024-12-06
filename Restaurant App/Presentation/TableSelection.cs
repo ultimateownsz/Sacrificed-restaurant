@@ -89,8 +89,6 @@ namespace Presentation
                 // Debug: Print the table ID
                 Console.SetCursorPosition(0, grid.GetLength(0) + 4); // Position below the grid
                 Console.ResetColor();
-                Console.WriteLine($"DEBUG: Highlighting Table {tableNumber} at ({cursorX}, {cursorY})");
-
                 // Determine the color of the X based on the table's availability
                 if (Array.Exists(availableTables, table => table == tableNumber))
                 {
