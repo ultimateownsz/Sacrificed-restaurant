@@ -99,6 +99,12 @@ public class DataAccess<T1> where T1 : IModel
         return _db.Query<T1>(query, new { value = value ?? default });
     }
 
+    public IEnumerable<T1> GetAll()
+    {
+        string query = $"SELECT * FROM {_table}";
+        return _db.Query<T1>(query) ?? Enumerable.Empty<T1>(); // Ensure it returns an empty list if no records are found
+    }
+
     public T1? Trace<T2>(T2 value)
     {
         // coming soon...
