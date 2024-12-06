@@ -175,13 +175,22 @@ namespace Presentation
         {
             int x = startX;
 
+            // Adjust when moving left from a double-digit number
             if (direction == -1 && IsDoubleDigit(startX, startY))
             {
-                // If moving left and part of a double-digit number, align to the first digit
                 string currentNumber = GetNumberAt(startX, startY);
                 if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2)
                 {
-                    x -= 1; // Move to the first digit of the current number
+                    x -= 1; // Align to the first digit of the current number
+                }
+            }
+            // Adjust when moving right from a double-digit number
+            else if (direction == 1 && IsDoubleDigit(startX, startY))
+            {
+                string currentNumber = GetNumberAt(startX, startY);
+                if (!string.IsNullOrEmpty(currentNumber) && currentNumber.Length == 2)
+                {
+                    x += currentNumber.Length; // Move past the current number
                 }
             }
 
@@ -203,6 +212,7 @@ namespace Presentation
 
             return (startX, startY); // Return the original position if no number is found
         }
+
 
         private (int, int) FindNextNumberInColumn(int startX, int startY, int direction)
         {
