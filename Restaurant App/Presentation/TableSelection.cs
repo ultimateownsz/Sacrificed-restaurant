@@ -4,6 +4,8 @@ namespace Presentation
 {
     public class TableSelection
     {        
+        private int previousX = -1;
+        private int previousY = -1;
 
         private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
         private char[,] grid = {
@@ -40,9 +42,19 @@ namespace Presentation
         private int cursorX = 3, cursorY = 6; // Start at table "1"
         public int SelectedTable { get; private set; }
 
+        private void ClearGrid()
+        {
+            for (int y = 0; y < grid.GetLength(0); y++)
+            {
+                Console.SetCursorPosition(0, y);
+                Console.Write(new string(' ', grid.GetLength(1))); // Clear the entire row
+            }
+            Console.SetCursorPosition(0, 0); // Reset cursor to the top
+        }
+
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
-            Console.Clear();
+            ClearGrid(); // Clear only the grid area
 
             for (int y = 0; y < grid.GetLength(0); y++)
             {
@@ -56,30 +68,36 @@ namespace Presentation
 
                         if (Array.Exists(availableTables, table => table == tableNumber))
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.ForegroundColor = ConsoleColor.Green; // Available tables
+                        }
+                        else if (Array.Exists(reservedTables, table => table == tableNumber))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red; // Reserved tables
                         }
                         else
                         {
-                            Console.ForegroundColor = Array.Exists(reservedTables, table => table == tableNumber)
-                                ? ConsoleColor.Red
-                                : ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Red; // Unreservable tables (same as reserved)
                         }
+
+                        Console.SetCursorPosition(x - (number.Length - 1), y);
                         Console.Write(number);
                     }
                     else
                     {
                         Console.ResetColor();
+                        Console.SetCursorPosition(x, y);
                         Console.Write(grid[y, x]);
                     }
                 }
-                Console.WriteLine();
             }
-            Console.ResetColor();
-            HighlightNumber(availableTables,
-            reservedTables);
+
+            HighlightNumber(availableTables, reservedTables); // Highlight the selected table
         }
 
-        private async Task FlashHighlightAsync(int tableNumber, int x, int y)
+
+
+
+        private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
         {
             var token = flashCancellationTokenSource.Token;
 
@@ -87,52 +105,67 @@ namespace Presentation
             {
                 // Display the table number
                 Console.SetCursorPosition(x, y);
-                Console.ResetColor();
-                Console.Write(tableNumber);
-                await Task.Delay(500); // Wait for 0.5 seconds
+                Console.ForegroundColor = tableColor;
+                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
+                await Task.Delay(500);
 
-                // Display the "X"
+                // Check if the task was canceled before flashing "X"
+                if (token.IsCancellationRequested) break;
+
+                // Display the "X" with the same color as the table
                 Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = ConsoleColor.Yellow; // Use yellow for the "X" to make it noticeable
-                Console.Write("X");
-                Console.ResetColor();
-                await Task.Delay(500); // Wait for 0.5 seconds
+                Console.ForegroundColor = tableColor;
+                Console.Write("X ");
+                await Task.Delay(500);
             }
+
+            // Ensure "X" remains visible at the end
+            if (!token.IsCancellationRequested)
+            {
+                Console.SetCursorPosition(x, y);
+                Console.ForegroundColor = tableColor;
+                Console.Write("X ");
+            }
+            Console.ResetColor();
         }
+
+
+
+
+
+
 
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
             // Cancel the previous flashing task
-            flashCancellationTokenSource.Cancel();
+            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+            {
+                flashCancellationTokenSource.Cancel();
+                flashCancellationTokenSource.Dispose();
+            }
+
             flashCancellationTokenSource = new CancellationTokenSource();
 
-            string number = GetNumberAt(cursorX, cursorY);
+            string currentNumber = GetNumberAt(cursorX, cursorY);
 
-            if (!string.IsNullOrEmpty(number))
+            if (!string.IsNullOrEmpty(currentNumber))
             {
-                int tableNumber = int.Parse(number);
+                int currentTable = int.Parse(currentNumber);
 
                 // Debug: Print the table ID
                 Console.SetCursorPosition(0, grid.GetLength(0) + 4); // Position below the grid
                 Console.ResetColor();
-                Console.WriteLine($"DEBUG: Highlighting Table {tableNumber} at ({cursorX}, {cursorY})");
+                Console.WriteLine($"DEBUG: Highlighting Table {currentTable} at ({cursorX}, {cursorY})");
 
                 // Determine the color of the X based on the table's availability
-                if (Array.Exists(availableTables, table => table == tableNumber))
+                ConsoleColor tableColor = ConsoleColor.Red; // Default to red
+                if (Array.Exists(availableTables, table => table == currentTable))
                 {
-                    Console.ForegroundColor = ConsoleColor.Green; // Available
-                }
-                else if (Array.Exists(reservedTables, table => table == tableNumber))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red; // Reserved
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red; // Unsuitable
+                    tableColor = ConsoleColor.Green; // Available
                 }
 
-                // Start flashing in the background
-                _ = FlashHighlightAsync(tableNumber, cursorX, cursorY);
+                // Start a new flashing task for the current table
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
             }
 
             Console.ResetColor();
@@ -140,22 +173,25 @@ namespace Presentation
 
 
 
-        private void RemoveHighlight()
+
+
+        private void RemoveHighlight(int x, int y)
         {
-            string number = GetNumberAt(cursorX, cursorY);
+            string oldNumber = GetNumberAt(x, y);
 
-            if (!string.IsNullOrEmpty(number))
+            if (!string.IsNullOrEmpty(oldNumber))
             {
-                Console.SetCursorPosition(cursorX, cursorY);
-                Console.Write(number);
+                int oldTable = int.Parse(oldNumber);
 
-                if (number.Length == 2)
-                {
-                    Console.SetCursorPosition(cursorX + 1, cursorY);
-                    Console.Write(number[1]);
-                }
+                // Restore the table number
+                Console.SetCursorPosition(x, y);
+                Console.ResetColor();
+                Console.Write(oldTable.ToString().PadRight(2)); // Properly clear for double digits
             }
         }
+
+
+
 
         private string GetNumberAt(int x, int y)
         {
@@ -262,6 +298,50 @@ namespace Presentation
             return (startX, startY);
         }
 
+        private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] availableTables, int[] reservedTables)
+        {
+            // Remove "X" from the previous position and restore the table number
+            if (prevX != -1 && prevY != -1)
+            {
+                string prevNumber = GetNumberAt(prevX, prevY);
+                if (!string.IsNullOrEmpty(prevNumber))
+                {
+                    int prevTable = int.Parse(prevNumber);
+
+                    // Determine the color of the previous table
+                    ConsoleColor prevColor = ConsoleColor.Red; // Default to red
+                    if (Array.Exists(availableTables, table => table == prevTable))
+                    {
+                        prevColor = ConsoleColor.Green;
+                    }
+
+                    // Restore the previous table number
+                    Console.SetCursorPosition(prevX, prevY);
+                    Console.ForegroundColor = prevColor;
+                    Console.Write(prevNumber.PadRight(2)); // Properly handle double digits
+                }
+            }
+
+            // Highlight the current table with "X"
+            string currNumber = GetNumberAt(currX, currY);
+            if (!string.IsNullOrEmpty(currNumber))
+            {
+                int currTable = int.Parse(currNumber);
+
+                // Determine the color of the "X" based on the current table's availability
+                ConsoleColor currColor = ConsoleColor.Red; // Default to red
+                if (Array.Exists(availableTables, table => table == currTable))
+                {
+                    currColor = ConsoleColor.Green;
+                }
+
+                Console.SetCursorPosition(currX, currY);
+                Console.ForegroundColor = currColor;
+                Console.Write("X "); // Highlight with "X"
+            }
+
+            Console.ResetColor();
+        }
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             ShowGrid(availableTables, reservedTables);
@@ -281,33 +361,30 @@ namespace Presentation
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
-                        flashCancellationTokenSource.Cancel(); // Stop flashing
+                        if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+                        {
+                            flashCancellationTokenSource.Cancel(); // Stop flashing
+                            flashCancellationTokenSource.Dispose();
+                            flashCancellationTokenSource = null; // Prevent further access
+                        }
                         return -1;
                     }
 
-                    RemoveHighlight();
+                    int nextX = cursorX, nextY = cursorY;
 
                     switch (key.Key)
                     {
                         case ConsoleKey.RightArrow:
-                            (int nextX, int nextY) = FindNextNumberInRow(cursorX, cursorY, 1);
-                            cursorX = nextX;
-                            cursorY = nextY;
+                            (nextX, nextY) = FindNextNumberInRow(cursorX, cursorY, 1);
                             break;
                         case ConsoleKey.LeftArrow:
                             (nextX, nextY) = FindNextNumberInRow(cursorX, cursorY, -1);
-                            cursorX = nextX;
-                            cursorY = nextY;
                             break;
                         case ConsoleKey.DownArrow:
                             (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, 1);
-                            cursorX = nextX;
-                            cursorY = nextY;
                             break;
                         case ConsoleKey.UpArrow:
                             (nextX, nextY) = FindNextNumberInColumn(cursorX, cursorY, -1);
-                            cursorX = nextX;
-                            cursorY = nextY;
                             break;
                         case ConsoleKey.Enter:
                             string selectedNumber = GetNumberAt(cursorX, cursorY);
@@ -326,33 +403,52 @@ namespace Presentation
                                 }
 
                                 SelectedTable = tableNumber;
-                                flashCancellationTokenSource.Cancel(); // Stop flashing
+
+                                // Cancel and dispose of flashing task
+                                if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+                                {
+                                    flashCancellationTokenSource.Cancel();
+                                    flashCancellationTokenSource.Dispose();
+                                    flashCancellationTokenSource = null; // Prevent further access
+                                }
+
                                 return SelectedTable;
                             }
                             break;
                     }
 
-                    if (cursorX < 0 || cursorX >= grid.GetLength(1) || cursorY < 0 || cursorY >= grid.GetLength(0) ||
-                        string.IsNullOrEmpty(GetNumberAt(cursorX, cursorY)))
+                    if (nextX < 0 || nextX >= grid.GetLength(1) || nextY < 0 || nextY >= grid.GetLength(0) ||
+                        string.IsNullOrEmpty(GetNumberAt(nextX, nextY)))
                     {
-                        cursorX = lastX;
-                        cursorY = lastY;
+                        nextX = lastX;
+                        nextY = lastY;
                     }
                     else
                     {
-                        lastX = cursorX;
-                        lastY = cursorY;
-                    }
+                        UpdateTableHighlight(lastX, lastY, nextX, nextY, availableTables, reservedTables); // Partial update
+                        lastX = nextX;
+                        lastY = nextY;
+                        cursorX = nextX;
+                        cursorY = nextY;
 
-                    ShowGrid(availableTables, reservedTables);
+                        HighlightNumber(availableTables, reservedTables); // Dynamically update flashing
+                    }
                 }
             }
             finally
             {
-                flashCancellationTokenSource.Cancel(); // Stop flashing when exiting
+                if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+                {
+                    flashCancellationTokenSource.Cancel(); // Stop flashing when exiting
+                    flashCancellationTokenSource.Dispose();
+                    flashCancellationTokenSource = null; // Prevent further access
+                }
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
+
+
+
 
     }
 }
