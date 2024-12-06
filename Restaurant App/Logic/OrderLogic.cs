@@ -12,16 +12,30 @@ public class OrderLogic
 
     }
 
-    public void SaveOrder(int? reservationID, int? productID)
-    {   
-        if (CurrentOrder != null)
+    public bool SaveOrder(int reservationId, int productId)
+    {
+        // Validate reservation ID
+        if (Access.Reservations.GetBy<int>("ID", reservationId) == null)
         {
-            CurrentOrder.ID = GenerateNewOrderID();
-            CurrentOrder.ReservationID = reservationID;
-            CurrentOrder.ProductID = productID;
-            Access.Requests.Write(CurrentOrder);
+            Console.WriteLine($"Reservation ID {reservationId} does not exist.");
+            return false;
         }
+
+        // Validate product ID
+        if (!ProductManager.DoesProductExist(productId))
+        {
+            Console.WriteLine($"Product ID {productId} does not exist.");
+            return false;
+        }
+
+        // Save the order
+        return Access.Orders.Write(new OrderModel
+        {
+            ReservationID = reservationId,
+            ProductID = productId
+        });
     }
+
 
     public int? GenerateNewOrderID()
     {

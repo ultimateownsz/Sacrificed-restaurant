@@ -2,6 +2,8 @@
 public abstract class Access
 {
     // this is for centralized and simplified usage 
+    public static DataAccess<OrderModel> Orders = new(new string?[] { "ID", "ReservationID", "ProductID" });
+
     public static UserAccess Users = new();
     public static PlaceAccess Places = new();
     public static ThemeAccess Themes = new();

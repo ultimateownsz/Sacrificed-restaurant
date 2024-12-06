@@ -10,19 +10,25 @@ public class ReservationLogic
 
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
-    //with all the info from the user
-    public int SaveReservation(DateTime date, int? userId, int tableId)
+            //with all the info from the user
+    public int SaveReservation(DateTime date, int userId, int tableId)
     {
-        if (CurrentReservation != null)
+        var reservation = new ReservationModel
         {
-            CurrentReservation.Date = date;
-            CurrentReservation.ID = null;
-            CurrentReservation.UserID = userId;
-            CurrentReservation.Place = tableId; // Assign the table ID to the Place column
-            Access.Reservations.Write(CurrentReservation);
-            return Access.Reservations.GetBy<DateTime>("Date", date)?.ID ?? 0;
+            Date = date,
+            UserID = userId,
+            Place = tableId
+        };
+
+        Console.WriteLine("DEBUG: Saving reservation");
+        if (Access.Reservations.Write(reservation))
+        {
+            Console.WriteLine($"DEBUG: Reservation saved with ID {reservation.ID}");
+            return reservation.ID ?? 0;
         }
-        return 0;
+
+        Console.WriteLine("DEBUG: Reservation save failed");
+        return 0; // Return 0 if saving fails
     }
 
 
@@ -79,6 +85,7 @@ public class ReservationLogic
     //     return Access.Reservations.GetBy<int>("ID", id);
     // }
 
+    
     public bool RemoveReservation(int id)
     {
         
