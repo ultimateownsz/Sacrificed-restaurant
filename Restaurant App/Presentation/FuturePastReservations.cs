@@ -114,7 +114,7 @@ namespace Presentation
             }
         }
 
-        public static void ViewUser(UserModel acc)
+        private static void ViewUser(UserModel acc)
         {
             string banner = "Choose a sort reservation you would like to view\n\n";
             while (true)
@@ -149,7 +149,7 @@ namespace Presentation
                         if (pastOptions.Contains(selectedPast))
                         {
                             Console.Clear();
-                            System.Console.WriteLine($"You selected Reservation on: {pastOptions})");
+                            Console.WriteLine($"You selected Reservation on: {selectedPast}");
                             Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the main menu...");
                             Console.ReadKey();
                         }
@@ -182,7 +182,7 @@ namespace Presentation
                         if (futureOptions.Contains(selectedFuture))
                         {
                             Console.Clear();
-                            System.Console.WriteLine($"You selected Reservation on: {futureOptions}");
+                            System.Console.WriteLine($"You selected Reservation on: {selectedFuture}");
                             Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the main menu...");
                             Console.ReadKey();
                         }
