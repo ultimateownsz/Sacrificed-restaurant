@@ -45,6 +45,14 @@ namespace Presentation
                         }
 
                         var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
+
+                        if (!reservations.Any(r => r.Date == parsedDate))
+                        {
+                            System.Console.WriteLine("There are no past reservations for this date. Press any key to return...");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var reservationDetails = reservations.Select(r => new
                         {
                             Reservation = r,
@@ -59,13 +67,11 @@ namespace Presentation
                         if (pastOptions.Contains(selectedPast))
                         {
                             int pastIndex = pastOptions.IndexOf(selectedPast);
-                            if (pastIndex >= 0 && pastIndex > reservationDetails.Count)
+                            if (pastIndex >= 0 && pastIndex < reservationDetails.Count)
                             {
                                 ShowReservations.ShowReservationOptions(reservationDetails[pastIndex].Reservation);
-                                break;
                             }
                         }
-
                         break;
                     case "Future Reservations":
                         Console.Clear();
@@ -86,6 +92,14 @@ namespace Presentation
                         }
 
                         var futureReservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedFuture);
+
+                        if (!futureReservations.Any(r => r.Date.HasValue && r.Date.Value.Date == parsedFuture))
+                        {
+                            System.Console.WriteLine("There are no current or future reservations for this date.\nPress any key to return...");
+                            Console.ReadKey();
+                            return;
+                        }
+
                         var futureDetails = futureReservations.Select(r => new
                         {
                             Reservation = r,
@@ -100,13 +114,11 @@ namespace Presentation
                         if (futureOptions.Contains(selectedFuture))
                         {
                             int futureIndex = futureOptions.IndexOf(selectedFuture);
-                            if (futureIndex >= 0 && futureIndex > futureDetails.Count)
+                            if (futureIndex >= 0 && futureIndex < futureDetails.Count)
                             {
                                 ShowReservations.ShowReservationOptions(futureDetails[futureIndex].Reservation);
-                                break;
                             }
                         }
-
                         break;
                     case "Cancel":
                         return;
