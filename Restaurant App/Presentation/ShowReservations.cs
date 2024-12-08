@@ -19,7 +19,7 @@ public static class ShowReservations
         while (true)
         {
             Console.Clear(); // Refresh the options display
-            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}");
+            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}");
             Console.WriteLine("Choose an action:");
 
             // Display actions with arrow key navigation and color highlighting
