@@ -54,7 +54,7 @@ namespace Presentation
 
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
-            ClearGrid(); // Clear only the grid area
+            ClearGrid(); // Clear the grid area
 
             for (int y = 0; y < grid.GetLength(0); y++)
             {
@@ -66,17 +66,18 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        if (Array.Exists(availableTables, table => table == tableNumber))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green; // Available tables
-                        }
-                        else if (Array.Exists(reservedTables, table => table == tableNumber))
+                        // Set table colors
+                        if (Array.Exists(reservedTables, table => table == tableNumber))
                         {
                             Console.ForegroundColor = ConsoleColor.Red; // Reserved tables
                         }
+                        else if (Array.Exists(availableTables, table => table == tableNumber))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green; // Available tables
+                        }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Red; // Unreservable tables (same as reserved)
+                            Console.ForegroundColor = ConsoleColor.Red; // Unusable tables
                         }
 
                         Console.SetCursorPosition(x - (number.Length - 1), y);
@@ -97,29 +98,26 @@ namespace Presentation
 
 
 
+
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
         {
             var token = flashCancellationTokenSource.Token;
 
             while (!token.IsCancellationRequested)
             {
-                // Display the table number
-                Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
-                await Task.Delay(500);
-
-                // Check if the task was canceled before flashing "X"
-                if (token.IsCancellationRequested) break;
-
-                // Display the "X" with the same color as the table
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
                 Console.Write("X ");
                 await Task.Delay(500);
+
+                if (token.IsCancellationRequested) break;
+
+                Console.SetCursorPosition(x, y);
+                Console.ForegroundColor = tableColor;
+                Console.Write(tableNumber.ToString().PadRight(2));
+                await Task.Delay(500);
             }
 
-            // Ensure "X" remains visible at the end
             if (!token.IsCancellationRequested)
             {
                 Console.SetCursorPosition(x, y);
@@ -128,11 +126,6 @@ namespace Presentation
             }
             Console.ResetColor();
         }
-
-
-
-
-
 
 
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
@@ -152,23 +145,19 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Debug: Print the table ID
-                Console.SetCursorPosition(0, grid.GetLength(0) + 4); // Position below the grid
-                Console.ResetColor();
-
-                // Determine the color of the X based on the table's availability
                 ConsoleColor tableColor = ConsoleColor.Red; // Default to red
                 if (Array.Exists(availableTables, table => table == currentTable))
                 {
-                    tableColor = ConsoleColor.Green; // Available
+                    tableColor = ConsoleColor.Green; // Available table
                 }
 
-                // Start a new flashing task for the current table
+                // Start a flashing task for the current table
                 _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
             }
 
             Console.ResetColor();
         }
+
 
 
 
