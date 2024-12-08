@@ -14,7 +14,8 @@ namespace Presentation
         public static void MakingReservation(UserModel acc)
         {
             // Step 1: Display the calendar and let the user select a date
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now); // This now happens only once
+            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; // Correct admin check
+            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin); // Pass isAdmin to CalendarPresent
 
             // Step 2: Ask the user for the number of guests
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
