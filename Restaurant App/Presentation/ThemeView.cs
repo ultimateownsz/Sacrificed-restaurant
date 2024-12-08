@@ -2,7 +2,7 @@ using Project;
 
 static class ThemeView
 {
-    public static void YearAndMonthInputs()
+    public static void ThemedEditing()
     {
         ConsoleKeyInfo key;
         do

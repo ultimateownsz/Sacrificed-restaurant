@@ -24,7 +24,7 @@ static class AdminMenu
                     RegisterUser.CreateAccount(true);
                     break;
                 case "update (themes)\n":
-                    ThemeView.YearAndMonthInputs();
+                    ThemeView.ThemedEditing();
                     break;
                 case "back":
                     return;
