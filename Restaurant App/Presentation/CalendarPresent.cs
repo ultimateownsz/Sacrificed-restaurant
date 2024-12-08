@@ -14,49 +14,38 @@ namespace Project
             while (running)
             {
                 DisplayCalendar(currentDate, selectedDay, isAdmin);
-
                 var key = Console.ReadKey(intercept: true);
-
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -1);
                         break;
-
                     case ConsoleKey.RightArrow:
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 1);
                         break;
-
                     case ConsoleKey.UpArrow:
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -7);
                         break;
-
                     case ConsoleKey.DownArrow:
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 7);
                         break;
-
                     case ConsoleKey.P: // Previous month
                         currentDate = currentDate.AddMonths(-1);
                         selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
                         break;
-
                     case ConsoleKey.N: // Next month
                         currentDate = currentDate.AddMonths(1);
                         selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
                         break;
-
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
-
                     case ConsoleKey.Q: // Quit
                         throw new OperationCanceledException("User canceled calendar navigation.");
-
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
             }
-
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
 
@@ -70,7 +59,6 @@ namespace Project
             while (true)
             {
                 day += direction;
-
                 // Wrap around to the next/previous month if out of bounds
                 if (day < 1)
                 {
@@ -83,20 +71,17 @@ namespace Project
                     currentDate = currentDate.AddMonths(1);
                     day = 1; // Wrap to the first day of the next month
                 }
-
                 // Check if the date is within bounds (e.g., not exceeding DateTime limits)
                 if (currentDate.Year < DateTime.MinValue.Year || currentDate.Year > DateTime.MaxValue.Year)
                 {
                     return startDay; // Stay on the current day if navigation fails
                 }
-
                 // Check if the current date is selectable
                 DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
                 if (IsDaySelectable(dateToCheck, isAdmin))
                 {
                     return day; // Found a valid day
                 }
-
                 // If all dates in the current month are unselectable, stay on the current day
                 if (direction > 0 && day == daysInMonth)
                 {

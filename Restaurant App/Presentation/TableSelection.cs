@@ -364,14 +364,11 @@ namespace Presentation
             Console.ResetColor();
         }
 
-
-
         private void ResetConsoleToDefault()
         {
             Console.ResetColor();
             Console.Clear();
         }
-
 
         private void EnsureConsoleSize()
         {
@@ -402,7 +399,6 @@ namespace Presentation
                 flashCancellationTokenSource = null; // Prevent further access
             }
         }
-
 
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
