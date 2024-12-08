@@ -38,7 +38,7 @@ public static class ThemeInputValidator
             Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nInvalid them name...");
+            Console.WriteLine("\nInvalid theme name...");
             Console.ReadKey();
         }
     }
@@ -66,7 +66,7 @@ public static class ThemeInputValidator
             Console.WriteLine($"Enter year: {year}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nInvalid year...");
+            Console.WriteLine("\nThemes can only be made for the year 2024 and beyond. Please try again....");
             Console.ReadKey();
         }
     }
