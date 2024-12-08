@@ -8,6 +8,8 @@ namespace Presentation
         private int previousY = -1;
 
         private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
+        private int cursorX = 3, cursorY = 6; // Start at table "1"
+        private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
         private char[,] grid = {
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',},
             {'|',' ',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ','|',},
@@ -39,7 +41,6 @@ namespace Presentation
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'}
         };
 
-        private int cursorX = 3, cursorY = 6; // Start at table "1"
         public int SelectedTable { get; private set; }
 
         private void ClearGrid()
@@ -54,6 +55,8 @@ namespace Presentation
 
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
+            tableColors.Clear(); // Clear the previous color mappings
+
             ClearGrid(); // Clear the grid area
 
             for (int y = 0; y < grid.GetLength(0); y++)
@@ -66,21 +69,22 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // Set table colors
+                        // Set table colors and store them in the dictionary
                         if (Array.Exists(reservedTables, table => table == tableNumber))
                         {
-                            Console.ForegroundColor = ConsoleColor.Red; // Reserved tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
                         }
                         else if (Array.Exists(availableTables, table => table == tableNumber))
                         {
-                            Console.ForegroundColor = ConsoleColor.Green; // Available tables
+                            tableColors[tableNumber] = ConsoleColor.Green; // Available tables
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Red; // Unusable tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Unusable tables
                         }
 
                         Console.SetCursorPosition(x - (number.Length - 1), y);
+                        Console.ForegroundColor = tableColors[tableNumber];
                         Console.Write(number);
                     }
                     else
@@ -97,35 +101,55 @@ namespace Presentation
 
 
 
-
-
-        private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
+        private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor, int[] availableTables, int[] reservedTables)
         {
             var token = flashCancellationTokenSource.Token;
 
             while (!token.IsCancellationRequested)
             {
+                // Display the table number with the current color
+                Console.SetCursorPosition(x, y);
+                Console.ForegroundColor = tableColor;
+                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
+                await Task.Delay(500);
+
+                // Check if the task was canceled before flashing "X"
+                if (token.IsCancellationRequested) break;
+
+                // Display the "X" with the same color as the table
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
                 Console.Write("X ");
                 await Task.Delay(500);
-
-                if (token.IsCancellationRequested) break;
-
-                Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2));
-                await Task.Delay(500);
             }
 
+            // After flashing, restore the correct table color
             if (!token.IsCancellationRequested)
             {
                 Console.SetCursorPosition(x, y);
+
+                // Re-evaluate the table's color
+                if (Array.Exists(reservedTables, table => table == tableNumber))
+                {
+                    tableColor = ConsoleColor.Red; // Reserved tables remain red
+                }
+                else if (Array.Exists(availableTables, table => table == tableNumber))
+                {
+                    tableColor = ConsoleColor.Green; // Available tables are green
+                }
+                else
+                {
+                    tableColor = ConsoleColor.Red; // Default to red for any other case
+                }
+
                 Console.ForegroundColor = tableColor;
-                Console.Write("X ");
+                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
             }
+
             Console.ResetColor();
         }
+
+
 
 
         private void HighlightNumber(int[] availableTables, int[] reservedTables)
@@ -145,14 +169,23 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                ConsoleColor tableColor = ConsoleColor.Red; // Default to red
-                if (Array.Exists(availableTables, table => table == currentTable))
+                // Determine the color of the table
+                ConsoleColor tableColor;
+                if (Array.Exists(reservedTables, table => table == currentTable))
                 {
-                    tableColor = ConsoleColor.Green; // Available table
+                    tableColor = ConsoleColor.Red; // Reserved tables stay red
+                }
+                else if (Array.Exists(availableTables, table => table == currentTable))
+                {
+                    tableColor = ConsoleColor.Green; // Available tables are green
+                }
+                else
+                {
+                    tableColor = ConsoleColor.Red; // Default to red for any other case
                 }
 
-                // Start a flashing task for the current table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
+                // Start the flashing task for the current table
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, availableTables, reservedTables);
             }
 
             Console.ResetColor();
@@ -296,17 +329,13 @@ namespace Presentation
                 {
                     int prevTable = int.Parse(prevNumber);
 
-                    // Determine the color of the previous table
-                    ConsoleColor prevColor = ConsoleColor.Red; // Default to red
-                    if (Array.Exists(availableTables, table => table == prevTable))
+                    // Retrieve the correct color from the dictionary
+                    if (tableColors.TryGetValue(prevTable, out ConsoleColor prevColor))
                     {
-                        prevColor = ConsoleColor.Green;
+                        Console.SetCursorPosition(prevX, prevY);
+                        Console.ForegroundColor = prevColor;
+                        Console.Write(prevNumber.PadRight(2)); // Properly handle double digits
                     }
-
-                    // Restore the previous table number
-                    Console.SetCursorPosition(prevX, prevY);
-                    Console.ForegroundColor = prevColor;
-                    Console.Write(prevNumber.PadRight(2)); // Properly handle double digits
                 }
             }
 
@@ -320,7 +349,11 @@ namespace Presentation
                 ConsoleColor currColor = ConsoleColor.Red; // Default to red
                 if (Array.Exists(availableTables, table => table == currTable))
                 {
-                    currColor = ConsoleColor.Green;
+                    currColor = ConsoleColor.Green; // Available tables
+                }
+                else if (Array.Exists(reservedTables, table => table == currTable))
+                {
+                    currColor = ConsoleColor.Red; // Reserved tables
                 }
 
                 Console.SetCursorPosition(currX, currY);
@@ -330,6 +363,8 @@ namespace Presentation
 
             Console.ResetColor();
         }
+
+
 
         private void ResetConsoleToDefault()
         {

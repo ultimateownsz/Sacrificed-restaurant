@@ -66,36 +66,49 @@ namespace Project
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int day = startDay;
 
+            // Loop to find the next available day
             while (true)
             {
                 day += direction;
 
                 // Wrap around to the next/previous month if out of bounds
-                if (day < 1 || day > daysInMonth)
+                if (day < 1)
                 {
-                    if (direction > 0) // Moving forward
-                    {
-                        currentDate = currentDate.AddMonths(1);
-                        daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-                        day = direction > 0 ? 1 : daysInMonth; // Reset to start of next month
-                    }
-                    else // Moving backward
-                    {
-                        currentDate = currentDate.AddMonths(-1);
-                        daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-                        day = direction > 0 ? 1 : daysInMonth; // Reset to end of previous month
-                    }
+                    currentDate = currentDate.AddMonths(-1);
+                    daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+                    day = daysInMonth; // Wrap to the last day of the previous month
+                }
+                else if (day > daysInMonth)
+                {
+                    currentDate = currentDate.AddMonths(1);
+                    day = 1; // Wrap to the first day of the next month
                 }
 
-                DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
+                // Check if the date is within bounds (e.g., not exceeding DateTime limits)
+                if (currentDate.Year < DateTime.MinValue.Year || currentDate.Year > DateTime.MaxValue.Year)
+                {
+                    return startDay; // Stay on the current day if navigation fails
+                }
 
-                // Check if the day is selectable
+                // Check if the current date is selectable
+                DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
                 if (IsDaySelectable(dateToCheck, isAdmin))
                 {
                     return day; // Found a valid day
                 }
+
+                // If all dates in the current month are unselectable, stay on the current day
+                if (direction > 0 && day == daysInMonth)
+                {
+                    return startDay; // No valid day found; stay on the current day
+                }
+                if (direction < 0 && day == 1)
+                {
+                    return startDay; // No valid day found; stay on the current day
+                }
             }
         }
+
 
         private static bool IsDaySelectable(DateTime dateToCheck, bool isAdmin)
         {
