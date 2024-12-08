@@ -18,7 +18,7 @@ public class ReservationLogic
             CurrentReservation.Date = date;
             CurrentReservation.ID = null;
             CurrentReservation.UserID = userId;
-            CurrentReservation.Place = tableId; // Assign the table ID to the Place column
+            CurrentReservation.PlaceID = tableId; // Assign the table ID to the Place column
             Access.Reservations.Write(CurrentReservation);
             return Access.Reservations.GetBy<DateTime>("Date", date)?.ID ?? 0;
         }
