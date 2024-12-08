@@ -57,7 +57,7 @@ namespace Presentation
                         {
                             Reservation = r,
                             UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                            TableID = r.Place // Table choice of the reservation
+                            TableID = r.PlaceID // Table choice of the reservation
                         
                         }).ToList();
 
@@ -104,7 +104,7 @@ namespace Presentation
                         {
                             Reservation = r,
                             UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                            TableID = r.Place // Table choice of the reservation
+                            TableID = r.PlaceID // Table choice of the reservation
                         
                         }).ToList();
 
