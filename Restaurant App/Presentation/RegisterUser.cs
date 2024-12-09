@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 
 namespace Project.Presentation;
 
@@ -9,161 +10,134 @@ internal class RegisterUser
 {
     public static void CreateAccount(bool admin = false)
     {
-        bool isInfoValid = false;
-        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
-
         Console.Clear();
         Console.WriteLine("Please enter the following information:\n");
 
-        // Input collection with validation loops
-        Console.Write("first name: ");
-        firstName = Console.ReadLine();
-
-        Console.Write("last name: ");
-        lastName = Console.ReadLine();
-
-        // Loop until valid email is provided
-        while (true)
+        TryCatchHelper.EscapeKeyException(() =>
         {
-            Console.Write("email: ");
-            email = Console.ReadLine();
-            if (UserLogic.IsEmailValid(email))
-                break;
-            Console.WriteLine("Invalid email address, try again!");
-        }
+        // Use InputHelper.GetValidatedInput for streamlined input handling
+        string firstName = InputHelper.GetValidatedInput<string>(
+        "First name: ",
+        input => InputHelper.InputNotNull(input, "First name")
+        );
+        string lastName = InputHelper.GetValidatedInput<string>(
+        "Last name: ",
+        input => InputHelper.InputNotNull(input, "Last name")
+        );
+        string email = InputHelper.GetValidatedInput<string>(
+            "Email: ",
+            input => UserLogic.IsEmailValid(input) ? (input, null) : (null, "Invalid email address, try again!")
+        );
+        string password = InputHelper.GetValidatedInput<string>(
+            "Password (8-16 characters): ",
+            input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password needs to have between 8-16 characters):")
+        );
+        string phoneNumber = InputHelper.GetValidatedInput<string>(
+            "Phone number (10 numbers): ",
+            input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Invalid phone number.")
+        );
 
-        // Loop until valid password is provided
+        ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+        });
+        // }
+        // catch (OperationCanceledException)
+        // {
+        //     Console.WriteLine("\nReturning to the previous menu...");
+        //     return;
+        // }
+    }
+
+    private static void ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
         while (true)
-        {
-            Console.Write("password (8-16 characters): ");
-            password = Console.ReadLine();
-            if (UserLogic.IsPasswordValid(password))
-                break;
-            Console.WriteLine("Invalid password, try again!");
-        }
-
-        // Loop until valid phone number is provided
-        while (true)
-        {
-            Console.Write("phone number (8 numbers): ");
-            phoneNumber = Console.ReadLine();
-            if (UserLogic.IsPhoneNumberValid(phoneNumber))
-                break;
-            Console.WriteLine("Invalid phone number, try again!");
-        }
-
-        // Confirm details loop
-        while (!isInfoValid)
         {
             Console.Clear();
-            Console.WriteLine("Your information: ");
-            Console.WriteLine(" ");
-            Console.WriteLine($"first name: {firstName}");
-            Console.WriteLine($"last name: {lastName}");
-            Console.WriteLine($"email: {email}");
-            Console.WriteLine($"password: {password}");
-            Console.WriteLine($"phone Number: {phoneNumber}");
-            Console.WriteLine(" ");
-            Console.WriteLine("Are you sure this is correct? Y/N");
-
-            string choice = Console.ReadLine().ToUpper();
-
-            if (choice == "Y")
+            Console.WriteLine("Your information:\n");
+            Console.WriteLine($"First name: {firstName}");
+            Console.WriteLine($"Last name: {lastName}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Phone Number: {phoneNumber}\n");
+            string banner = "Are you sure this is correct?\n\n";
+            switch (SelectionPresent.Show(["Yes", "No"], banner).text)
             {
-                // Create account and write it to storage
-                var account = new UserModel()
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Email = email,
-                        Password = password,
-                        Phone = phoneNumber,
-                        Admin = Convert.ToInt16(admin)
-                    };
+                case "Yes":
+                    SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+                    return;
 
-                Access.Users.Write(account);
-                Console.WriteLine("\nYour account is successfully registered!");
-                Thread.Sleep(1000); // so you can read the messages
-                isInfoValid = true; // Exit the confirmation loop
-
-            }
-            else if (choice == "N")
-            {
-                while (true)
-                {
-                    string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
-                    {
-                        case "first name":
-                            Console.Clear();
-                            Console.Write("first name: ");
-                            firstName = Console.ReadLine();
-                            break;
-
-                        case "last name":
-                            Console.Clear();
-                            Console.Write("last name: ");
-                            lastName = Console.ReadLine();
-                            break;
-
-                        case "email":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("email address: ");
-                                string newEmail = Console.ReadLine();
-                                if (UserLogic.IsEmailValid(newEmail))
-                                {
-                                    email = newEmail;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid email address, try again!");
-                            }
-                            break;
-
-                        case "password":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("password (8-16 characters): ");
-                                string newPassword = Console.ReadLine();
-                                if (UserLogic.IsPasswordValid(newPassword))
-                                {
-                                    password = newPassword;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid password, try again!");
-                            }
-                            break;
-
-                        case "phone number":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("phone number (8 numbers): ");
-                                string newPhoneNumber = Console.ReadLine();
-                                if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
-                                {
-                                    phoneNumber = newPhoneNumber;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid phone number, try again!");
-                            }
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                    // valid input has been provided
+                case "No":
+                    (firstName, lastName, email, password, phoneNumber) = EditInformation(firstName, lastName, email, password, phoneNumber);
                     break;
-                }
-
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+                
+                default:
+                    Console.WriteLine("Invalid choice. Please select 'Yes' or 'No'.");
+                    break;
             }
         }
+        
+    }
+
+    private static void SaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
+        var account = new UserModel
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Password = password,
+            Phone = phoneNumber,
+            Admin = Convert.ToInt16(admin)
+        };
+
+        Access.Users.Write(account);
+        Console.WriteLine("\nYour account is successfully registered!");
+        Thread.Sleep(1000);
+    }
+
+    private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(
+        string firstName, string lastName, string email, string password, string phoneNumber)
+    {
+        string banner = "Choose which information you'd like to change:\n\n";
+        string fieldToChange = SelectionPresent.Show([ "First name", "Last name", "Email", "Password", "Phone number" ], banner).text;
+
+        switch (fieldToChange)
+        {
+            case "First name":
+                firstName = InputHelper.GetValidatedInput<string>(
+                    "First name: ",
+                    input => InputHelper.InputNotNull(input, "First name")
+                );
+                break;
+
+            case "Last name":
+                lastName = InputHelper.GetValidatedInput<string>(
+                    "Last name: ",
+                    input => InputHelper.InputNotNull(input, "Last name")
+                );
+                break;
+
+            case "Email":
+                email = InputHelper.GetValidatedInput<string>(
+                    "Email: ",
+                    input => UserLogic.IsEmailValid(input) ? (input, null) : (null, "Invalid email address.")
+                );
+                break;
+
+            case "Password":
+                password = InputHelper.GetValidatedInput<string>(
+                    "Password (8-16 characters): ",
+                    input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Invalid password.")
+                );
+                break;
+
+            case "Phone number":
+                phoneNumber = InputHelper.GetValidatedInput<string>(
+                    "Phone number (10 numbers): ",
+                    input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Invalid phone number.")
+                );
+                break;
+        }
+
+        return (firstName, lastName, email, password, phoneNumber);
     }
 }
