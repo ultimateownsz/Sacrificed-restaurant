@@ -59,37 +59,18 @@ namespace Project
             while (true)
             {
                 day += direction;
+
                 // Wrap around to the next/previous month if out of bounds
-                if (day < 1)
+                if (day < 1 || day > daysInMonth)
                 {
-                    currentDate = currentDate.AddMonths(-1);
-                    daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-                    day = daysInMonth; // Wrap to the last day of the previous month
+                    return startDay; // Redirect to the current day if no valid day is found
                 }
-                else if (day > daysInMonth)
-                {
-                    currentDate = currentDate.AddMonths(1);
-                    day = 1; // Wrap to the first day of the next month
-                }
-                // Check if the date is within bounds (e.g., not exceeding DateTime limits)
-                if (currentDate.Year < DateTime.MinValue.Year || currentDate.Year > DateTime.MaxValue.Year)
-                {
-                    return startDay; // Stay on the current day if navigation fails
-                }
+
                 // Check if the current date is selectable
                 DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
                 if (IsDaySelectable(dateToCheck, isAdmin))
                 {
                     return day; // Found a valid day
-                }
-                // If all dates in the current month are unselectable, stay on the current day
-                if (direction > 0 && day == daysInMonth)
-                {
-                    return startDay; // No valid day found; stay on the current day
-                }
-                if (direction < 0 && day == 1)
-                {
-                    return startDay; // No valid day found; stay on the current day
                 }
             }
         }
