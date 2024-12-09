@@ -52,19 +52,27 @@ public static class ThemeInputValidator
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Enter year: ", Console.ForegroundColor);
+            Console.Write("Enter year (or press ESC to exit): ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
+
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Escape)
+            {
+                return -1; // or another value indicating exit
+            }
+
+            Console.Write(key.KeyChar);
             var year = Console.ReadLine();
 
-            if (int.TryParse(year, out result) && result >= minYear)
+            if (int.TryParse(key.KeyChar + year, out result) && result >= minYear)
             {
                 return result;
             }
-            
-            Console.Clear();            
+
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Enter year: {year}", Console.ForegroundColor);
-            
+            Console.WriteLine($"Enter year: {key.KeyChar + year}", Console.ForegroundColor);
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nThemes can only be made for the year 2024 and beyond. Please try again....");
             Console.ReadKey();

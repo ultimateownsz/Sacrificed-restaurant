@@ -10,6 +10,8 @@ static class ThemeView
             // The year input gets all made and validated in ThemeInputValidator.ValidateYear()
             Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes. However, you can still view months in 2024 with themes that were already made in the past.");
             int year = ThemeInputValidator.ValidateYear();
+            if (year == -1)
+                return;
             string themeName;
             
             // Down here the selection menu for the months is done, rn u cant choose the current month
@@ -40,18 +42,23 @@ static class ThemeView
                 {
                     themeName = ThemeInputValidator.GetValidString();
                     ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                    // Console.Clear();
+                    Console.WriteLine($"The theme has been updated to {themeName}");
                 }
                 else 
                 {
                     ThemeMenuManager.DeleteMonthTheme(month, year);
+                    Console.Clear();
+                    Console.WriteLine("This theme has been deleted");
                 }
             }
             else
             {
                 themeName = ThemeInputValidator.GetValidString();
                 ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                Console.WriteLine($"The theme has been updated to {themeName}");
+
             }
-            Console.Clear();
             Console.WriteLine("Press escape to go back to admin menu, or press anykey to keep editing...");
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape); //loops keeps going until user clicks escape at end of process
         return;

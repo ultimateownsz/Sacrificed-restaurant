@@ -9,13 +9,21 @@ static class ThemeMenuManager
     public static void UpdateThemeSchedule(int month, int year, string themeName)
     {
         ScheduleModel? scheduleItem = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        ThemeModel? themeItem = Access.Themes.GetAllBy<string>("Name", themeName).FirstOrDefault();
+        ScheduleModel newScheduleItem;
 
         if (scheduleItem == null)
         {
-            ThemeModel newTheme = new(themeName, null);
-            Access.Themes.Write(newTheme);
-            
-            ScheduleModel newScheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
+            if(themeItem == null)
+            {
+                ThemeModel newTheme = new(themeName, null);
+                Access.Themes.Write(newTheme);  
+                newScheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
+            }
+            else
+            {
+                newScheduleItem = new(null, year, month, themeItem.ID);
+            }
 
             if (!Access.Schedules.Write(newScheduleItem))
             {
@@ -25,9 +33,18 @@ static class ThemeMenuManager
         }
         else
         {
-            ThemeModel? theme = Access.Themes.GetBy<int?>("ID", scheduleItem.ThemeID);
-            theme.Name = themeName;
-            Access.Themes.Update(theme);
+            if(themeItem == null)
+            {
+                ThemeModel newTheme = new(themeName, null);
+                Access.Themes.Write(newTheme);  
+                scheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
+                Console.WriteLine("no theme item");
+            }
+            else
+            {
+                scheduleItem.ThemeID = themeItem.ID;
+            }
+            Access.Schedules.Update(scheduleItem);
         }
     }
 
