@@ -42,7 +42,16 @@ static class Menu
             switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
             {
                 case "Make a reservation":
-                    MakingReservations.MakingReservation(acc);
+                    try
+                    {
+                        // Directly call MakingReservation without calendar in Menu
+                        MakingReservations.MakingReservation(acc);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
+                        Console.ReadKey();
+                    }
                     break;
 
                 case "View reservations":
@@ -59,5 +68,4 @@ static class Menu
             }
         }
     }
-
 }
