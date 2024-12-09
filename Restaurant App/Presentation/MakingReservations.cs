@@ -152,11 +152,9 @@ namespace Presentation
 
         public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
         {
-            Console.WriteLine($"DEBUG: Entering TakeOrders with ReservationID={reservationId}");
-
             if (reservationId == 0)
             {
-                Console.WriteLine("DEBUG: Invalid reservation ID. Exiting TakeOrders.");
+                Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
                 return new List<ProductModel>(); // Return an empty list for invalid reservations
             }
 
