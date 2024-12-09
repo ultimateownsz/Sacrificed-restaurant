@@ -17,17 +17,14 @@ internal class RegisterUser
 
         // Input collection with validation loops
         Console.Write("First name: ");
-        Console.Write("First name: ");
         firstName = Console.ReadLine();
 
-        Console.Write("Last name: ");
         Console.Write("Last name: ");
         lastName = Console.ReadLine();
 
         // Loop until valid email is provided
         while (true)
         {
-            Console.Write("Email: ");
             Console.Write("Email: ");
             email = Console.ReadLine();
             if (UserLogic.IsEmailValid(email))
@@ -39,7 +36,6 @@ internal class RegisterUser
         while (true)
         {
             Console.Write("Password (8-16 characters): ");
-            Console.Write("Password (8-16 characters): ");
             password = Console.ReadLine();
             if (UserLogic.IsPasswordValid(password))
                 break;
@@ -49,7 +45,6 @@ internal class RegisterUser
         // Loop until valid phone number is provided
         while (true)
         {
-            Console.Write("Phone number (8 numbers): ");
             Console.Write("Phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
             if (UserLogic.IsPhoneNumberValid(phoneNumber))
