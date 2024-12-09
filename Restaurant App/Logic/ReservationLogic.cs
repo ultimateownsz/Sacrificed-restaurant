@@ -10,19 +10,66 @@ public class ReservationLogic
 
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
-    //with all the info from the user
-    public int SaveReservation(DateTime date, int? userId)
+            //with all the info from the user
+    public int SaveReservation(DateTime date, int userId, int placeId)
     {
-        if (CurrentReservation != null)
+        Console.WriteLine($"DEBUG: Attempting to save reservation with Date={date}, UserID={userId}, TableID={placeId}");
+
+        // Validate UserID (check if the user exists)
+        var user = Access.Users.GetBy<int>("ID", userId);
+        if (user == null)
         {
-            CurrentReservation.Date = date;
-            CurrentReservation.ID = null;
-            CurrentReservation.UserID = userId;
-            Access.Reservations.Write(CurrentReservation);
-            return Access.Reservations.GetBy<DateTime>("Date", date).ID ?? 0;
+            Console.WriteLine($"ERROR: User ID {userId} does not exist.");
+            return 0; // Return 0 if the user does not exist
         }
-        return 0;
+
+        // Validate PlaceID (check if the place exists)
+        var place = Access.Places.GetBy<int>("ID", placeId); // Assuming Access.Places is valid
+        if (place == null)
+        {
+            Console.WriteLine($"ERROR: Place ID {placeId} does not exist.");
+            return 0; // Return 0 if the place does not exist
+        }
+
+        // Check if there is already an existing reservation on the same date and place
+        var existingReservation = Access.Reservations.GetAllBy<DateTime>("Date", date)
+                                                    .FirstOrDefault(r => r?.PlaceID == placeId);
+        if (existingReservation != null)
+        {
+            Console.WriteLine($"ERROR: There is already a reservation for PlaceID {placeId} on Date {date.ToShortDateString()}.");
+            return 0; // Return 0 if there's a conflict
+        }
+
+        // Create the reservation
+        var reservation = new ReservationModel
+        {
+            Date = date,
+            PlaceID = placeId,
+            UserID = userId
+        };
+
+        // Debug log the SQL query to make sure the data is correct
+        Console.WriteLine($"DEBUG: SQL Query - INSERT INTO Reservations (Date, PlaceID, UserID) VALUES ({date}, {placeId}, {userId})");
+
+        // Insert reservation into database
+        if (Access.Reservations.Write(reservation))
+        {
+            // Now get the last inserted reservation ID (assuming your database auto-increments the ID)
+            var lastReservation = Access.Reservations.GetAllBy<int>("UserID", userId)
+                                                    .OrderByDescending(r => r?.Date)
+                                                    .FirstOrDefault(); // Assuming the latest reservation is by date or similar
+
+            if (lastReservation != null)
+            {
+                Console.WriteLine($"DEBUG: Reservation saved with ID={lastReservation.ID}");
+                return lastReservation.ID ?? 0; // Return the generated ID
+            }
+        }
+
+        Console.WriteLine("ERROR: Reservation save failed");
+        return 0; // Return 0 if the reservation failed
     }
+
 
     //Converts the date from string to Int64 and saves it into CurrentReservation
     public Int64 ConvertDate(DateTime date)
@@ -72,11 +119,12 @@ public class ReservationLogic
     }
 
     //This is used to get a specific reservation from the database based on the given ID
-    public ReservationModel GetById(int id)
-    {
-        return Access.Reservations.GetBy<int>("ID", id);
-    }
+    // public ReservationModel GetById(int id)
+    // {
+    //     return Access.Reservations.GetBy<int>("ID", id);
+    // }
 
+    
     public bool RemoveReservation(int id)
     {
         
