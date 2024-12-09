@@ -1,31 +1,137 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Presentation
 {
     public class TableSelection
     {
         private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
-        private int cursorX, cursorY;
+        private int cursorX, cursorY; // Updated as requested
+        private int previousX = -1, previousY = -1;
         private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
 
         public int SelectedTable { get; private set; }
 
-        private void ClearErrorMessage()
+        public int SelectTable(int[] availableTables, int[] reservedTables, bool isAdmin)
         {
-            Console.SetCursorPosition(0, Console.WindowHeight - 3);
-            Console.Write(new string(' ', Console.WindowWidth)); // Clear the error line
+            EnsureConsoleSize(); // Ensure the console size is adequate
+            Console.CursorVisible = false; // Hide the cursor
+
+            try
+            {
+                if (!GridPresent.Show(availableTables, reservedTables, isAdmin))
+                {
+                    return -1; // Exit early if admin
+                }
+
+                // Automatically find table 1 and set the cursor position
+                (cursorX, cursorY) = FindTableCoordinates(1);
+
+                int lastX = cursorX, lastY = cursorY;
+
+                while (true)
+                {
+                    Console.SetCursorPosition(0, Console.WindowHeight - 3);
+                    Console.ResetColor();
+                    Console.WriteLine("(B)ack");
+
+                    var key = Console.ReadKey(true);
+
+                    if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                    {
+                        StopFlashing();
+                        ResetConsoleToDefault();
+                        return -1; // Return -1 to indicate cancellation
+                    }
+
+                    int nextX = cursorX, nextY = cursorY;
+
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.RightArrow:
+                            (nextX, nextY) = GridPresent.FindNextNumberInRow(cursorX, cursorY, 1);
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            (nextX, nextY) = GridPresent.FindNextNumberInRow(cursorX, cursorY, -1);
+                            break;
+                        case ConsoleKey.DownArrow:
+                            (nextX, nextY) = GridPresent.FindNextNumberInColumn(cursorX, cursorY, 1);
+                            break;
+                        case ConsoleKey.UpArrow:
+                            (nextX, nextY) = GridPresent.FindNextNumberInColumn(cursorX, cursorY, -1);
+                            break;
+                        case ConsoleKey.Enter:
+                            string selectedNumber = GridPresent.GetNumberAt(cursorX, cursorY);
+
+                            if (string.IsNullOrEmpty(selectedNumber))
+                            {
+                                Console.SetCursorPosition(0, Console.WindowHeight - 4);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Invalid table. Please select a valid table.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            int tableNumber = int.Parse(selectedNumber);
+
+                            if (!Array.Exists(availableTables, table => table == tableNumber) ||
+                                Array.Exists(reservedTables, table => table == tableNumber))
+                            {
+                                Console.SetCursorPosition(0, Console.WindowHeight - 4);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            SelectedTable = tableNumber;
+
+                            StopFlashing();
+                            ResetConsoleToDefault();
+                            return SelectedTable;
+                    }
+
+                    if (nextX < 0 || nextX >= GridPresent.GridWidth || nextY < 0 || nextY >= GridPresent.GridHeight ||
+                        string.IsNullOrEmpty(GridPresent.GetNumberAt(nextX, nextY)))
+                    {
+                        nextX = lastX;
+                        nextY = lastY;
+                    }
+                    else
+                    {
+                        UpdateTableHighlight(lastX, lastY, nextX, nextY, availableTables, reservedTables);
+                        lastX = nextX;
+                        lastY = nextY;
+                        cursorX = nextX;
+                        cursorY = nextY;
+
+                        HighlightNumber(availableTables, reservedTables);
+                    }
+                }
+            }
+            finally
+            {
+                StopFlashing();
+                ResetConsoleToDefault();
+                Console.CursorVisible = true;
+            }
         }
 
-        public void ShowGrid(int[] availableTables, int[] reservedTables)
+        private void HighlightNumber(int[] availableTables, int[] reservedTables)
         {
-            tableColors.Clear();
-            GridPresent.Show(availableTables, reservedTables, tableColors);
-            (cursorX, cursorY) = GridPresent.FindTableCoordinates(1); // Set cursor to table 1
-            HighlightNumber(availableTables, reservedTables); // Highlight selected table
+            StopFlashing();
+
+            string currentNumber = GridPresent.GetNumberAt(cursorX, cursorY);
+
+            if (!string.IsNullOrEmpty(currentNumber))
+            {
+                int currentTable = int.Parse(currentNumber);
+
+                ConsoleColor tableColor = Array.Exists(reservedTables, table => table == currentTable)
+                    ? ConsoleColor.Red
+                    : ConsoleColor.Green;
+
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, availableTables, reservedTables);
+            }
         }
 
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor, int[] availableTables, int[] reservedTables)
@@ -50,7 +156,6 @@ namespace Presentation
             if (!token.IsCancellationRequested)
             {
                 Console.SetCursorPosition(x, y);
-                tableColor = GetTableColor(tableNumber, availableTables, reservedTables);
                 Console.ForegroundColor = tableColor;
                 Console.Write(tableNumber.ToString().PadRight(2));
             }
@@ -58,41 +163,33 @@ namespace Presentation
             Console.ResetColor();
         }
 
-        private void HighlightNumber(int[] availableTables, int[] reservedTables)
+        private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] availableTables, int[] reservedTables)
         {
-            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
+            GridPresent.RemoveHighlight(prevX, prevY);
+
+            string currNumber = GridPresent.GetNumberAt(currX, currY);
+            if (!string.IsNullOrEmpty(currNumber))
             {
-                flashCancellationTokenSource.Cancel();
-                flashCancellationTokenSource.Dispose();
-            }
+                int currTable = int.Parse(currNumber);
+                ConsoleColor currColor = Array.Exists(availableTables, table => table == currTable)
+                    ? ConsoleColor.Green
+                    : ConsoleColor.Red;
 
-            flashCancellationTokenSource = new CancellationTokenSource();
-
-            string currentNumber = GridPresent.GetNumberAt(cursorX, cursorY);
-            if (!string.IsNullOrEmpty(currentNumber))
-            {
-                int currentTable = int.Parse(currentNumber);
-                ConsoleColor tableColor = GetTableColor(currentTable, availableTables, reservedTables);
-
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, availableTables, reservedTables);
+                Console.SetCursorPosition(currX, currY);
+                Console.ForegroundColor = currColor;
+                Console.Write("X ");
             }
 
             Console.ResetColor();
         }
 
-        private ConsoleColor GetTableColor(int tableNumber, int[] availableTables, int[] reservedTables)
+        private void StopFlashing()
         {
-            if (Array.Exists(reservedTables, table => table == tableNumber))
+            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
-                return ConsoleColor.Red;
-            }
-            else if (Array.Exists(availableTables, table => table == tableNumber))
-            {
-                return ConsoleColor.Green;
-            }
-            else
-            {
-                return ConsoleColor.DarkGray;
+                flashCancellationTokenSource.Cancel();
+                flashCancellationTokenSource.Dispose();
+                flashCancellationTokenSource = null;
             }
         }
 
@@ -107,168 +204,36 @@ namespace Presentation
             const int requiredWidth = 80;
             const int requiredHeight = 30;
 
-            MaximizeConsoleWindow();
-
             while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Your console is too small to display the table blueprint.");
-                Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
+                Console.WriteLine($"Your console is too small. Minimum size: {requiredWidth}x{requiredHeight}");
                 Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
                 Console.ResetColor();
-                Console.WriteLine("Please resize your console window and press Enter to continue...");
+                Console.WriteLine("Resize the console and press Enter to continue...");
                 Console.ReadLine();
             }
 
             Console.Clear();
         }
 
-        public static void MaximizeConsoleWindow()
+        private (int x, int y) FindTableCoordinates(int tableNumber)
         {
-            const int SW_MAXIMIZE = 3;
-
-            [DllImport("kernel32.dll", SetLastError = true)]
-            static extern IntPtr GetConsoleWindow();
-
-            [DllImport("user32.dll", SetLastError = true)]
-            static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-            IntPtr consoleWindow = GetConsoleWindow();
-            if (consoleWindow != IntPtr.Zero)
+            // Iterate through the grid to locate the given table number
+            for (int y = 0; y < GridPresent.GridHeight; y++)
             {
-                ShowWindow(consoleWindow, SW_MAXIMIZE);
-            }
-        }
-
-        private void StopFlashing()
-        {
-            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
-            {
-                flashCancellationTokenSource.Cancel();
-                flashCancellationTokenSource.Dispose();
-                flashCancellationTokenSource = null;
-            }
-        }
-
-        public int SelectTable(int[] availableTables, int[] reservedTables)
-        {
-            EnsureConsoleSize(); // Ensure the console size is adequate
-            ShowGrid(availableTables, reservedTables);
-            Console.CursorVisible = false; // Hide the cursor
-
-            int lastX = cursorX, lastY = cursorY;
-
-            try
-            {
-                while (true)
+                for (int x = 0; x < GridPresent.GridWidth; x++)
                 {
-                    Console.SetCursorPosition(0, Console.WindowHeight - 2);
-                    Console.ResetColor();
-                    Console.WriteLine("(B)ack");
-
-                    var key = Console.ReadKey(true);
-
-                    if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                    string number = GridPresent.GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
                     {
-                        StopFlashing(); // Ensure flashing stops
-                        ResetConsoleToDefault(); // Reset colors and clean up screen
-                        return -1; // Return -1 to indicate cancellation
-                    }
-                    (int nextX, int nextY) = GridPresent.HandleGridNavigation(cursorX, cursorY, key.Key, availableTables, reservedTables);
-
-                    // Ensure valid navigation
-                    if (nextX != cursorX || nextY != cursorY)
-                    {
-                        UpdateTableHighlight(cursorX, cursorY, nextX, nextY, availableTables, reservedTables);
-                        cursorX = nextX;
-                        cursorY = nextY;
-                    }
-
-                    else
-                    {
-                        ClearErrorMessage();
-
-                        UpdateTableHighlight(lastX, lastY, nextX, nextY, availableTables, reservedTables);
-                        lastX = nextX;
-                        lastY = nextY;
-                        cursorX = nextX;
-                        cursorY = nextY;
-
-                        HighlightNumber(availableTables, reservedTables);
-                    }
-
-                    if (key.Key == ConsoleKey.Enter)
-                    {
-                        string selectedNumber = GridPresent.GetNumberAt(cursorX, cursorY);
-
-                        if (string.IsNullOrEmpty(selectedNumber))
-                        {
-                            Console.SetCursorPosition(0, Console.WindowHeight - 3);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid table. Please select a valid table.");
-                            Console.ResetColor();
-                            continue;
-                        }
-
-                        int tableNumber = int.Parse(selectedNumber);
-
-                        if (!Array.Exists(availableTables, table => table == tableNumber) ||
-                            Array.Exists(reservedTables, table => table == tableNumber))
-                        {
-                            Console.SetCursorPosition(0, Console.WindowHeight - 3);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
-                            Console.ResetColor();
-                            continue;
-                        }
-
-                        SelectedTable = tableNumber;
-
-                        StopFlashing(); // Stop flashing task
-                        ResetConsoleToDefault(); // Reset colors and clean up screen
-                        return SelectedTable; // Return the valid table number
-                    }
-                }
-            }
-            finally
-            {
-                StopFlashing();
-                ResetConsoleToDefault();
-                Console.CursorVisible = true;
-            }
-        }
-
-        private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] availableTables, int[] reservedTables)
-        {
-            if (prevX != -1 && prevY != -1)
-            {
-                string prevNumber = GridPresent.GetNumberAt(prevX, prevY);
-                if (!string.IsNullOrEmpty(prevNumber))
-                {
-                    int prevTable = int.Parse(prevNumber);
-
-                    if (tableColors.TryGetValue(prevTable, out ConsoleColor prevColor))
-                    {
-                        Console.SetCursorPosition(prevX, prevY);
-                        Console.ForegroundColor = prevColor;
-                        Console.Write(prevNumber.PadRight(2));
+                        return (x, y); // Return the coordinates of the table
                     }
                 }
             }
 
-            string currNumber = GridPresent.GetNumberAt(currX, currY);
-            if (!string.IsNullOrEmpty(currNumber))
-            {
-                int currTable = int.Parse(currNumber);
-                ConsoleColor currColor = GetTableColor(currTable, availableTables, reservedTables);
-
-                Console.SetCursorPosition(currX, currY);
-                Console.ForegroundColor = currColor;
-                Console.Write("X ");
-            }
-
-            Console.ResetColor();
+            throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
         }
     }
 }
