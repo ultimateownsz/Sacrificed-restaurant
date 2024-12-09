@@ -400,6 +400,7 @@ namespace Presentation
             }
         }
 
+
         public int SelectTable(int[] availableTables, int[] reservedTables)
         {
             EnsureConsoleSize(); // Ensure the console size is adequate
