@@ -71,6 +71,7 @@ namespace Project
                 if (IsDaySelectable(dateToCheck, isAdmin))
                 {
                     return day; // Found a valid day
+                    
                 }
             }
         }
