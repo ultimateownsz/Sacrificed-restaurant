@@ -9,6 +9,7 @@ static class AdminMenu
         List<string> options = [
             "view",
             "create (admin account)",
+            "delete (accounts)",
             "update (themes)\n",
             "back"
             ];
@@ -22,6 +23,9 @@ static class AdminMenu
                     break;
                 case "create (admin account)":
                     RegisterUser.CreateAccount(true);
+                    break;
+                case "delete (accounts)":
+                    DeleteAccount.ShowDeleteAccountMenu();
                     break;
                 case "update (themes)\n":
                     ThemeView.SetOrUpdateTheme();
