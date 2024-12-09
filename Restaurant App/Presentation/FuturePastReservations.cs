@@ -29,6 +29,14 @@ namespace Presentation
             {
                 var calReservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
 
+                if (!calReservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
+                {
+                    Console.Clear();
+                    Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                    Console.ReadKey();
+                    return;
+                }
+
                 var calDetails = calReservations.Select(r => new
                 {
                     Reservation = r,
@@ -38,12 +46,15 @@ namespace Presentation
                 }).ToList();
 
                 var calOptions = calDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
-                var selectedCal = SelectionPresent.Show(calOptions, "RESERVATIONS\n").text;
+                var selectedCal = SelectionPresent.Show(calOptions, "RESERVATIONS\n\n").text;
 
                 if (calOptions.Contains(selectedCal))
                 {
                     int calIndex = calOptions.IndexOf(selectedCal);
-                    if (calIndex >= 0 && calIndex < calDetails.Count);
+                    if (calIndex >= 0 && calIndex < calDetails.Count)
+                    {
+                        ShowReservations.ShowReservationOptions(calDetails[calIndex].Reservation);
+                    }
                 }
             }
 
