@@ -7,7 +7,7 @@ public static class ShowReservations
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            Console.WriteLine("Enter a specific date (DD/MM/YYYY) to view reservations:");
 
             var dateInput = Console.ReadLine();
             if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
