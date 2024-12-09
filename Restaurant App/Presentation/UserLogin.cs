@@ -10,7 +10,7 @@ static class UserLogin
         Console.WriteLine("LOGIN\n");
 
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write("mail: ", Console.ForegroundColor);
+        Console.Write("Mail: ", Console.ForegroundColor);
         
         Console.ForegroundColor = ConsoleColor.White;
         return Console.ReadLine();
@@ -20,10 +20,10 @@ static class UserLogin
     {
         Console.Clear();
         Console.WriteLine("LOGIN\n");
-        Console.WriteLine($"mail: {email}");
+        Console.WriteLine($"Mail: {email}");
         
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write($"pass: ", Console.ForegroundColor);
+        Console.Write($"Pass: ", Console.ForegroundColor);
 
         Console.ForegroundColor = ConsoleColor.White;
         return Console.ReadLine();
@@ -46,8 +46,8 @@ static class UserLogin
             Console.WriteLine("LOGIN\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"mail: {email}", Console.ForegroundColor);
-            Console.WriteLine($"pass: {password}", Console.ForegroundColor);
+            Console.WriteLine($"Mail: {email}", Console.ForegroundColor);
+            Console.WriteLine($"Pass: {password}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nInvalid credentials, returning...");
