@@ -175,14 +175,16 @@ namespace Presentation
                         ResetConsoleToDefault(); // Reset colors and clean up screen
                         return -1; // Return -1 to indicate cancellation
                     }
+                    (int nextX, int nextY) = GridPresent.HandleGridNavigation(cursorX, cursorY, key.Key, availableTables, reservedTables);
 
-                    (int nextX, int nextY) = GridPresent.HandleGridNavigation(cursorX, cursorY, key.Key);
-
-                    if (nextX < 0 || nextY < 0 || string.IsNullOrEmpty(GridPresent.GetNumberAt(nextX, nextY)))
+                    // Ensure valid navigation
+                    if (nextX != cursorX || nextY != cursorY)
                     {
-                        nextX = lastX;
-                        nextY = lastY;
+                        UpdateTableHighlight(cursorX, cursorY, nextX, nextY, availableTables, reservedTables);
+                        cursorX = nextX;
+                        cursorY = nextY;
                     }
+
                     else
                     {
                         ClearErrorMessage();

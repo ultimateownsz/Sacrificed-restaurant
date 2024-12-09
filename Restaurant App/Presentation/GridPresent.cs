@@ -80,42 +80,70 @@ namespace Presentation
             Console.ResetColor();
         }
 
-        public static (int x, int y) HandleGridNavigation(int startX, int startY, int directionX, int directionY, char[,] grid)
+        public static (int x, int y) HandleGridNavigation(int startX, int startY, ConsoleKey directionKey, int[] availableTables, int[] reservedTables)
         {
-            int x = startX + directionX;
-            int y = startY + directionY;
+            char[,] grid = GetGrid(); // Assuming you have a method to get the grid
+            int directionX = 0, directionY = 0;
 
-            while (y >= 0 && y < grid.GetLength(0))
+            switch (directionKey)
             {
-                if (x >= 0 && x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
-                {
-                    return (x, y); // Return new valid position
-                }
-                x += directionX;
-                y += directionY;
+                case ConsoleKey.RightArrow:
+                    directionX = 1;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    directionX = -1;
+                    break;
+                case ConsoleKey.DownArrow:
+                    directionY = 1;
+                    break;
+                case ConsoleKey.UpArrow:
+                    directionY = -1;
+                    break;
+                default:
+                    return (startX, startY); // No movement for other keys
             }
 
-            return (startX, startY); // No valid position found
-        }
+            int x = startX, y = startY;
 
-        public static (int x, int y) FindTableCoordinates(int tableNumber)
-        {
-            for (int y = 0; y < grid.GetLength(0); y++)
+            // Row-based navigation
+            if (directionX != 0)
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
+                while (x >= 0 && x < grid.GetLength(1))
                 {
-                    string number = GetNumberAt(x, y);
-                    if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
+                    x += directionX;
+                    string nextNumber = GetNumberAt(grid, x, y);
+                    if (!string.IsNullOrEmpty(nextNumber))
                     {
                         return (x, y);
                     }
                 }
             }
+            // Column-based navigation
+            else if (directionY != 0)
+            {
+                while (y >= 0 && y < grid.GetLength(0))
+                {
+                    y += directionY;
+                    for (int offset = -1; offset <= 1; offset++)
+                    {
+                        int currentX = startX + offset;
+                        if (currentX >= 0 && currentX < grid.GetLength(1))
+                        {
+                            string nextNumber = GetNumberAt(grid, currentX, y);
+                            if (!string.IsNullOrEmpty(nextNumber))
+                            {
+                                return (currentX, y);
+                            }
+                        }
+                    }
+                }
+            }
 
-            throw new Exception($"Table {tableNumber} not found in the grid.");
+            return (startX, startY); // Return original position if no valid number found
         }
 
-        public static string GetNumberAt(int x, int y)
+        // Helper method to get a number from the grid
+        private static string GetNumberAt(char[,] grid, int x, int y)
         {
             if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
 
@@ -128,5 +156,6 @@ namespace Presentation
 
             return number;
         }
+
     }
 }

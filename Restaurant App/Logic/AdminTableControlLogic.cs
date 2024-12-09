@@ -6,9 +6,9 @@ namespace Project
 {
     public class TableAdmin
     {
-        private Access.Reservations reservationsAccess;
+        private ReservationAccess reservationsAccess;
 
-        public TableAdmin(Access.Reservations access)
+        public TableAdmin(ReservationAccess access)
         {
             reservationsAccess = access;
         }
