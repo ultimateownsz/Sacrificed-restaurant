@@ -20,6 +20,22 @@ static class ProductLogic
         return true;
     }
 
+    //public static bool UpdateProductQuantity(ProductModel product, int newQuantity)
+    //{
+
+    //    //product.UpdateQuantity(newQuantity);
+    //    ProductsAccess.Update(product);
+    //    return true;
+    //    // Console.WriteLine($"Updated '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
+    //}
+
+    public static bool DoesProductExist(int? productId)
+    {
+        if (productId == null) return false;
+        return Access.Products.GetBy<int?>("ID", productId.Value) != null;
+    }
+
+
     public static bool DeleteProduct(int productId)
     {
         if (productId < 0)

@@ -7,7 +7,6 @@ static class Menu
 {
     static public void Start()
     {
-
         while (true)
         {
             Console.Clear();
@@ -17,7 +16,6 @@ static class Menu
 
                     if (MenuLogic.Login() == "continue")
                         continue;
-
                     break;
 
                 case "Register\n":
@@ -31,9 +29,7 @@ static class Menu
                 default:
                     continue;
             }
-
-            // valid input has been provided at this point
-            break;
+            break; // Valid input provided, break the loop
         }
     }
 
@@ -56,8 +52,11 @@ static class Menu
                     return;
 
                 default:
+                    Console.WriteLine("Invalid selection. Please try again.");
+                    Console.ReadKey();
                     break;
             }
         }
     }
+
 }
