@@ -34,7 +34,7 @@ static class ThemeView
             if(ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // In this menu u choose what happens with the chosen month (that does have a theme attached to it)
-                string banner2 = $"Choose: {ThemeMenuManager.GetMonthThemeName(month, year)}\n\n";
+                string banner2 = $"Choose: {ThemeMenuManager.GetMonthName(month)}\n\n";
                 List<string> options2 = new List<string>{"Edit the theme for this month", "Delete the theme for this month"};
                 int selection = SelectionPresent.Show(options2, banner2, false).index;
                 // This is for updating the theme the else is for deleting

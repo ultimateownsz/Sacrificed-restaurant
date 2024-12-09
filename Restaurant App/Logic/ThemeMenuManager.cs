@@ -84,6 +84,26 @@ static class ThemeMenuManager
         };
     }
 
+    // this method generates the months names
+    public static string GetMonthName(int? month)
+    {
+        return month switch
+        {
+            1 =>  "January",
+            2 =>  "February",
+            3 =>  "March",
+            4 =>  "April",
+            5 =>  "May",
+            6 =>  "June",
+            7 =>  "July",
+            8 =>  "August",
+            9 =>  "September",
+            10 => "October",
+            11 => "November",
+            12 => "December",
+            _ => "Invalid month"
+        };
+    }
 
     // this method is used to delete themes that are attached to a schedule
     public static bool DeleteMonthTheme(int month, int year)
