@@ -10,7 +10,7 @@ namespace Presentation
         {
             if (admin) // if statement to check wether the user is a admin or not
             {
-                ViewAdmin();
+                ViewAdmin(acc);
             }
             else
             {
@@ -18,112 +18,137 @@ namespace Presentation
             }
         }
 
-        private static void ViewAdmin()
+        private static void ViewAdmin(UserModel acc)
         {
             string banner = "Choose a sort reservation you would like to view\n\n";
 
+            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin);
+
             while (true)
             {
-                switch (SelectionPresent.Show(["Past Reservations", "Future Reservations", "Cancel"], banner).text) // displaying three options to the admin
+                var calReservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
+
+                var calDetails = calReservations.Select(r => new
                 {
-                    case "Past Reservations":
-                        Console.Clear();
-                        Console.WriteLine("Enter a date from the past (dd/MM/yyyy) to view past reservations:");
-                        var dateInput = Console.ReadLine();
-                        if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate)) // check if the input date is in a valid format
-                        {
-                            Console.WriteLine("Invalid date format.\nPress any key to try again.");
-                            Console.ReadKey();
-                            continue;
-                        }
+                    Reservation = r,
+                    UserName = GetUserFullName(r.UserID),
+                    TableID = r.PlaceID
 
-                        if (parsedDate >= DateTime.Now.Date) // checking if the date is a past reservation
-                        {
-                            Console.WriteLine("The enterd date must be from the past.\nPress any key to try again.");
-                            Console.ReadKey();
-                            continue;
-                        }
+                }).ToList();
 
-                        var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate); // getting all reservations
+                var calOptions = calDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList();
+                var selectedCal = SelectionPresent.Show(calOptions, "RESERVATIONS\n").text;
 
-                        if (!reservations.Any(r => r.Date == parsedDate)) // checking if the DB contains the input date
-                        {
-                            System.Console.WriteLine("There are no past reservations for this date.\nPress any key to return...");
-                            Console.ReadKey();
-                            return;
-                        }
-
-                        var reservationDetails = reservations.Select(r => new
-                        {
-                            Reservation = r,
-                            UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                            TableID = r.PlaceID // Table choice of the reservation
-                        
-                        }).ToList();
-
-                        var pastOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // selecting the needed info from reservation details
-                        var selectedPast = SelectionPresent.Show(pastOptions, "PAST RESERVATIONS\n\n").text; // displaying the admin all the reservations on the date that has been input
-
-                        if (pastOptions.Contains(selectedPast)) // getting the index for the showing of reservation options
-                        {
-                            int pastIndex = pastOptions.IndexOf(selectedPast);
-                            if (pastIndex >= 0 && pastIndex < reservationDetails.Count)
-                            {
-                                ShowReservations.ShowReservationOptions(reservationDetails[pastIndex].Reservation);
-                            }
-                        }
-                        break;
-                    case "Future Reservations":
-                        Console.Clear();
-                        Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
-                        var futureInput = Console.ReadLine();
-                        if (!DateTime.TryParseExact(futureInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedFuture)) // checking if the input date is of a valid fomrat
-                        {
-                            Console.WriteLine("Invalid date format.\nPress any key to try again.");
-                            Console.ReadKey();
-                            continue;
-                        }
-
-                        if (parsedFuture < DateTime.Now.Date) // checking if the input date is not from the past
-                        {
-                            Console.WriteLine("The entered date must be a current date or a future date.\nPress any key to try again.");
-                            Console.ReadKey();
-                            continue;
-                        }
-
-                        var futureReservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedFuture); // getting all the dates
-
-                        if (!futureReservations.Any(r => r.Date.HasValue && r.Date.Value.Date == parsedFuture)) // checking if the DB contains the input date
-                        {
-                            System.Console.WriteLine("There are no current or future reservations for this date.\nPress any key to return...");
-                            Console.ReadKey();
-                            return;
-                        }
-
-                        var futureDetails = futureReservations.Select(r => new
-                        {
-                            Reservation = r,
-                            UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                            TableID = r.PlaceID // Table choice of the reservation
-                        
-                        }).ToList();
-
-                        var futureOptions = futureDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // selecting info from futureDetails
-                        var selectedFuture = SelectionPresent.Show(futureOptions, "FUTURE/CURRENT RESERVATIONS").text; // displaying the admin all the reservations on the date that has been input
-
-                        if (futureOptions.Contains(selectedFuture)) // getting the index for showing reservation options
-                        {
-                            int futureIndex = futureOptions.IndexOf(selectedFuture);
-                            if (futureIndex >= 0 && futureIndex < futureDetails.Count)
-                            {
-                                ShowReservations.ShowReservationOptions(futureDetails[futureIndex].Reservation);
-                            }
-                        }
-                        break;
-                    case "Cancel": // goes back to the previous menu
-                        return;
+                if (calOptions.Contains(selectedCal))
+                {
+                    int calIndex = calOptions.IndexOf(selectedCal);
+                    if (calIndex >= 0 && calIndex < calDetails.Count);
                 }
             }
+
+            // while (true)
+            // {
+            //     switch (SelectionPresent.Show(["Past Reservations", "Future Reservations", "Cancel"], banner).text) // displaying three options to the admin
+            //     {
+            //         case "Past Reservations":
+            //             Console.Clear();
+            //             Console.WriteLine("Enter a date from the past (dd/MM/yyyy) to view past reservations:");
+            //             var dateInput = Console.ReadLine();
+            //             if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate)) // check if the input date is in a valid format
+            //             {
+            //                 Console.WriteLine("Invalid date format.\nPress any key to try again.");
+            //                 Console.ReadKey();
+            //                 continue;
+            //             }
+
+            //             if (parsedDate >= DateTime.Now.Date) // checking if the date is a past reservation
+            //             {
+            //                 Console.WriteLine("The enterd date must be from the past.\nPress any key to try again.");
+            //                 Console.ReadKey();
+            //                 continue;
+            //             }
+
+            //             var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate); // getting all reservations
+
+            //             if (!reservations.Any(r => r.Date == parsedDate)) // checking if the DB contains the input date
+            //             {
+            //                 System.Console.WriteLine("There are no past reservations for this date.\nPress any key to return...");
+            //                 Console.ReadKey();
+            //                 return;
+            //             }
+
+            //             var reservationDetails = reservations.Select(r => new
+            //             {
+            //                 Reservation = r,
+            //                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
+            //                 TableID = r.PlaceID // Table choice of the reservation
+                        
+            //             }).ToList();
+
+            //             var pastOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // selecting the needed info from reservation details
+            //             var selectedPast = SelectionPresent.Show(pastOptions, "PAST RESERVATIONS\n\n").text; // displaying the admin all the reservations on the date that has been input
+
+            //             if (pastOptions.Contains(selectedPast)) // getting the index for the showing of reservation options
+            //             {
+            //                 int pastIndex = pastOptions.IndexOf(selectedPast);
+            //                 if (pastIndex >= 0 && pastIndex < reservationDetails.Count)
+            //                 {
+            //                     ShowReservations.ShowReservationOptions(reservationDetails[pastIndex].Reservation);
+            //                 }
+            //             }
+            //             break;
+            //         case "Future Reservations":
+            //             Console.Clear();
+            //             Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
+            //             var futureInput = Console.ReadLine();
+            //             if (!DateTime.TryParseExact(futureInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedFuture)) // checking if the input date is of a valid fomrat
+            //             {
+            //                 Console.WriteLine("Invalid date format.\nPress any key to try again.");
+            //                 Console.ReadKey();
+            //                 continue;
+            //             }
+
+            //             if (parsedFuture < DateTime.Now.Date) // checking if the input date is not from the past
+            //             {
+            //                 Console.WriteLine("The entered date must be a current date or a future date.\nPress any key to try again.");
+            //                 Console.ReadKey();
+            //                 continue;
+            //             }
+
+            //             var futureReservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedFuture); // getting all the dates
+
+            //             if (!futureReservations.Any(r => r.Date.HasValue && r.Date.Value.Date == parsedFuture)) // checking if the DB contains the input date
+            //             {
+            //                 System.Console.WriteLine("There are no current or future reservations for this date.\nPress any key to return...");
+            //                 Console.ReadKey();
+            //                 return;
+            //             }
+
+            //             var futureDetails = futureReservations.Select(r => new
+            //             {
+            //                 Reservation = r,
+            //                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
+            //                 TableID = r.PlaceID // Table choice of the reservation
+                        
+            //             }).ToList();
+
+            //             var futureOptions = futureDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // selecting info from futureDetails
+            //             var selectedFuture = SelectionPresent.Show(futureOptions, "FUTURE/CURRENT RESERVATIONS").text; // displaying the admin all the reservations on the date that has been input
+
+            //             if (futureOptions.Contains(selectedFuture)) // getting the index for showing reservation options
+            //             {
+            //                 int futureIndex = futureOptions.IndexOf(selectedFuture);
+            //                 if (futureIndex >= 0 && futureIndex < futureDetails.Count)
+            //                 {
+            //                     ShowReservations.ShowReservationOptions(futureDetails[futureIndex].Reservation);
+            //                 }
+            //             }
+            //             break;
+            //         case "Cancel": // goes back to the previous menu
+            //             return;
+            //     }
+            // }
         }
 
         private static void ViewUser(UserModel acc)

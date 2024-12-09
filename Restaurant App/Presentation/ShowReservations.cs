@@ -3,9 +3,8 @@ using Project;
 
 public static class ShowReservations
 {
-    public static void Show()
+    public static void Show(UserModel acc)
     {
-        UserModel acc = new UserModel();
         FuturePastResrvations.Show(acc, true); // using the new method
     }
 
