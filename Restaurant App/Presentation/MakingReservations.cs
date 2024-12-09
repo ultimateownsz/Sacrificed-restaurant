@@ -120,14 +120,14 @@ namespace Presentation
         var options = userReservations
             .Select((r, index) => $"Reservation {index + 1}: {r.Date}") // Add a unique identifier to each option
             .ToList();
-        options.Add("Back"); // Add "Back" option
+        options.Add("Go back to 'User Menu'"); // Add "Back" option
 
         while (true)
         {
             // Use the Show method to display the menu
             var selection = SelectionPresent.Show(options, $"Here are your Reservations, {acc.FirstName}:\n");
 
-            if (selection.text == "Back")
+            if (selection.text == "Go back to 'User Menu'")
             {
                 // Exit to the previous menu
                 return;
