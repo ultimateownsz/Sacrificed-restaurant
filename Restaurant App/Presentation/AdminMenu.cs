@@ -5,18 +5,26 @@ static class AdminMenu
 {
     public static void AdminStart()
     {
-
-        List<string> options = [
+        List<string> options = new List<string>
+        {
             "View reservations by date",
             "Create (admin account)",
-            "Delete (accounts) (TODO)",
+            "Delete (accounts)",
             "Update (themes)\n",
             "Back"
-            ];
+        };
 
-        while (true) 
+        ConsoleKeyInfo key;
+        do
         {
-            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
+            Console.Clear();
+            Console.WriteLine("Press Escape to exit the Admin Menu\n");
+
+            // Display menu and get selection
+            string selection = SelectionPresent.Show(options, "ADMIN MENU\n\n").text;
+
+            // Process the selected option
+            switch (selection)
             {
                 case "View reservations by date":
                     ShowReservations.Show();
@@ -25,7 +33,7 @@ static class AdminMenu
                     RegisterUser.CreateAccount(true);
                     break;
                 case "Delete (accounts)":
-                //  todo: @Dyl4n01 is hiermee bezig
+                    DeleteAccount.ShowDeleteAccountMenu();
                     break;
                 case "Update (themes)\n":
                     ThemeView.ThemedEditing();
@@ -33,6 +41,16 @@ static class AdminMenu
                 case "Back":
                     return;
             }
-        }
+
+            Console.WriteLine("\nPress Escape to exit the Admin Menu, or any key to continue...");
+
+            // read the key and store in 'key'
+            key = Console.ReadKey(true);
+
+        } while (key.Key != ConsoleKey.Escape); // Loop until Escape is pressed
+        Console.Clear();
+        Console.SetCursorPosition(0, 0);
+        Console.WriteLine("Exiting Admin Menu...");
+        return;
     }
 }
