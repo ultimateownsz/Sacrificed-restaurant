@@ -7,6 +7,7 @@ public static class ShowReservations
     {
         while (true)
         {
+            // TODO: Add a Calendar to select dates instead of typing it out
             Console.Clear();
             Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
 

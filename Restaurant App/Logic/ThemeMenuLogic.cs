@@ -2,7 +2,7 @@
 
 using Project;
 
-static class ThemeMenuManager
+static class ThemeMenuLogic
 {
 
     // this method updates the theme name

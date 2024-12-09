@@ -209,7 +209,7 @@ namespace Presentation
                 List<ProductModel> guestOrder = new();
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
+                    List<ProductModel> products = ProductLogic.GetAllWithinCategory(categories[z]).ToList();
                     int productIndex = 0;
                     bool choosingProduct = true;
 

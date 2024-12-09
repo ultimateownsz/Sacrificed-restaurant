@@ -10,18 +10,20 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
+            switch (SelectionPresent.Show(["Login", "Register\n", "Exit"], "MAIN MENU\n\n").text)
             {
-                case "login":
+                case "Login":
+
                     if (MenuLogic.Login() == "continue")
                         continue;
                     break;
 
-                case "register\n":
+                case "Register\n":
+                    
                     RegisterUser.CreateAccount();
                     continue;
 
-                case "exit":
+                case "Exit":
                     return;
 
                 default:
@@ -36,29 +38,17 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            var options = new List<string> { "reserve", "view reservations", "logout" };
-            var selection = SelectionPresent.Show(options, "USER MENU\n\n").text;
-
-            switch (selection)
+            switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
             {
-                case "reserve":
-                    try
-                    {
-                        // Directly call MakingReservation without calendar in Menu
-                        MakingReservations.MakingReservation(acc);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
-                        Console.ReadKey();
-                    }
+                case "Make a reservation":
+                    MakingReservations.MakingReservation(acc);
                     break;
 
-                case "view reservations":
+                case "View reservations":
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
-                case "logout":
+                case "Logout":
                     return;
 
                 default:
