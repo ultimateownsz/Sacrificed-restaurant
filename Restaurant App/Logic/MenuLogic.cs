@@ -24,7 +24,6 @@ internal class MenuLogic
             return "continue";
         }
 
-        return null;
     }
 
 }

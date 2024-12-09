@@ -33,7 +33,7 @@ public static class ShowReservations
             {
                 Reservation = r,
                 UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                TableID = r.Place // Table choice of the reservation
+                TableID = r.PlaceID // Table choice of the reservation
             
             }).ToList();
 
@@ -66,7 +66,7 @@ public static class ShowReservations
         while (!isValid)
         {
             Console.Clear(); // Refresh the options display
-            string banner = $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.Place}\nChoose an action:\n\n"; // Text the user will see
+            string banner = $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\nChoose an action:\n\n"; // Text the user will see
 
             switch (SelectionPresent.Show(["View Details", "Update Reservation", "Delete Reservation", "Cancel"], banner).text) // Showing all the options
             {
