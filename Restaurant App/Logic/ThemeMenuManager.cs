@@ -18,12 +18,12 @@ static class ThemeMenuManager
             {
                 theme = new ThemeModel()
                 {
-                    Month = startMonth,
+                    __deprecated_attr_month = startMonth,
                     Name = "Not scheduled"
                 };
             }
             
-            displayData.Add((theme.Month ?? 0, theme.Name)); 
+            displayData.Add((theme.__deprecated_attr_month ?? 0, theme.Name)); 
 
             startMonth++;
             if (startMonth > 12)
@@ -38,7 +38,7 @@ static class ThemeMenuManager
     {
         foreach (var theme in themes)
         {
-            var key = theme.Month ?? 0;
+            var key = theme.__deprecated_attr_month ?? 0;
             ThemeSchedule[key] = theme;  // add or update
         }
 
@@ -49,7 +49,7 @@ static class ThemeMenuManager
             {
                 ThemeSchedule[key] = new ThemeModel()
                 {
-                    Month = startMonth,
+                    __deprecated_attr_month = startMonth,
                     Name = "Not scheduled"
                 };
             }
@@ -106,7 +106,7 @@ static class ThemeMenuManager
 
         isDuplicate = false;  // no duplicate found
         
-        var key = (theme.Month ?? 0);
+        var key = (theme.__deprecated_attr_month ?? 0);
         if (ThemeSchedule.ContainsKey(key))
         {
             if (!Access.Themes.Update(theme)) return false;
@@ -130,7 +130,7 @@ static class ThemeMenuManager
     {
         if (theme == null) throw new ArgumentNullException(nameof(theme));
 
-        var key = theme.Month ?? 0;
+        var key = theme.__deprecated_attr_month ?? 0;
         if (ThemeSchedule.Remove(key))
         {
             Access.Themes.Delete(theme.ID);
