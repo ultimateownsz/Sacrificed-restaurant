@@ -106,13 +106,13 @@ namespace Presentation
                     continue;
                 }
 
-                if (selectedReservations == "<< Previous page")
+                if (selectedReservations == "<< Previous Page")
                 {
                     currentPage = Math.Max(currentPage - 1, 0);
                     continue;
                 }
 
-                if (reservationOptions.Contains(selectedReservations))
+                if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations))
                 {
                     Console.WriteLine($"You selected the reservation {selectedReservations}");
                     Console.WriteLine("Press any key to return...");
