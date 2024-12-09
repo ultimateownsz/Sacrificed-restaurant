@@ -1,5 +1,4 @@
-using Project;
-
+namespace Project;
 public static class ReservationDetails
 {
     public static void ShowDetails(ReservationModel reservation)
@@ -7,7 +6,7 @@ public static class ReservationDetails
         Console.Clear();
 
         // Fetch the account details for the user
-        var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
+        var account = Access.Reservations.GetBy<int?>("UserID", reservation.UserID);
 
         // Ensure data exists
         if (account == null)
@@ -21,7 +20,7 @@ public static class ReservationDetails
         // Display the details
         Console.WriteLine("Reservation Details");
         Console.WriteLine("-------------------");
-        Console.WriteLine($"Name: {account.FirstName} {account.LastName}");
+        // Console.WriteLine($"Name: {account.FirstName} {account.LastName}");
         Console.WriteLine();
         Console.WriteLine($"Reservation Date: {reservation.Date.ToString()}");
         Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
@@ -35,5 +34,5 @@ public static class ReservationDetails
         // Format the date from ddMMyyyy (e.g., 12122024) to dd/MM/yyyy
         string dateString = date.ToString("D8"); // Ensure it's 8 digits long
         return $"{dateString.Substring(0, 2)}/{dateString.Substring(2, 2)}/{dateString.Substring(4)}";
-    } 
+    }
 }

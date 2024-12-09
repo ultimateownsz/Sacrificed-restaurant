@@ -1,5 +1,5 @@
 ﻿namespace Project;
-public class ReservationModel: IModel
+public class ReservationModel : IModel
 {
     public int? ID { get; set; }
     public DateTime? Date { get; set; }
