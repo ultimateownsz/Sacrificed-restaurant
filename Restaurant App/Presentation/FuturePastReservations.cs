@@ -82,12 +82,18 @@ namespace Presentation
             Console.WriteLine($"Here are your reservations, {acc.FirstName}");
 
             int currentPage = 0;
-            int totalPages = (int)Math.Ceiling((double)sortedReservations.Count / 10);
+            int itemsPerPage = 20;
+            int totalPages = (int)Math.Ceiling((double)sortedReservations.Count / itemsPerPage);
 
             while (true)
             {
-                var reservationOptions = ReservationLogic.GenerateMenuOptions(sortedReservations, currentPage, totalPages);
-                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS").text;
+                var currentPageReserv = sortedReservations
+                                            .Skip(currentPage * itemsPerPage)
+                                            .Take(itemsPerPage)
+                                            .ToList();
+
+                var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
+                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text;
 
                 if (selectedReservations == "Back")
                 {
