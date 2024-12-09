@@ -8,7 +8,6 @@ static class ThemeView
         do
         {
             // The year input gets all made and validated in ThemeInputValidator.ValidateYear()
-            Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes. However, you can still view months in 2024 with themes that were already made in the past.");
             int year = ThemeInputValidator.ValidateYear();
             if (year == -1)
                 return;
