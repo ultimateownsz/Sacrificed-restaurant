@@ -82,7 +82,7 @@ internal class RegisterUser
                     while (true)
                     {
                         string banner = "Choose which information you'd like to change:\n\n";
-                        switch (SelectionPresent.Show(["First name", "Last name", "Email", "Password", "Phone number"], banner).text)
+                        switch (SelectionPresent.Show(["First name", "Last name", "Email", "Password", "Phone number", "\nBack"], banner).text)
                         {
                             case "First name":
                                 Console.Clear();
@@ -141,12 +141,17 @@ internal class RegisterUser
                                 }
                                 break;
 
+                            case "Back":
+                                break;
+
                             default:
                                 continue;
+                                
                         }
                         // valid input has been provided
                         break;
                     }
+
                 break;
             }
         }
