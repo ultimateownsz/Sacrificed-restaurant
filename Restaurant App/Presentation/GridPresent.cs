@@ -5,7 +5,7 @@ namespace Presentation
 {
     public class GridPresent
     {
-        private char[,] grid = {
+        private static char[,] grid = {
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',},
             {'|',' ',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ','|',},
             {'|',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B','A','R',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ','|',},
@@ -35,53 +35,98 @@ namespace Presentation
             {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ','/',' ',' ','\\',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'}
         };
-        private Dictionary<int, bool> tableStates; // Active/inactive state of each table
 
-        public GridPresent(char[,] gridData, Dictionary<int, bool> states)
-        {
-            grid = gridData;
-            tableStates = states;
-        }
-
-        public void Show(bool isAdmin)
+        public static void Show(int[] availableTables, int[] reservedTables, Dictionary<int, ConsoleColor> tableColors)
         {
             Console.Clear();
+
+            // Render the grid and color tables
             for (int y = 0; y < grid.GetLength(0); y++)
             {
                 for (int x = 0; x < grid.GetLength(1); x++)
                 {
-                    string tableNumber = GetTableNumberAt(x, y);
-                    if (!string.IsNullOrEmpty(tableNumber))
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number))
                     {
-                        int table = int.Parse(tableNumber);
-                        Console.ForegroundColor = isAdmin && !tableStates[table] ? ConsoleColor.Red :
-                                                  !isAdmin && tableStates[table] ? ConsoleColor.Green :
-                                                  ConsoleColor.DarkGray;
-                        Console.Write(tableNumber);
+                        int tableNumber = int.Parse(number);
+
+                        if (Array.Exists(reservedTables, table => table == tableNumber))
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved
+                        }
+                        else if (Array.Exists(availableTables, table => table == tableNumber))
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Green; // Available
+                        }
+                        else
+                        {
+                            tableColors[tableNumber] = ConsoleColor.DarkGray; // Default for unusable
+                        }
+
+                        Console.SetCursorPosition(x, y);
+                        Console.ForegroundColor = tableColors[tableNumber];
+                        Console.Write(number);
+                        x += number.Length - 1; // Skip to the end of the number
                     }
                     else
                     {
+                        Console.SetCursorPosition(x, y);
                         Console.ResetColor();
                         Console.Write(grid[y, x]);
                     }
                 }
-                Console.WriteLine();
             }
 
-            if (isAdmin)
-            {
-                Console.WriteLine("Press Enter on a table to toggle its state (active/inactive).");
-            }
             Console.ResetColor();
         }
 
-        private string GetTableNumberAt(int x, int y)
+        public static (int x, int y) HandleGridNavigation(int startX, int startY, int directionX, int directionY, char[,] grid)
         {
-            if (char.IsDigit(grid[y, x]))
+            int x = startX + directionX;
+            int y = startY + directionY;
+
+            while (y >= 0 && y < grid.GetLength(0))
             {
-                return grid[y, x].ToString();
+                if (x >= 0 && x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
+                {
+                    return (x, y); // Return new valid position
+                }
+                x += directionX;
+                y += directionY;
             }
-            return null;
+
+            return (startX, startY); // No valid position found
+        }
+
+        public static (int x, int y) FindTableCoordinates(int tableNumber)
+        {
+            for (int y = 0; y < grid.GetLength(0); y++)
+            {
+                for (int x = 0; x < grid.GetLength(1); x++)
+                {
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
+                    {
+                        return (x, y);
+                    }
+                }
+            }
+
+            throw new Exception($"Table {tableNumber} not found in the grid.");
+        }
+
+        public static string GetNumberAt(int x, int y)
+        {
+            if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
+
+            string number = "";
+            while (x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
+            {
+                number += grid[y, x];
+                x++;
+            }
+
+            return number;
         }
     }
 }

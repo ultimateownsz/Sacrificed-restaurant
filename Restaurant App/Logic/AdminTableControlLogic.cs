@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Project;
 
-namespace Project.Access
+namespace Project
 {
     public class TableAdmin
     {
