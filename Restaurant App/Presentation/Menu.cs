@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Presentation;
 using Project.Logic;
 using Project.Presentation;
@@ -10,41 +9,25 @@ static class Menu
     {
         while (true)
         {
-            var userChoiceResult = SelectionPresent.Show(
-                    new List<string> { "login", "register", "exit" },
-                    "MAIN MENU\n\n"
-            );
-
-            if (userChoiceResult == null)
-            {
-                Console.WriteLine("Returning to the previous menu...");
-                return;
-            }
-
-            var userChoice = userChoiceResult.text;
-
-            switch (userChoice)
+            Console.Clear();
+            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
             {
                 case "login":
-                    SelectionPresent.HandleEscape(() => MenuLogic.Login());
-                    // MenuLogic.Login();
+                    if (MenuLogic.Login() == "continue")
+                        continue;
                     break;
 
-                case "register":
-                    SelectionPresent.HandleEscape(() => 
-                    {
-                        RegisterUser.CreateAccount();
-                        return null;
-                    });
-                    // RegisterUser.CreateAccount();
-                    break;
+                case "register\n":
+                    RegisterUser.CreateAccount();
+                    continue;
 
                 case "exit":
                     return;
 
                 default:
-                    break;
+                    continue;
             }
+            break; // Valid input provided, break the loop
         }
     }
 
@@ -53,37 +36,37 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            var userChoice = SelectionPresent.HandleEscape(() => SelectionPresent.Show(
-                new List<string> { "reserve", "view reservations", "logout" },
-                "USER MENU\n\n"
-                )
-            );
+            var options = new List<string> { "reserve", "view reservations", "logout" };
+            var selection = SelectionPresent.Show(options, "USER MENU\n\n").text;
 
-            if (userChoice == null)
-            {
-                Console.WriteLine("Returning to the previous menu...");
-                return;
-            }
-
-            switch (userChoice.text)
+            switch (selection)
             {
                 case "reserve":
-                   
-                    MakingReservations.CalendarNavigation(acc);
+                    try
+                    {
+                        // Directly call MakingReservation without calendar in Menu
+                        MakingReservations.CalendarNavigation(acc);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
+                        Console.ReadKey();
+                    }
                     break;
 
                 case "view reservations":
-                    
                     MakingReservations.UserOverViewReservation(acc);
                     break;
 
                 case "logout":
-                    Console.WriteLine("Logging out...");
                     return;
 
                 default:
+                    Console.WriteLine("Invalid selection. Please try again.");
+                    Console.ReadKey();
                     break;
             }
         }
     }
+
 }
