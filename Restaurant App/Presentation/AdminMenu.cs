@@ -28,7 +28,7 @@ static class AdminMenu
                 //  todo: @Dyl4n01 is hiermee bezig
                     break;
                 case "Update (themes)\n":
-                    ThemeView.SetOrUpdateTheme();
+                    ThemeView.ThemedEditing();
                     break;
                 case "Back":
                     return;
