@@ -13,7 +13,6 @@ public class ReservationLogic
             //with all the info from the user
     public int SaveReservation(DateTime date, int userId, int placeId)
     {
-        Console.WriteLine($"DEBUG: Attempting to save reservation with Date={date}, UserID={userId}, TableID={placeId}");
 
         // Validate UserID (check if the user exists)
         var user = Access.Users.GetBy<int>("ID", userId);
@@ -49,7 +48,6 @@ public class ReservationLogic
         };
 
         // Debug log the SQL query to make sure the data is correct
-        Console.WriteLine($"DEBUG: SQL Query - INSERT INTO Reservations (Date, PlaceID, UserID) VALUES ({date}, {placeId}, {userId})");
 
         // Insert reservation into database
         if (Access.Reservations.Write(reservation))
