@@ -62,6 +62,4 @@ static class ThemeView
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape); //loops keeps going until user clicks escape at end of process
         return;
     }
-
-
 }
