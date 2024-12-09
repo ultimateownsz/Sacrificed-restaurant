@@ -4,87 +4,100 @@ using Project;
 
 static class ThemeMenuManager
 {
-    public static Dictionary<int, ThemeModel> ThemeSchedule = new();
-    
-    public static List<(int month, string themeName)> GetMonthlyDisplay()
+
+    // this method updates the theme name
+    public static void UpdateThemeSchedule(int month, int year, string themeName)
     {
-        var displayData = new List<(int month, string themeName)>();
-        int startMonth = DateTime.Now.Month;
+        ScheduleModel? scheduleItem = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        ThemeModel? themeItem = Access.Themes.GetAllBy<string>("Name", themeName).FirstOrDefault();
+        ScheduleModel newScheduleItem;
 
-        for (int i = 0; i < 12; i++)
+        if (scheduleItem == null)
         {
-            var key = startMonth;
-            if (!ThemeSchedule.TryGetValue(key, out var theme))
+            if(themeItem == null)
             {
-                theme = new ThemeModel()
-                {
-                    __deprecated_attr_month = startMonth,
-                    Name = "Not scheduled"
-                };
+                ThemeModel newTheme = new(themeName, null);
+                Access.Themes.Write(newTheme);  
+                newScheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
             }
-            
-            displayData.Add((theme.__deprecated_attr_month ?? 0, theme.Name)); 
-
-            startMonth++;
-            if (startMonth > 12)
+            else
             {
-                startMonth = 1;
+                newScheduleItem = new(null, year, month, themeItem.ID);
+            }
+
+            if (!Access.Schedules.Write(newScheduleItem))
+            {
+                Console.WriteLine("Failed to write to database");
+                Console.ReadKey();
             }
         }
-        return displayData;
-    }
-
-    public static void UpdateThemeSchedule(int startYear, int startMonth, List<ThemeModel> themes)
-    {
-        foreach (var theme in themes)
+        else
         {
-            var key = theme.__deprecated_attr_month ?? 0;
-            ThemeSchedule[key] = theme;  // add or update
-        }
-
-        for (int i = 0; i < 12; i++)
-        {
-            var key = startMonth;
-            if (!ThemeSchedule.ContainsKey(key))
+            if(themeItem == null)
             {
-                ThemeSchedule[key] = new ThemeModel()
-                {
-                    __deprecated_attr_month = startMonth,
-                    Name = "Not scheduled"
-                };
+                ThemeModel newTheme = new(themeName, null);
+                Access.Themes.Write(newTheme);  
+                scheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
+                Console.WriteLine("no theme item");
             }
-
-            startMonth++;
-            if (startMonth > 12)
+            else
             {
-                startMonth = 1;
-                startYear++;
+                scheduleItem.ThemeID = themeItem.ID;
             }
+            Access.Schedules.Update(scheduleItem);
         }
     }
 
-    public static ThemeModel? GetThemeByYearAndMonth(int key)
+    // this method gets all the Theme model attatched to a schedule
+    public static ThemeModel? GetThemeByYearAndMonth(int month, int year)
     {
-        if (ThemeSchedule.TryGetValue(key, out var theme))
+        
+        ScheduleModel? item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        if (item == null)
         {
-            return theme;
+            return null;
         }
-        return null;  // Return null if no theme exists for the given year and month
+        else
+        {
+            return Access.Themes.GetBy<int?>("ID", item.ThemeID);
+        }
     }
 
+    // this method generates the months names and gets the themes names next to them, its used to make the lost for the selection menu
+    public static string GetMonthThemeName(int? month, int year)
+    {
+        return month switch
+        {
+            1 =>  $"January   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            2 =>  $"February  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            3 =>  $"March     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            4 =>  $"April     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            5 =>  $"May       -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            6 =>  $"June      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            7 =>  $"July      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            8 =>  $"August    -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            9 =>  $"September -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            10 => $"October   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            11 => $"November  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            12 => $"December  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            _ => "Invalid month"
+        };
+    }
+
+    // this method generates the months names
     public static string GetMonthName(int? month)
     {
         return month switch
         {
-            1 => "January",
-            2 => "February",
-            3 => "March",
-            4 => "April",
-            5 => "May",
-            6 => "June",
-            7 => "July",
-            8 => "August",
-            9 => "September",
+            1 =>  "January",
+            2 =>  "February",
+            3 =>  "March",
+            4 =>  "April",
+            5 =>  "May",
+            6 =>  "June",
+            7 =>  "July",
+            8 =>  "August",
+            9 =>  "September",
             10 => "October",
             11 => "November",
             12 => "December",
@@ -92,50 +105,11 @@ static class ThemeMenuManager
         };
     }
 
-    // return falsew hether the failure was due to a duplicate theme name.
-    public static bool AddOrUpdateTheme(ThemeModel theme, int scheduledMonth, out bool isDuplicate)
+    // this method is used to delete themes that are attached to a schedule
+    public static bool DeleteMonthTheme(int month, int year)
     {
-        if (theme == null) throw new ArgumentNullException(nameof(theme));
-
-        // check if the theme name already exists
-        if (ThemeSchedule.Values.Any(t => t.Name.Equals(theme.Name, StringComparison.OrdinalIgnoreCase)))
-        {
-            isDuplicate = true;
-            return false;  // return false due to duplicate theme
-        }
-
-        isDuplicate = false;  // no duplicate found
-        
-        var key = (theme.__deprecated_attr_month ?? 0);
-        if (ThemeSchedule.ContainsKey(key))
-        {
-            if (!Access.Themes.Update(theme)) return false;
-        }
-        else
-        {
-            if (!Access.Themes.Write(theme)) return false;
-        }
-
-        ThemeSchedule[key] = theme;
-        return true;
-    }
-
-    public static bool IsFutureDate(int year, int month)
-    {
-        DateTime currentDate = DateTime.Now;
-        return year > currentDate.Year || (year == currentDate.Year && month >= currentDate.Month);
-    }
-
-    public static bool DeleteTheme(ThemeModel theme)
-    {
-        if (theme == null) throw new ArgumentNullException(nameof(theme));
-
-        var key = theme.__deprecated_attr_month ?? 0;
-        if (ThemeSchedule.Remove(key))
-        {
-            Access.Themes.Delete(theme.ID);
-            return true;
-        }
-        return false;
+        var item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        if (item == null) return false;
+        return Access.Schedules.Delete(item.ID);
     }
 }
