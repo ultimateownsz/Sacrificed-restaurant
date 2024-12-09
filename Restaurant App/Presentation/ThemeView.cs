@@ -47,7 +47,7 @@ static class ThemeView
                     var newTheme = new ThemeModel
                     {
                         Name = newThemeName,
-                        Month = month 
+                        __deprecated_attr_month = month 
                     };
 
                     bool isDuplicate;
@@ -78,7 +78,7 @@ static class ThemeView
                 {
                     string newThemeName = ThemeInputValidator.GetValidString("\nEnter the new theme name: ");
                     existingTheme.Name = newThemeName;
-                    existingTheme.Month = month; // Update the month
+                    existingTheme.__deprecated_attr_month = month; // Update the month
 
                     bool isDuplicate;
                     // pass the existingTheme to the logic layer method for updating

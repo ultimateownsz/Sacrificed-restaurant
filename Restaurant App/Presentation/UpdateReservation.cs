@@ -34,7 +34,7 @@ public static class UpdateReservation
         // Format date and display reservation details
         Console.WriteLine($"Reservation ID: {reservation.ID}");
         Console.WriteLine($"Date: {reservation.Date}");
-        Console.WriteLine($"Table number: {reservation.Place}");
+        Console.WriteLine($"Table number: {reservation.PlaceID}");
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
@@ -180,7 +180,7 @@ public static class UpdateReservation
                 else
                 {
                     // Assign the new table ID
-                    reservation.Place = tableID;
+                    reservation.PlaceID = tableID;
                     break;
                 }
             }
@@ -267,7 +267,7 @@ public static class UpdateReservation
 
         foreach (var res in reservations)
         {
-            if (res.Place == tableID && res.Date != reservationDate) // Ignore the current reservation
+            if (res.PlaceID == tableID && res.Date != reservationDate) // Ignore the current reservation
             {
                 return true; // Table is taken
             }
