@@ -23,7 +23,7 @@ public class OrderLogic
         }
 
         // Validate product ID
-        if (!ProductManager.DoesProductExist(productId))
+        if (!ProductLogic.DoesProductExist(productId))
         {
             Console.WriteLine($"Product ID {productId} does not exist.");
             return false;
