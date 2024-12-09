@@ -56,7 +56,7 @@ public static class UpdateReservation
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
-                        case "Tabel number":
+                        case "Table number":
                             Console.Clear();
                             UpdateTableID(reservation);
                             Console.WriteLine("\nReservation updated successfully.");
@@ -91,7 +91,7 @@ public static class UpdateReservation
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
-                        case "Tabel number":
+                        case "Table number":
                             Console.Clear();
                             UpdateTableID(reservation);
                             Console.WriteLine("\nReservation updated successfully.");
