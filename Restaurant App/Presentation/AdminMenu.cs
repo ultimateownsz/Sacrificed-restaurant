@@ -28,7 +28,7 @@ static class AdminMenu
                     DeleteAccount.ShowDeleteAccountMenu();
                     break;
                 case "update (themes)\n":
-                    ThemeView.SetOrUpdateTheme();
+                    ThemeView.ThemedEditing();
                     break;
                 case "back":
                     return;
