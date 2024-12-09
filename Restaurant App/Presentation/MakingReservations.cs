@@ -8,25 +8,9 @@ namespace Presentation
 		static private ReservationLogic reservationLogic = new();
 		static private ReservationMenuLogic reservationMenuLogic = new();
 		static private OrderLogic orderLogic = new();
-		//private static CalendarLogic calendarLogic = new CalendarLogic();
 
 	public static void MakingReservation(UserModel acc, DateTime date)
 	{
-			//Ask the user for the reservation amount
-			//Console.WriteLine("Please enter the number of guests between 1 and 6");
-			//string reservationAmount = Console.ReadLine();
-			//reservationAmount = reservationAmount.Replace(" ", "");
-			//bool isDigit = reservationAmount.All(char.IsDigit);
-			//while(string.IsNullOrEmpty(reservationAmount) || !isDigit || Convert.ToInt32(reservationAmount) < 1 || Convert.ToInt32(reservationAmount) > 6)
-			//{
-			//	Console.Clear();
-			//	Console.WriteLine("Invalid input");
-			//	Console.WriteLine("Please enter a number between 1 and 6");
-			//	reservationAmount = Console.ReadLine();
-			//	isDigit = reservationAmount.All(char.IsDigit);
-			//}
-
-		// better..
 		List<string> options = new() { "1", "2", "3", "4", "5", "6" };
 		string banner = "How many guests will be coming?\n\n";
         int reservationAmount = options.Count() - SelectionPresent.Show(options, banner, true).index;
@@ -335,18 +319,6 @@ namespace Presentation
 			}
 		}
 	}
-
-	//public static void ShowAvailableTables(DateTime selectedDate)
-	//{
-	//    var availableTables = calendarLogic.GetAvailableTables(selectedDate);
-	//    Console.WriteLine($"\nAvailable tables for {selectedDate.ToString("MMMM dd, yyyy")}:");
-	//    foreach (var table in availableTables)
-	//    {
-	//        Console.WriteLine($" - {table}");
-	//    }
-	//    Console.WriteLine("\nPress any key to return to the calendar...");
-	//    Console.ReadKey();
-	//}
 }
 }
 
