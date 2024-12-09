@@ -210,28 +210,6 @@ namespace Presentation
         }
 
 
-
-
-
-
-        private void RemoveHighlight(int x, int y)
-        {
-            string oldNumber = GetNumberAt(x, y);
-
-            if (!string.IsNullOrEmpty(oldNumber))
-            {
-                int oldTable = int.Parse(oldNumber);
-
-                // Restore the table number
-                Console.SetCursorPosition(x, y);
-                Console.ResetColor();
-                Console.Write(oldTable.ToString().PadRight(2)); // Properly clear for double digits
-            }
-        }
-
-
-
-
         private string GetNumberAt(int x, int y)
         {
             if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
