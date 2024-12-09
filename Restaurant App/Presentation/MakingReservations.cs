@@ -91,21 +91,18 @@ namespace Presentation
             }
 
         var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
-                                                .Select(r => r.PlaceID)
+                                                .Select(r => r?.PlaceID)
                                                 .Where(rt => rt.HasValue)
                                                 .Select(rt => rt.Value)
                                                 .ToArray();
 
 
-            TableSelection tableSelection = new();
-            return tableSelection.SelectTable(availableTables, reservedTables);
+        TableSelection tableSelection = new();
+        return tableSelection.SelectTable(availableTables, reservedTables);
         }
 
     public static void UserOverViewReservation(UserModel acc)
     {
-        int reservationIndex = 0;
-        bool inResMenu = true;
-
         var userReservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID)
                                                 .Where(r => r != null)
                                                 .Cast<ReservationModel>()
@@ -119,62 +116,39 @@ namespace Presentation
             return;
         }
 
-        while (inResMenu)
+        // Prepare the menu options with unique identifiers
+        var options = userReservations
+            .Select((r, index) => $"Reservation {index + 1}: {r.Date}") // Add a unique identifier to each option
+            .ToList();
+        options.Add("Back"); // Add "Back" option
+
+        while (true)
         {
-            Console.Clear();
-            Console.WriteLine($"Here are your Reservations, {acc.FirstName}:");
+            // Use the Show method to display the menu
+            var selection = SelectionPresent.Show(options, $"Here are your Reservations, {acc.FirstName}:\n");
 
-            // Display reservations with navigation
-            for (int j = 0; j < userReservations.Count; j++)
+            if (selection.text == "Back")
             {
-                if (j == reservationIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"> Reservation: {userReservations[j].Date}"); // Highlight selected item
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.WriteLine($"  Reservation: {userReservations[j].Date}");
-                }
+                // Exit to the previous menu
+                return;
             }
-
-            var key = Console.ReadKey(intercept: true);
-            switch (key.Key)
+            else
             {
-                case ConsoleKey.UpArrow:
-                    if (reservationIndex > 0) reservationIndex--; // Move up
-                    break;
+                // Process the selected reservation
+                var selectedReservation = userReservations[selection.index];
+                Console.Clear();
+                Console.WriteLine($"You selected Reservation on: {selectedReservation.Date}");
+                Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the user menu...");
+                var key = Console.ReadKey(true);
 
-                case ConsoleKey.DownArrow:
-                    if (reservationIndex < userReservations.Count - 1) reservationIndex++; // Move down
-                    break;
-
-                case ConsoleKey.Enter:
-                    // Process the selected reservation
-                    Console.Clear();
-                    Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
-                    Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the main menu...");
-                    var key2 = Console.ReadKey();
-
-                    if (key2.Key == ConsoleKey.Escape)
-                    {
-                        inResMenu = false;
-                        break; // Exit loop
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                case ConsoleKey.Escape: // Exit without selection
-                    inResMenu = false;
-                    break;
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    return; // Exit to the user menu
+                }
             }
         }
-
-        return;
     }
+
 
         public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
         {
