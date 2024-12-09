@@ -242,7 +242,6 @@ namespace Presentation
         }
 
 
-
         private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
         {
             int x = startX;
