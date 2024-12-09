@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Presentation
 {
@@ -375,6 +376,9 @@ namespace Presentation
             const int requiredWidth = 80; // Example width
             const int requiredHeight = 30; // Example height
 
+            // Try to maximize the console window
+            MaximizeConsoleWindow();
+
             while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
             {
                 Console.Clear();
@@ -388,6 +392,24 @@ namespace Presentation
             }
 
             Console.Clear();
+        }
+
+        public static void MaximizeConsoleWindow()
+        {
+            const int SW_MAXIMIZE = 3;
+
+            // Import Windows API functions
+            [DllImport("kernel32.dll", SetLastError = true)]
+            static extern IntPtr GetConsoleWindow();
+
+            [DllImport("user32.dll", SetLastError = true)]
+            static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+            IntPtr consoleWindow = GetConsoleWindow();
+            if (consoleWindow != IntPtr.Zero)
+            {
+                ShowWindow(consoleWindow, SW_MAXIMIZE);
+            }
         }
 
         private void StopFlashing()
