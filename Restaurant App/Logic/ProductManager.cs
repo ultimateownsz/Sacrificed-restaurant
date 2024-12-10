@@ -31,6 +31,13 @@ static class ProductManager
     //    // Console.WriteLine($"Updated '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
     //}
 
+    public static bool DoesProductExist(int? productId)
+    {
+        if (productId == null) return false;
+        return Access.Products.GetBy<int?>("ID", productId.Value) != null;
+    }
+
+
     public static bool DeleteProduct(int productId)
     {
         if (productId < 0)

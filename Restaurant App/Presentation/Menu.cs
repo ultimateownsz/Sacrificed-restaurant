@@ -7,6 +7,7 @@ static class Menu
 {
     static public void Start()
     {
+        TableSelection.MaximizeConsoleWindow();
         while (true)
         {
             Console.Clear();
@@ -45,7 +46,7 @@ static class Menu
                     try
                     {
                         // Directly call MakingReservation without calendar in Menu
-                        MakingReservations.CalendarNavigation(acc);
+                        MakingReservations.MakingReservation(acc);
                     }
                     catch (OperationCanceledException)
                     {

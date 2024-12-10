@@ -84,4 +84,17 @@ public class UserLogic
             Admin = 1
         };
     }
+
+    public static bool DeleteUserAccount(int userId)
+    {
+        var user = Access.Users.GetBy<int>("ID", userId);
+        if (user == null)
+        {
+            return false; // Account not found
+        }
+
+        // Proceed to delete the user or admin account
+        bool success = Access.Users.Delete(userId);
+        return success;
+    }
 }
