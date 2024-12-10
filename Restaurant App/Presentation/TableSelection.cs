@@ -46,6 +46,12 @@ namespace Presentation
 
             ClearGrid(); // Clear the grid area
 
+            // Fetch reservations for today
+            var reservations = Access.Reservations.Read()
+                .Where(r => r.Date.HasValue && r.Date.Value.Date == DateTime.Now.Date)
+                .Select(r => r.PlaceID)
+                .ToHashSet(); // Store reserved table IDs for today in a HashSet for fast lookup
+
             for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
                 for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
@@ -56,15 +62,18 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // Check if the table is active or inactive in the database
-                        var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
-                        if (table != null && table.Active == 0)
+                        // Check the table's status
+                        if (inactiveTables.Contains(tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Inactive tables are red
+                            tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables are red
                         }
-                        else if (Array.Exists(activeTables, t => t == tableNumber))
+                        else if (reservations.Contains(tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Active tables are green
+                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables are red
+                        }
+                        else if (activeTables.Contains(tableNumber))
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Green; // Active, available tables are green
                         }
                         else
                         {
@@ -88,6 +97,7 @@ namespace Presentation
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
             HighlightNumber(activeTables, inactiveTables); // Highlight the selected table
         }
+
 
 
 
