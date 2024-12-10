@@ -51,22 +51,29 @@ namespace Project.Logic
                 if (replacementTable != null)
                 {
                     // Update the reservation to use the new table
-                    updates.Add($"Reservation ID {reservation.ID} has been moved from table {tableID} to table {replacementTable.ID}.");
+                    updates.Add($"Reservation ID {reservation.ID} on {reservation.Date:yyyy-MM-dd} has been moved from table {tableID} to table {replacementTable.ID}.");
                     reservation.PlaceID = replacementTable.ID;
                     Access.Reservations.Update(reservation);
                 }
                 else
                 {
                     // If no replacement table is available, cancel the reservation
-                    updates.Add($"Reservation ID {reservation.ID} for table {tableID} has been canceled (no replacement available).");
+                    updates.Add($"[CANCELED] Reservation ID {reservation.ID} on {reservation.Date:yyyy-MM-dd} for table {tableID} has been canceled (no replacement available).");
                     Access.Reservations.Delete(reservation.ID);
                 }
             }
 
-            // Print all updates at once
-            Console.ForegroundColor = ConsoleColor.Green;
+            // Print all updates at once with color logic
             foreach (var update in updates)
             {
+                if (update.Contains("[CANCELED]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red; // Canceled reservations in red
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Green; // Moved reservations in green
+                }
                 Console.WriteLine(update);
             }
             Console.ResetColor();
