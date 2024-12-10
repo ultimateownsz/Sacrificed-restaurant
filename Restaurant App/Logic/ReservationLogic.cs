@@ -10,19 +10,62 @@ public class ReservationLogic
 
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
-    //with all the info from the user
-    public int SaveReservation(DateTime date, int? userId, int tableId)
+            //with all the info from the user
+    public int SaveReservation(DateTime date, int userId, int placeId)
     {
-        if (CurrentReservation != null)
+
+        // Validate UserID (check if the user exists)
+        var user = Access.Users.GetBy<int>("ID", userId);
+        if (user == null)
         {
-            CurrentReservation.Date = date;
-            CurrentReservation.ID = null;
-            CurrentReservation.UserID = userId;
-            CurrentReservation.PlaceID = tableId; // Assign the table ID to the Place column
-            Access.Reservations.Write(CurrentReservation);
-            return Access.Reservations.GetBy<DateTime>("Date", date)?.ID ?? 0;
+            Console.WriteLine($"ERROR: User ID {userId} does not exist.");
+            return 0; // Return 0 if the user does not exist
         }
-        return 0;
+
+        // Validate PlaceID (check if the place exists)
+        var place = Access.Places.GetBy<int>("ID", placeId); // Assuming Access.Places is valid
+        if (place == null)
+        {
+            Console.WriteLine($"ERROR: Place ID {placeId} does not exist.");
+            return 0; // Return 0 if the place does not exist
+        }
+
+        // Check if there is already an existing reservation on the same date and place
+        var existingReservation = Access.Reservations.GetAllBy<DateTime>("Date", date)
+                                                    .FirstOrDefault(r => r?.PlaceID == placeId);
+        if (existingReservation != null)
+        {
+            Console.WriteLine($"ERROR: There is already a reservation for PlaceID {placeId} on Date {date.ToShortDateString()}.");
+            return 0; // Return 0 if there's a conflict
+        }
+
+        // Create the reservation
+        var reservation = new ReservationModel
+        {
+            Date = date,
+            PlaceID = placeId,
+            UserID = userId
+        };
+
+        // Debug log the SQL query to make sure the data is correct
+
+        // Insert reservation into database
+        if (Access.Reservations.Write(reservation))
+        {
+            // Now get the last inserted reservation ID (assuming your database auto-increments the ID)
+            var lastReservation = Access.Reservations.GetAllBy<int>("UserID", userId)
+                                                    .OrderByDescending(r => r?.Date)
+                                                    .FirstOrDefault(); // Assuming the latest reservation is by date or similar
+
+            if (lastReservation != null)
+            {
+                Console.WriteLine($"DEBUG: Reservation saved with ID={lastReservation.ID}");
+                return lastReservation.ID ?? 0; // Return the generated ID
+            }
+        }
+
+        Console.WriteLine("ERROR: Reservation save failed");
+        return 0; // Return 0 if the reservation failed
     }
 
 
@@ -79,6 +122,7 @@ public class ReservationLogic
     //     return Access.Reservations.GetBy<int>("ID", id);
     // }
 
+    
     public bool RemoveReservation(int id)
     {
         
@@ -113,5 +157,19 @@ public class ReservationLogic
         var productID = Access.Requests.GetBy<int?>("ReservationID", reservationID)?.ProductID;
         var themeID = Access.Products.GetBy<int?>("ID", productID)?.ThemeID;
         return Access.Themes.GetBy<int?>("ID", themeID)?.Name;
+    }
+
+    public static string FormatAccount(ReservationModel reservation)
+    {
+        return $"Reservation on {reservation.Date:yyyy-MM-dd} at Table {reservation.PlaceID} (ID: {reservation.ID})";
+    }
+
+    public static List<string> GenerateMenuOptions(List<ReservationModel> accounts, int currentPage, int totalPages)
+    {
+        var options = accounts.Select(FormatAccount).ToList();
+        if (currentPage > 0) options.Add("<< Previous Page");
+        if (currentPage < totalPages - 1) options.Add("Next Page >>");
+        options.Add("Back");
+        return options;
     }
 }

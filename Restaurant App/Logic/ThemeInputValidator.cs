@@ -17,33 +17,66 @@ public static class ThemeInputValidator
         }
     }
 
-    public static string GetValidString(string prompt)
+    public static string GetValidString()
     {
         while (true)
         {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Enter theme name: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            var themeName = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(themeName) && !themeName.Any(char.IsDigit))
             {
-                return input;
+                return themeName;
             }
-            Console.WriteLine("Invalid input. Please enter a non empty string.");
+            
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid theme name...");
+            Console.ReadKey();
         }
     }
 
-    public static int GetValidYear(string prompt, int minYear)
+    public static int ValidateYear()
     {
         int result;
+        int minYear = DateTime.Now.Year;
         while (true)
         {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
+            Console.Clear();
 
-            if (int.TryParse(input, out result) && result >= minYear)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes. However, you can still view months in 2024 with themes that were already made in the past.");
+            Console.Write("Enter year (or press ESC to exit): ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Escape)
+            {
+                return -1; // or another value indicating exit
+            }
+
+            Console.Write(key.KeyChar);
+            var year = Console.ReadLine();
+
+            if (int.TryParse(key.KeyChar + year, out result) && result >= minYear)
             {
                 return result;
             }
-            Console.WriteLine($"Invalid input. Please enter a year greater than or equal to {minYear}.");
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter year: {key.KeyChar + year}", Console.ForegroundColor);
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nThemes can only be made for the year 2024 and beyond. Please try again....");
+            Console.ReadKey();
         }
     }
 

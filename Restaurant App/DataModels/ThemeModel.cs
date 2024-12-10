@@ -1,4 +1,4 @@
-﻿namespace Project;
+namespace Project;
 public class ThemeModel: IModel
 {
     public int? ID { get; set; }

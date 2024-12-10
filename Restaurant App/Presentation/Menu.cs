@@ -7,6 +7,7 @@ static class Menu
 {
     static public void Start()
     {
+        // TableSelection.MaximizeConsoleWindow();
         while (true)
         {
             Console.Clear();
@@ -22,6 +23,7 @@ static class Menu
                     continue;
 
                 case "exit":
+                    Environment.Exit(0);
                     return;
 
                 default:
@@ -42,20 +44,13 @@ static class Menu
             switch (selection)
             {
                 case "reserve":
-                    try
-                    {
-                        // Directly call MakingReservation without calendar in Menu
-                        MakingReservations.MakingReservation(acc);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
-                        Console.ReadKey();
-                    }
+                    // Directly call MakingReservation without calendar in Menu
+                    MakingReservations.MakingReservation(acc);
                     break;
 
                 case "view reservations":
-                    MakingReservations.UserOverViewReservation(acc);
+                    // MakingReservations.UserOverViewReservation(acc);
+                    FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
 
                 case "logout":

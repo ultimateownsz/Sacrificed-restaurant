@@ -1,93 +1,14 @@
+using Presentation;
 using Project;
 
 public static class ShowReservations
 {
-    public static void Show()
+    public static void Show(UserModel acc)
     {
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine("Enter a specific date (DD/MM/YYYY) to view reservations:");
-
-            var dateInput = Console.ReadLine();
-            if (!DateTime.TryParseExact(dateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
-            {
-                Console.WriteLine("Invalid date format. Press any key to try again.");
-                Console.ReadKey();
-                continue;
-            }
-
-            // Convert date to the required format (ddMMyyyy as integer)
-            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate);
-
-            if (reservations.Count() == 0)
-            {
-                Console.WriteLine("No reservations found for this date. Press any key to try another date.");
-                Console.ReadKey();
-                continue;
-            }
-
-            // Fetch user names and table choices for reservations
-            var reservationDetails = reservations.Select(r => new
-            {
-                Reservation = r,
-                UserName = GetUserFullName(r.UserID), // Helper method to get the user's name
-                TableID = r.PlaceID // Table choice of the reservation
-            
-            }).ToList();
-
-            int selectedIndex = 0; 
-
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine($"Reservations for {parsedDate:dd/MM/yyyy}:");
-
-                // Display reservations with highlight for the selected one
-                for (int i = 0; i < reservationDetails.Count(); i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow; // Highlight selected
-                        Console.WriteLine($"-> {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
-                    }
-                    else
-                    {
-                        Console.ResetColor(); // Default color for others
-                        Console.WriteLine($"  {reservationDetails[i].UserName} - Assigned to Table {reservationDetails[i].TableID}");
-                    }
-                }
-
-                Console.ResetColor(); // Reset any lingering color changes
-                Console.WriteLine("\nUse arrow keys to navigate. Press Enter to select, or Esc to go back to the Admin Menu.");
-
-                var key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        if (selectedIndex > 0)
-                            selectedIndex--;
-                        break;
-
-                    case ConsoleKey.DownArrow:
-                        if (selectedIndex < reservationDetails.Count() - 1)
-                            selectedIndex++;
-                        break;
-
-                    case ConsoleKey.Enter:
-                        // Show options for the selected reservation
-                        ShowReservationOptions(reservationDetails[selectedIndex].Reservation);
-                        break;
-
-                    case ConsoleKey.Escape:
-                        return;
-                }
-            }
-        }
+        FuturePastResrvations.Show(acc, true); // using the new method
     }
 
-    private static void ShowReservationOptions(ReservationModel reservation)
+    public static void ShowReservationOptions(ReservationModel reservation)
     {
         // List of possible actions
         string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };

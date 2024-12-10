@@ -1,30 +1,39 @@
 using Project;
 using Project.Presentation;
+using Presentation;
 
 static class AdminMenu
 {
-    public static void AdminStart()
+    public static void AdminStart(UserModel acc)
     {
-
-        List<string> options = [
-            "view",
-            "create (admin account)",
-            "update (themes)\n",
-            "back"
-            ];
-
-        while (true) 
+        List<string> options = new()
         {
-            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
+            "edit reservations",
+            "create (admin account)",
+            "delete (accounts)",
+            "update (themes)",
+            "(de)activate tables\n",
+            "back"
+        };
+
+        while (true)
+        {
+            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
             {
-                case "view":
-                    ShowReservations.Show();
+                case "edit reservations":
+                    ShowReservations.Show(acc);
                     break;
                 case "create (admin account)":
                     RegisterUser.CreateAccount(true);
                     break;
-                case "update (themes)\n":
-                    ThemeView.SetOrUpdateTheme();
+                case "delete (accounts)":
+                    DeleteAccount.ShowDeleteAccountMenu();
+                    break;
+                case "update (themes)":
+                    ThemeView.ThemedEditing();
+                    break;
+                case "(de)activate tables\n":
+                    AdminTableControlPresent.Show();
                     break;
                 case "back":
                     return;
