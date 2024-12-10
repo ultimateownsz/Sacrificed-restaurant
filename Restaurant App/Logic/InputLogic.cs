@@ -6,7 +6,7 @@ public static class InputLogic
         {
             return (result, null);
         }
-        return (null, $"Input must be a valid long number and greater than or equal to {minValue}");
+        return (null, $"Input must be a valid number and greater than or equal to {minValue}");
     }
 
     public static (int? result, string? error) ParseValidInteger(string input, int minValue = 0)
@@ -20,23 +20,23 @@ public static class InputLogic
     
     // possible use for reservations
 
-    // public static (DateTime? result, string? error) ParseValidDate(string input)
-    // {
-    //     if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
-    //     {
-    //         return (date.Date, null);  // return only the date without the time
-    //     }
-    //     return (null, "Invalid date format. Please use dd/MM/yyyy");
-    // }
+    public static (DateTime? result, string? error) ParseValidDate(string input)
+    {
+        if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
+        {
+            return (date.Date, null);  // return only the date without the time
+        }
+        return (null, "Invalid date format. Please use dd/MM/yyyy");
+    }
 
-    // public static int ConvertDateToInteger(DateTime? date)
-    // {
-    //     if (!date.HasValue)
-    //         throw new ArgumentNullException(nameof(date), "Date cannot be null.");
+    public static int ConvertDateToInt(DateTime? date)
+    {
+        if (!date.HasValue)
+            throw new ArgumentNullException(nameof(date), "Date cannot be null.");
         
-    //     // convert date to the correct int format "ddMMyyyy"
-    //     return int.Parse(date.Value.ToString("ddMMyyyy"));
-    // }
+        // convert date to the correct int format "ddMMyyyy"
+        return int.Parse(date.Value.ToString("ddMMyyyy"));
+    }
 
     public static (int?, string? error) ParseValidateYear(string input, int minYear)
     {
@@ -61,8 +61,6 @@ public static class InputLogic
     {
         return !string.IsNullOrWhiteSpace(input)
             ? (input, null)
-            : (null, "Input cannot be empty or whitespace.");
+            : (null, "Input cannot be empty or has a whitespace.");
     }
-
-
 }

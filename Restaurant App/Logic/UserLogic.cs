@@ -56,7 +56,7 @@ public class UserLogic
 
     public static bool IsPhoneNumberValid(string phoneNumber)
     {
-        return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
+        return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 10;
     }
 
     public static UserModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
