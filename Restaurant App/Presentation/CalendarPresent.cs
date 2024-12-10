@@ -18,24 +18,24 @@ namespace Project
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, direction: -1);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -1);
                         break;
                     case ConsoleKey.RightArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, direction: 1);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 1);
                         break;
                     case ConsoleKey.UpArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, direction: -7);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -7);
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, direction: 7);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 7);
                         break;
                     case ConsoleKey.P: // Previous month
                         currentDate = currentDate.AddMonths(-1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, direction: 1); // Start at the first available day
+                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
                         break;
                     case ConsoleKey.N: // Next month
                         currentDate = currentDate.AddMonths(1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, direction: 1); // Start at the first available day
+                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
                         break;
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
