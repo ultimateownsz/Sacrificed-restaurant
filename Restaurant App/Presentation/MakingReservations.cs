@@ -21,7 +21,7 @@ namespace Presentation
             int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
             // Step 2: Display the calendar and mark unreservable dates
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests);
+            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
             // Step 3: Filter available tables based on the number of guests
             TableSelection tableSelection = new();

@@ -5,7 +5,7 @@ namespace Project
 {
     public class CalendarPresent
     {
-        public static DateTime Show(DateTime initialDate, bool isAdmin, int guests)
+        public static DateTime Show(DateTime initialDate, bool isAdmin, int guests, UserModel acc)
         {
             DateTime currentDate = initialDate;
 
@@ -44,7 +44,8 @@ namespace Project
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
                     case ConsoleKey.Q: // Quit
-                        throw new OperationCanceledException("User canceled calendar navigation.");
+                        Menu.ShowUserMenu(acc); // Pass acc to ShowUserMenu
+                        return DateTime.MinValue; // Return an invalid date to indicate cancellation
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
@@ -56,6 +57,10 @@ namespace Project
 
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
+
+        // The rest of the methods (DisplayCalendar, FindFirstAvailableDay, NavigateToAvailableDay, IsDaySelectable, HasAvailableTablesForGuests) remain unchanged.
+    
+
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {

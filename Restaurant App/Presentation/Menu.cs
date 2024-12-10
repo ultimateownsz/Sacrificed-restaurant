@@ -23,6 +23,7 @@ static class Menu
                     continue;
 
                 case "exit":
+                    Environment.Exit(0);
                     return;
 
                 default:
