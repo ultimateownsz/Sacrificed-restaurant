@@ -70,7 +70,10 @@ namespace Project.Logic
             }
         }
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         public static bool ToggleTableActiveState(int tableID)
         {
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);

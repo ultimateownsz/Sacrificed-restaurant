@@ -30,7 +30,7 @@ namespace Presentation
             {
                 while (true)
                 {
-                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables);
+                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables, isAdmin: true);
 
                     if (selectedTable == -1)
                     {

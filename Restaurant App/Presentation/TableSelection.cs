@@ -372,7 +372,7 @@ namespace Presentation
         }
 
 
-        public int SelectTable(int[] availableTables, int[] reservedTables)
+        public int SelectTable(int[] availableTables, int[] reservedTables, bool isAdmin = false)
         {
             EnsureConsoleSize(); // Ensure the console size is adequate
             ShowGrid(availableTables, reservedTables);
@@ -431,11 +431,20 @@ namespace Presentation
                             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
                             if (table != null && table.Active == 0)
                             {
-                                Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Table {tableNumber} is unavailable. It is deactivated.");
-                                Console.ResetColor();
-                                continue; // Retry selection
+                                if (isAdmin)
+                                {
+                                    // Admins can reactivate tables
+                                    return tableNumber;
+                                }
+                                else
+                                {
+                                    // Users cannot interact with deactivated tables
+                                    Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Table {tableNumber} is unavailable. It is deactivated.");
+                                    Console.ResetColor();
+                                    continue; // Retry selection
+                                }
                             }
 
                             if (!Array.Exists(availableTables, t => t == tableNumber) ||
@@ -486,7 +495,5 @@ namespace Presentation
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
-
-
     }
 }
