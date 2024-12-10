@@ -70,6 +70,7 @@ namespace Project.Logic
             }
         }
 
+
         public static bool ToggleTableActiveState(int tableID)
         {
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);
