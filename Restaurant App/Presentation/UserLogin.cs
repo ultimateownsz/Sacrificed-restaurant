@@ -11,7 +11,7 @@ static class UserLogin
             Console.WriteLine("LOGIN\n");
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Email: ", Console.ForegroundColor);
+            // Console.Write("Email: ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
 
             // Wrap the input handling logic with EscapeKeyException
@@ -19,13 +19,9 @@ static class UserLogin
             TryCatchHelper.EscapeKeyException(() =>
             {
                 email = InputHelper.GetValidatedInput<string?>(
-                    "",
-                    input =>
-                    {
-                        if (string.IsNullOrWhiteSpace(input))
-                            return (null, "Email cannot be empty.");
-                        return (input, null); // Valid input
-                    });
+                    "Email: ",
+                    input => InputHelper.InputNotNull(input, "Email cannot be empty")  // Validation failure
+                );
             });
 
             if (email == null) // Escape key pressed
@@ -44,10 +40,10 @@ static class UserLogin
         {
             Console.Clear();
             Console.WriteLine("LOGIN\n");
-            Console.WriteLine($"Email: {email}");
+            // Console.WriteLine($"Email: {email}");
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Password: ", Console.ForegroundColor);
+            // Console.Write("Password: ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
 
             // Use TryCatchHelper to handle Escape key exceptions during password input
@@ -56,13 +52,9 @@ static class UserLogin
             TryCatchHelper.EscapeKeyException(() =>
             {
                 password = InputHelper.GetValidatedInput<string?>(
-                    "",
-                    input =>
-                    {
-                        if (string.IsNullOrWhiteSpace(input))
-                            return (null, "Password cannot be empty."); // Validation failure
-                        return (input, null); // Valid input
-                    });
+                    "Password: ",
+                    input => InputHelper.InputNotNull(input, "Password cannot be empty.")  // Validation failure
+                );
             });
 
             if (password == null) // Escape key pressed
