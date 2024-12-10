@@ -11,36 +11,48 @@ namespace Presentation
         static private ReservationMenuLogic reservationMenuLogic = new();
         static private OrderLogic orderLogic = new();
 
-        public static void MakingReservation(UserModel acc)
-        {
-            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin);
+		public static void MakingReservation(UserModel acc)
+		{
+			bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
-            List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
-            int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
+			// Call GridPresent to handle grid rendering and admin check
+			if (!GridPresent.Show(isAdmin))
+			{
+				// If admin, exit after showing the admin-only message
+				Console.WriteLine("Returning to the main menu...");
+				return;
+			}
 
-            TableSelection tableSelection = new();
-            int[] availableTables = guests switch
-            {
-                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                5 or 6 => new int[] { 2, 3 },
-                _ => Array.Empty<int>()
-            };
-            var reservedTables = Access.Reservations
-                                        .GetAllBy<DateTime>("Date", selectedDate)
-                                        .Where(r => r?.PlaceID != null)
-                                        .Select(r => r!.PlaceID!.Value)
-                                        .ToArray();
+			// Regular process for users proceeds here
+			DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin);
 
-            int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+			List<string> options = new() { "1", "2", "3", "4", "5", "6" };
+			string banner = "How many guests will be coming?\n\n";
+			int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-            if (selectedTable == -1)
-            {
-                Console.WriteLine("Returning to the calendar...");
-                return;
-            }
+			TableSelection tableSelection = new();
+			int[] availableTables = guests switch
+			{
+				1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+				3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+				5 or 6 => new int[] { 2, 3 },
+				_ => Array.Empty<int>()
+			};
+
+			var reservedTables = Access.Reservations
+				.GetAllBy<DateTime>("Date", selectedDate)
+				.Where(r => r?.PlaceID != null)
+				.Select(r => r!.PlaceID!.Value)
+				.ToArray();
+
+			int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+
+			if (selectedTable == -1)
+			{
+				Console.WriteLine("Returning to the calendar...");
+				return;
+			}
+
 
             int reservationId;
             if (acc.ID.HasValue)
@@ -73,33 +85,34 @@ namespace Presentation
         }
 
 
-        public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
-        {
-            int[] availableTables = guests switch
-            {
-                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                5 or 6 => new int[] { 2, 3 },
-                _ => Array.Empty<int>()
-            };
+        // public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
+        // {
+        //     int[] availableTables = guests switch
+        //     {
+        //         1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+        //         3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+        //         5 or 6 => new int[] { 2, 3 },
+        //         _ => Array.Empty<int>()
+        //     };
 
-            if (availableTables.Length == 0)
-            {
-                Console.WriteLine("No available tables for this number of guests.");
-                Console.ReadKey();
-                return -1;
-            }
+        //     if (availableTables.Length == 0)
+        //     {
+        //         Console.WriteLine("No available tables for this number of guests.");
+        //         Console.ReadKey();
+        //         return -1;
+        //     }
 
-        var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
-                                                .Select(r => r.PlaceID)
-                                                .Where(rt => rt.HasValue)
-                                                .Select(rt => rt.Value)
-                                                .ToArray();
+        // var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
+        //                                         .Select(r => r.PlaceID)
+        //                                         .Where(rt => rt.HasValue)
+        //                                         .Select(rt => rt.Value)
+        //                                         .ToArray();
 
 
-            TableSelection tableSelection = new();
-            return tableSelection.SelectTable(availableTables, reservedTables);
-        }
+        //     TableSelection tableSelection = new();
+		// int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, isAdmin);
+
+        // }
 
     public static void UserOverViewReservation(UserModel acc)
     {
