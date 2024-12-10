@@ -35,7 +35,7 @@ namespace Presentation
                     Console.Clear();
                     Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
                     Console.ReadKey();
-                    continue;
+                    return;
                 }
 
                 var reservationDetails = reservations.Select(r => new
