@@ -28,13 +28,6 @@ namespace Presentation
 
             while (true)
             {
-                var key = Console.ReadKey(intercept: true);
-
-                if (key.Key == ConsoleKey.Escape)
-                {
-                    return;
-                }
-
                 var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
 
                 if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
