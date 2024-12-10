@@ -22,8 +22,9 @@ namespace Presentation
 
         private static void ViewAdmin(UserModel acc)
         {
+            int guests = 1;
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin); // creating the calender (admin calender)
+            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
 
             while (true)
             {
