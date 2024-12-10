@@ -11,8 +11,8 @@ using Presentation;
                 "view",
                 "create (admin account)",
                 "delete (accounts)",
-                "update (themes)\n",
-                "(de)activate tables",
+                "update (themes)",
+                "(de)activate tables\n",
                 "back"
             };
 
@@ -29,10 +29,10 @@ using Presentation;
                     case "delete (accounts)":
                         DeleteAccount.ShowDeleteAccountMenu();
                         break;
-                    case "update (themes)\n":
+                    case "update (themes)":
                         ThemeView.ThemedEditing();
                         break;
-                    case "(de)activate tables":
+                    case "(de)activate tables\n":
                         AdminTableControlPresent.Show();
 
                         break;
