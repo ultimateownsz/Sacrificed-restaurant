@@ -41,7 +41,9 @@ public static class InputHelper
             {
                 return result;
             }
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Invalid input: {error}");
+            Console.ResetColor();
         }
     }
 
@@ -58,7 +60,7 @@ public static class InputHelper
             if (keyInfo.Key == ConsoleKey.Escape)
             {
                 // throw new OperationCanceledException("Escape key pressed. User canceled input.");
-                return null;
+                return null;  // escape key detected
             }
 
             if (keyInfo.Key == ConsoleKey.Enter)
