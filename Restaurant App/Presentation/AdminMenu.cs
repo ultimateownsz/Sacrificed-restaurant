@@ -5,16 +5,17 @@ static class AdminMenu
 {
     public static void AdminStart()
     {
-
-        List<string> options = [
+        List<string> options = new()
+        {
             "view",
             "create (admin account)",
             "delete (accounts)",
             "update (themes)\n",
+            // "(de)activate tables",
             "back"
-            ];
+        };
 
-        while (true) 
+        while (true)
         {
             switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
             {
@@ -30,6 +31,10 @@ static class AdminMenu
                 case "update (themes)\n":
                     ThemeView.ThemedEditing();
                     break;
+                // case "(de)activate tables":
+                //     DateTime selectedDate = CalendarPresent.Show(DateTime.Now, true);
+                //     AdminTableControlPresent.Show(selectedDate);
+                //     break;
                 case "back":
                     return;
             }

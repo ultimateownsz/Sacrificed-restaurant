@@ -341,7 +341,7 @@ namespace Presentation
             const int requiredHeight = 30; // Example height
 
             // Try to maximize the console window
-            MaximizeConsoleWindow();
+            // MaximizeConsoleWindow();
 
             while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
             {
