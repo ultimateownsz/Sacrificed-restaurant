@@ -54,7 +54,7 @@ namespace Project.Presentation
                     {
                         Console.WriteLine("Account deleted successfully.");
                         Console.WriteLine("Press any key to refresh...");
-                        Console.ReadKey(); // Pause for feedback
+                        // Console.ReadKey(); // Pause for feedback
 
                         break; // Refresh list after deletion
                     }
