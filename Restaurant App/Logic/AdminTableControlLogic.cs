@@ -70,9 +70,6 @@ namespace Project.Logic
                 while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
             }
         }
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
         public static bool ToggleTableActiveState(int tableID)
         {
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);
