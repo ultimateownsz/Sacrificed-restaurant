@@ -18,24 +18,24 @@ namespace Project
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -1);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -1);
                         break;
                     case ConsoleKey.RightArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 1);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 1);
                         break;
                     case ConsoleKey.UpArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: -7);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -7);
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, direction: 7);
+                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
                         break;
                     case ConsoleKey.P: // Previous month
                         currentDate = currentDate.AddMonths(-1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
+                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, 1); // Start at the first available day
                         break;
                     case ConsoleKey.N: // Next month
                         currentDate = currentDate.AddMonths(1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, direction: 1); // Start at the first available day
+                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, 1); // Start at the first available day
                         break;
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
@@ -47,47 +47,6 @@ namespace Project
                 }
             }
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
-        }
-
-        private static int NavigateToAvailableDay(DateTime currentDate, int startDay, bool isAdmin, int direction)
-        {
-            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-            int day = startDay;
-
-            // Loop to find the next available day
-            while (true)
-            {
-                day += direction;
-
-                // Wrap around to the next/previous month if out of bounds
-                if (day < 1 || day > daysInMonth)
-                {
-                    return startDay; // Redirect to the current day if no valid day is found
-                }
-
-                // Check if the current date is selectable
-                DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
-                if (IsDaySelectable(dateToCheck, isAdmin))
-                {
-                    return day; // Found a valid day
-                    
-                }
-            }
-        }
-
-
-        private static bool IsDaySelectable(DateTime dateToCheck, bool isAdmin)
-        {
-            DateTime today = DateTime.Today;
-
-            // Non-admin users cannot select past days
-            if (!isAdmin && dateToCheck < today)
-            {
-                return false;
-            }
-
-            // Check if there are available tables on this day
-            return HasAvailableTables(dateToCheck);
         }
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
@@ -147,8 +106,50 @@ namespace Project
             Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
         }
 
+
+        private static int NavigateToAvailableDay(DateTime currentDate, int startDay, bool isAdmin, int guests, int direction)
+        {
+            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+            int day = startDay;
+
+            // Loop to find the next available day
+            while (true)
+            {
+                day += direction;
+
+                // Wrap around to the next/previous month if out of bounds
+                if (day < 1 || day > daysInMonth)
+                {
+                    return startDay; // Redirect to the current day if no valid day is found
+                }
+
+                // Check if the current date is selectable
+                DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
+                if (IsDaySelectable(dateToCheck, isAdmin, guests))
+                {
+                    return day; // Found a valid day
+                }
+            }
+        }
+
+        private static bool IsDaySelectable(DateTime dateToCheck, bool isAdmin, int guests)
+        {
+            DateTime today = DateTime.Today;
+
+            // Non-admin users cannot select past days
+            if (!isAdmin && dateToCheck < today)
+            {
+                return false;
+            }
+
+            // Check if there are available tables for the selected guest count on this day
+            return HasAvailableTablesForGuests(dateToCheck, guests);
+        }
+
+
         private static bool HasAvailableTablesForGuests(DateTime date, int guests)
         {
+            // Get the tables suitable for the given guest count
             var availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -157,35 +158,25 @@ namespace Project
                 _ => Array.Empty<int>()
             };
 
+            // Fetch all active tables
+            var activeTables = Access.Places.Read()
+                .Where(p => p.Active == 1)
+                .Select(p => p.ID.Value)
+                .ToHashSet();
+
+            // Get all reserved tables for the specified date
             var reservedTables = Access.Reservations
                 .GetAllBy<DateTime>("Date", date)
                 .Where(r => r?.PlaceID != null)
                 .Select(r => r!.PlaceID!.Value)
                 .ToHashSet();
 
-            // Check if any table is available for the given guest count
-            return availableTables.Except(reservedTables).Any();
-        }
-        
-        private static bool HasAvailableTables(DateTime date)
-        {
-            var allTables = Enumerable.Range(1, 15); // Assuming 15 tables
-            var reservedTables = Access.Reservations
-                                    .GetAllBy<DateTime>("Date", date)
-                                    .Where(r => r?.PlaceID != null)
-                                    .Select(r => r!.PlaceID!.Value)
-                                    .ToHashSet();
-
-            return allTables.Except(reservedTables).Any(); // Returns true if any tables are still available
+            // Check if any tables are both active and available for the given guest count
+            return availableTables
+                .Intersect(activeTables)
+                .Except(reservedTables)
+                .Any();
         }
 
-        private static bool IsDayUnavailable(DateTime currentDate, int day, bool isAdmin)
-        {
-            DateTime targetDate = new DateTime(currentDate.Year, currentDate.Month, day);
-            bool isInPast = !isAdmin && targetDate < DateTime.Now.Date;
-            bool hasNoAvailableTables = !HasAvailableTables(targetDate);
-
-            return isInPast || hasNoAvailableTables;
-        }
     }
 }
