@@ -14,6 +14,8 @@ namespace Project.Logic
             if (!reservations.Any())
             {
                 Console.WriteLine($"No reservations found for table {tableID}.");
+                Console.WriteLine("Press Enter to continue...");
+                while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
                 return;
             }
 
@@ -25,15 +27,21 @@ namespace Project.Logic
                 var currentTable = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);
                 if (currentTable == null) continue;
 
-                var replacementTable = Access.Places.Read()
-                    .Where(p => p.Capacity == currentTable.Capacity && p.Active == 1 && p.ID != tableID)
+                var availableTables = Access.Places.Read()
+                    .Where(p => p.Active == 1 && p.ID != tableID) // Active and not the current table
+                    .ToList();
+
+                var replacementTable = availableTables
+                    .Where(p => p.Capacity == currentTable.Capacity &&
+                                !Access.Reservations.Read().Any(r => r.PlaceID == p.ID && r.Date == reservation.Date))
                     .FirstOrDefault();
 
                 if (replacementTable == null)
                 {
                     // If no table with the same capacity is available, try larger capacity
-                    replacementTable = Access.Places.Read()
-                        .Where(p => p.Capacity > currentTable.Capacity && p.Active == 1 && p.ID != tableID)
+                    replacementTable = availableTables
+                        .Where(p => p.Capacity > currentTable.Capacity &&
+                                    !Access.Reservations.Read().Any(r => r.PlaceID == p.ID && r.Date == reservation.Date))
                         .OrderBy(p => p.Capacity) // Prefer the smallest larger table
                         .FirstOrDefault();
                 }
@@ -41,18 +49,27 @@ namespace Project.Logic
                 if (replacementTable != null)
                 {
                     // Update the reservation to use the new table
-                    Console.WriteLine($"Moving reservation ID {reservation.ID} from table {tableID} to table {replacementTable.ID}.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Reservation ID {reservation.ID} has been moved from table {tableID} to table {replacementTable.ID}.");
+                    Console.ResetColor();
                     reservation.PlaceID = replacementTable.ID;
                     Access.Reservations.Update(reservation);
                 }
                 else
                 {
                     // If no replacement table is available, cancel the reservation
-                    Console.WriteLine($"Cancelling reservation ID {reservation.ID} for table {tableID} as no replacement is available.");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Reservation ID {reservation.ID} for table {tableID} has been canceled (no replacement available).");
+                    Console.ResetColor();
                     Access.Reservations.Delete(reservation.ID);
                 }
+
+                // Wait for the admin to press Enter before proceeding
+                Console.WriteLine("Press Enter to continue...");
+                while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
             }
         }
+
         public static bool ToggleTableActiveState(int tableID)
         {
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);
