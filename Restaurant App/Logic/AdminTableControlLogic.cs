@@ -38,6 +38,7 @@ namespace Project.Logic
 
                 if (replacementTable == null)
                 {
+
                     // If no table with the same capacity is available, try larger capacity
                     replacementTable = availableTables
                         .Where(p => p.Capacity > currentTable.Capacity &&
@@ -71,8 +72,6 @@ namespace Project.Logic
         }
 
 <<<<<<< Updated upstream
-
-=======
 >>>>>>> Stashed changes
         public static bool ToggleTableActiveState(int tableID)
         {
