@@ -40,22 +40,16 @@ namespace Presentation
             throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
         }
 
-        public void ShowGrid(int[] activeTables, int[] inactiveTables)
+        public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
             tableColors.Clear(); // Clear the previous color mappings
             ClearGrid(); // Clear the grid area
-
-            // Fetch reservations for today
-            var reservations = Access.Reservations.Read()
-                .Where(r => r.Date.HasValue && r.Date.Value.Date == DateTime.Now.Date)
-                .Select(r => r.PlaceID)
-                .ToHashSet(); // Store reserved table IDs for today in a HashSet
 
             // Fetch deactivated tables
             var deactivatedTables = Access.Places.Read()
                 .Where(p => p.Active == 0)
                 .Select(p => p.ID.Value)
-                .ToHashSet();
+                .ToHashSet(); // Store deactivated table IDs in a HashSet for fast lookup
 
             for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
@@ -72,18 +66,17 @@ namespace Presentation
                         {
                             tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables
                         }
-                        else if (reservations.Contains(tableNumber))
+                        else if (Array.Exists(reservedTables, table => table == tableNumber))
                         {
                             tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
                         }
-                        else if (Array.Exists(activeTables, table => table == tableNumber) &&
-                                !reservations.Contains(tableNumber)) // Ensure table is active and not reserved
+                        else if (Array.Exists(availableTables, table => table == tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Available for the day
+                            tableColors[tableNumber] = ConsoleColor.Green; // Available tables
                         }
                         else
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Default to red for unfit or unavailable tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Unusable tables
                         }
 
                         // Draw table with assigned color
@@ -102,9 +95,8 @@ namespace Presentation
 
             // Automatically find table 1 and place the "X" on it
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
-            HighlightNumber(activeTables, inactiveTables); // Highlight the selected table
+            HighlightNumber(availableTables, reservedTables); // Highlight the selected table
         }
-
 
 
 
