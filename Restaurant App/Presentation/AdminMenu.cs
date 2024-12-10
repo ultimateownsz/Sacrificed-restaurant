@@ -4,7 +4,7 @@ using Presentation;
 
 static class AdminMenu
 {
-    public static void AdminStart()
+    public static void AdminStart(UserModel acc)
     {
         List<string> options = new()
         {
@@ -21,7 +21,7 @@ static class AdminMenu
             switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
             {
                 case "edit reservations":
-                    ShowReservations.Show();
+                    ShowReservations.Show(acc);
                     break;
                 case "create (admin account)":
                     RegisterUser.CreateAccount(true);

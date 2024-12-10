@@ -44,7 +44,14 @@ namespace Project
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
                     case ConsoleKey.Q: // Quit
-                        Menu.ShowUserMenu(acc); // Pass acc to ShowUserMenu
+                        if (acc.Admin == 1)
+                        {
+                            AdminMenu.AdminStart(acc); // Pass acc to admin menu (if user is admin)
+                        }
+                        else
+                        {
+                            Menu.ShowUserMenu(acc); // Pass acc to ShowUserMenu
+                        }
                         return DateTime.MinValue; // Return an invalid date to indicate cancellation
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
