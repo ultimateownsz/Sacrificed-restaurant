@@ -46,6 +46,12 @@ namespace Presentation
                         Console.Clear();
                         Console.WriteLine($"Table {selectedTable} state toggled successfully.");
 
+                        if (Access.Places.Read().FirstOrDefault(p => p.ID == selectedTable)?.Active == 0)
+                        {
+                            // Handle reservations when a table is deactivated
+                            AdminTableControlLogic.HandleDeactivatedTable(selectedTable);
+                        }
+
                         // Update active and inactive tables
                         activeTables = Access.Places.Read()
                             .Where(p => p.Active == 1)
