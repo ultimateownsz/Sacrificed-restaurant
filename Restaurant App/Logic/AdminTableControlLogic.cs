@@ -14,12 +14,14 @@ namespace Project.Logic
             if (!reservations.Any())
             {
                 Console.WriteLine($"No reservations found for table {tableID}.");
-                Console.WriteLine("Press Enter to continue...");
+                Console.WriteLine("Press Enter to return...");
                 while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
                 return;
             }
 
             Console.WriteLine($"Handling reservations for deactivated table {tableID}:");
+
+            List<string> updates = new List<string>(); // Collect updates here
 
             foreach (var reservation in reservations)
             {
@@ -38,7 +40,6 @@ namespace Project.Logic
 
                 if (replacementTable == null)
                 {
-
                     // If no table with the same capacity is available, try larger capacity
                     replacementTable = availableTables
                         .Where(p => p.Capacity > currentTable.Capacity &&
@@ -50,26 +51,31 @@ namespace Project.Logic
                 if (replacementTable != null)
                 {
                     // Update the reservation to use the new table
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Reservation ID {reservation.ID} has been moved from table {tableID} to table {replacementTable.ID}.");
-                    Console.ResetColor();
+                    updates.Add($"Reservation ID {reservation.ID} has been moved from table {tableID} to table {replacementTable.ID}.");
                     reservation.PlaceID = replacementTable.ID;
                     Access.Reservations.Update(reservation);
                 }
                 else
                 {
                     // If no replacement table is available, cancel the reservation
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Reservation ID {reservation.ID} for table {tableID} has been canceled (no replacement available).");
-                    Console.ResetColor();
+                    updates.Add($"Reservation ID {reservation.ID} for table {tableID} has been canceled (no replacement available).");
                     Access.Reservations.Delete(reservation.ID);
                 }
-
-                // Wait for the admin to press Enter before proceeding
-                Console.WriteLine("Press Enter to continue...");
-                while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
             }
+
+            // Print all updates at once
+            Console.ForegroundColor = ConsoleColor.Green;
+            foreach (var update in updates)
+            {
+                Console.WriteLine(update);
+            }
+            Console.ResetColor();
+
+            // Wait for Enter to be pressed before returning
+            Console.WriteLine("Press Enter to return...");
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
         }
+
         public static bool ToggleTableActiveState(int tableID)
         {
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableID);
