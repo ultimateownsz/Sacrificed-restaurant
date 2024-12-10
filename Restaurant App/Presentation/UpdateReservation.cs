@@ -82,7 +82,7 @@ public static class UpdateReservation
             switch (SelectionPresent.Show(["Yes", "No"], confirmUpdate).text)
             {
                 case "Yes":
-                    switch (SelectionPresent.Show(["Date", "Table number", "Cancel"], confirmChoice).text)
+                    switch (SelectionPresent.Show(["Date", "Table number", "Number of guests", "Cancel"], confirmChoice).text)
                     {
                         case "Date":
                             Console.Clear();
@@ -99,13 +99,12 @@ public static class UpdateReservation
                             Console.ReadKey();
                             break;
                         // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
-                        // case "Number of guests":
-                        //     Console.Clear();
-                        //     UdpateReservationAmount(reservation);
-                        //     Console.WriteLine("\nProcess ended successfully.");
-                        //     Console.WriteLine("Press any key to return.");
-                        //     Console.ReadKey();
-                        //     break;
+                        case "Number of guests":
+                            Console.Clear();
+                            Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
+                            Console.WriteLine("Press any key to return.");
+                            Console.ReadKey();
+                            break;
                         case "Cancel":
                             return;
                     }
