@@ -63,7 +63,7 @@ namespace Presentation
                         ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
                     }
                 }
-            } // TODO: Add a escape key
+            }
         }
 
         private static void ViewUser(UserModel acc)
@@ -124,8 +124,8 @@ namespace Presentation
 
                     if (selectedResModel != null)
                     {
-                        Console.WriteLine($"You selected the reservation {selectedReservations}\n");
-                        switch (SelectionPresent.Show(new List<string> { "Update Reservation" }).text)
+                        var banner = $"You selected the {selectedReservations}\n\n";
+                        switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
                         {
                             case "Update Reservation":
                                 UpdateReservation.Show(selectedResModel, false);
