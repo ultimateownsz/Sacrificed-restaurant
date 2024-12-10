@@ -11,7 +11,6 @@ namespace Presentation
             Console.Clear();
             Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
             Console.WriteLine("Press Esc to return to the admin menu.");
-            Thread.Sleep(1000);
             
             while (true)
             {
@@ -21,7 +20,6 @@ namespace Presentation
                 if (!isDisplayed)
                 {
                     Console.WriteLine("Error displaying grid.");
-                    Thread.Sleep(1000);
 
                     break;
                 }

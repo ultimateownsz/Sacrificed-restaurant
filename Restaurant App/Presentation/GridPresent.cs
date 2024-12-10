@@ -40,7 +40,6 @@ namespace Presentation
             if (isAdmin)
             {
                 Console.Clear();
-                Console.WriteLine("Admin access detected: 'Coming soon...'");
                 return true;
             }
 
