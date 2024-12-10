@@ -52,6 +52,12 @@ namespace Presentation
                 .Select(r => r.PlaceID)
                 .ToHashSet(); // Store reserved table IDs for today in a HashSet for fast lookup
 
+            // Fetch deactivated tables directly from the database
+            var deactivatedTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
+                .ToHashSet(); // Store deactivated table IDs in a HashSet for fast lookup
+
             for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
                 for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
@@ -63,7 +69,7 @@ namespace Presentation
                         x += number.Length - 1;
 
                         // Check the table's status
-                        if (inactiveTables.Contains(tableNumber))
+                        if (deactivatedTables.Contains(tableNumber))
                         {
                             tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables are red
                         }
@@ -71,7 +77,7 @@ namespace Presentation
                         {
                             tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables are red
                         }
-                        else if (activeTables.Contains(tableNumber))
+                        else if (Array.Exists(activeTables, table => table == tableNumber))
                         {
                             tableColors[tableNumber] = ConsoleColor.Green; // Active, available tables are green
                         }
@@ -97,6 +103,7 @@ namespace Presentation
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
             HighlightNumber(activeTables, inactiveTables); // Highlight the selected table
         }
+
 
 
 
