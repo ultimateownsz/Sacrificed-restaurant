@@ -8,12 +8,16 @@ namespace Project
         public static DateTime Show(DateTime initialDate, bool isAdmin, int guests)
         {
             DateTime currentDate = initialDate;
-            int selectedDay = currentDate.Day;
-            bool running = true;
 
+            // Default to the current day if selectable, otherwise find the first available day
+            int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+
+            // Immediately display the calendar
+            DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+
+            bool running = true;
             while (running)
             {
-                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
                 var key = Console.ReadKey(intercept: true);
                 switch (key.Key)
                 {
@@ -31,11 +35,11 @@ namespace Project
                         break;
                     case ConsoleKey.P: // Previous month
                         currentDate = currentDate.AddMonths(-1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, 1); // Start at the first available day
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.N: // Next month
                         currentDate = currentDate.AddMonths(1);
-                        selectedDay = NavigateToAvailableDay(currentDate, 1, isAdmin, guests, 1); // Start at the first available day
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
@@ -45,7 +49,11 @@ namespace Project
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
+
+                // Update calendar display after any key press
+                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
             }
+
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
 
@@ -79,8 +87,13 @@ namespace Project
                 // Check if the day has no available tables for the guest count
                 bool hasNoAvailableTables = !HasAvailableTablesForGuests(dateToCheck, guests);
 
-                // Apply gray for past days or fully reserved days
-                if (isPast || hasNoAvailableTables)
+                // Apply dark gray for past days
+                if (isPast)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                }
+                // Apply light gray for busy/unavailable days
+                else if (hasNoAvailableTables)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
@@ -91,6 +104,7 @@ namespace Project
                 }
                 else
                 {
+                    // Reset to the default console color
                     Console.ResetColor();
                 }
 
@@ -104,6 +118,22 @@ namespace Project
             }
 
             Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
+        }
+
+        private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
+        {
+            int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
+                if (IsDaySelectable(dateToCheck, isAdmin, guests))
+                {
+                    return day;
+                }
+            }
+
+            throw new InvalidOperationException("No available days in the current month.");
         }
 
 
