@@ -358,23 +358,23 @@ namespace Presentation
             Console.Clear();
         }
 
-        public static void MaximizeConsoleWindow()
-        {
-            const int SW_MAXIMIZE = 3;
+        // public static void MaximizeConsoleWindow()
+        // {
+        //     const int SW_MAXIMIZE = 3;
 
-            // Import Windows API functions
-            [DllImport("kernel32.dll", SetLastError = true)]
-            static extern IntPtr GetConsoleWindow();
+        //     // Import Windows API functions
+        //     [DllImport("kernel32.dll", SetLastError = true)]
+        //     static extern IntPtr GetConsoleWindow();
 
-            [DllImport("user32.dll", SetLastError = true)]
-            static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        //     [DllImport("user32.dll", SetLastError = true)]
+        //     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-            IntPtr consoleWindow = GetConsoleWindow();
-            if (consoleWindow != IntPtr.Zero)
-            {
-                ShowWindow(consoleWindow, SW_MAXIMIZE);
-            }
-        }
+        //     IntPtr consoleWindow = GetConsoleWindow();
+        //     if (consoleWindow != IntPtr.Zero)
+        //     {
+        //         ShowWindow(consoleWindow, SW_MAXIMIZE);
+        //     }
+        // }
 
         private void StopFlashing()
         {

@@ -7,7 +7,7 @@ static class Menu
 {
     static public void Start()
     {
-        TableSelection.MaximizeConsoleWindow();
+        // TableSelection.MaximizeConsoleWindow();
         while (true)
         {
             Console.Clear();
