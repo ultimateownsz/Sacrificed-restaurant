@@ -1,24 +1,26 @@
 using Project;
 using Project.Presentation;
+using Presentation;
 
 static class AdminMenu
 {
     public static void AdminStart(UserModel acc)
     {
-
-        List<string> options = [
-            "view",
+        List<string> options = new()
+        {
+            "edit reservations",
             "create (admin account)",
             "delete (accounts)",
-            "update (themes)\n",
+            "update (themes)",
+            "(de)activate tables\n",
             "back"
-            ];
+        };
 
-        while (true) 
+        while (true)
         {
-            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
+            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
             {
-                case "view":
+                case "edit reservations":
                     ShowReservations.Show(acc);
                     break;
                 case "create (admin account)":
@@ -27,8 +29,11 @@ static class AdminMenu
                 case "delete (accounts)":
                     DeleteAccount.ShowDeleteAccountMenu();
                     break;
-                case "update (themes)\n":
+                case "update (themes)":
                     ThemeView.ThemedEditing();
+                    break;
+                case "(de)activate tables\n":
+                    AdminTableControlPresent.Show();
                     break;
                 case "back":
                     return;
