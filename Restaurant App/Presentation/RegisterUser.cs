@@ -39,12 +39,6 @@ internal class RegisterUser
 
         ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
         });
-        // }
-        // catch (OperationCanceledException)
-        // {
-        //     Console.WriteLine("\nReturning to the previous menu...");
-        //     return;
-        // }
     }
 
     private static void ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
