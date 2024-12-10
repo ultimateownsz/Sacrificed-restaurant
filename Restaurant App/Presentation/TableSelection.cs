@@ -1,14 +1,12 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Presentation
 {
     public class TableSelection
     {        
-        private int previousX = -1;
-        private int previousY = -1;
-
         private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
-        private int cursorX = 3, cursorY = 6; // Start at table "1"
+        private int cursorX, cursorY;
         private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
         private char[,] grid = {
             {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',},
@@ -51,6 +49,24 @@ namespace Presentation
                 Console.Write(new string(' ', grid.GetLength(1))); // Clear the entire row
             }
             Console.SetCursorPosition(0, 0); // Reset cursor to the top
+        }
+
+        private (int x, int y) FindTableCoordinates(int tableNumber)
+        {
+            // Iterate through the grid to locate the given table number
+            for (int y = 0; y < grid.GetLength(0); y++)
+            {
+                for (int x = 0; x < grid.GetLength(1); x++)
+                {
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
+                    {
+                        return (x, y); // Return the coordinates of the table
+                    }
+                }
+            }
+
+            throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
         }
 
         public void ShowGrid(int[] availableTables, int[] reservedTables)
@@ -96,6 +112,8 @@ namespace Presentation
                 }
             }
 
+            // Automatically find table 1 and place the "X" on it
+            (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
             HighlightNumber(availableTables, reservedTables); // Highlight the selected table
         }
 
@@ -192,28 +210,6 @@ namespace Presentation
         }
 
 
-
-
-
-
-        private void RemoveHighlight(int x, int y)
-        {
-            string oldNumber = GetNumberAt(x, y);
-
-            if (!string.IsNullOrEmpty(oldNumber))
-            {
-                int oldTable = int.Parse(oldNumber);
-
-                // Restore the table number
-                Console.SetCursorPosition(x, y);
-                Console.ResetColor();
-                Console.Write(oldTable.ToString().PadRight(2)); // Properly clear for double digits
-            }
-        }
-
-
-
-
         private string GetNumberAt(int x, int y)
         {
             if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
@@ -244,7 +240,6 @@ namespace Presentation
 
             return false;
         }
-
 
 
         private (int, int) FindNextNumberInRow(int startX, int startY, int direction)
@@ -375,6 +370,9 @@ namespace Presentation
             const int requiredWidth = 80; // Example width
             const int requiredHeight = 30; // Example height
 
+            // Try to maximize the console window
+            MaximizeConsoleWindow();
+
             while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
             {
                 Console.Clear();
@@ -388,6 +386,24 @@ namespace Presentation
             }
 
             Console.Clear();
+        }
+
+        public static void MaximizeConsoleWindow()
+        {
+            const int SW_MAXIMIZE = 3;
+
+            // Import Windows API functions
+            [DllImport("kernel32.dll", SetLastError = true)]
+            static extern IntPtr GetConsoleWindow();
+
+            [DllImport("user32.dll", SetLastError = true)]
+            static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+            IntPtr consoleWindow = GetConsoleWindow();
+            if (consoleWindow != IntPtr.Zero)
+            {
+                ShowWindow(consoleWindow, SW_MAXIMIZE);
+            }
         }
 
         private void StopFlashing()
