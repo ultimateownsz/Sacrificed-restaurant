@@ -28,6 +28,13 @@ namespace Presentation
 
             while (true)
             {
+                var key = Console.ReadKey(intercept: true);
+
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    return;
+                }
+
                 var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
 
                 if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
@@ -47,7 +54,13 @@ namespace Presentation
                 }).ToList();  // selecting info from reservation that are needed
 
                 var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
+                reservationOptions.Add("Back");
                 var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
+
+                if (selectedReservation == "Back")
+                {
+                    return;
+                }
 
                 if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
                 {
