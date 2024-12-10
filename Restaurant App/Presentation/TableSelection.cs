@@ -461,10 +461,21 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
-                            if (!Array.Exists(availableTables, table => table == tableNumber) ||
-                                Array.Exists(reservedTables, table => table == tableNumber))
+                            // Check if the table is deactivated
+                            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
+                            if (table != null && table.Active == 0)
                             {
-                                // Display the error message
+                                Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Table {tableNumber} is unavailable. It is deactivated.");
+                                Console.ResetColor();
+                                continue; // Retry selection
+                            }
+
+                            if (!Array.Exists(availableTables, t => t == tableNumber) ||
+                                Array.Exists(reservedTables, t => t == tableNumber))
+                            {
+                                // Display the error message for unavailable or reserved tables
                                 Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
@@ -509,6 +520,7 @@ namespace Presentation
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
+
 
     }
 }
