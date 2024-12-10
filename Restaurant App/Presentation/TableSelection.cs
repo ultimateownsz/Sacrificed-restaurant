@@ -67,16 +67,24 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // **Prioritize Coloring Logic:**
-                        if (deactivatedTables.Contains(tableNumber) || reservations.Contains(tableNumber) || !Array.Exists(activeTables, table => table == tableNumber))
+                        // Coloring Logic
+                        if (deactivatedTables.Contains(tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Mark table as red for any unavailability
+                            tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables
+                        }
+                        else if (reservations.Contains(tableNumber))
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
+                        }
+                        else if (Array.Exists(activeTables, table => table == tableNumber) &&
+                                !reservations.Contains(tableNumber)) // Ensure table is active and not reserved
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Green; // Available for the day
                         }
                         else
                         {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Mark table as green only if available
+                            tableColors[tableNumber] = ConsoleColor.Red; // Default to red for unfit or unavailable tables
                         }
-
 
                         // Draw table with assigned color
                         Console.SetCursorPosition(x - (number.Length - 1), y);
@@ -96,6 +104,8 @@ namespace Presentation
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
             HighlightNumber(activeTables, inactiveTables); // Highlight the selected table
         }
+
+
 
 
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor, int[] availableTables, int[] reservedTables)
