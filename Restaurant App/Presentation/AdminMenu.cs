@@ -2,43 +2,42 @@ using Project;
 using Project.Presentation;
 using Presentation;
 
-    static class AdminMenu
+static class AdminMenu
+{
+    public static void AdminStart()
     {
-        public static void AdminStart()
+        List<string> options = new()
         {
-            List<string> options = new()
-            {
-                "view",
-                "create (admin account)",
-                "delete (accounts)",
-                "update (themes)",
-                "(de)activate tables\n",
-                "back"
-            };
+            "edit reservations",
+            "create (admin account)",
+            "delete (accounts)",
+            "update (themes)",
+            "(de)activate tables\n",
+            "back"
+        };
 
-            while (true)
+        while (true)
+        {
+            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
             {
-                switch (SelectionPresent.Show(options, "ADMIN MENU\n\n(reservations)\n").text)
-                {
-                    case "view":
-                        ShowReservations.Show();
-                        break;
-                    case "create (admin account)":
-                        RegisterUser.CreateAccount(true);
-                        break;
-                    case "delete (accounts)":
-                        DeleteAccount.ShowDeleteAccountMenu();
-                        break;
-                    case "update (themes)":
-                        ThemeView.ThemedEditing();
-                        break;
-                    case "(de)activate tables\n":
-                        AdminTableControlPresent.Show();
-
-                        break;
-                    case "back":
-                        return;
-                }
+                case "edit reservations":
+                    ShowReservations.Show();
+                    break;
+                case "create (admin account)":
+                    RegisterUser.CreateAccount(true);
+                    break;
+                case "delete (accounts)":
+                    DeleteAccount.ShowDeleteAccountMenu();
+                    break;
+                case "update (themes)":
+                    ThemeView.ThemedEditing();
+                    break;
+                case "(de)activate tables\n":
+                    AdminTableControlPresent.Show();
+                    break;
+                case "back":
+                    return;
             }
         }
     }
+}
