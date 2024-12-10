@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Project;
 
 namespace Presentation
 {
@@ -39,7 +40,7 @@ namespace Presentation
             throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
         }
 
-        public void ShowGrid(int[] availableTables, int[] reservedTables)
+        public void ShowGrid(int[] activeTables, int[] inactiveTables)
         {
             tableColors.Clear(); // Clear the previous color mappings
 
@@ -55,18 +56,19 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // Set table colors and store them in the dictionary
-                        if (Array.Exists(reservedTables, table => table == tableNumber))
+                        // Check if the table is active or inactive in the database
+                        var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
+                        if (table != null && table.Active == 0)
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Inactive tables are red
                         }
-                        else if (Array.Exists(availableTables, table => table == tableNumber))
+                        else if (Array.Exists(activeTables, t => t == tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Available tables
+                            tableColors[tableNumber] = ConsoleColor.Green; // Active tables are green
                         }
                         else
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Unusable tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Default to red for any other case
                         }
 
                         Console.SetCursorPosition(x - (number.Length - 1), y);
@@ -84,7 +86,7 @@ namespace Presentation
 
             // Automatically find table 1 and place the "X" on it
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
-            HighlightNumber(availableTables, reservedTables); // Highlight the selected table
+            HighlightNumber(activeTables, inactiveTables); // Highlight the selected table
         }
 
 
@@ -138,9 +140,7 @@ namespace Presentation
         }
 
 
-
-
-        private void HighlightNumber(int[] availableTables, int[] reservedTables)
+        private void HighlightNumber(int[] activeTables, int[] reservedTables)
         {
             // Cancel the previous flashing task
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
@@ -157,27 +157,46 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Determine the color of the table
-                ConsoleColor tableColor;
+                // Check if the table is active or inactive in the database
+                var table = Access.Places.Read().FirstOrDefault(p => p.ID == currentTable); 
+                if (table == null)
+                {
+                    // If the table doesn't exist in the database, default to red
+                    ConsoleColor tableColor = ConsoleColor.Red;
+                    _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, activeTables, reservedTables);
+                    return;
+                }
+
+                if (table.Active == 0)
+                {
+                    // Inactive tables are always red
+                    ConsoleColor tableColor = ConsoleColor.Red;
+                    _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, activeTables, reservedTables);
+                    return; // Skip further checks for inactive tables
+                }
+
+                // Determine the color of the table based on its reservation status
+                ConsoleColor color;
                 if (Array.Exists(reservedTables, table => table == currentTable))
                 {
-                    tableColor = ConsoleColor.Red; // Reserved tables stay red
+                    color = ConsoleColor.Red; // Reserved tables stay red
                 }
-                else if (Array.Exists(availableTables, table => table == currentTable))
+                else if (Array.Exists(activeTables, table => table == currentTable))
                 {
-                    tableColor = ConsoleColor.Green; // Available tables are green
+                    color = ConsoleColor.Green; // Active tables are green
                 }
                 else
                 {
-                    tableColor = ConsoleColor.Red; // Default to red for any other case
+                    color = ConsoleColor.Red; // Default to red for any other case
                 }
 
                 // Start the flashing task for the current table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, availableTables, reservedTables);
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, color, activeTables, reservedTables);
             }
 
             Console.ResetColor();
         }
+
 
 
         private string GetNumberAt(int x, int y)
