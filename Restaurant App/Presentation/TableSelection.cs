@@ -68,22 +68,15 @@ namespace Presentation
                         x += number.Length - 1;
 
                         // **Prioritize Coloring Logic:**
-                        if (deactivatedTables.Contains(tableNumber))
+                        if (deactivatedTables.Contains(tableNumber) || reservations.Contains(tableNumber) || !Array.Exists(activeTables, table => table == tableNumber))
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables
-                        }
-                        else if (reservations.Contains(tableNumber))
-                        {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
-                        }
-                        else if (Array.Exists(activeTables, table => table == tableNumber))
-                        {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Available and active tables
+                            tableColors[tableNumber] = ConsoleColor.Red; // Mark table as red for any unavailability
                         }
                         else
                         {
-                            tableColors[tableNumber] = ConsoleColor.Red; // Default to red for unfit tables
+                            tableColors[tableNumber] = ConsoleColor.Green; // Mark table as green only if available
                         }
+
 
                         // Draw table with assigned color
                         Console.SetCursorPosition(x - (number.Length - 1), y);
