@@ -41,7 +41,7 @@ namespace Presentation
             {
                 Console.Clear();
                 Console.WriteLine("Admin access detected: 'Coming soon...'");
-                return false;
+                return true;
             }
 
             Console.Clear();
