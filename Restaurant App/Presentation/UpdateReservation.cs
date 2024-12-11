@@ -52,14 +52,14 @@ public static class UpdateReservation
                         case "Date":
                             Console.Clear();
                             UpdateReservationDate(reservation);
-                            Console.WriteLine("\nProcess ended successfully.");
+                            Console.WriteLine("\nDate process ended successfully.");
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
                         case "Table number":
                             Console.Clear();
                             UpdateTableID(reservation);
-                            Console.WriteLine("\nProcess ended successfully.");
+                            Console.WriteLine("\nTable number process ended successfully.");
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
@@ -87,14 +87,14 @@ public static class UpdateReservation
                         case "Date":
                             Console.Clear();
                             UpdateReservationDate(reservation);
-                            Console.WriteLine("\nProcess ended successfully.");
+                            Console.WriteLine("\nDate process ended successfully.");
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
                         case "Table number":
                             Console.Clear();
                             UpdateTableID(reservation);
-                            Console.WriteLine("\nProcess ended successfully.");
+                            Console.WriteLine("\nTable number process ended successfully.");
                             Console.WriteLine("Press any key to return.");
                             Console.ReadKey();
                             break;
