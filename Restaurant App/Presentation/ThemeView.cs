@@ -16,15 +16,18 @@ static class ThemeView
             // Down here the selection menu for the months is done, rn u cant choose the current month
             string banner = $"Year: {year}\nSelect a month to edit the theme\n\n";            
             List<string> options = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthThemeName(m, year)).ToList();
+            options.Add("Exit");
             int month;
             do
             {
                 month = 1 + SelectionPresent.Show(options, banner, false).index;
-
-                if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
+                if(month == 13)
+                {
+                    return;
+                }
+                else if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
                 {
                     Console.WriteLine("Invalid input. Please enter a month that is not in the past or the current month.");
-                    Console.ReadKey();
                 }
             } while (DateTime.Now.Month >= month && DateTime.Now.Year == year);
 

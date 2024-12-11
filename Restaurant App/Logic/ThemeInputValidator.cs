@@ -51,8 +51,8 @@ public static class ThemeInputValidator
         {
             Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes. However, you can still view months in 2024 with themes that were already made in the past.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Enter year (or press ESC to exit): ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
 
