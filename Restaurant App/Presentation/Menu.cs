@@ -7,7 +7,7 @@ static class Menu
 {
     static public void Start()
     {
-        TableSelection.MaximizeConsoleWindow();
+        // TableSelection.MaximizeConsoleWindow();
         while (true)
         {
             Console.Clear();
@@ -42,7 +42,7 @@ static class Menu
             Console.Clear();
             switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
             {
-                case "reserve":
+                case "Make a reservation":
                     // Directly call MakingReservation without calendar in Menu
                     MakingReservations.MakingReservation(acc);
                     break;
