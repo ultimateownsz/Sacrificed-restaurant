@@ -6,30 +6,36 @@ public static class DeleteReservation
     // Method to show the delete reservation interface and process the deletion
     public static void Show(ReservationModel reservation)
     {
-        bool isVaild = false;
-        while (!isVaild)
+        while (true)
         {
-            // Confirm with the user if they are sure about deleting the reservation
+            // Clear the console and display the confirmation menu
             Console.Clear();
             var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
-            string confirm_info = $"Are you sure you want to delete the reservation for {GetUserFullName(account?.ID)}?\n\n";
+            string userFullName = GetUserFullName(account?.ID);
+            Console.WriteLine($"Are you sure?");
 
-            switch(SelectionPresent.Show(["Yes", "No"], confirm_info).text)
+            // Use SelectionPresent to show Yes/No options
+            var selectedOption = SelectionPresent.Show(
+                new List<string> { "Yes", "No" },
+                "Delete Reservation\n\nAre you sure?\n"
+            ).text;
+
+            if (selectedOption == "Yes")
             {
-                case "Yes":
-                    // Attempt to delete the specific reservation
-                    Access.Reservations.Delete(reservation.ID);
-                    Console.WriteLine("Reservation deleted successfully.");
-                    isVaild = true; // Exits the confirmation loop
-                    break;
-
-                case "No":
-                    Console.WriteLine("Reservation deletion cancelled.");
-                    isVaild = true; // Exits the confirmation loop
-                    break;
+                // Attempt to delete the specific reservation
+                Access.Reservations.Delete(reservation.ID);
+                Console.WriteLine("Reservation deleted successfully.");
+                Console.WriteLine("Press any key to return to the reservation list.");
+                Console.ReadKey();
+                return; // Exit after successful deletion
             }
-        // Wait for user input before going back to the reservation list
-        Console.WriteLine("Press any key to return to the reservation list.");
+            else if (selectedOption == "No")
+            {
+                Console.WriteLine("Reservation deletion cancelled.");
+                Console.WriteLine("Press any key to return to the reservation list.");
+                Console.ReadKey();
+                return; // Exit back to the reservation list
+            }
         }
     }
 
