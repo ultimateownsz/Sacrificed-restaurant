@@ -68,7 +68,7 @@ namespace Presentation
             var orders = TakeOrders(selectedDate, acc, reservationId, guests);
             if (orders.Count > 0)
             {
-                PrintReceipt(orders, reservationId);
+                PrintReceipt(orders, reservationId, acc);
 
                 // Prompt the user to press Enter to return to the menu
                 Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
@@ -274,11 +274,28 @@ namespace Presentation
 
 
 
-        public static void PrintReceipt(List<ProductModel> orders, int reservationId)
+        public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
+
+            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID);
+
+            if (reservations != null && reservations.Any(r => r != null))
+            {
+                var reservation = reservations.Where(r => r != null).OrderByDescending(r => r.Date).FirstOrDefault();
+
+                if (reservation != null)
+                {
+                Console.WriteLine("----------------------------");
+                Console.WriteLine($"Name of the reservator:   {GetUserFullName(reservation.UserID)}");
+                Console.WriteLine($"Reservation Date:         {reservation.Date}");
+                Console.WriteLine($"Table ID:                 {reservation.PlaceID}");
+                Console.WriteLine("----------------------------");
+                // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
+                }
+            }
 
             foreach (var product in orders)
             {
@@ -289,9 +306,19 @@ namespace Presentation
             }
 
             Console.WriteLine("----------------------------");
+            Console.WriteLine($"");
             Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
-            Console.WriteLine($"Reservation ID:        {reservationId}");
             Console.WriteLine("============================");
+        }
+
+        private static string GetUserFullName(int? userID)
+        {
+            var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
+            if (account != null)
+            {
+                return $"{account.FirstName} {account.LastName}";
+            }
+            return "Unknown User"; // Fallback in case no account is found
         }
     }
 }
