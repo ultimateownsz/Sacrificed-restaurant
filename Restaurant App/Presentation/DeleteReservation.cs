@@ -6,26 +6,37 @@ public static class DeleteReservation
     // Method to show the delete reservation interface and process the deletion
     public static void Show(ReservationModel reservation)
     {
-        // Confirm with the user if they are sure about deleting the reservation
-        Console.Clear();
-        var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
-        Console.WriteLine($"Are you sure you want to delete the reservation for {GetUserFullName(account?.ID)}? (Y/N)");
-
-        string confirm = Console.ReadLine().ToLower();
-
-        if (confirm == "y")
+        while (true)
         {
-            // Attempt to delete the specific reservation
-            Access.Reservations.Delete(reservation.ID);
-            Console.WriteLine("Reservation deleted successfully.");
-        } 
-        else
-        {
-            Console.WriteLine("Reservation deletion cancelled.");
+            // Clear the console and display the confirmation menu
+            Console.Clear();
+            var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
+            string userFullName = GetUserFullName(account?.ID);
+            Console.WriteLine($"Are you sure?");
+
+            // Use SelectionPresent to show Yes/No options
+            var selectedOption = SelectionPresent.Show(
+                new List<string> { "Yes", "No" },
+                "Delete Reservation\n\nChoose an action:\n"
+            ).text;
+
+            if (selectedOption == "Yes")
+            {
+                // Attempt to delete the specific reservation
+                Access.Reservations.Delete(reservation.ID);
+                Console.WriteLine("Reservation deleted successfully.");
+                Console.WriteLine("Press any key to return to the reservation list.");
+                Console.ReadKey();
+                return; // Exit after successful deletion
+            }
+            else if (selectedOption == "No")
+            {
+                Console.WriteLine("Reservation deletion cancelled.");
+                Console.WriteLine("Press any key to return to the reservation list.");
+                Console.ReadKey();
+                return; // Exit back to the reservation list
+            }
         }
-
-        // Wait for user input before going back to the reservation list
-        Console.WriteLine("Press any key to return to the reservation list.");
     }
 
     // Helper method to get user full name based on UserID
