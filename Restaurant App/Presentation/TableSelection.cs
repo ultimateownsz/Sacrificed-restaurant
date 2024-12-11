@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Project;
 
 namespace Presentation
 {
@@ -8,45 +9,15 @@ namespace Presentation
         private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
         private int cursorX, cursorY;
         private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
-        private char[,] grid = {
-            {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',},
-            {'|',' ',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B','A','R',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','1',' ','|',' ',' ',' ',' ',' ','C','|',' ',' ',' ','2',' ',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ',' ',' ','3',' ',' ',' ','|','ↄ',' ',' ',' ',' ',' ','|',' ','4',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','-','-','-','+',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
-            {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'÷',' ',' ','5',' ','|',' ',' ',' ',' ',' ',' ',' ','C','|',' ','6',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','7',' ',' ','|','ↄ',' ',' ',' ',' ',' ',' ','|',' ','8',' ',' ','÷',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
-            {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'÷',' ',' ','9',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','0',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ','1','1',' ','÷',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
-            {'|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',},
-            {'|',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','∩',' ',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ','1','2',' ','|',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','3',' ','|','ↄ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','C','|',' ','1','4',' ','|','ↄ',' ',' ',' ',' ',' ',' ','|',' ','1','5',' ','|',},
-            {'|','+','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','-','+',' ',' ',' ',' ',' ',' ',' ','+','-','-','-','+','|',},
-            {'|',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ','/',' ',' ','\\',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u',' ',' ','|',},
-            {'+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+',' ',' ',' ',' ','+','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','+'}
-        };
 
         public int SelectedTable { get; private set; }
 
         private void ClearGrid()
         {
-            for (int y = 0; y < grid.GetLength(0); y++)
+            for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
                 Console.SetCursorPosition(0, y);
-                Console.Write(new string(' ', grid.GetLength(1))); // Clear the entire row
+                Console.Write(new string(' ', GridPresent.GetGrid().GetLength(1))); // Clear the entire row
             }
             Console.SetCursorPosition(0, 0); // Reset cursor to the top
         }
@@ -54,9 +25,9 @@ namespace Presentation
         private (int x, int y) FindTableCoordinates(int tableNumber)
         {
             // Iterate through the grid to locate the given table number
-            for (int y = 0; y < grid.GetLength(0); y++)
+            for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
+                for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
                 {
                     string number = GetNumberAt(x, y);
                     if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
@@ -72,12 +43,17 @@ namespace Presentation
         public void ShowGrid(int[] availableTables, int[] reservedTables)
         {
             tableColors.Clear(); // Clear the previous color mappings
-
             ClearGrid(); // Clear the grid area
 
-            for (int y = 0; y < grid.GetLength(0); y++)
+            // Fetch deactivated tables
+            var deactivatedTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
+                .ToHashSet(); // Store deactivated table IDs in a HashSet for fast lookup
+
+            for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
+                for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
                 {
                     string number = GetNumberAt(x, y);
                     if (!string.IsNullOrEmpty(number))
@@ -85,8 +61,12 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // Set table colors and store them in the dictionary
-                        if (Array.Exists(reservedTables, table => table == tableNumber))
+                        // Coloring Logic
+                        if (deactivatedTables.Contains(tableNumber))
+                        {
+                            tableColors[tableNumber] = ConsoleColor.Red; // Deactivated tables
+                        }
+                        else if (Array.Exists(reservedTables, table => table == tableNumber))
                         {
                             tableColors[tableNumber] = ConsoleColor.Red; // Reserved tables
                         }
@@ -99,6 +79,7 @@ namespace Presentation
                             tableColors[tableNumber] = ConsoleColor.Red; // Unusable tables
                         }
 
+                        // Draw table with assigned color
                         Console.SetCursorPosition(x - (number.Length - 1), y);
                         Console.ForegroundColor = tableColors[tableNumber];
                         Console.Write(number);
@@ -107,7 +88,7 @@ namespace Presentation
                     {
                         Console.ResetColor();
                         Console.SetCursorPosition(x, y);
-                        Console.Write(grid[y, x]);
+                        Console.Write(GridPresent.GetGrid()[y, x]);
                     }
                 }
             }
@@ -125,43 +106,24 @@ namespace Presentation
 
             while (!token.IsCancellationRequested)
             {
-                // Display the table number with the current color
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
+                Console.Write(tableNumber.ToString().PadRight(2));
                 await Task.Delay(500);
 
-                // Check if the task was canceled before flashing "X"
                 if (token.IsCancellationRequested) break;
 
-                // Display the "X" with the same color as the table
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
                 Console.Write("X ");
                 await Task.Delay(500);
             }
 
-            // After flashing, restore the correct table color
             if (!token.IsCancellationRequested)
             {
                 Console.SetCursorPosition(x, y);
-
-                // Re-evaluate the table's color
-                if (Array.Exists(reservedTables, table => table == tableNumber))
-                {
-                    tableColor = ConsoleColor.Red; // Reserved tables remain red
-                }
-                else if (Array.Exists(availableTables, table => table == tableNumber))
-                {
-                    tableColor = ConsoleColor.Green; // Available tables are green
-                }
-                else
-                {
-                    tableColor = ConsoleColor.Red; // Default to red for any other case
-                }
-
                 Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2)); // Properly clear for double digits
+                Console.Write(tableNumber.ToString().PadRight(2));
             }
 
             Console.ResetColor();
@@ -170,9 +132,8 @@ namespace Presentation
 
 
 
-        private void HighlightNumber(int[] availableTables, int[] reservedTables)
+        private void HighlightNumber(int[] activeTables, int[] reservedTables)
         {
-            // Cancel the previous flashing task
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
                 flashCancellationTokenSource.Cancel();
@@ -187,37 +148,35 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Determine the color of the table
-                ConsoleColor tableColor;
-                if (Array.Exists(reservedTables, table => table == currentTable))
+                // Check database for table status
+                var table = Access.Places.Read().FirstOrDefault(p => p.ID == currentTable);
+
+                if (table == null || table.Active == 0 || Array.Exists(reservedTables, table => table == currentTable))
                 {
-                    tableColor = ConsoleColor.Red; // Reserved tables stay red
-                }
-                else if (Array.Exists(availableTables, table => table == currentTable))
-                {
-                    tableColor = ConsoleColor.Green; // Available tables are green
-                }
-                else
-                {
-                    tableColor = ConsoleColor.Red; // Default to red for any other case
+                    // Mark deactivated or reserved tables as red
+                    ConsoleColor tableColor = ConsoleColor.Red;
+                    _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, activeTables, reservedTables);
+                    return;
                 }
 
-                // Start the flashing task for the current table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, availableTables, reservedTables);
+                // Otherwise, highlight active and available tables
+                ConsoleColor color = Array.Exists(activeTables, table => table == currentTable) ? ConsoleColor.Green : ConsoleColor.Red;
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, color, activeTables, reservedTables);
             }
 
             Console.ResetColor();
         }
 
 
+
         private string GetNumberAt(int x, int y)
         {
-            if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
+            if (y < 0 || y >= GridPresent.GetGrid().GetLength(0) || x < 0 || x >= GridPresent.GetGrid().GetLength(1)) return null;
 
             string number = "";
-            while (x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
+            while (x < GridPresent.GetGrid().GetLength(1) && char.IsDigit(GridPresent.GetGrid()[y, x]))
             {
-                number += grid[y, x];
+                number += GridPresent.GetGrid()[y, x];
                 x++;
             }
 
@@ -227,15 +186,15 @@ namespace Presentation
 
         private bool IsDoubleDigit(int x, int y)
         {
-            if (x < 0 || x >= grid.GetLength(1) || y < 0 || y >= grid.GetLength(0))
+            if (x < 0 || x >= GridPresent.GetGrid().GetLength(1) || y < 0 || y >= GridPresent.GetGrid().GetLength(0))
                 return false;
 
             // Check if the current character and its neighbor form a two-digit number
-            if (char.IsDigit(grid[y, x]) && x + 1 < grid.GetLength(1) && char.IsDigit(grid[y, x + 1]))
+            if (char.IsDigit(GridPresent.GetGrid()[y, x]) && x + 1 < GridPresent.GetGrid().GetLength(1) && char.IsDigit(GridPresent.GetGrid()[y, x + 1]))
                 return true;
 
             // Check if the current character is the second digit of a two-digit number
-            if (char.IsDigit(grid[y, x]) && x - 1 >= 0 && char.IsDigit(grid[y, x - 1]))
+            if (char.IsDigit(GridPresent.GetGrid()[y, x]) && x - 1 >= 0 && char.IsDigit(GridPresent.GetGrid()[y, x - 1]))
                 return true;
 
             return false;
@@ -265,7 +224,7 @@ namespace Presentation
                 }
             }
 
-            while (x >= 0 && x < grid.GetLength(1))
+            while (x >= 0 && x < GridPresent.GetGrid().GetLength(1))
             {
                 x += direction;
 
@@ -289,19 +248,19 @@ namespace Presentation
         {
             int y = startY;
 
-            while (y >= 0 && y < grid.GetLength(0))
+            while (y >= 0 && y < GridPresent.GetGrid().GetLength(0))
             {
                 y += direction;
 
-                if (y < 0 || y >= grid.GetLength(0)) break;
+                if (y < 0 || y >= GridPresent.GetGrid().GetLength(0)) break;
 
                 for (int offset = -1; offset <= 1; offset++)
                 {
                     int x = startX + offset;
 
-                    if (x >= 0 && x < grid.GetLength(1) && char.IsDigit(grid[y, x]))
+                    if (x >= 0 && x < GridPresent.GetGrid().GetLength(1) && char.IsDigit(GridPresent.GetGrid()[y, x]))
                     {
-                        if (x < grid.GetLength(1) - 1 && char.IsDigit(grid[y, x + 1]))
+                        if (x < GridPresent.GetGrid().GetLength(1) - 1 && char.IsDigit(GridPresent.GetGrid()[y, x + 1]))
                         {
                             return (x, y);
                         }
@@ -316,20 +275,18 @@ namespace Presentation
 
         private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] availableTables, int[] reservedTables)
         {
-            // Remove "X" from the previous position and restore the table number
+            // Restore the previous table's original color
             if (prevX != -1 && prevY != -1)
             {
                 string prevNumber = GetNumberAt(prevX, prevY);
                 if (!string.IsNullOrEmpty(prevNumber))
                 {
                     int prevTable = int.Parse(prevNumber);
-
-                    // Retrieve the correct color from the dictionary
                     if (tableColors.TryGetValue(prevTable, out ConsoleColor prevColor))
                     {
                         Console.SetCursorPosition(prevX, prevY);
                         Console.ForegroundColor = prevColor;
-                        Console.Write(prevNumber.PadRight(2)); // Properly handle double digits
+                        Console.Write(prevNumber.PadRight(2));
                     }
                 }
             }
@@ -340,24 +297,22 @@ namespace Presentation
             {
                 int currTable = int.Parse(currNumber);
 
-                // Determine the color of the "X" based on the current table's availability
-                ConsoleColor currColor = ConsoleColor.Red; // Default to red
-                if (Array.Exists(availableTables, table => table == currTable))
+                // Determine the color for "X" based on table status
+                ConsoleColor currColor = ConsoleColor.Red; // Default red
+                if (Array.Exists(availableTables, table => table == currTable) && !Array.Exists(reservedTables, table => table == currTable))
                 {
-                    currColor = ConsoleColor.Green; // Available tables
-                }
-                else if (Array.Exists(reservedTables, table => table == currTable))
-                {
-                    currColor = ConsoleColor.Red; // Reserved tables
+                    currColor = ConsoleColor.Green; // Available and not reserved
                 }
 
                 Console.SetCursorPosition(currX, currY);
                 Console.ForegroundColor = currColor;
-                Console.Write("X "); // Highlight with "X"
+                Console.Write("X ");
             }
 
             Console.ResetColor();
         }
+
+
 
         private void ResetConsoleToDefault()
         {
@@ -371,7 +326,7 @@ namespace Presentation
             const int requiredHeight = 30; // Example height
 
             // Try to maximize the console window
-            MaximizeConsoleWindow();
+            // MaximizeConsoleWindow();
 
             while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
             {
@@ -388,23 +343,23 @@ namespace Presentation
             Console.Clear();
         }
 
-        public static void MaximizeConsoleWindow()
-        {
-            const int SW_MAXIMIZE = 3;
+        // public static void MaximizeConsoleWindow()
+        // {
+        //     const int SW_MAXIMIZE = 3;
 
-            // Import Windows API functions
-            [DllImport("kernel32.dll", SetLastError = true)]
-            static extern IntPtr GetConsoleWindow();
+        //     // Import Windows API functions
+        //     [DllImport("kernel32.dll", SetLastError = true)]
+        //     static extern IntPtr GetConsoleWindow();
 
-            [DllImport("user32.dll", SetLastError = true)]
-            static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        //     [DllImport("user32.dll", SetLastError = true)]
+        //     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-            IntPtr consoleWindow = GetConsoleWindow();
-            if (consoleWindow != IntPtr.Zero)
-            {
-                ShowWindow(consoleWindow, SW_MAXIMIZE);
-            }
-        }
+        //     IntPtr consoleWindow = GetConsoleWindow();
+        //     if (consoleWindow != IntPtr.Zero)
+        //     {
+        //         ShowWindow(consoleWindow, SW_MAXIMIZE);
+        //     }
+        // }
 
         private void StopFlashing()
         {
@@ -417,7 +372,7 @@ namespace Presentation
         }
 
 
-        public int SelectTable(int[] availableTables, int[] reservedTables)
+        public int SelectTable(int[] availableTables, int[] reservedTables, bool isAdmin = false)
         {
             EnsureConsoleSize(); // Ensure the console size is adequate
             ShowGrid(availableTables, reservedTables);
@@ -429,7 +384,7 @@ namespace Presentation
             {
                 while (true)
                 {
-                    Console.SetCursorPosition(0, grid.GetLength(0) + 2);
+                    Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
                     Console.WriteLine("(B)ack");
 
@@ -463,7 +418,7 @@ namespace Presentation
 
                             if (string.IsNullOrEmpty(selectedNumber))
                             {
-                                Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                                Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("Invalid table. Please select a valid table.");
                                 Console.ResetColor();
@@ -472,11 +427,31 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
-                            if (!Array.Exists(availableTables, table => table == tableNumber) ||
-                                Array.Exists(reservedTables, table => table == tableNumber))
+                            // Check if the table is deactivated
+                            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
+                            if (table != null && table.Active == 0)
                             {
-                                // Display the error message
-                                Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                                if (isAdmin)
+                                {
+                                    // Admins can reactivate tables
+                                    return tableNumber;
+                                }
+                                else
+                                {
+                                    // Users cannot interact with deactivated tables
+                                    Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Table {tableNumber} is unavailable. It is deactivated.");
+                                    Console.ResetColor();
+                                    continue; // Retry selection
+                                }
+                            }
+
+                            if (!Array.Exists(availableTables, t => t == tableNumber) ||
+                                Array.Exists(reservedTables, t => t == tableNumber))
+                            {
+                                // Display the error message for unavailable or reserved tables
+                                Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
                                 Console.ResetColor();
@@ -491,7 +466,7 @@ namespace Presentation
                     }
 
                     // Ensure valid cursor movement
-                    if (nextX < 0 || nextX >= grid.GetLength(1) || nextY < 0 || nextY >= grid.GetLength(0) ||
+                    if (nextX < 0 || nextX >= GridPresent.GetGrid().GetLength(1) || nextY < 0 || nextY >= GridPresent.GetGrid().GetLength(0) ||
                         string.IsNullOrEmpty(GetNumberAt(nextX, nextY)))
                     {
                         nextX = lastX;
@@ -500,7 +475,7 @@ namespace Presentation
                     else
                     {
                         // Clear error message when navigating
-                        Console.SetCursorPosition(0, grid.GetLength(0) + 3);
+                        Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
                         Console.Write(new string(' ', Console.WindowWidth)); // Clear the error line
 
                         UpdateTableHighlight(lastX, lastY, nextX, nextY, availableTables, reservedTables); // Partial update
@@ -520,6 +495,5 @@ namespace Presentation
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
-
     }
 }

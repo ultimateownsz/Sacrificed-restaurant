@@ -1,16 +1,18 @@
 using Project;
 using Project.Presentation;
+using Presentation;
 
 static class AdminMenu
 {
-    public static void AdminStart()
+    public static void AdminStart(UserModel acc)
     {
         List<string> options = new List<string>
         {
             "View reservations by date",
             "Create (admin account)",
             "Delete (accounts)",
-            "Update (themes)\n",
+            "Update (themes)",
+            "(De)activate tables\n",
             "Back"
         };
 
@@ -38,7 +40,10 @@ static class AdminMenu
                 case "Update (themes)\n":
                     ThemeView.ThemedEditing();
                     break;
-                case "Back":
+                case "(De)activate tables\n":
+                    AdminTableControlPresent.Show();
+                    break;
+                case "back":
                     return;
             }
 

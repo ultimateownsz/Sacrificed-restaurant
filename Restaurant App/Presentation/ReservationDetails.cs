@@ -24,6 +24,7 @@ public static class ReservationDetails
         Console.WriteLine();
         Console.WriteLine($"Reservation Date: {reservation.Date.ToString()}");
         Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
+        Console.WriteLine("More details may appear in the future...");
 
         Console.WriteLine("\nPress any key to return to the reservations list.");
         Console.ReadKey();

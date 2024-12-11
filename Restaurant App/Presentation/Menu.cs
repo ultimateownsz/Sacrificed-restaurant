@@ -25,6 +25,7 @@ static class Menu
                     continue;
 
                 case "Exit application":
+                    Environment.Exit(0);
                     return;
 
                 default:
@@ -41,21 +42,14 @@ static class Menu
             Console.Clear();
             switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
             {
-                case "Make a reservation":
-                    try
-                    {
-                        // Directly call MakingReservation without calendar in Menu
-                        MakingReservations.MakingReservation(acc);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Console.WriteLine("Reservation process canceled. Returning to user menu...");
-                        Console.ReadKey();
-                    }
+                case "reserve":
+                    // Directly call MakingReservation without calendar in Menu
+                    MakingReservations.MakingReservation(acc);
                     break;
 
                 case "View reservations":
-                    MakingReservations.UserOverViewReservation(acc);
+                    // MakingReservations.UserOverViewReservation(acc);
+                    FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
 
                 case "Logout":

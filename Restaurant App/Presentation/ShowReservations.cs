@@ -1,56 +1,14 @@
-using System.IO.Compression;
+using Presentation;
 using Project;
 
 public static class ShowReservations
 {
-    public static void Show()
+    public static void Show(UserModel acc)
     {
-        TryCatchHelper.EscapeKeyException(() =>
-        {
-            while (true)
-            {
-                // TODO: Add a Calendar to select dates instead of typing it out
-                Console.Clear();
-                Console.WriteLine("Enter a specific date (dd/MM/yyyy) to view reservations:");
-
-                // Use InputHelper to handle Escape and validate the date
-                DateTime? parsedDate = InputHelper.GetValidatedInput<DateTime?>(
-                "Date (dd/MM/yyyy): ",
-                input =>
-                {
-                    if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
-                    {
-                        return (date, null);  // valid date
-                    }
-                    return (null, "Invalid date format. Please try again.");
-                });
-
-                if (parsedDate == null)
-                {
-                    Console.WriteLine("Returning to the previous menu...");
-                    return; // Escape key pressed
-                }
-
-                // fetch reservations for the given date
-                var reservations = Access.Reservations.GetAllBy<DateTime>("Date", parsedDate.Value)
-                .Where(r => r != null)  // remove null elements
-                .Cast<ReservationModel>();  // make sure the type is non-nullable
-                
-                if (!reservations.Any())
-                {
-                     Console.WriteLine("No reservations found for this date. Press any key to try another date.");
-                    Console.ReadKey();
-                    continue;
-                }
-
-                // display reservations
-                ShowReservationOptions(parsedDate.Value, reservations);
-            }
-
-        });
+        FuturePastResrvations.Show(acc, true); // using the new method
     }
 
-    private static void ShowReservationOptions(DateTime date, IEnumerable<ReservationModel> reservations)
+    public static void ShowReservationOptions(ReservationModel reservation)
     {
         var reservationDetails = reservations.Select(r => new
         {
@@ -94,7 +52,10 @@ public static class ShowReservations
             Console.Clear();
             string banner = $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\nChoose an action:\n\n";
 
-            var options = new List<string> { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
+                        case 1: // Update Reservation
+                            UpdateReservation.Show(reservation, true); // Boolean to check for admin
+                            Console.ReadKey();
+                            break;
 
             var selectedOption = SelectionPresent.Show(options, banner);
 

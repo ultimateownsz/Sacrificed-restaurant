@@ -9,7 +9,7 @@ internal class MenuLogic
         {
             if (acc.Admin == 1)
             {
-                AdminMenu.AdminStart();  // directs to Admin menu if the account is an admin
+                AdminMenu.AdminStart(acc);  // directs to Admin menu if the account is an admin
                 return "continue";
             }
             else
