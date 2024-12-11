@@ -40,78 +40,64 @@ public static class UpdateReservation
 
     public static void UpdateReservationAdmin(ReservationModel reservation)
     {
-        string confirmUpdate = "Would you like to update your reservation details?\n\n";
         string confirmChoice = "Which detail would you like to update?\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Yes", "No"], confirmUpdate).text)
+            switch (SelectionPresent.Show(["Date", "Table number", "Cancel"], confirmChoice).text)
             {
-                case "Yes":
-                    switch (SelectionPresent.Show(["Date", "Table number", "Cancel"], confirmChoice).text)
-                    {
-                        case "Date":
-                            Console.Clear();
-                            UpdateReservationDate(reservation);
-                            Console.WriteLine("\nDate process ended successfully.");
-                            Console.WriteLine("Press any key to return.");
-                            Console.ReadKey();
-                            break;
-                        case "Table number":
-                            Console.Clear();
-                            UpdateTableID(reservation);
-                            Console.WriteLine("\nTable number process ended successfully.");
-                            Console.WriteLine("Press any key to return.");
-                            Console.ReadKey();
-                            break;
-                        case "Cancel":
-                            return;
-                    }
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation);
+                    Console.WriteLine("\nDate process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
                     break;
-                case "No":
+                case "Table number":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    Console.WriteLine("\nTable number process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
+                case "Cancel":
                     return;
             }
+            break;
         }
     }
 
     public static void UpdateReservationUser(ReservationModel reservation)
     {
-        string confirmUpdate = "Would you like to update your reservation details?\n\n";
         string confirmChoice = "Which detail would you like to update?\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Yes", "No"], confirmUpdate).text)
+            switch (SelectionPresent.Show(["Date", "Table number", "Number of guests", "Cancel"], confirmChoice).text)
             {
-                case "Yes":
-                    switch (SelectionPresent.Show(["Date", "Table number", "Number of guests", "Cancel"], confirmChoice).text)
-                    {
-                        case "Date":
-                            Console.Clear();
-                            UpdateReservationDate(reservation);
-                            Console.WriteLine("\nDate process ended successfully.");
-                            Console.WriteLine("Press any key to return.");
-                            Console.ReadKey();
-                            break;
-                        case "Table number":
-                            Console.Clear();
-                            UpdateTableID(reservation);
-                            Console.WriteLine("\nTable number process ended successfully.");
-                            Console.WriteLine("Press any key to return.");
-                            Console.ReadKey();
-                            break;
-                        // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
-                        case "Number of guests":
-                            Console.Clear();
-                            Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
-                            Console.WriteLine("Press any key to return.");
-                            Console.ReadKey();
-                            break;
-                        case "Cancel":
-                            return;
-                    }
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation);
+                    Console.WriteLine("\nDate process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
                     break;
-                case "No":
+                case "Table number":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    Console.WriteLine("\nTable number process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
+                // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
+                case "Number of guests":
+                    Console.Clear();
+                    Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
+                case "Cancel":
                     return;
             }
+            break;
         }
     }
 
