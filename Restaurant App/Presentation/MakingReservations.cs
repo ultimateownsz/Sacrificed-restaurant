@@ -221,14 +221,14 @@ namespace Presentation
                     while (true)
                     {
                         Console.Clear();
-                        Console.WriteLine($"Guest {i + 1}, choose a product for {categories[z]}:");
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:\n\n";
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
                         productOptions.Add("Cancel"); // Option to cancel or skip
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, "PRODUCT SELECTION\n\n").text;
+                        var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
                         if (selectedOption == "Cancel")
                         {
