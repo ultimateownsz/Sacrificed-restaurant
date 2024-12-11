@@ -63,7 +63,7 @@ namespace Presentation
                         ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
                     }
                 }
-            } // TODO: Add a escape key
+            }
         }
 
         private static void ViewUser(UserModel acc)
@@ -120,9 +120,20 @@ namespace Presentation
 
                 if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations)) // ensuring that the options won't be read as reservation options
                 {
-                    Console.WriteLine($"You selected the reservation {selectedReservations}");
-                    Console.WriteLine("Press any key to return...");
-                    Console.ReadKey();
+                    var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
+
+                    if (selectedResModel != null)
+                    {
+                        var banner = $"You selected the {selectedReservations}\n\n";
+                        switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
+                        {
+                            case "Update Reservation":
+                                UpdateReservation.Show(selectedResModel, false);
+                                break;
+                        }
+                        Console.WriteLine("Press any key to return...");
+                        Console.ReadKey();
+                    }
                     return;
                 }
             }
