@@ -10,86 +10,47 @@ public static class ShowReservations
 
     public static void ShowReservationOptions(ReservationModel reservation)
     {
-        // List of possible actions
-        string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
-
-        int currentActionIndex = 0;
-
         while (true)
         {
-            Console.Clear(); // Refresh the options display
-            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}");
-            Console.WriteLine("Choose an action:");
+            // Use SelectionPresent to display options and capture user selection
+            var selectedOption = SelectionPresent.Show(
+                new List<string> 
+                { 
+                    "View Details", 
+                    "Update Reservation", 
+                    "Delete Reservation", 
+                    "Cancel" 
+                },
+                $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:\n"
+            ).text;
 
-            // Display actions with arrow key navigation and color highlighting
-            for (int i = 0; i < actions.Length; i++)
+            // Handle the chosen action
+            switch (selectedOption)
             {
-                if (i == currentActionIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow; // Highlight the selected option
-                    Console.WriteLine($"-> {actions[i]}");
-                }
-                else
-                {
-                    Console.ResetColor(); // Reset color for non-selected options
-                    Console.WriteLine($"  {actions[i]}");
-                }
+                case "View Details":
+                    ReservationDetails.ShowDetails(reservation);
+                    break;
+
+                case "Update Reservation":
+                    UpdateReservation.Show(reservation, true); // Boolean to check for admin
+                    break;
+
+                case "Delete Reservation":
+                    DeleteReservation.Show(reservation);
+                    return; // Return after deleting a reservation to exit this menu
+                case "Cancel":
+                    return; // Exit the options and return to the reservation list
             }
 
-            // Capture key input for navigation and action selection
-            var key = Console.ReadKey(true);
-
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (currentActionIndex > 0)
-                    {
-                        currentActionIndex--;
-                    }
-                    break;
-
-                case ConsoleKey.DownArrow:
-                    if (currentActionIndex < actions.Length - 1)
-                    {
-                        currentActionIndex++;
-                    }
-                    break;
-
-                case ConsoleKey.Enter:
-                    Console.ResetColor();
-                    switch (currentActionIndex)
-                    {
-                        case 0: // View Details
-                            ReservationDetails.ShowDetails(reservation);
-                            Console.ReadKey();
-                            break;
-
-                        case 1: // Update Reservation
-                            UpdateReservation.Show(reservation, true); // Boolean to check for admin
-                            Console.ReadKey();
-                            break;
-
-                        case 2: // Delete Reservation
-                            // Call DeleteReservation.Show() with the selected reservation
-                            DeleteReservation.Show(reservation);
-                            Console.ReadKey();
-                            break;
-
-                        case 3: // Cancel
-                            return; // Return to the reservation list
-                    }
-                    break;
-
-                case ConsoleKey.Escape:
-                    return; // Exit the options and return to reservation list
-            }
-
+            // Pause after executing the action
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
     }
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
+        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch account details
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";
