@@ -10,79 +10,80 @@ public static class ShowReservations
 
     public static void ShowReservationOptions(ReservationModel reservation)
     {
-        var reservationDetails = reservations.Select(r => new
-        {
-            Reservation = r,
-            UserName = GetUserFullName(r.UserID),
-            TableID = r.PlaceID
-        }).ToList();
+        // List of possible actions
+        string[] actions = { "View Details", "Update Reservation", "Delete Reservation", "Cancel" };
 
-        var options = reservationDetails.Select((r, i) => $"{r.UserName} - Table {r.TableID}").ToList();
-        options.Add("Cancel");  // add a cancel option
+        int currentActionIndex = 0;
 
         while (true)
         {
             Console.Clear(); // Refresh the options display
-            string banner = $"Reservations for {date:dd/MM/yyyy}\nChoose a reservation:\n\n";
+            Console.WriteLine($"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}");
+            Console.WriteLine("Choose an action:");
 
-            var selectedOption = SelectionPresent.Show(options, banner);
-            if (selectedOption == null)
+            // Display actions with arrow key navigation and color highlighting
+            for (int i = 0; i < actions.Length; i++)
             {
-                Console.WriteLine("Returning to the previous menu...");
-                return;
+                if (i == currentActionIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow; // Highlight the selected option
+                    Console.WriteLine($"-> {actions[i]}");
+                }
+                else
+                {
+                    Console.ResetColor(); // Reset color for non-selected options
+                    Console.WriteLine($"  {actions[i]}");
+                }
             }
 
-            string selectedText = selectedOption.text;
-            if (selectedText == "Cancel") return;
+            // Capture key input for navigation and action selection
+            var key = Console.ReadKey(true);
 
-            int selectedIndex = options.IndexOf(selectedText);
-            if (selectedIndex >= 0 && selectedIndex < reservationDetails.Count)
+            switch (key.Key)
             {
-                ShowReservationActions(reservationDetails[selectedIndex].Reservation);
-            }
-        }
-    }
+                case ConsoleKey.UpArrow:
+                    if (currentActionIndex > 0)
+                    {
+                        currentActionIndex--;
+                    }
+                    break;
 
-    private static void ShowReservationActions(ReservationModel reservation)
-    {
-        bool isValid = false;
+                case ConsoleKey.DownArrow:
+                    if (currentActionIndex < actions.Length - 1)
+                    {
+                        currentActionIndex++;
+                    }
+                    break;
 
-        while (!isValid)
-        {
-            Console.Clear();
-            string banner = $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\nChoose an action:\n\n";
+                case ConsoleKey.Enter:
+                    Console.ResetColor();
+                    switch (currentActionIndex)
+                    {
+                        case 0: // View Details
+                            ReservationDetails.ShowDetails(reservation);
+                            Console.ReadKey();
+                            break;
 
                         case 1: // Update Reservation
                             UpdateReservation.Show(reservation, true); // Boolean to check for admin
                             Console.ReadKey();
                             break;
 
-            var selectedOption = SelectionPresent.Show(options, banner);
+                        case 2: // Delete Reservation
+                            // Call DeleteReservation.Show() with the selected reservation
+                            DeleteReservation.Show(reservation);
+                            Console.ReadKey();
+                            break;
 
-            if (selectedOption == null) // Escape key pressed
-            {
-                Console.WriteLine("Returning to the reservations list...");
-                return;
+                        case 3: // Cancel
+                            return; // Return to the reservation list
+                    }
+                    break;
+
+                case ConsoleKey.Escape:
+                    return; // Exit the options and return to reservation list
             }
 
-            switch (selectedOption.text)
-            {
-                case "View Details":
-                    ReservationDetails.ShowDetails(reservation);
-                    break;
-                case "Update Reservation":
-                    UpdateReservation.Show(reservation);
-                    break;
-                case "Delete Reservation":
-                    DeleteReservation.Show(reservation);
-                    break;
-                case "Cancel":
-                    isValid = true; // Exit to the reservations list
-                    break;
-                default:
-                    Console.WriteLine("Invalid option. Please try again.");
-                    break;
-            }
         }
     }
 
