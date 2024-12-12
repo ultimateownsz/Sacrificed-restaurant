@@ -51,14 +51,14 @@ public static class ThemeInputValidator
         {
             Console.Clear();
 
-            Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes.\n However, you can still view months in 2024 with themes that were already made in the past.\n\n");
+            Console.WriteLine($"Please note: You can only enter a year from {minYear} onwards for future themes.\nHowever, you can still view months in 2024 with themes that were already made in the past.\n\n");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Enter year (or type (b)ack to exit): ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
 
-            var year = Console.ReadLine();
+            var year = Console.ReadLine().ToLower();
 
-            if(year == "b" || year == "B" || year == "back" || year == "Back")
+            if(year == "b" || year == "back")
             {
                 return -1;
             }
