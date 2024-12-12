@@ -26,7 +26,7 @@ namespace Project.Logic
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure?\n\n"
+                $"Are you sure you want to delete the account: {account.FirstName} {account.LastName}?\n\n"
             );
 
             if (selection.text == "Yes")
@@ -40,7 +40,7 @@ namespace Project.Logic
 
                 // Remove sensitive data
                 account.Email = "Inactive";
-                account.Password = "Removed";
+                account.Password = "Inactive";
                 account.Phone = "Inactive";
 
                 // Update the account in the database
@@ -48,20 +48,6 @@ namespace Project.Logic
             }
 
             return false;
-        }
-
-        private static bool MarkAsInactive(UserModel account)
-        {
-            // Find other accounts with "Inactive" as the first name
-            var inactiveAccounts = Access.Users.GetAllBy<string>("FirstName", "Inactive");
-            int nextNumber = inactiveAccounts.Count() + 1;
-
-            // Update the account's first and last names
-            account.FirstName = "Inactive";
-            account.LastName = $"#{nextNumber}";
-
-            // Perform the update
-            return Access.Users.Update(account);
         }
 
         public static List<UserModel> GetActiveAccounts()
@@ -81,22 +67,24 @@ namespace Project.Logic
         }
 
         // Method to delete an account and refresh the list
-        public static bool DeleteAccount(int currentPage, List<UserModel> sortedAccounts)
+        public static bool DeleteAccount(UserModel currentUser, int currentPage, List<UserModel> sortedAccounts, string selectedText)
         {
             var accountsToDisplay = GetPage(sortedAccounts, currentPage, AccountsPerPage);
-            var options = GenerateMenuOptions(accountsToDisplay, currentPage, (int)Math.Ceiling((double)sortedAccounts.Count / AccountsPerPage));
 
-            // If a valid account is selected, delete it
-            var selectedAccount = accountsToDisplay.FirstOrDefault(acc => FormatAccount(acc) == options.First());
-            if (selectedAccount?.ID != null && ConfirmAndDelete(selectedAccount))
+            // Find the account that matches the selected text
+            var selectedAccount = accountsToDisplay.FirstOrDefault(acc => FormatAccount(acc) == selectedText);
+
+            if (selectedAccount != null && selectedAccount.ID != currentUser.ID) // Ensure you don't delete your own account
             {
-                return true;
+                // Call the confirmation method
+                if (ConfirmAndDelete(selectedAccount))
+                {
+                    return true;
+                }
             }
-            else
-            {
-                Console.WriteLine("Failed to delete account.");
-                return false;
-            }
+
+            Console.WriteLine("Failed to delete account.");
+            return false;
         }
     }
 }

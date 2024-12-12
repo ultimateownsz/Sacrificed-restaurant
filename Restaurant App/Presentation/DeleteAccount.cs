@@ -8,7 +8,7 @@ namespace Project.Presentation
     internal class DeleteAccount
     {
         // Method to show the delete account menu
-        public static void ShowDeleteAccountMenu()
+        public static void ShowDeleteAccountMenu(UserModel currentUser)
         {
             while (true)
             {
@@ -19,8 +19,11 @@ namespace Project.Presentation
                     return;
                 }
 
+                // Exclude the current logged-in account
+                var accountsToDisplay = activeAccounts.Where(acc => acc.ID != currentUser.ID).ToList();
+
                 // Sort accounts by first name alphabetically
-                var sortedAccounts = activeAccounts.OrderBy(acc => acc.FirstName).ToList();
+                var sortedAccounts = accountsToDisplay.OrderBy(acc => acc.FirstName).ToList();
 
                 int currentPage = 0;
                 int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
@@ -50,11 +53,10 @@ namespace Project.Presentation
                     }
 
                     // Call the logic layer to delete an account
-                    if (DeleteAccountLogic.DeleteAccount(currentPage, sortedAccounts))
+                    if (DeleteAccountLogic.DeleteAccount(currentUser, currentPage, sortedAccounts, selectedText))
                     {
                         Console.WriteLine("Press any key to refresh...");
-                        Console.ReadKey(); // Pause for feedback
-
+                        Console.ReadKey();
                         break; // Refresh list after deletion
                     }
                 }
