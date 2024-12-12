@@ -26,7 +26,7 @@ namespace Project.Logic
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure you want to delete the account: {account.FirstName} {account.LastName}?\n\n"
+                $"Are you sure?\n\n"
             );
 
             if (selection.text == "Yes")
