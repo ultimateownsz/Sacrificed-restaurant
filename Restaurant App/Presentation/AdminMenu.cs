@@ -8,7 +8,7 @@ static class AdminMenu
     {
         List<string> options = new List<string>
         {
-            "View reservations by date",
+            "View reservations (date)",
             "Create (admin account)",
             "Delete (accounts)",
             "Update (themes)",
@@ -28,7 +28,7 @@ static class AdminMenu
             // Process the selected option
             switch (selection)
             {
-                case "View reservations by date":
+                case "View reservations (date)":
                     ShowReservations.Show(acc);
                     break;
                 case "Create (admin account)":
