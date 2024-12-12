@@ -296,11 +296,11 @@ namespace Presentation
 
                 if (reservation != null)
                 {
-                Console.WriteLine("----------------------------");
-                Console.WriteLine($"Name of the reservator:   {GetUserFullName(reservation.UserID)}");
-                Console.WriteLine($"Reservation Date:         {reservation.Date:dd/MM/yyyy}");
-                Console.WriteLine($"Table ID:                 {reservation.PlaceID}");
-                Console.WriteLine("----------------------------");
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
+                Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
+                Console.WriteLine($"Table ID:               {reservation.PlaceID}");
+                Console.WriteLine("-------------------------------");
                 // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
                 }
             }
@@ -309,21 +309,21 @@ namespace Presentation
             {
                 if (product.Price < 10)
                 {
-                    Console.WriteLine($"{product.Name,-20} € {product.Price:F2}");
+                    Console.WriteLine($"{product.Name,-20}    € {product.Price:F2}");
                 }
                 else
                 {
-                    Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
+                    Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
                 }
 
                 // Convert nullable float to decimal, treat null as 0
                 totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
 
-            Console.WriteLine("----------------------------");
+            Console.WriteLine("-------------------------------");
             Console.WriteLine($"");
-            Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
-            Console.WriteLine("============================");
+            Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
+            Console.WriteLine("===============================");
         }
 
         private static string GetUserFullName(int? userID)
