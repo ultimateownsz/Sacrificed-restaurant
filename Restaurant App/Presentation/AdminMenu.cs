@@ -43,7 +43,7 @@ static class AdminMenu
                 case "(De)activate tables\n":
                     AdminTableControlPresent.Show();
                     break;
-                case "back":
+                case "Back":
                     return;
             }
 
