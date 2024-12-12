@@ -298,7 +298,7 @@ namespace Presentation
                 {
                 Console.WriteLine("----------------------------");
                 Console.WriteLine($"Name of the reservator:   {GetUserFullName(reservation.UserID)}");
-                Console.WriteLine($"Reservation Date:         {reservation.Date}");
+                Console.WriteLine($"Reservation Date:         {reservation.Date:dd/MM/yyyy}");
                 Console.WriteLine($"Table ID:                 {reservation.PlaceID}");
                 Console.WriteLine("----------------------------");
                 // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
@@ -307,7 +307,14 @@ namespace Presentation
 
             foreach (var product in orders)
             {
-                Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
+                if (product.Price < 10)
+                {
+                    Console.WriteLine($"{product.Name,-20} € {product.Price:F2}");
+                }
+                else
+                {
+                    Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
+                }
 
                 // Convert nullable float to decimal, treat null as 0
                 totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
