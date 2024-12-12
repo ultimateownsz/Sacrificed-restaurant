@@ -225,15 +225,18 @@ namespace Presentation
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
-                        productOptions.Add("Cancel"); // Option to cancel or skip
+                        productOptions.Add("Cancel"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
                         if (selectedOption == "Cancel")
                         {
-                            Console.WriteLine("Selection canceled. Returning to the previous menu.");
+                            Console.WriteLine("Selection canceled. Restarting the order process...");
                             Console.ReadKey();
+                            i = -1;
+                            guestOrder.Clear();
+                            allOrders.Clear();
                             break;
                         }
 
@@ -262,11 +265,16 @@ namespace Presentation
                             Console.ReadKey();
                         }
                     }
+
+                    if (i == -1) break;
                 }
 
-                allOrders.AddRange(guestOrder);
-                Console.WriteLine("\nPress any key to continue to the next guest...");
-                Console.ReadKey();
+                if (i != -1)
+                {
+                    allOrders.AddRange(guestOrder);
+                    Console.WriteLine("\nPress any key to continue to the next guest...");
+                    Console.ReadKey();
+                }
             }
 
             return allOrders; // Return the collected orders
