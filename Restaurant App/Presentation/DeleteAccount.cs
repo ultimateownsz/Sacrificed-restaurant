@@ -12,15 +12,15 @@ namespace Project.Presentation
         {
             while (true)
             {
-                var allAccounts = Access.Users.Read(); // Re-fetch all accounts
-                if (allAccounts == null || !allAccounts.Any())
+                var activeAccounts = DeleteAccountLogic.GetActiveAccounts(); // Get active accounts
+                if (activeAccounts == null || !activeAccounts.Any())
                 {
                     Console.WriteLine("No accounts found.");
                     return;
                 }
 
                 // Sort accounts by first name alphabetically
-                var sortedAccounts = allAccounts.OrderBy(acc => acc.FirstName).ToList();
+                var sortedAccounts = activeAccounts.OrderBy(acc => acc.FirstName).ToList();
 
                 int currentPage = 0;
                 int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
@@ -52,7 +52,6 @@ namespace Project.Presentation
                     // Call the logic layer to delete an account
                     if (DeleteAccountLogic.DeleteAccount(currentPage, sortedAccounts))
                     {
-                        Console.WriteLine("Account deleted successfully.");
                         Console.WriteLine("Press any key to refresh...");
                         Console.ReadKey(); // Pause for feedback
 

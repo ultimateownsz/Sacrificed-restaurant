@@ -22,19 +22,47 @@ namespace Project.Logic
         // Method to handle account deletion confirmation and deletion
         public static bool ConfirmAndDelete(UserModel account)
         {
-            // Use SelectionPresent for confirmation
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure?\n\n"
+                $"Are you sure you want to mark this account as inactive?\n\n"
             );
 
             if (selection.text == "Yes")
             {
-                return UserLogic.DeleteUserAccount(account.ID.Value);
+                // Mark the account as inactive
+                if (MarkAsInactive(account))
+                {
+                    Console.WriteLine("Account marked as inactive successfully.");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to mark account as inactive.");
+                }
             }
 
             return false;
+        }
+
+        private static bool MarkAsInactive(UserModel account)
+        {
+            // Find other accounts with "Inactive" as the first name
+            var inactiveAccounts = Access.Users.GetAllBy<string>("FirstName", "Inactive");
+            int nextNumber = inactiveAccounts.Count() + 1;
+
+            // Update the account's first and last names
+            account.FirstName = "Inactive";
+            account.LastName = $"#{nextNumber}";
+
+            // Perform the update
+            return Access.Users.Update(account);
+        }
+
+        public static List<UserModel> GetActiveAccounts()
+        {
+            var allAccounts = Access.Users.Read(); // Fetch all accounts
+            return allAccounts.Where(account => account.FirstName != "Inactive").ToList();
         }
 
         // Method to generate menu options based on the current page and total pages
