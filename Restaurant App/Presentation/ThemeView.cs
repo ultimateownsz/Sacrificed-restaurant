@@ -7,30 +7,17 @@ static class ThemeView
         ConsoleKeyInfo key;
         do
         {
-            List<string> optionsYears = Enumerable.Range(DateTime.Now.Year, 1000).Select(y => y.ToString()).ToList();
-            string bannerYear = $"Select a year to edit its themes\n\n";  
-            int year = DateTime.Now.Year - 1 + optionsYears.Count() -  SelectionPresent.Show(optionsYears, bannerYear, true).index;
-            
             string themeName;
-            
-            // Down here the selection menu for the months is done, rn u cant choose the current month
-            string bannerMonths = $"Year: {year}\nSelect a month to edit the theme\n\n";
-            List<string> optionsMonths = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthThemeName(m, year)).ToList();
-            optionsMonths.Add("Exit");
-            int month;
-            do
+            int year = YearChoice();
+            if(year == -1)
             {
-                month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
-                if(month == 13)
-                {
-                    return;
-                }
-                else if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
-                {
-                    Console.WriteLine("Invalid input. Please enter a month that is not in the past or the current month.");
-                    Console.ReadKey();
-                }
-            } while (DateTime.Now.Month >= month && DateTime.Now.Year == year);
+                return;
+            }
+            int month = MonthChoice(year);
+            if(month == 0) // The reasone why this checks for 0 and not -1 cuz i always do +1 to month while making it in MonthChoice(year)
+            {
+                return;
+            }
 
             // This is to check if the chosen month has a theme, if not look at else
             // If it does have a theme then u enter a new mini menu
@@ -62,10 +49,50 @@ static class ThemeView
                 Console.WriteLine($"The theme has been updated to {themeName}");
 
             }
+
             Console.WriteLine("Press escape to go back to admin menu, or press anykey to keep editing...");
+
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape); //loops keeps going until user clicks escape at end of process
+
         return;
+
     }
 
+    // Down here the selection menu for the year.
+    public static int YearChoice()
+    {
+        List<string> optionsYears = Enumerable.Range(DateTime.Now.Year, 1000).Select(y => y.ToString()).ToList();
+        string bannerYear = $"Select a year to edit its themes\n\n";  
+        int year =  SelectionPresent.Show(optionsYears, bannerYear, true).index;
+        if(year != -1)
+        {
+            year = DateTime.Now.Year - 1 + optionsYears.Count() - year;
+            return year;
+        }
 
+        return year;
+
+    }
+
+    // Down here the selection menu for the months, u cant choose the current month.
+    public static int MonthChoice(int year)
+    {
+        int month;
+        string bannerMonths = $"Year: {year}\nSelect a month to edit the theme\n\n";
+        List<string> optionsMonths = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthThemeName(m, year)).ToList();
+
+        do
+        {
+            month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
+            if (month == 0) break;
+            if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
+            {
+                Console.WriteLine(" Invalid input. Please enter a month that is not in the past or the current month.");
+                Console.ReadKey();
+            }
+        } while (DateTime.Now.Month >= month && DateTime.Now.Year == year);
+
+        return month;
+
+    }
 }
