@@ -7,7 +7,6 @@ namespace Project.Presentation
 {
     internal class DeleteAccount
     {
-        // Method to show the delete account menu
         public static void ShowDeleteAccountMenu(UserModel currentUser)
         {
             while (true)
