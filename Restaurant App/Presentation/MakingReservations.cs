@@ -26,8 +26,6 @@ namespace Presentation
 
             if (selectedDate == DateTime.MinValue)
             {
-                Console.WriteLine("\nReservation process has been caneled...\nPress any key to return...");
-                Console.ReadKey();
                 return;
             }
 
