@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using Project;
 
@@ -22,6 +23,13 @@ namespace Presentation
 
             // Step 2: Display the calendar and mark unreservable dates
             DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+
+            if (selectedDate == DateTime.MinValue)
+            {
+                Console.WriteLine("\nReservation process has been caneled...\nPress any key to return...");
+                Console.ReadKey();
+                return;
+            }
 
             // Step 3: Filter available tables based on the number of guests
             TableSelection tableSelection = new();
@@ -232,7 +240,7 @@ namespace Presentation
 
                         if (selectedOption == "Cancel")
                         {
-                            Console.WriteLine("Selection canceled. Restarting the order process...");
+                            Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
                             Console.ReadKey();
                             i = -1;
                             guestOrder.Clear();
