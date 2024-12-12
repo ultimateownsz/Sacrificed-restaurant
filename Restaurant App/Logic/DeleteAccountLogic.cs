@@ -22,24 +22,29 @@ namespace Project.Logic
         // Method to handle account deletion confirmation and deletion
         public static bool ConfirmAndDelete(UserModel account)
         {
+            // Use SelectionPresent for confirmation
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure you want to mark this account as inactive?\n\n"
+                $"Are you sure?\n\n"
             );
 
             if (selection.text == "Yes")
             {
                 // Mark the account as inactive
-                if (MarkAsInactive(account))
-                {
-                    Console.WriteLine("Account marked as inactive successfully.");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("Failed to mark account as inactive.");
-                }
+                account.FirstName = "Inactive";
+                
+                // Get the current number of inactive accounts for unique identifier
+                int inactiveCount = Access.Users.GetAllBy<string>("FirstName", "Inactive").Count();
+                account.LastName = $"#{inactiveCount + 1}";
+
+                // Remove sensitive data
+                account.Email = "Inactive";
+                account.Password = "Removed";
+                account.Phone = "Inactive";
+
+                // Update the account in the database
+                return Access.Users.Update(account);
             }
 
             return false;
