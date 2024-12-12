@@ -7,20 +7,20 @@ static class ThemeView
         ConsoleKeyInfo key;
         do
         {
-            // The year input gets all made and validated in ThemeInputValidator.ValidateYear()
-            int year = ThemeInputValidator.ValidateYear();
-            if (year == -1)
-                return;
+            List<string> optionsYears = Enumerable.Range(DateTime.Now.Year, 1000).Select(y => y.ToString()).ToList();
+            string bannerYear = $"Select a year to edit its themes\n\n";  
+            int year = DateTime.Now.Year - 1 + optionsYears.Count() -  SelectionPresent.Show(optionsYears, bannerYear, true).index;
+            
             string themeName;
             
             // Down here the selection menu for the months is done, rn u cant choose the current month
-            string banner = $"Year: {year}\nSelect a month to edit the theme\n\n";
-            List<string> options = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthThemeName(m, year)).ToList();
-            options.Add("Exit");
+            string bannerMonths = $"Year: {year}\nSelect a month to edit the theme\n\n";
+            List<string> optionsMonths = Enumerable.Range(1, 12).Select(m => ThemeMenuManager.GetMonthThemeName(m, year)).ToList();
+            optionsMonths.Add("Exit");
             int month;
             do
             {
-                month = 1 + SelectionPresent.Show(options, banner, false).index;
+                month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
                 if(month == 13)
                 {
                     return;
