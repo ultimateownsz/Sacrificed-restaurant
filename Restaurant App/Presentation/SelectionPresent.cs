@@ -47,7 +47,7 @@ internal class SelectionPresent : SelectionLogic
                 return new(current.Item1, current.Item2);
             
             case ConsoleKey.Escape:
-            // // case ConsoleKey.B:
+            // case ConsoleKey.B:
 
                 Console.ForegroundColor = ConsoleColor.White;
                 return new("", -1);
