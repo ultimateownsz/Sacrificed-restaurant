@@ -80,9 +80,12 @@ internal class SelectionPresent : SelectionLogic
                     return escapeHandle;
                 }
 
+                // Trim the selection text to handle the arrow keys and logic
+                string trimmedSelection = selected.Item1?.Trim() ?? "";
+
                 // initialize and return dynamic object for selection
                 dynamic dynamicHandle = new ExpandoObject();
-                dynamicHandle.text = selected.Item1;
+                dynamicHandle.text = trimmedSelection;  // return trimmed value for logic
                 dynamicHandle.index = selected.Item2;
 
                 return dynamicHandle;
