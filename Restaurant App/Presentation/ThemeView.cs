@@ -95,6 +95,8 @@ static class ThemeView
             {
                 case ConsoleKey.UpArrow:
                     message = string.Empty; // Clear message on valid navigation
+                    Console.WriteLine($"Before UpArrow: currentIndex={currentIndex}, lastYear={availableYears[^1]}");
+                    Thread.Sleep(1000);
                     if (currentIndex < availableYears.Count - 1)
                     {
                         currentIndex++;
@@ -106,7 +108,11 @@ static class ThemeView
                         availableYears.Add(nextYear);
                         currentIndex++;
                     }
+                    Console.WriteLine($"After UpArrow: currentIndex={currentIndex}, availableYears={string.Join(", ", availableYears)}");
+                    Thread.Sleep(1000);
+
                     break;
+
 
                 case ConsoleKey.DownArrow:
                     if (currentIndex > 0)
