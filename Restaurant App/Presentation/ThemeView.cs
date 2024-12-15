@@ -59,36 +59,54 @@ static class ThemeView
         // Fetch available years from the database and add future years
         List<int> availableYears = ThemeMenuManager.GetAvailableYears();
         int minYear = DateTime.Now.Year;
-        int currentIndex = availableYears.IndexOf(minYear);
-        if (currentIndex == -1)
+        int currentYearIndex = availableYears.IndexOf(minYear);
+        if (currentYearIndex == -1)
         {
             availableYears.Insert(0, minYear); // Ensure the current year is included if not present
-            currentIndex = 0;
+            currentYearIndex = 0;
         }
+
+        int currentIndex = currentYearIndex;
+        string message = string.Empty; // Message to display
 
         while (true)
         {
             Console.Clear();
             Console.WriteLine("Select a year to edit its themes:");
+
+            // Highlight the current year in yellow
             for (int i = 0; i < availableYears.Count; i++)
             {
                 if (i == currentIndex)
-                    Console.ForegroundColor = ConsoleColor.Yellow; // Highlight the current selection
-                Console.WriteLine(availableYears[i]);
-                Console.ResetColor();
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"\n{availableYears[i]}"); // Highlighted year
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine($"\n{availableYears[i]}"); // Regular year
+                }
             }
 
-            Console.WriteLine("\nUse Up/Down arrow keys to navigate years.");
-            Console.WriteLine("Press 'R' to reset to the current year.");
-            Console.WriteLine("Press 'B' to go back.");
+            Console.WriteLine("\n(r)eset, (b)ack");
+
+            // Display message if applicable
+            if (!string.IsNullOrEmpty(message))
+            {
+                Console.WriteLine($"\n{message}");
+            }
 
             var key = Console.ReadKey(intercept: true);
 
             switch (key.Key)
             {
                 case ConsoleKey.UpArrow:
+                    message = string.Empty; // Clear message on valid navigation
                     if (currentIndex < availableYears.Count - 1)
+                    {
                         currentIndex++;
+                    }
                     else
                     {
                         // Add a new future year dynamically
@@ -100,13 +118,19 @@ static class ThemeView
 
                 case ConsoleKey.DownArrow:
                     if (currentIndex > 0)
+                    {
+                        message = string.Empty; // Clear message on valid navigation
                         currentIndex--;
+                    }
                     else
-                        Console.WriteLine("Cannot navigate to years in the past.");
+                    {
+                        message = "Cannot navigate to years in the past.";
+                    }
                     break;
 
                 case ConsoleKey.R:
-                    currentIndex = availableYears.IndexOf(minYear); // Reset to the current year
+                    message = string.Empty; // Clear message on reset
+                    currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
                 case ConsoleKey.B:
@@ -116,7 +140,7 @@ static class ThemeView
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    Console.WriteLine("Invalid input. Use arrow keys, 'R', 'B', or Enter.");
+                    message = "Invalid input. Use arrow keys, 'R', 'B', or Enter.";
                     break;
             }
         }
