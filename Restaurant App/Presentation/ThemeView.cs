@@ -138,8 +138,6 @@ static class ThemeView
         }
     }
 
-
-
     public static int MonthChoice(int year)
     {
         int month;
@@ -148,18 +146,38 @@ static class ThemeView
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
 
-        do
+        while (true)
         {
+            Console.Clear();
+            Console.WriteLine(bannerMonths);
+            for (int i = 0; i < optionsMonths.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {optionsMonths[i]}");
+            }
+
+            Console.WriteLine("\n(b)ack");
+
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.B)
+            {
+                return 0; // Indicate going back
+            }
+
             month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
-            if (month == 0) break;
+            if (month == 0)
+            {
+                return 0; // Ensure a return value for the back option
+            }
 
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
                 Console.ReadKey();
             }
-        } while (DateTime.Now.Month >= month && DateTime.Now.Year == year);
-
-        return month;
+            else
+            {
+                return month; // Return the selected month if valid
+            }
+        }
     }
 }
