@@ -60,6 +60,7 @@ static class ThemeView
         List<int> availableYears = ThemeMenuManager.GetAvailableYears();
         int minYear = DateTime.Now.Year;
         int currentYearIndex = availableYears.IndexOf(minYear);
+
         if (currentYearIndex == -1)
         {
             availableYears.Insert(0, minYear); // Ensure the current year is included if not present
@@ -67,31 +68,22 @@ static class ThemeView
         }
 
         int currentIndex = currentYearIndex;
-        string message = string.Empty; // Message to display
+        string message = string.Empty; // Message for errors or additional info
 
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Select a year to edit its themes:");
+            Console.WriteLine("Select a year to edit its themes:\n");
 
-            // Highlight the current year in yellow
-            for (int i = 0; i < availableYears.Count; i++)
-            {
-                if (i == currentIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"\n{availableYears[i]}"); // Highlighted year
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.WriteLine($"\n{availableYears[i]}"); // Regular year
-                }
-            }
+            // Highlight the currently selected year in yellow
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(availableYears[currentIndex]);
+            Console.ResetColor();
 
+            // Navigation options
             Console.WriteLine("\n(r)eset, (b)ack");
 
-            // Display message if applicable
+            // Display any error or info messages
             if (!string.IsNullOrEmpty(message))
             {
                 Console.WriteLine($"\n{message}");
@@ -109,7 +101,7 @@ static class ThemeView
                     }
                     else
                     {
-                        // Add a new future year dynamically
+                        // Dynamically add a new future year and navigate to it
                         int nextYear = availableYears[^1] + 1;
                         availableYears.Add(nextYear);
                         currentIndex++;
@@ -145,6 +137,7 @@ static class ThemeView
             }
         }
     }
+
 
 
     public static int MonthChoice(int year)
