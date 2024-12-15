@@ -22,121 +22,171 @@ namespace Presentation
 
         private static void ViewAdmin(UserModel acc)
         {
-            int guests = 1;
-            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
-
-            while (true)
+            TryCatchHelper.EscapeKeyException(() =>
             {
-                var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
+                int guests = 1;
+                bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
+                DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
 
-                if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
+                while (true)
                 {
-                    Console.Clear();
-                    Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
-                    Console.ReadKey();
-                    return;
-                }
+                    var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
 
-                var reservationDetails = reservations.Select(r => new
-                {
-                    Reservation = r,
-                    UserName = GetUserFullName(r.UserID),
-                    TableID = r.PlaceID
-
-                }).ToList();  // selecting info from reservation that are needed
-
-                var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
-                reservationOptions.Add("Back");
-                var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
-
-                if (selectedReservation == "Back")
-                {
-                    return;
-                }
-
-                if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
-                {
-                    int reservationIndex = reservationOptions.IndexOf(selectedReservation);
-                    if (reservationIndex >= 0 && reservationIndex < reservationDetails.Count)
+                    if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
                     {
-                        ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
+                        Console.Clear();
+                        Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    var reservationDetails = reservations.Select(r => new
+                    {
+                        Reservation = r,
+                        UserName = GetUserFullName(r.UserID),
+                        TableID = r.PlaceID
+
+                    }).ToList();  // selecting info from reservation that are needed
+
+                    var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
+                    reservationOptions.Add("Back");
+                    var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
+
+                    if (selectedReservation == "Back")
+                    {
+                        return;
+                    }
+
+                    if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
+                    {
+                        int reservationIndex = reservationOptions.IndexOf(selectedReservation);
+                        if (reservationIndex >= 0 && reservationIndex < reservationDetails.Count)
+                        {
+                            ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
+                        }
                     }
                 }
-            }
+
+            });
         }
 
         private static void ViewUser(UserModel acc)
         {
-            var testReservation = Access.Reservations.GetAllBy<int?>("UserID", acc.ID) // getting the user id's
-                                                    .Where(r => r != null)
-                                                    .Cast<ReservationModel>()
-                                                    .ToList();
-
-            var sortedReservations = testReservation
-                        .OrderBy(r => r.Date)
-                        .ToList(); // sorting the dates 
-
-            if (sortedReservations == null || sortedReservations.Count == 0) // checking if the reservations exists
+            TryCatchHelper.EscapeKeyException(() =>
             {
-                Console.WriteLine("You have no reservations.\nPress any key to return");
-                Console.ReadKey();
-                return;
-            }
+                var userReservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID) // getting the user id's
+                    .Where(r => r != null)
+                    .Cast<ReservationModel>()
+                    .OrderBy(r => r.Date)
+                    .ToList();
 
-            Console.Clear();
-            Console.WriteLine($"Here are your reservations, {acc.FirstName}");
-
-            int currentPage = 0;
-            int itemsPerPage = 20;
-            int totalPages = (int)Math.Ceiling((double)sortedReservations.Count / itemsPerPage); // reservations per page
-
-            while (true)
-            {
-                var currentPageReserv = sortedReservations
-                                            .Skip(currentPage * itemsPerPage)
-                                            .Take(itemsPerPage)
-                                            .ToList(); // making sure there are 20 reservations per page
-
-                var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
-                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // making use of SelectionPresent.Show
-
-                if (selectedReservations == "Back")
+                 if (userReservations == null || userReservations.Count == 0)
                 {
+                    Console.WriteLine("You have no reservations.\nPress any key to return...");
+                    Console.ReadKey();
                     return;
                 }
 
-                if (selectedReservations == "Next Page >>") // option to go to the next page
-                {
-                    currentPage = Math.Min(currentPage + 1, totalPages -1);
-                    continue;
-                }
+                int currentPage = 0;
+                int itemsPerPage = 20;
+                int totalPages = (int)Math.Ceiling((double)userReservations.Count / itemsPerPage);
 
-                if (selectedReservations == "<< Previous Page") // option to go to the previous page
+                while (true)
                 {
-                    currentPage = Math.Max(currentPage - 1, 0);
-                    continue;
-                }
+                    Console.Clear();
+                    var currentPageReservations = userReservations
+                        .Skip(currentPage * itemsPerPage)
+                        .Take(itemsPerPage)
+                        .ToList();
 
-                if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations)) // ensuring that the options won't be read as reservation options
-                {
-                    var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
+                    // Generate options
+                    var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReservations, currentPage, totalPages);
+                    var selectedOption = SelectionPresent.Show(reservationOptions, "YOUR RESERVATIONS\n\n").text;
+                
+                    if (selectedOption == null || selectedOption == "Back") return;
+                    if (selectedOption == "Next Page >>")
+                    {
+                        currentPage = Math.Min(currentPage + 1, totalPages - 1);
+                        continue;
+                    }
+                    if (selectedOption == "<< Previous Page")
+                    {
+                        currentPage = Math.Max(currentPage - 1, 0);
+                        continue;
+                    }
+
+                    // Match the selected reservation
+                    var selectedResModel = currentPageReservations
+                        .FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedOption);
 
                     if (selectedResModel != null)
                     {
-                        var banner = $"You selected the {selectedReservations}\n\n";
-                        switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
+                        var banner = $"You selected {selectedOption}\n\n";
+                        dynamic action = SelectionPresent.Show(new List<string> { "Update Reservation", "Back" }, banner).text;
+
+                        if (action == "Update Reservation")
                         {
-                            case "Update Reservation":
-                                UpdateReservation.Show(selectedResModel, false);
-                                break;
+                            UpdateReservation.Show(selectedResModel, false);
                         }
+
                         Console.WriteLine("Press any key to return...");
                         Console.ReadKey();
                     }
-                    return;
                 }
-            }
+            });
+
+            // Console.WriteLine($"Here are your reservations, {acc.FirstName}");
+
+            // int currentPage = 0;
+            // int itemsPerPage = 20;
+            // int totalPages = (int)Math.Ceiling((double)sortedReservations.Count / itemsPerPage); // reservations per page
+
+            // while (true)
+            // {
+            //     var currentPageReserv = sortedReservations
+            //                                 .Skip(currentPage * itemsPerPage)
+            //                                 .Take(itemsPerPage)
+            //                                 .ToList(); // making sure there are 20 reservations per page
+
+            //     var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
+            //     var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // making use of SelectionPresent.Show
+
+            //     if (selectedReservations == "Back")
+            //     {
+            //         return;
+            //     }
+
+            //     if (selectedReservations == "Next Page >>") // option to go to the next page
+            //     {
+            //         currentPage = Math.Min(currentPage + 1, totalPages -1);
+            //         continue;
+            //     }
+
+            //     if (selectedReservations == "<< Previous Page") // option to go to the previous page
+            //     {
+            //         currentPage = Math.Max(currentPage - 1, 0);
+            //         continue;
+            //     }
+
+            //     if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations)) // ensuring that the options won't be read as reservation options
+            //     {
+            //         var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
+
+            //         if (selectedResModel != null)
+            //         {
+            //             var banner = $"You selected the {selectedReservations}\n\n";
+            //             switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
+            //             {
+            //                 case "Update Reservation":
+            //                     UpdateReservation.Show(selectedResModel, false);
+            //                     break;
+            //             }
+            //             Console.WriteLine("Press any key to return...");
+            //             Console.ReadKey();
+            //         }
+            //         return;
+            //     }
+            // }
         }
 
         private static string GetUserFullName(int? userID)
