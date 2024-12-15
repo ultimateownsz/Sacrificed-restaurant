@@ -39,7 +39,7 @@ static class AdminMenu
                     RegisterUser.CreateAccount(true);
                     break;
                 case "Delete (accounts)":
-                    DeleteAccount.ShowDeleteAccountMenu();
+                    DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
                 case "Update (themes)\n":
                     ThemeView.ThemedEditing();
