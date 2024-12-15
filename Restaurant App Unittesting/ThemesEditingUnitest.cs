@@ -20,6 +20,17 @@ public class ThemeViewTests
         Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
     }
 
+    [TestMethod]
+    public void TestEditThemes()
+    {
+        var existingTheme = new Theme { ID = 101, ThemeName = "Turkish" };
+        var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
+        var newThemeName = "Japanese";
+
+        string result = SimulateEditTheme(user, existingTheme, schedule, newThemeName);
+
+        Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
+    }
 
     // Simulated Methods for Testing
     //This Method simulates adding themes
