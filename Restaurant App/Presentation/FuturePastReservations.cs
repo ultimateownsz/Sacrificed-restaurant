@@ -47,14 +47,18 @@ namespace Presentation
                 }).ToList();  // selecting info from reservation that are needed
 
                 var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
+
+                // format improvement
+                reservationOptions[reservationOptions.Count() - 1] += "\n";
                 reservationOptions.Add("Back");
-                var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
+                
+                var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // displaying the info as opions to choose
 
                 if (selectedReservation == "Back")
                 {
                     return;
                 }
-
+                
                 if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
                 {
                     int reservationIndex = reservationOptions.IndexOf(selectedReservation);
@@ -99,20 +103,20 @@ namespace Presentation
                                             .ToList(); // making sure there are 20 reservations per page
 
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
-                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n").text; // making use of SelectionPresent.Show
+                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // making use of SelectionPresent.Show
 
                 if (selectedReservations == "Back")
                 {
                     return;
                 }
 
-                if (selectedReservations == "Next Page >>") // option to go to the next page
+                if (selectedReservations == "Next Page") // option to go to the next page
                 {
                     currentPage = Math.Min(currentPage + 1, totalPages -1);
                     continue;
                 }
 
-                if (selectedReservations == "<< Previous Page") // option to go to the previous page
+                if (selectedReservations == "Previous Page") // option to go to the previous page
                 {
                     currentPage = Math.Max(currentPage - 1, 0);
                     continue;
@@ -121,20 +125,21 @@ namespace Presentation
                 if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations)) // ensuring that the options won't be read as reservation options
                 {
                     var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
+                    UpdateReservation.Show(selectedResModel, false);
 
-                    if (selectedResModel != null)
-                    {
-                        var banner = $"You selected the {selectedReservations}\n\n";
-                        switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
-                        {
-                            case "Update Reservation":
-                                UpdateReservation.Show(selectedResModel, false);
-                                break;
-                        }
-                        Console.WriteLine("Press any key to return...");
-                        Console.ReadKey();
-                    }
-                    return;
+                    //if (selectedResModel != null)
+                    //{
+                    //    var banner = $"You selected the {selectedReservations}\n\n";
+                    //    switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
+                    //    {
+                    //        case "Update Reservation":
+                    //            UpdateReservation.Show(selectedResModel, false);
+                    //            break;
+                    //    }
+                    //    Console.WriteLine("Press any key to return...");
+                    //    Console.ReadKey();
+                    //}
+                    break;
                 }
             }
         }

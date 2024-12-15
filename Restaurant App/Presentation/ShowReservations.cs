@@ -18,8 +18,8 @@ public static class ShowReservations
                 { 
                     "View Details", 
                     "Update Reservation", 
-                    "Delete Reservation", 
-                    "Cancel" 
+                    "Delete Reservation\n", 
+                    "Back" 
                 },
                 $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:\n"
             ).text;
@@ -35,16 +35,18 @@ public static class ShowReservations
                     UpdateReservation.Show(reservation, true); // Boolean to check for admin
                     break;
 
-                case "Delete Reservation":
+                case "Delete Reservation\n":
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
-                case "Cancel":
+                
+                case "Back":
                     return; // Exit the options and return to the reservation list
             }
 
             // Pause after executing the action
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // EMERGENCY MODIFICATION: 2
+            //Console.WriteLine("Press any key to continue...");
+            //Console.ReadKey();
         }
     }
 
