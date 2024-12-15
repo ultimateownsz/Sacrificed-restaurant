@@ -32,6 +32,17 @@ public class ThemeViewTests
         Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
     }
 
+    [TestMethod]
+    public void TestDeleteThemes()
+    {
+        var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
+        var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
+
+        string result = SimulateDeleteTheme(user, themeToDelete, schedule);
+
+        Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
+    }
+
     // Simulated Methods for Testing
     //This Method simulates adding themes
     private string SimulateAddTheme(Schedule schedule, string themeName)
