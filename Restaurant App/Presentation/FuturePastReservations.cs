@@ -49,16 +49,15 @@ namespace Presentation
                 var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
 
                 // format improvement
-                reservationOptions[reservationOptions.Count() - 1] += "\n";
                 reservationOptions.Add("Back");
                 
-                var selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // displaying the info as opions to choose
+                string selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // displaying the info as opions to choose
 
                 if (selectedReservation == "Back")
                 {
                     return;
                 }
-                
+
                 if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
                 {
                     int reservationIndex = reservationOptions.IndexOf(selectedReservation);

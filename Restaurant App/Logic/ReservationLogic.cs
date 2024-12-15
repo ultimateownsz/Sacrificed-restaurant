@@ -167,7 +167,6 @@ public class ReservationLogic
     public static List<string> GenerateMenuOptions(List<ReservationModel> accounts, int currentPage, int totalPages)
     {
         var options = accounts.Select(FormatAccount).ToList();
-        options[options.Count() - 1] += "\n";
         if (currentPage > 0) options.Add("Previous Page");
         if (currentPage < totalPages - 1) options.Add("Next Page");
         options.Add("Back");
