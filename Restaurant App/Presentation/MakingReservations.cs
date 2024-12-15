@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using Project;
 
@@ -22,6 +23,11 @@ namespace Presentation
 
             // Step 2: Display the calendar and mark unreservable dates
             DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+
+            if (selectedDate == DateTime.MinValue)
+            {
+                return;
+            }
 
             // Step 3: Filter available tables based on the number of guests
             TableSelection tableSelection = new();
@@ -68,7 +74,7 @@ namespace Presentation
             var orders = TakeOrders(selectedDate, acc, reservationId, guests);
             if (orders.Count > 0)
             {
-                PrintReceipt(orders, reservationId);
+                PrintReceipt(orders, reservationId, acc);
 
                 // Prompt the user to press Enter to return to the menu
                 Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
@@ -222,19 +228,22 @@ namespace Presentation
                     while (true)
                     {
                         Console.Clear();
-                        Console.WriteLine($"Guest {i + 1}, choose a product for {categories[z]}:");
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:\n\n";
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
-                        productOptions.Add("Cancel"); // Option to cancel or skip
+                        productOptions.Add("Cancel"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, "PRODUCT SELECTION\n\n").text;
+                        var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
                         if (selectedOption == "Cancel")
                         {
-                            Console.WriteLine("Selection canceled. Returning to the previous menu.");
+                            Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
                             Console.ReadKey();
+                            i = -1;
+                            guestOrder.Clear();
+                            allOrders.Clear();
                             break;
                         }
 
@@ -263,11 +272,16 @@ namespace Presentation
                             Console.ReadKey();
                         }
                     }
+
+                    if (i == -1) break;
                 }
 
-                allOrders.AddRange(guestOrder);
-                Console.WriteLine("\nPress any key to continue to the next guest...");
-                Console.ReadKey();
+                if (i != -1)
+                {
+                    allOrders.AddRange(guestOrder);
+                    Console.WriteLine("\nPress any key to continue to the next guest...");
+                    Console.ReadKey();
+                }
             }
 
             return allOrders; // Return the collected orders
@@ -275,24 +289,58 @@ namespace Presentation
 
 
 
-        public static void PrintReceipt(List<ProductModel> orders, int reservationId)
+        public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
+            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID);
+
+            if (reservations != null && reservations.Any(r => r != null))
+            {
+                var reservation = reservations.Where(r => r != null).OrderByDescending(r => r.Date).FirstOrDefault();
+
+                if (reservation != null)
+                {
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
+                Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
+                Console.WriteLine($"Table ID:               {reservation.PlaceID}");
+                Console.WriteLine("-------------------------------");
+                // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
+                }
+            }
+
             foreach (var product in orders)
             {
-                Console.WriteLine($"{product.Name,-20} €{product.Price:F2}");
+                if (product.Price < 10)
+                {
+                    Console.WriteLine($"{product.Name,-20}    € {product.Price:F2}");
+                }
+                else
+                {
+                    Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
+                }
 
                 // Convert nullable float to decimal, treat null as 0
                 totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
 
-            Console.WriteLine("----------------------------");
-            Console.WriteLine($"Total Amount:         €{totalAmount:F2}");
-            Console.WriteLine($"Reservation ID:        {reservationId}");
-            Console.WriteLine("============================");
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"");
+            Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
+            Console.WriteLine("===============================");
+        }
+
+        private static string GetUserFullName(int? userID)
+        {
+            var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
+            if (account != null)
+            {
+                return $"{account.FirstName} {account.LastName}";
+            }
+            return "Unknown User"; // Fallback in case no account is found
         }
     }
 }

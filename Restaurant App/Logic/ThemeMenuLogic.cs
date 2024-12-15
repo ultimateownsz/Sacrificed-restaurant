@@ -106,6 +106,20 @@ static class ThemeMenuLogic
     }
 
     // this method is used to delete themes that are attached to a schedule
+    // This method retrieves all available years from the database that have associated schedules.
+    public static List<int> GetAvailableYears()
+    {
+        // Fetch distinct years from the schedules table, excluding null values
+        return Access.Schedules.Read()
+            .Select(schedule => schedule.Year)
+            .Where(year => year.HasValue) // Exclude null values
+            .Select(year => year.Value) // Convert int? to int
+            .Distinct()
+            .OrderBy(year => year) // Ensure years are in ascending order
+            .ToList(); // Convert to a List<int> for the final return
+    }
+
+
     public static bool DeleteMonthTheme(int month, int year)
     {
         var item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();

@@ -68,7 +68,6 @@ internal class SelectionPresent : SelectionLogic
             // update screen
             _update(banner, selection, oneline);
 
-            // read user-input
             if ((selected = _read(selection)) != null)
             {
                 if (selected.Item2 == -1)  // escape pressed

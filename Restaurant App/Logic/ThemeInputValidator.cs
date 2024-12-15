@@ -43,43 +43,6 @@ public static class ThemeInputValidator
         }
     }
 
-    public static int ValidateYear()
-    {
-        int result;
-        int minYear = DateTime.Now.Year;
-        while (true)
-        {
-            Console.Clear();
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Please note: You can only enter a year from 2024 onwards for future themes. However, you can still view months in 2024 with themes that were already made in the past.");
-            Console.Write("Enter year (or press ESC to exit): ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            var key = Console.ReadKey(intercept: true);
-            if (key.Key == ConsoleKey.Escape)
-            {
-                return -1; // or another value indicating exit
-            }
-
-            Console.Write(key.KeyChar);
-            var year = Console.ReadLine();
-
-            if (int.TryParse(key.KeyChar + year, out result) && result >= minYear)
-            {
-                return result;
-            }
-
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Enter year: {key.KeyChar + year}", Console.ForegroundColor);
-
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nThemes can only be made for the year 2024 and beyond. Please try again....");
-            Console.ReadKey();
-        }
-    }
-
     public static int? GetValidMonth(string prompt)
     {
         int result;
