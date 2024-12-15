@@ -9,56 +9,80 @@ namespace Project.Presentation
     {
         public static void ShowDeleteAccountMenu(UserModel currentUser)
         {
-            while (true)
+            try
             {
-                var activeAccounts = DeleteAccountLogic.GetActiveAccounts(); // Get active accounts
+                var activeAccounts = DeleteAccountLogic.GetActiveAccounts()?
+                .Where(acc => acc.ID != currentUser.ID) // exclude current user
+                .OrderBy(acc => acc.FirstName)          // sort by first name
+                .ToList();
+
                 if (activeAccounts == null || !activeAccounts.Any())
                 {
-                    Console.WriteLine("No accounts found.");
+                    Console.WriteLine("No accounts available to delete.");
+                    Console.WriteLine("\nPress any key to return to the previous menu...");
+                    Console.ReadKey();
                     return;
                 }
 
-                // Exclude the current logged-in account
-                var accountsToDisplay = activeAccounts.Where(acc => acc.ID != currentUser.ID).ToList();
-
-                // Sort accounts by first name alphabetically
-                var sortedAccounts = accountsToDisplay.OrderBy(acc => acc.FirstName).ToList();
-
                 int currentPage = 0;
-                int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
-
-                while (true)
+                bool running = true;
+                do
                 {
-                    // Generate and display the menu options
-                    var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                    var selection = SelectionPresent.Show(options, "ACCOUNTS\n\n");
+                    Console.Clear();
+                    // prepare options for the current page
+                    var options = DeleteAccountLogic.GenerateMenuOptions(activeAccounts, currentPage);
 
-                    string selectedText = selection.text;
+                    // display menu and handle user input
+                    dynamic selection = SelectionPresent.Show(options, "ACCOUNTS MENU\n\n");
 
-                    // Handle user navigation and actions
-                    if (selectedText == "Back")
+                    if (selection.text == null || selection.text == "Back")
+                    {
+                        Console.WriteLine(" Exiting ACCOUNT MENU...");
+                        Thread.Sleep(1500);
                         return;
-
-                    if (selectedText == "Next Page >>")
-                    {
-                        currentPage = Math.Min(currentPage + 1, totalPages - 1); // Avoid exceeding total pages
-                        continue;
                     }
 
-                    if (selectedText == "<< Previous Page")
+                    switch (selection.text)
                     {
-                        currentPage = Math.Max(currentPage - 1, 0); // Avoid going below page 0
-                        continue;
+                        case "Back":
+                            running = false;
+                            break;
+                        
+                        case "Next page >>":
+                            currentPage++;
+                            break;
+
+                        case "<< Previous page":
+                            currentPage--;
+                            break;
+                        
+                        default:
+                            // attempt to delete the selected account
+                            bool success = DeleteAccountLogic.DeleteAccount(currentUser, selection.text, activeAccounts, currentPage);
+                            if (success)
+                            {
+                                Console.WriteLine("\nAccount successfully deleted. Press any key to refresh...");
+                                Console.ReadKey();
+                                activeAccounts = DeleteAccountLogic.GetActiveAccounts()
+                                    .Where(acc => acc.ID != currentUser.ID)
+                                    .OrderBy(acc => acc.FirstName)
+                                    .ToList();
+                                currentPage = 0; // Reset to the first page after deletion
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nFailed to delete the account. Press any key to continue...");
+                                Console.ReadKey();
+                            }
+                            break;
                     }
 
-                    // Call the logic layer to delete an account
-                    if (DeleteAccountLogic.DeleteAccount(currentUser, currentPage, sortedAccounts, selectedText))
-                    {
-                        Console.WriteLine("Press any key to refresh...");
-                        Console.ReadKey();
-                        break; // Refresh list after deletion
-                    }
-                }
+                } while (running);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine(" Exiting ACCOUNT MENU...");
+                Thread.Sleep(1500);
             }
         }
     }
