@@ -129,7 +129,8 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
+            Console.WriteLine("\n\nnavigate : <arrows>\nselect   : <enter>");
+            //Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
