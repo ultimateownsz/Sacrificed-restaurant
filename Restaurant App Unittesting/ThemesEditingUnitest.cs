@@ -20,13 +20,6 @@ public class ThemeViewTests
     }
 
     // Supporting Classes
-    public class UserModel
-    {
-        public int ID { get; set; }
-        public int? Admin { get; set; }
-        public string FirstName { get; set; }
-    }
-
     public class Theme
     {
         public int ID { get; set; }
