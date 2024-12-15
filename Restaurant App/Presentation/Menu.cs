@@ -63,7 +63,7 @@ static class Menu
                 case "Make a reservation":
                     // Directly call MakingReservation without calendar in Menu
                     MakingReservations.MakingReservation(acc);
-                    return;
+                    break;
 
                 case "View reservations":
                     // MakingReservations.UserOverViewReservation(acc);

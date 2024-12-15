@@ -141,27 +141,28 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Year: {year}\nSelect a month to edit the theme\n\n";
+        string bannerMonths = $"Select month in {year}, or go (b)ack\n\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuLogic.GetMonthThemeName(m, year))
             .ToList();
 
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(bannerMonths);
-            for (int i = 0; i < optionsMonths.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {optionsMonths[i]}");
-            }
+            // brother, what? cm'on
+            //Console.Clear();
+            //Console.WriteLine(bannerMonths);
+            //for (int i = 0; i < optionsMonths.Count; i++)
+            //{
+            //    Console.WriteLine($"{i + 1}. {optionsMonths[i]}");
+            //}
 
-            Console.WriteLine("\n(b)ack");
-
-            var key = Console.ReadKey(intercept: true);
-            if (key.Key == ConsoleKey.B)
-            {
-                return 0; // Indicate going back
-            }
+            //Console.WriteLine("\n(b)ack")
+            //var key = Console.ReadKey(intercept: true);
+            
+            //if (key.Key == ConsoleKey.B)
+            //{
+            //    return 0; // Indicate going back
+            //}
 
             month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
             if (month == 0)
