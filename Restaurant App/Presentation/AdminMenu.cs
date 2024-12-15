@@ -6,27 +6,31 @@ static class AdminMenu
 {
     public static void AdminStart(UserModel acc)
     {
-        List<string> options = new List<string>
-        {
-            "View reservations (date)",
-            "Create (admin account)",
-            "Delete (accounts)",
-            "Update (themes)",
-            "(De)activate tables\n",
-            "Back"
-        };
-
-        ConsoleKeyInfo key;
         do
         {
             Console.Clear();
-            Console.WriteLine("Press Escape to exit the Admin Menu\n");
+            // Console.WriteLine("Press Escape to exit the Admin Menu\n");
 
             // Display menu and get selection
-            string selection = SelectionPresent.Show(options, "ADMIN MENU\n\n").text;
+            dynamic selection = SelectionPresent.Show([
+                "View reservations (date)",
+                "Create (admin account)",
+                "Delete (accounts)",
+                "Update (themes)",
+                "(De)activate tables\n",
+                "Back"
+            ], "ADMIN MENU\n\n");
+
+            // Check if Escape was pressed
+            if (selection.text == null)
+            {
+                Console.WriteLine(" Exiting Admin Menu...");  // optional message to show the user what is happening
+                Thread.Sleep(1500);  // use this to wait 1,5 seconds before returning to menu
+                return;
+            }
 
             // Process the selected option
-            switch (selection)
+            switch (selection.text)
             {
                 case "View reservations (date)":
                     ShowReservations.Show(acc);
@@ -46,16 +50,7 @@ static class AdminMenu
                 case "Back":
                     return;
             }
-
-            Console.WriteLine("\nPress Escape to exit the Admin Menu, or any key to continue...");
-
-            // read the key and store in 'key'
-            key = Console.ReadKey(true);
-
-        } while (key.Key != ConsoleKey.Escape); // Loop until Escape is pressed
-        Console.Clear();
-        Console.SetCursorPosition(0, 0);
-        Console.WriteLine("Exiting Admin Menu...");
-        return;
+        } while (true);
     }
 }
+
