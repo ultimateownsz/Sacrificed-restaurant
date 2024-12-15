@@ -22,7 +22,6 @@ namespace Project.Logic
         // Method to handle account deletion confirmation and deletion
         public static bool ConfirmAndDelete(UserModel account)
         {
-            // Use SelectionPresent for confirmation
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
@@ -31,10 +30,67 @@ namespace Project.Logic
 
             if (selection.text == "Yes")
             {
-                return UserLogic.DeleteUserAccount(account.ID.Value);
+                // Mark the account as inactive
+                account.FirstName = "Inactive";
+                
+                // Get the current number of inactive accounts for unique identifier
+                int inactiveCount = Access.Users.GetAllBy<string>("FirstName", "Inactive").Count();
+                account.LastName = $"#{inactiveCount + 1}";
+
+                // Replace data
+                account.Email = "Inactive";
+                account.Password = "Inactive";
+                account.Phone = "Inactive";
+
+                // Update the account in the database
+                if (Access.Users.Update(account))
+                {
+                    // After deleting the account, delete future reservations
+                    DeleteFutureReservations(account.ID);
+
+                    return true;
+                }
             }
 
             return false;
+        }
+
+        // Method to delete future reservations
+        public static void DeleteFutureReservations(int? userId)
+        {
+            // Check if userId is not null
+            if (userId.HasValue)
+            {
+                int id = userId.Value;  // Get the value of the nullable int
+
+                // Fetch all reservations for the user
+                var allReservations = Access.Reservations.Read();
+
+                // Get today's date (ignores the time part)
+                var currentDate = DateTime.Now.Date;  // This will set the time to 00:00:00
+
+                // Filter for future reservations, including today
+                var futureReservations = allReservations
+                    .Where(res => res.UserID == id && res.Date.HasValue && res.Date.Value.Date >= currentDate)  // Include today as part of the future
+                    .ToList();
+
+                // Delete all future reservations
+                foreach (var reservation in futureReservations)
+                {
+                    Access.Reservations.Delete(reservation.ID);
+                }
+
+                Console.WriteLine($"{futureReservations.Count} future reservations deleted.");
+            }
+            else
+            {
+                Console.WriteLine("User ID is null. Cannot delete future reservations.");
+            }
+        }
+        public static List<UserModel> GetActiveAccounts()
+        {
+            var allAccounts = Access.Users.Read(); // Fetch all accounts
+            return allAccounts.Where(account => account.FirstName != "Inactive").ToList();
         }
 
         // Method to generate menu options based on the current page and total pages
@@ -48,22 +104,24 @@ namespace Project.Logic
         }
 
         // Method to delete an account and refresh the list
-        public static bool DeleteAccount(int currentPage, List<UserModel> sortedAccounts)
+        public static bool DeleteAccount(UserModel currentUser, int currentPage, List<UserModel> sortedAccounts, string selectedText)
         {
             var accountsToDisplay = GetPage(sortedAccounts, currentPage, AccountsPerPage);
-            var options = GenerateMenuOptions(accountsToDisplay, currentPage, (int)Math.Ceiling((double)sortedAccounts.Count / AccountsPerPage));
 
-            // If a valid account is selected, delete it
-            var selectedAccount = accountsToDisplay.FirstOrDefault(acc => FormatAccount(acc) == options.First());
-            if (selectedAccount?.ID != null && ConfirmAndDelete(selectedAccount))
+            // Find the account that matches the selected text
+            var selectedAccount = accountsToDisplay.FirstOrDefault(acc => FormatAccount(acc) == selectedText);
+
+            if (selectedAccount != null && selectedAccount.ID != currentUser.ID) // Ensure you don't delete your own account
             {
-                return true;
+                // Call the confirmation method
+                if (ConfirmAndDelete(selectedAccount))
+                {
+                    return true;
+                }
             }
-            else
-            {
-                Console.WriteLine("Failed to delete account.");
-                return false;
-            }
+
+            Console.WriteLine("Failed to delete account.");
+            return false;
         }
     }
 }

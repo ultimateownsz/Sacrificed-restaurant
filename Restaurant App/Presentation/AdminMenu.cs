@@ -27,7 +27,7 @@ static class AdminMenu
                     RegisterUser.CreateAccount(true);
                     break;
                 case "delete (accounts)":
-                    DeleteAccount.ShowDeleteAccountMenu();
+                    DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
                 case "update (themes)":
                     ThemeView.ThemedEditing();
