@@ -6,41 +6,59 @@ namespace Project;
 static class Menu
 {
     static public void Start()
-    {
-        // TableSelection.MaximizeConsoleWindow();
-        while (true)
+    {        
+        do
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["Login", "Register\n", "Exit application"], "MAIN MENU\n\n").text)
+            dynamic selection = SelectionPresent.Show([
+                 "Login",
+                "Register\n",
+                "Exit"
+            ], "MAIN MENU\n\n");
+
+            if (selection.text == null)
+            {
+                Environment.Exit(0);
+                return;
+            }
+
+            switch(selection.text)
             {
                 case "Login":
-
                     if (MenuLogic.Login() == "continue")
                         continue;
                     break;
-
-                case "Register\n":
-                    
+                
+                case "Register":
                     RegisterUser.CreateAccount();
                     continue;
-
-                case "Exit application":
+                
+                case "Exit":
                     Environment.Exit(0);
                     return;
-
+                
                 default:
                     continue;
             }
-            break; // Valid input provided, break the loop
-        }
+        
+        } while (true);
     }
 
     public static void ShowUserMenu(UserModel acc)
     {
-        while (true)
+        do
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n").text)
+            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n");
+            
+            if (selection.text == null)
+            {
+                Console.WriteLine(" Return to main menu");
+                Thread.Sleep(1500);  // wait 1,5 seconds before you return to main menu
+                return;
+            }
+            
+            switch (selection.text)
             {
                 case "Make a reservation":
                     // Directly call MakingReservation without calendar in Menu
@@ -54,12 +72,7 @@ static class Menu
 
                 case "Logout":
                     return;
-
-                default:
-                    Console.WriteLine("Invalid selection. Please try again.");
-                    Console.ReadKey();
-                    break;
             }
-        }
+        } while (true);
     }
 }
