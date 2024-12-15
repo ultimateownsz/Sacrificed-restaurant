@@ -43,6 +43,19 @@ public class ThemeViewTests
         Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
     }
 
+    [TestMethod]
+    public void TestValidateThemeName()
+    {
+        string validThemeName = "Valid Theme";
+        string invalidThemeName = "Invalid123!";
+
+        bool isValid1 = ValidateThemeName(validThemeName);
+        bool isValid2 = ValidateThemeName(invalidThemeName);
+
+        Assert.IsTrue(isValid1, "Expected the theme name to be valid.");
+        Assert.IsFalse(isValid2, "Expected the theme name to be invalid.");
+    }
+
     // Simulated Methods for Testing
     //This Method simulates adding themes
     private string SimulateAddTheme(Schedule schedule, string themeName)
