@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 [TestClass]
 public class ThemeViewTests
 {
-
     // Simulated Methods for Testing
     private string SimulateAddTheme(Schedule schedule, string themeName)
     {
@@ -16,6 +15,19 @@ public class ThemeViewTests
         return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
+    private string SimulateEditTheme(Theme existingTheme, Schedule schedule, string newThemeName)
+    {
+        if (!ValidateThemeName(newThemeName))
+            return "Invalid theme name. Only letters and spaces are allowed.";
+
+        existingTheme.ThemeName = newThemeName;
+        return $"Theme updated to '{newThemeName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
+    }
+
+    private string SimulateDeleteTheme(Theme themeToDelete, Schedule schedule)
+    {
+        return $"Theme '{themeToDelete.ThemeName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
+    }
 
     private bool ValidateThemeName(string themeName)
     {
