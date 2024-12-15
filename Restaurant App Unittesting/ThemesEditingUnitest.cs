@@ -6,6 +6,20 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 [TestClass]
 public class ThemeViewTests
 {
+    [TestMethod]
+    public void TestAddThemes()
+    {
+        // Arrange the Models(the models are the end of this file)
+        var themeName = "Turkish";
+        var schedule = new Schedule { Year = 2025, Month = 6 };
+
+        // Act
+        string result = SimulateAddTheme(user, schedule, themeName);
+
+        // Assert
+        Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
+    }
+
 
     // Simulated Methods for Testing
     //This Method simulates adding themes
