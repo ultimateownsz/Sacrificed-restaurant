@@ -11,7 +11,7 @@ static class Menu
         {
             Console.Clear();
             dynamic selection = SelectionPresent.Show([
-                 "Login",
+                "Login",
                 "Register\n",
                 "Exit"
             ], "MAIN MENU\n\n");
