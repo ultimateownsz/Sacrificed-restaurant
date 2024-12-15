@@ -7,6 +7,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 public class ThemeViewTests
 {
 
+    // Simulated Methods for Testing
+    private string SimulateAddTheme(Schedule schedule, string themeName)
+    {
+        if (!ValidateThemeName(themeName))
+            return "Invalid theme name. Only letters and spaces are allowed.";
+
+        return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
+    }
+
 
     private bool ValidateThemeName(string themeName)
     {
