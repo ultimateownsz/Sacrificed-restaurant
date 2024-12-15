@@ -9,7 +9,6 @@ static class AdminMenu
         do
         {
             Console.Clear();
-            // Console.WriteLine("Press Escape to exit the Admin Menu\n");
 
             // Display menu and get selection
             dynamic selection = SelectionPresent.Show([
