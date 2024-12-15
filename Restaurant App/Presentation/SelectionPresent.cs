@@ -10,7 +10,7 @@ internal class SelectionPresent : SelectionLogic
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
-        Console.WriteLine("Controls:\n\nNavigate [Arrows]\nSelect [Enter]\nExit [Escape]\n");
+        Console.WriteLine("Controls:\n\nNavigate : <Arrows>\nSelect : <Enter>\nExit : <Escape>\n");
 
 
         foreach ((string text, bool selected) in selection)
