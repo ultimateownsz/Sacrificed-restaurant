@@ -40,10 +40,10 @@ static class AdminMenu
                 case "Delete (accounts)":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
-                case "Update (themes)\n":
+                case "Update (themes)":
                     ThemeView.ThemedEditing();
                     break;
-                case "(De)activate tables\n":
+                case "(De)activate tables":
                     AdminTableControlPresent.Show();
                     break;
                 case "Back":
