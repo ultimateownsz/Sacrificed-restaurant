@@ -3,67 +3,53 @@ using Project;
 
 static class UserLogin
 {
+    private static UserLogic userLogic = new();
+    
     private static string? request_email()
     {
-        while (true)
+        Console.Clear();
+        Console.WriteLine("LOGIN\n");
+
+        string? email = null;
+
+        // Pass the prompt directly to GetValidatedInput
+        TryCatchHelper.EscapeKeyException(() =>
         {
-            Console.Clear();
-            Console.WriteLine("LOGIN\n");
+            email = InputHelper.GetValidatedInput<string?>(
+                "Email: ", // Pass the prompt here
+                input => InputHelper.InputNotNull(input, "Email cannot be empty.")
+            );
+        });
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            // Console.Write("Email: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
+        if (email == null) return null; // Escape key pressed
 
-            // Wrap the input handling logic with EscapeKeyException
-            string? email = null;
-            TryCatchHelper.EscapeKeyException(() =>
-            {
-                email = InputHelper.GetValidatedInput<string?>(
-                    "Email: ",
-                    input => InputHelper.InputNotNull(input, "Email cannot be empty")  // Validation failure
-                );
-            });
-
-            if (email == null) // Escape key pressed
-            {
-                return null;
-            }
-
-            return email; // Valid email entered
-        }
+        return email; // Valid email entered
     }
 
 
     private static string? request_password(string? email)
     {
-        while (true)
+        Console.Clear();
+        Console.WriteLine("LOGIN\n");
+
+        Console.WriteLine($"Email: {email}");  // Keep the email visible above the password prompt
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        
+        // Use TryCatchHelper to handle Escape key exceptions during password input
+        string? password = null;
+
+        TryCatchHelper.EscapeKeyException(() =>
         {
-            Console.Clear();
-            Console.WriteLine("LOGIN\n");
-            // Console.WriteLine($"Email: {email}");
+            password = InputHelper.GetValidatedInput<string?>(
+                "Password: ",
+                input => InputHelper.InputNotNull(input, "Password cannot be empty.")  // Validation failure
+            );
+        });
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            // Console.Write("Password: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
+        if (password == null) return null;  // Escape key pressed
 
-            // Use TryCatchHelper to handle Escape key exceptions during password input
-            string? password = null;
-
-            TryCatchHelper.EscapeKeyException(() =>
-            {
-                password = InputHelper.GetValidatedInput<string?>(
-                    "Password: ",
-                    input => InputHelper.InputNotNull(input, "Password cannot be empty.")  // Validation failure
-                );
-            });
-
-            if (password == null) // Escape key pressed
-            {
-                return null;
-            }
-
-            return password; // Valid password entered
-        }
+        return password; // Valid password entered
     }
 
 
@@ -83,17 +69,20 @@ static class UserLogin
         {
             return acc; // Successful login
         }
+        else
+        {
+            // Invalid credentials
+            Console.Clear();
+            Console.WriteLine("LOGIN\n");
 
-        // Invalid credentials
-        Console.Clear();
-        Console.WriteLine("LOGIN\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
 
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Email: {email}", Console.ForegroundColor);
-        Console.WriteLine($"Password: {password}", Console.ForegroundColor);
+            Console.ResetColor();
+            Console.WriteLine("\nInvalid credentials, returning...");
+            return null;
+        }
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("\nInvalid credentials, returning...");
-        return null;
     }
 }
