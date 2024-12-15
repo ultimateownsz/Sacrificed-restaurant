@@ -6,15 +6,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 [TestClass]
 public class ThemeViewTests
 {
+
     // Simulated Methods for Testing
+    //This Method simulates adding themes
     private string SimulateAddTheme(Schedule schedule, string themeName)
     {
+        //calls ValidateThemeName to check if it has symbols in it
         if (!ValidateThemeName(themeName))
             return "Invalid theme name. Only letters and spaces are allowed.";
 
         return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
+    //This Method simulates editing themes
     private string SimulateEditTheme(Theme existingTheme, Schedule schedule, string newThemeName)
     {
         if (!ValidateThemeName(newThemeName))
@@ -24,17 +28,19 @@ public class ThemeViewTests
         return $"Theme updated to '{newThemeName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
+    //This Method simulates Deleting themes
     private string SimulateDeleteTheme(Theme themeToDelete, Schedule schedule)
     {
         return $"Theme '{themeToDelete.ThemeName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
+    //Validates the name of the theme
     private bool ValidateThemeName(string themeName)
     {
-        return Regex.IsMatch(themeName, "^[A-Za-z ]+$");
+        return Regex.IsMatch(themeName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
     }
 
-    // Utility Method for Month Name
+    // gets the month name
     private string GetMonthName(int month)
     {
         return new DateTime(1, month, 1).ToString("MMMM");
