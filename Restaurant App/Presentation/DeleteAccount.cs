@@ -7,7 +7,7 @@ namespace Project.Presentation
 {
     internal class DeleteAccount
     {
-        // Method to show the delete account menu
+        // Method to show the delete account menu 
         public static void ShowDeleteAccountMenu()
         {
             while (true)
