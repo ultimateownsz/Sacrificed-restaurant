@@ -10,7 +10,8 @@ internal class SelectionPresent : SelectionLogic
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
-        Console.WriteLine("Use the arrow keys to navigate and press 'Enter' to select an action.\n");
+        Console.WriteLine("Controls:\n\nNavigate [arrows]\nSelect [enter]\nExit [escape]\n");
+
 
         foreach ((string text, bool selected) in selection)
         {
@@ -46,7 +47,7 @@ internal class SelectionPresent : SelectionLogic
                 return new(current.Item1, current.Item2);
             
             case ConsoleKey.Escape:
-            // case ConsoleKey.B:
+            // // case ConsoleKey.B:
 
                 Console.ForegroundColor = ConsoleColor.White;
                 return new("", -1);
@@ -62,7 +63,6 @@ internal class SelectionPresent : SelectionLogic
         
         Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
-
         while (true)
         {
             // update screen
@@ -71,12 +71,20 @@ internal class SelectionPresent : SelectionLogic
             // read user-input
             if ((selected = _read(selection)) != null)
             {
-                // iniitialize
+                if (selected.Item2 == -1)  // escape pressed
+                {
+                    // Return a dynamic object indicating Escape was pressed
+                    dynamic escapeHandle = new ExpandoObject();
+                    escapeHandle.text = null;
+                    escapeHandle.index = -1;
+                    return escapeHandle;
+                }
+
+                // initialize and return dynamic object for selection
                 dynamic dynamicHandle = new ExpandoObject();
                 dynamicHandle.text = selected.Item1;
                 dynamicHandle.index = selected.Item2;
 
-                // return
                 return dynamicHandle;
             }
         }
