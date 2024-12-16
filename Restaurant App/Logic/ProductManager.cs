@@ -38,14 +38,14 @@ static class ProductManager
     }
 
 
-    public static bool DeleteProduct(int? productId)
+    public static bool DeleteProductAndRelatedRequests(int? productId)
     {
         var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
         foreach (var request in requests)
         {
             Access.Requests.Delete(request.ID);
         }
-        
+
         if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
             return false;

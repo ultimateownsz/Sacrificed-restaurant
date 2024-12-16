@@ -95,8 +95,9 @@ static class ProductView
                 case "Edit theme":
                     ProductManager.ProductEditValidator(chosenProduct, "theme", true);
                     break;
-                case "Delete product":
-                    DeleteProduct(chosenProduct);
+                case "Delete product\n":
+                    if(DeleteProduct(chosenProduct))
+                        return;
                     break;
                 case "back" or "":
                     return;
@@ -104,8 +105,22 @@ static class ProductView
         }
     }
 
-    public static void DeleteProduct(ProductModel chosenProduct)
+    public static bool DeleteProduct(ProductModel chosenProduct)
     {
-
+        Console.Clear();
+        if(ProductManager.DeleteProductAndRelatedRequests(chosenProduct.ID))
+        {
+            Console.WriteLine($"{chosenProduct.Name} has been deleted.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            return true;
+        }
+        else
+        {
+            Console.WriteLine($"Failed to delete {chosenProduct.Name}.");
+            Console.WriteLine("Press any key to continue..."); 
+            Console.ReadKey();
+            return false;
+        }
     }
 }
