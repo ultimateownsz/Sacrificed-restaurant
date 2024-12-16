@@ -84,13 +84,13 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Edit name":
-                    EditProductName(chosenProduct);
+                    ProductManager.ProductStringValidator(chosenProduct, "name");
                     break;
                 case "Edit price":
-                    EditProductPrice(chosenProduct);
+                    ProductManager.ProductStringValidator(chosenProduct, "price");
                     break;
                 case "Edit course":
-                    EditProductCourse(chosenProduct);
+                    ProductManager.ProductStringValidator(chosenProduct, "course");
                     break;
                 case "Edit theme":
                     EditProductTheme(chosenProduct);
@@ -102,122 +102,6 @@ static class ProductView
                     return;
             }
         }
-    }
-
-    public static void EditProductName(ProductModel oldProduct)
-    {
-        string newProductName;
-        while(true)
-        {        
-            Console.Clear();
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Enter new product name: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
-            newProductName = Console.ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(newProductName) && !newProductName.Any(char.IsDigit))
-            {
-                break;
-            }
-            
-            Console.Clear();            
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Enter new product name: {newProductName}", Console.ForegroundColor);
-            
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nInvalid product name...");
-            Console.ReadKey();
-        }
-        ProductModel newProduct = new ProductModel
-        {
-            ID = oldProduct.ID,
-            Name = newProductName,
-            Price = oldProduct.Price,
-            Course = oldProduct.Course,
-            ThemeID = oldProduct.ThemeID
-        };
-
-        if(ProductManager.UpdateProduct(oldProduct, newProduct))
-        {
-            Console.WriteLine($"Name has been updated from {oldProduct.Name} to {newProductName}");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
-        else
-        {
-            Console.WriteLine($"Name failed to update");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey(); 
-        }
-
-        return;
-    }
-
-    public static void EditProductPrice(ProductModel oldProduct)
-    {
-        string newProductPriceString;
-        while(true)
-        {        
-            Console.Clear();
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Enter new product price: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
-            newProductPriceString = Console.ReadLine();
-
-            decimal temp;
-
-            if 
-            (
-                !string.IsNullOrWhiteSpace(newProductPriceString)
-                && decimal.TryParse(newProductPriceString, out temp)
-                && newProductPriceString.Contains('.')
-                && newProductPriceString.Trim().Split('.')[1].Length == 2
-                && !newProductPriceString.Contains(' ')
-            )
-            {
-                break;
-            }
-            
-            Console.Clear();            
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Enter new product price: {newProductPriceString}", Console.ForegroundColor);
-            
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nInvalid product price...");
-            Console.ReadKey();
-        }
-
-        decimal newProductPriceDecimal = Convert.ToDecimal(newProductPriceString);
-        ProductModel newProduct = new ProductModel
-        {
-            ID = oldProduct.ID,
-            Name = oldProduct.Name,
-            Price = newProductPriceDecimal,
-            Course = oldProduct.Course,
-            ThemeID = oldProduct.ThemeID
-        };
-
-        if(ProductManager.UpdateProduct(oldProduct, newProduct))
-        {
-            Console.WriteLine($"Price has been updated from {oldProduct.Price}€ to {newProductPriceDecimal}€");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
-        else
-        {
-            Console.WriteLine($"Price failed to update");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey(); 
-        }
-        
-        return;
-    }
-
-    public static void EditProductCourse(ProductModel oldProduct)
-    {
-
     }
 
     public static void EditProductTheme(ProductModel oldProduct)
