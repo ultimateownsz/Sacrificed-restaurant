@@ -73,6 +73,34 @@ static class ProductManager
             .ToList();
     }
 
+public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
+{
+    var parts = productInfo.Split(" - ");
+    if (parts.Length != 4)
+    {
+        throw new ArgumentException($"Could not parse product info: '{productInfo}'");
+    }
+
+    float price;
+    int themeID;
+
+    if (!float.TryParse(parts[1].TrimEnd(' '), out price))
+    {
+        throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
+    }
+
+    if (!int.TryParse(parts[3], out themeID))
+    {
+        throw new ArgumentException($"Could not parse theme ID from product info: '{productInfo}'");
+    }
+
+    return Access.Products.Read()
+        .FirstOrDefault(p =>
+            p.Name == parts[0] &&
+            p.Price == price &&
+            p.Course == parts[2] &&
+            p.ThemeID == themeID);
+}
 
      public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
