@@ -119,13 +119,47 @@ static class ProductManager
     {
         return Access.Products.GetAllBy<string>("Course", category);
     }
+
+
     
-    public static void ProductStringValidator(ProductModel oldProduct, string type)
+    public static void ProductEditValidator(ProductModel oldProduct, string type, bool themeEdit)
     {
         List<string> courseNames = new List<string>{"main", "dessert", "appetizer", "beverage"};
-        string newProductEdit;
-        while(true)
-        {        
+        string newProductEdit = "";
+        int? ThemeID = null;
+
+        if(themeEdit)
+        {
+            while(true)
+            {
+                string newThemeName = ThemeInputValidator.GetValidString();
+                if(!ThemeMenuManager.DoesThemeExist(newThemeName))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("This theme doesn't exist.\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("Press any key to retry or escape to go back");
+
+                    if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    ThemeID = ThemeMenuManager.GetThemeIDByName(newThemeName);
+                    newProductEdit = newThemeName;
+                    Console.WriteLine(ThemeID);
+                    Console.WriteLine(oldProduct.ThemeID);
+                    Console.ReadKey();
+                    break;
+                }
+            }
+        }
+
+        while(true && !themeEdit)
+        {
+
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -172,13 +206,14 @@ static class ProductManager
             Console.WriteLine($"\nInvalid {type}...");
             Console.ReadKey();
         }
+
         ProductModel newProduct = new ProductModel
         {
             ID = oldProduct.ID,
             Name = type == "name" ? newProductEdit : oldProduct.Name,
             Price = type == "price" ? Convert.ToDecimal(newProductEdit) : oldProduct.Price,
             Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
-            ThemeID = oldProduct.ThemeID
+            ThemeID = type == "theme" ? ThemeID : oldProduct.ThemeID,
         };
 
         Console.Clear();
