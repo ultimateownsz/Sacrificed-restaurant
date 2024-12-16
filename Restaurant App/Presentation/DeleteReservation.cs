@@ -12,7 +12,7 @@ public static class DeleteReservation
             Console.Clear();
             var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
             string userFullName = GetUserFullName(account?.ID);
-            Console.WriteLine($"Are you sure?");
+            // Console.WriteLine($"Are you sure?");
 
             // Use SelectionPresent to show Yes/No options
             var selectedOption = SelectionPresent.Show(
