@@ -34,7 +34,7 @@ static class AdminMenu
                     ThemeView.ThemedEditing();
                     break;
                 case "update (products)":
-                    ProductView.ProductMenu();
+                    ProductView.ProductMainMenu();
                     break;
                 case "(de)activate tables\n":
                     AdminTableControlPresent.Show();

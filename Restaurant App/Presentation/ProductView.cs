@@ -2,7 +2,7 @@ using Project;
 
 static class ProductView
 {
-    public static void ProductMenu()
+    public static void ProductMainMenu()
     {
         string banner = $"PRODUCT MENU\n\n";
             List<string> options = new()
@@ -42,13 +42,39 @@ static class ProductView
     // Display all products
     public static void DisplayAllProducts()
     {
-        while(true)
+        string banner = "Choose a product to edit/delete:\n\n";
+        while (true)
         {
-            string banner = "Choose a product to edit/delete:\n\n";
             List<string> products = ProductManager.GetAllProductInfo().ToList();
-            string selection = SelectionPresent.Show(products, banner).text;
-            Console.WriteLine(selection);
-            Console.ReadKey();
+            string productSelection = SelectionPresent.Show(products, banner).text;
         }
+
+
+    }
+
+    public static void DeleteOrEditChoice()
+    {
+        string banner = "Choose a what to do with the product:\n\n";
+            List<string> options = new()
+        {
+            "Edit name",
+            "Edit price",
+            "Edit course",
+            "Edit theme",
+            "Delete product\n",
+            "back"
+        };
+
+        string selection = SelectionPresent.Show(options, banner).text;
+    }
+
+    public static void EditProduct()
+    {
+
+    }
+
+    public static void DeleteProduct()
+    {
+
     }
 }
