@@ -115,9 +115,85 @@ static class ProductManager
         return true;
     }
 
-     public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
+    public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
         return Access.Products.GetAllBy<string>("Course", category);
+    }
+    
+    public static void ProductStringValidator(ProductModel oldProduct, string type)
+    {
+        List<string> courseNames = new List<string>{"main", "dessert", "appetizer", "beverage"};
+        string newProductEdit;
+        while(true)
+        {        
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"Enter new product {type}: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            newProductEdit = Console.ReadLine().ToLower();
+            
+            if(type == "price")
+            {
+                decimal temp;
+
+                if 
+                (
+                    !string.IsNullOrWhiteSpace(newProductEdit)
+                    && decimal.TryParse(newProductEdit, out temp)
+                    && newProductEdit.Contains('.')
+                    && newProductEdit.Trim().Split('.')[1].Length == 2
+                    && !newProductEdit.Contains(' ')
+                )
+                {
+                    break;
+                }
+            }
+            else if(type == "course")
+            {
+                if (!string.IsNullOrWhiteSpace(newProductEdit) && !newProductEdit.Any(char.IsDigit) && courseNames.Contains(newProductEdit))
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(newProductEdit) && !newProductEdit.Any(char.IsDigit))
+                {
+                    break;
+                }
+            }
+
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter new product {type}: {newProductEdit}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"\nInvalid {type}...");
+            Console.ReadKey();
+        }
+        ProductModel newProduct = new ProductModel
+        {
+            ID = oldProduct.ID,
+            Name = type == "name" ? newProductEdit : oldProduct.Name,
+            Price = type == "price" ? Convert.ToDecimal(newProductEdit) : oldProduct.Price,
+            Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
+            ThemeID = oldProduct.ThemeID
+        };
+
+        Console.Clear();
+        if(UpdateProduct(oldProduct, newProduct))
+        {
+            Console.WriteLine($"The {type} has been updated to {newProductEdit}");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+        }
+        else
+        {
+            Console.WriteLine($"Failed to update the {type}");
+            Console.WriteLine("Press any key to continue..."); 
+            Console.ReadKey(); 
+        }
     }
 
 }
