@@ -132,4 +132,9 @@ static class ThemeMenuManager
     {
         return Access.Themes.GetAllBy<string>("Name", name).Select(theme => theme.ID).FirstOrDefault();
     }
+
+    public static bool DoesThemeExist(string themeName)
+    {
+        return Access.Themes.GetAllBy<string>("Name", themeName).Any();
+    }
 }
