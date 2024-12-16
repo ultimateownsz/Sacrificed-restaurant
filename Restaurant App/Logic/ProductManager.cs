@@ -101,20 +101,18 @@ static class ProductManager
                 p.ThemeID == themeID);
     }
 
-    public static void UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
+    public static bool UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
     {
         var existingProduct = Access.Products.GetBy<int?>("ID", oldProduct.ID);
 
         if (existingProduct == null)
         {
-            // Console.WriteLine($"Product with ID: {oldProduct.ID} does not exist.");
-            return;
+            return false;
         }
 
         newProduct.ID = oldProduct.ID;
         Access.Products.Update(newProduct);
-        // Console.WriteLine($"Product: {oldProduct.Name}, with ID: {oldProduct.ID} updated successfully.");
-        return;
+        return true;
     }
 
      public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
