@@ -126,4 +126,10 @@ static class ThemeMenuManager
         if (item == null) return false;
         return Access.Schedules.Delete(item.ID);
     }
+
+    
+    public static int? GetThemeIDByName(string name)
+    {
+        return Access.Themes.GetAllBy<string>("Name", name).Select(theme => theme.ID).FirstOrDefault();
+    }
 }
