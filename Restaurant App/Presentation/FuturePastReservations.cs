@@ -43,27 +43,42 @@ namespace Presentation
                     var reservationDetails = reservations.Select(r => new
                     {
                         Reservation = r,
-                        UserName = GetUserFullName(r.UserID),
-                        TableID = r.PlaceID
+                        UserName = GetUserFullName(r.UserID) ?? "Unknown User",
+                        TableID = r.PlaceID ?? 0
                     }).ToList();  // selecting info from reservation that are needed
 
                     var reservationOptions = reservationDetails
-                        .Select((r, index) => $"{index + 1}. {r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})")
+                        .Select((r, index) => $"{index + 1}. {r.UserName} - Table {r.TableID} (ID: {r.Reservation?.ID})")
                         .ToList(); // using this info in a string
                     
                     reservationOptions.Add("Back");
                     
+                    // display the menu
                     var selectedReservation = SelectionPresent.Show(
-                        reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
+                        reservationOptions, "RESERVATIONS\n\n").text;
 
-                    if (selectedReservation == "\nBack") return;
+                    //  handle null cases
+                    if (string.IsNullOrEmpty(selectedReservation) || selectedReservation.Equals("Back", StringComparison.OrdinalIgnoreCase))
+                        return;
 
-                    if (int.TryParse(selectedReservation.Split('.').FirstOrDefault(), out int selectedIndex)) // esnuring that after a choice the admin is sent to the correct menu
+                    // Safely parse user selection
+                    string[] splitSelection = selectedReservation.Split('.');
+                    if (splitSelection.Length > 0 && int.TryParse(splitSelection[0], out int selectedIndex))
                     {
-                        if (selectedIndex > 0 && selectedIndex <= reservationDetails.Count)
-                        {
-                            ShowReservations.ShowReservationOptions(reservationDetails[selectedIndex - 1].Reservation);
-                        }
+                         if (selectedIndex > 0 && selectedIndex <= reservationDetails.Count)
+                         {
+                            var selectedRes = reservationDetails[selectedIndex - 1]?.Reservation;
+
+                            if (selectedRes != null)
+                            {
+                                ShowReservations.ShowReservationOptions(selectedRes);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid selection. Returning to the menu...");
+                                Console.ReadKey();
+                            }
+                         }
                     }
                 }
             });
