@@ -32,14 +32,19 @@ public static class ThemeInputValidator
             {
                 return themeName;
             }
-            
+
             Console.Clear();            
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nInvalid theme name...");
-            Console.ReadKey();
+            Console.WriteLine("Press any key to retry or ESCAPE to go back");
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
+            {
+                return null;
+            }
         }
     }
 
