@@ -30,6 +30,12 @@ static class ThemeView
                 if (selection == 0)
                 {
                     themeName = ThemeInputValidator.GetValidString();
+                    if(themeName == null)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Failed to update theme");
+                        return;
+                    }
                     ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
                 }
@@ -43,6 +49,12 @@ static class ThemeView
             else
             {
                 themeName = ThemeInputValidator.GetValidString();
+                if(themeName == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Failed to update theme");
+                    return;
+                }
                 ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                 Console.WriteLine($"The theme has been updated to {themeName}");
             }
