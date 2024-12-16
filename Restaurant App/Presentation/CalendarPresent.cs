@@ -43,6 +43,7 @@ namespace Project
                         break;
                     case ConsoleKey.Enter: // Select date
                         return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+                    case ConsoleKey.Escape:
                     case ConsoleKey.Q: // Quit
                         if (acc.Admin == 1)
                         {
@@ -129,7 +130,7 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            Console.WriteLine("\n\nnavigate : <arrows>\nselect   : <enter>");
+            Console.WriteLine("\n\nControls:\n\nNavigate : <arrows>\nSelect   : <enter>\nExit : <escape>");
             //Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
         }
 
