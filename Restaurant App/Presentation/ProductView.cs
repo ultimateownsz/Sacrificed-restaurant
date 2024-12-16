@@ -48,6 +48,9 @@ static class ProductView
         {
             List<string> products = ProductManager.GetAllProductInfo().ToList();
             string productSelection = SelectionPresent.Show(products, banner).text;
+
+            ProductModel? chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection);
+
             if(productSelection == "")
             {
                 return;
@@ -57,7 +60,7 @@ static class ProductView
 
     }
 
-    public static void DeleteOrEditChoice()
+    public static void DeleteOrEditChoice(ProductModel chosenProduct)
     {
         string banner = "Choose a what to do with the product:\n\n";
             List<string> options = new()
@@ -75,19 +78,19 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Edit name":
-                    EditProductName();
+                    EditProductName(chosenProduct);
                     break;
                 case "Edit price":
-                    EditProductPrice();
+                    EditProductPrice(chosenProduct);
                     break;
                 case "Edit course":
-                    EditProductCourse();
+                    EditProductCourse(chosenProduct);
                     break;
                 case "Edit theme":
-                    EditProductTheme();
+                    EditProductTheme(chosenProduct);
                     break;
                 case "Delete product":
-                    DeleteProduct();
+                    DeleteProduct(chosenProduct);
                     break;
                 case "back" or "":
                     return;
@@ -95,27 +98,27 @@ static class ProductView
         }
     }
 
-    public static void EditProductName()
-    {
-        
-    }
-
-    public static void EditProductPrice()
+    public static void EditProductName(ProductModel chosenProduct)
     {
 
     }
 
-    public static void EditProductCourse()
+    public static void EditProductPrice(ProductModel chosenProduct)
     {
 
     }
 
-    public static void EditProductTheme()
+    public static void EditProductCourse(ProductModel chosenProduct)
     {
 
     }
 
-    public static void DeleteProduct()
+    public static void EditProductTheme(ProductModel chosenProduct)
+    {
+
+    }
+
+    public static void DeleteProduct(ProductModel chosenProduct)
     {
 
     }
