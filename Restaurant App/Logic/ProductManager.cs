@@ -64,9 +64,15 @@ static class ProductManager
      public static List<string> GetAllProductInfo()
     {
         return Access.Products.Read()
-            .Select(p => $"{p.Name} - {p.Price}€ - {p.Course}")
+            .Select(p => {
+                var themeName = p.ThemeID.HasValue
+                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    : "No theme";
+                return $"{p.Name} - {p.Price}€ - {p.Course} - {themeName}";
+            })
             .ToList();
     }
+
 
      public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
