@@ -4,10 +4,12 @@ static class ProductView
 {
     public static void ProductMenu()
     {
-        string banner = $"Choose:\n\n";
+        string banner = $"PRODUCT MENU\n\n";
             List<string> options = new()
         {
+            "Add product",
             "Show all products",
+            "Choose products course",
             "Choose products theme",
             "Choose products in month\n",
             "back"
@@ -17,6 +19,9 @@ static class ProductView
         {
             switch (SelectionPresent.Show(options, banner).text)
             {
+                case "Add product":
+                    
+                    break;
                 case "Show all products":
                     DisplayAllProducts();
                     break;
@@ -26,7 +31,10 @@ static class ProductView
                 case "Choose products in month":
                     
                     break;
-                case "back":
+                case "Choose products course":
+                    
+                    break;
+                case "back" or "":
                     return;
             }
         }
@@ -34,17 +42,13 @@ static class ProductView
     // Display all products
     public static void DisplayAllProducts()
     {
-        IEnumerable<ProductModel> products = ProductManager.GetAllProducts();
-        if (products.Count() > 0)
+        while(true)
         {
-            foreach (var product in products)
-            {
-                Console.WriteLine($"- Product: {product.Name}");
-            }
-        }
-        else
-        {
-            Console.WriteLine("No products found.");
+            string banner = "Choose a product to edit/delete:\n\n";
+            List<string> products = ProductManager.GetAllProductInfo().ToList();
+            string selection = SelectionPresent.Show(products, banner).text;
+            Console.WriteLine(selection);
+            Console.ReadKey();
         }
     }
 }
