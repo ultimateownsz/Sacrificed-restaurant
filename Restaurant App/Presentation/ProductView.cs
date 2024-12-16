@@ -43,21 +43,28 @@ static class ProductView
     // Display all products
     public static void DisplayAllProducts()
     {
+        ProductModel? chosenProduct;
         string banner = "Choose a product to edit/delete:\n\n";
         while (true)
         {
             List<string> products = ProductManager.GetAllProductInfo().ToList();
             string productSelection = SelectionPresent.Show(products, banner).text;
 
-            ProductModel? chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection);
-
             if(productSelection == "")
             {
                 return;
             }
+
+            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection);
+
+            if(chosenProduct == null)
+            {
+                return;
+            }
+            break;
         }
-
-
+        DeleteOrEditChoice(chosenProduct);
+        return;
     }
 
     public static void DeleteOrEditChoice(ProductModel chosenProduct)
@@ -98,22 +105,56 @@ static class ProductView
         }
     }
 
-    public static void EditProductName(ProductModel chosenProduct)
+    public static void EditProductName(ProductModel oldProduct)
+    {
+        string productNewName;
+        while(true)
+        {        
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Enter new product name: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            productNewName = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(productNewName) && !productNewName.Any(char.IsDigit))
+            {
+                break;
+            }
+            
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter new product name: {productNewName}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nInvalid product name...");
+            Console.ReadKey();
+        }
+        ProductModel newProduct = new ProductModel
+        {
+            ID = oldProduct.ID,
+            Name = productNewName,
+            Price = Math.Round(decimal.Parse(oldProduct.Price.ToString()), 2),
+            Course = oldProduct.Course,
+            ThemeID = oldProduct.ThemeID
+        };
+
+        ProductManager.UpdateProduct(oldProduct, newProduct);
+        
+        return;
+    }
+
+    public static void EditProductPrice(ProductModel oldProduct)
     {
 
     }
 
-    public static void EditProductPrice(ProductModel chosenProduct)
+    public static void EditProductCourse(ProductModel oldProduct)
     {
 
     }
 
-    public static void EditProductCourse(ProductModel chosenProduct)
-    {
-
-    }
-
-    public static void EditProductTheme(ProductModel chosenProduct)
+    public static void EditProductTheme(ProductModel oldProduct)
     {
 
     }
