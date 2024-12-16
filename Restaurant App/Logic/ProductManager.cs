@@ -71,8 +71,6 @@ static class ProductManager
             .ToList();
     }
 
-
-
     public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
     {
         productInfo = productInfo.Replace("€", "");
@@ -113,12 +111,17 @@ static class ProductManager
         return true;
     }
 
-    public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
+     public static List<string> GetAllWithinCategory(string course)
     {
-        return Access.Products.GetAllBy<string>("Course", category);
+        return Access.Products.GetAllBy("Course", course)
+            .Select(p => {
+                var themeName = p.ThemeID.HasValue
+                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    : "No theme";
+                return $"{p.Name} - {p.Price}€ - {themeName}";
+            })
+            .ToList();
     }
-
-
     
     public static void ProductEditValidator(ProductModel oldProduct, string type, bool themeEdit)
     {
