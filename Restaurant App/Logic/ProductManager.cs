@@ -72,6 +72,28 @@ static class ProductManager
             .ToList();
     }
 
+    public static List<string> GetAllWithinCategory(string course)
+    {
+        return Access.Products.GetAllBy("Course", course)
+            .Select(p => {
+                var themeName = p.ThemeID.HasValue
+                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    : "No theme";
+                return $"{p.Name} - {p.Price}€ - {themeName}";
+            })
+            .ToList();
+    }
+
+    public static List<string> GetAllWithinTheme(string theme)
+    {
+        int? themeID = ThemeMenuManager.GetThemeIDByName(theme);
+        return Access.Products.GetAllBy("ThemeID", themeID)
+            .Select(p => {
+                return $"{p.Name} - {p.Price}€ - {p.Course}";
+            })
+            .ToList();
+    }
+
     public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
     {
         productInfo = productInfo.Replace("€", "");
@@ -110,18 +132,6 @@ static class ProductManager
         newProduct.ID = oldProduct.ID;
         Access.Products.Update(newProduct);
         return true;
-    }
-
-     public static List<string> GetAllWithinCategory(string course)
-    {
-        return Access.Products.GetAllBy("Course", course)
-            .Select(p => {
-                var themeName = p.ThemeID.HasValue
-                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
-                    : "No theme";
-                return $"{p.Name} - {p.Price}€ - {themeName}";
-            })
-            .ToList();
     }
     
     public static void ProductEditValidator(ProductModel oldProduct, string type, bool themeEdit)
@@ -240,7 +250,7 @@ static class ProductManager
         }
     }
 
-    public static bool CourseOrThemeValidator(string type)
+    public static string? CourseOrThemeValidator(string type)
     {
         string Name;
         if (type == "course")
@@ -251,9 +261,9 @@ static class ProductManager
                 Console.WriteLine("Failed to filter based on course");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
-                return false;
+                return null;
             }
-            return true;
+            return Name;
         }
         else if (type == "theme")
         {
@@ -263,18 +273,18 @@ static class ProductManager
                 Console.WriteLine("Failed to filter based on theme");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
-                return false;
+                return null;
             }
             if(!ThemeMenuManager.DoesThemeExist(Name))
             {
-                return false;
+                return null;
             }
-            return true;
+            return Name;
 
         }
         else
         {
-            return false;
+            return null;
         }
     }
 
