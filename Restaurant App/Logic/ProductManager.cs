@@ -60,6 +60,11 @@ static class ProductManager
         return Access.Products.Read().ToList();
     }
 
+    public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
+    {
+            return Access.Products.GetAllBy<string>("Course", category);
+    }
+
      public static List<string> GetAllProductInfo()
     {
         return Access.Products.Read()
@@ -72,7 +77,7 @@ static class ProductManager
             .ToList();
     }
 
-    public static List<string> GetAllWithinCategory(string course)
+    public static List<string> GetAllWithinCategoryNew(string course)
     {
         return Access.Products.GetAllBy("Course", course)
             .Select(p => {

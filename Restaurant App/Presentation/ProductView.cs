@@ -64,7 +64,7 @@ static class ProductView
             else
             {
                 banner = "${Name}\n\nChoose a product to edit/delete:\n\n";
-                products = ProductManager.GetAllWithinCategory(Name).ToList();
+                products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
             }
                 
             string productSelection = SelectionPresent.Show(products, banner).text;
