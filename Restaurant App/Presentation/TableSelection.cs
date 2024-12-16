@@ -386,11 +386,12 @@ namespace Presentation
                 {
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    Console.WriteLine("(B)ack");
+                    Console.WriteLine("Controls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
 
                     var key = Console.ReadKey(true);
 
-                    if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                    // if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)  // removed to make the menus more consistent
+                    if (key.Key == ConsoleKey.Escape)
                     {
                         StopFlashing(); // Ensure flashing stops
                         ResetConsoleToDefault(); // Reset colors and clean up screen
