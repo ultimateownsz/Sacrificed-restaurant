@@ -1,5 +1,6 @@
 ﻿using Project.Presentation;
 using Project;
+using System.Text.RegularExpressions;
 
 public class UserLogic
 {
@@ -45,8 +46,15 @@ public class UserLogic
             if (mail == email)
                 return false;
         }
-         
-        return email.Contains("@") && email.Contains(".com");
+        string localPart = @"^[\wz]+";              // starts with letters, numbers or underscores
+        string atSymbol = @"@";                     // requires '@'
+        string domain = @"([\w]+\.)+";              // requires a domain name with at least one '.'
+        string topLevelDomain = @"[\w-]{2,4}$";     // ends with 2-4 characters (e.g., .com, .org)
+
+        string emailPattern = $"{localPart}{atSymbol}{domain}{topLevelDomain}";
+
+        return Regex.IsMatch(email, emailPattern);
+        //  return Regex.IsMatch(email, @"^[\wz]+@([\w]+\.)+[\w\w-]{2,4}$");
     }
 
     public static bool IsPasswordValid(string password)
