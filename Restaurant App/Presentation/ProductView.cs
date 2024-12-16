@@ -38,6 +38,7 @@ static class ProductView
                     return;
             }
         }
+
     }
     // Display all products
     public static void DisplayAllProducts()
@@ -47,6 +48,10 @@ static class ProductView
         {
             List<string> products = ProductManager.GetAllProductInfo().ToList();
             string productSelection = SelectionPresent.Show(products, banner).text;
+            if(productSelection == "")
+            {
+                return;
+            }
         }
 
 
@@ -65,10 +70,47 @@ static class ProductView
             "back"
         };
 
-        string selection = SelectionPresent.Show(options, banner).text;
+        while (true)
+        {
+            switch (SelectionPresent.Show(options, banner).text)
+            {
+                case "Edit name":
+                    EditProductName();
+                    break;
+                case "Edit price":
+                    EditProductPrice();
+                    break;
+                case "Edit course":
+                    EditProductCourse();
+                    break;
+                case "Edit theme":
+                    EditProductTheme();
+                    break;
+                case "Delete product":
+                    DeleteProduct();
+                    break;
+                case "back" or "":
+                    return;
+            }
+        }
     }
 
-    public static void EditProduct()
+    public static void EditProductName()
+    {
+        
+    }
+
+    public static void EditProductPrice()
+    {
+
+    }
+
+    public static void EditProductCourse()
+    {
+
+    }
+
+    public static void EditProductTheme()
     {
 
     }
