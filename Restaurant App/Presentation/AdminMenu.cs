@@ -12,6 +12,7 @@ static class AdminMenu
             "create (admin account)",
             "delete (accounts)",
             "update (themes)",
+            "update (products)",
             "(de)activate tables\n",
             "back"
         };
@@ -30,6 +31,9 @@ static class AdminMenu
                     DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
                 case "update (themes)":
+                    ThemeView.ThemedEditing();
+                    break;
+                case "update (products)":
                     ThemeView.ThemedEditing();
                     break;
                 case "(de)activate tables\n":
