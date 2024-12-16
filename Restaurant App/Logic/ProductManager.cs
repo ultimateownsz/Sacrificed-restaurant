@@ -56,9 +56,16 @@ static class ProductManager
         return true;
     }
 
-     public static IEnumerable<ProductModel> GetAllProducts()
+     public static List<ProductModel> GetAllProducts()
     {
-        return Access.Products.Read();
+        return Access.Products.Read().ToList();
+    }
+
+     public static List<string> GetAllProductInfo()
+    {
+        return Access.Products.Read()
+            .Select(p => $"{p.Name} - {p.Price}€ - {p.Course}")
+            .ToList();
     }
 
      public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
