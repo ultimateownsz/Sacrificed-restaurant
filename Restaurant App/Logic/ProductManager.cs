@@ -73,34 +73,49 @@ static class ProductManager
             .ToList();
     }
 
-public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
-{
-    var parts = productInfo.Split(" - ");
-    if (parts.Length != 4)
+
+
+    public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
     {
-        throw new ArgumentException($"Could not parse product info: '{productInfo}'");
+        productInfo = productInfo.Replace("€", "");
+        var parts = productInfo.Split(" - ");
+        if (parts.Length != 4)
+        {
+            throw new ArgumentException($"Could not parse product info: '{productInfo}'");
+        }
+
+        decimal price;
+
+        if (!decimal.TryParse(parts[1].TrimEnd(' '), out price))
+        {
+            throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
+        }
+
+    int? themeID = ThemeMenuManager.GetThemeIDByName(parts[3]);
+
+        return Access.Products.Read()
+            .FirstOrDefault(p =>
+                p.Name == parts[0] &&
+                p.Price == price &&
+                p.Course == parts[2] &&
+                p.ThemeID == themeID);
     }
 
-    float price;
-    int themeID;
-
-    if (!float.TryParse(parts[1].TrimEnd(' '), out price))
+    public static void UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
     {
-        throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
-    }
+        var existingProduct = Access.Products.GetBy<int?>("ID", oldProduct.ID);
 
-    if (!int.TryParse(parts[3], out themeID))
-    {
-        throw new ArgumentException($"Could not parse theme ID from product info: '{productInfo}'");
-    }
+        if (existingProduct == null)
+        {
+            // Console.WriteLine($"Product with ID: {oldProduct.ID} does not exist.");
+            return;
+        }
 
-    return Access.Products.Read()
-        .FirstOrDefault(p =>
-            p.Name == parts[0] &&
-            p.Price == price &&
-            p.Course == parts[2] &&
-            p.ThemeID == themeID);
-}
+        newProduct.ID = oldProduct.ID;
+        Access.Products.Update(newProduct);
+        // Console.WriteLine($"Product: {oldProduct.Name}, with ID: {oldProduct.ID} updated successfully.");
+        return;
+    }
 
      public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
