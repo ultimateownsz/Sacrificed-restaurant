@@ -1,5 +1,6 @@
 // this class handles all the logic for adding, updating, and deleting products
 
+using System.Diagnostics;
 using Project;
 
 static class ProductManager
@@ -134,6 +135,13 @@ static class ProductManager
             while(true)
             {
                 string newThemeName = ThemeInputValidator.GetValidString();
+                if(newThemeName == null)
+                {
+                    Console.WriteLine("The theme has not been updated.");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                }
                 if(!ThemeMenuManager.DoesThemeExist(newThemeName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -229,6 +237,44 @@ static class ProductManager
             Console.WriteLine($"Failed to update the {type}");
             Console.WriteLine("Press any key to continue..."); 
             Console.ReadKey(); 
+        }
+    }
+
+    public static bool CourseOrThemeValidator(string type)
+    {
+        string Name;
+        if (type == "course")
+        {
+            Name = CourseLogic.GetValidString();
+            if(Name == null)
+            {
+                Console.WriteLine("Failed to filter based on course");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                return false;
+            }
+            return true;
+        }
+        else if (type == "theme")
+        {
+            Name = ThemeInputValidator.GetValidString();
+            if(Name == null)
+            {
+                Console.WriteLine("Failed to filter based on theme");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                return false;
+            }
+            if(!ThemeMenuManager.DoesThemeExist(Name))
+            {
+                return false;
+            }
+            return true;
+
+        }
+        else
+        {
+            return false;
         }
     }
 
