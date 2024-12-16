@@ -10,13 +10,13 @@ static class ProductView
             "Add product",
             "Show all products",
             "Choose products course",
-            "Choose products theme",
-            "Choose products in month\n",
+            "Choose products theme\n",
             "back"
         };
 
         while (true)
         {
+            string? Name;
             Console.Clear();
             switch (SelectionPresent.Show(options, banner).text)
             {
@@ -24,16 +24,17 @@ static class ProductView
                     
                     break;
                 case "Show all products":
-                    DisplayAllProducts();
+                    DisplayProducts();
                     break;
                 case "Choose products theme":
-                    
+                    Name = ProductManager.CourseOrThemeValidator("theme");
+                    if (Name == null) break;
+                    DisplayProducts("theme", Name);
                     break;
-                case "Choose products in month":
-                    
-                    break;
-                case "Choose products course":
-                    
+                case "Choose products course\n":
+                    Name = ProductManager.CourseOrThemeValidator("course");
+                    if (Name == null) break;
+                    DisplayProducts("course", Name);
                     break;
                 case "back" or "":
                     return;
@@ -41,14 +42,31 @@ static class ProductView
         }
 
     }
+
     // Display all products
-    public static void DisplayAllProducts()
+    public static void DisplayProducts(string filterType = "", string Name = "")
     {
         ProductModel? chosenProduct;
-        string banner = "Choose a product to edit/delete:\n\n";
+        string banner;
+        List<string> products;
         while (true)
         {
-            List<string> products = ProductManager.GetAllProductInfo().ToList();
+            if(filterType == "")
+            {
+                banner = "Choose a product to edit/delete:\n\n";
+                products = ProductManager.GetAllProductInfo().ToList();
+            }
+            else if (filterType == "theme")
+            {
+                banner = $"{Name}\n\nChoose a product to edit/delete:\n\n";
+                products = ProductManager.GetAllWithinTheme(Name).ToList();
+            }
+            else
+            {
+                banner = "${Name}\n\nChoose a product to edit/delete:\n\n";
+                products = ProductManager.GetAllWithinCategory(Name).ToList();
+            }
+                
             string productSelection = SelectionPresent.Show(products, banner).text;
 
             if(productSelection == "")
@@ -66,6 +84,11 @@ static class ProductView
         }
     }
 
+    public static void AddProduct(ProductModel product)
+    {
+
+    }
+    
     public static void DeleteOrEditChoice(ProductModel chosenProduct)
     {
         string banner = "Choose a what to do with the product:\n\n";
