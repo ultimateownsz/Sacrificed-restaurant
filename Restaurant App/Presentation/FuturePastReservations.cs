@@ -25,12 +25,12 @@ namespace Presentation
             TryCatchHelper.EscapeKeyException(() =>
             {
                 int guests = 1;
-                bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
-                DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
+                bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+                DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // Calendar for admin
 
                 while (true)
                 {
-                    var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
+                    var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
 
                     if (!reservations.Any())
                     {
@@ -43,30 +43,49 @@ namespace Presentation
                     var reservationDetails = reservations.Select(r => new
                     {
                         Reservation = r,
-                        UserName = GetUserFullName(r.UserID),
-                        TableID = r.PlaceID
-                    }).ToList();  // selecting info from reservation that are needed
+                        UserName = GetUserFullName(r.UserID) ?? "Unknown User",
+                        TableID = r.PlaceID ?? 0
+                    }).ToList();
 
+                    // Add options and Back to the menu
                     var reservationOptions = reservationDetails
-                        .Select((r, index) => $"{index + 1}. {r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})")
-                        .ToList(); // using this info in a string
-                    
+                        .Select((r, index) => $"{index + 1}. {r.UserName} - Table {r.TableID} (ID: {r.Reservation?.ID})")
+                        .ToList();
+
                     reservationOptions.Add("Back");
-                    
-                    var selectedReservation = SelectionPresent.Show(
-                        reservationOptions, "RESERVATIONS\n\n").text; // displaying the info as opions to choose
 
-                    if (selectedReservation == "\nBack") return;
+                    // Display the menu
+                    var selectionResult = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n");
 
-                    if (int.TryParse(selectedReservation.Split('.').FirstOrDefault(), out int selectedIndex)) // esnuring that after a choice the admin is sent to the correct menu
+                    string selectedReservation = selectionResult?.text; // Explicitly handle null cases
+                    if (string.IsNullOrEmpty(selectedReservation) || selectedReservation.Equals("Back", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    // Safely parse user selection
+                    string[] splitSelection = selectedReservation.Split('.');
+                    if (splitSelection.Length > 0 && int.TryParse(splitSelection[0], out int selectedIndex))
                     {
                         if (selectedIndex > 0 && selectedIndex <= reservationDetails.Count)
                         {
-                            ShowReservations.ShowReservationOptions(reservationDetails[selectedIndex - 1].Reservation);
+                            var selectedRes = reservationDetails[selectedIndex - 1]?.Reservation;
+
+                            if (selectedRes != null)
+                            {
+                                ShowReservations.ShowReservationOptions(selectedRes);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid selection. Returning to the menu...");
+                                Console.ReadKey();
+                            }
                         }
                     }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please select a valid option.");
+                        Console.ReadKey();
+                    }
                 }
-
             });
         }
 
