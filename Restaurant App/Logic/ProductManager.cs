@@ -38,21 +38,19 @@ static class ProductManager
     }
 
 
-    public static bool DeleteProduct(int productId)
+    public static bool DeleteProduct(int? productId)
     {
-        if (productId < 0)
+        var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
+        foreach (var request in requests)
         {
-            throw new ArgumentOutOfRangeException($"{nameof(productId)} Product ID must be greater than 0.");
-            // return ;
+            Access.Requests.Delete(request.ID);
         }
-
-        if (Access.Products.GetBy<int>("ID", productId) == null)
+        
+        if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
-            // Console.WriteLine($"Database does not contain a product with ID: {productId}.");
             return false;
         }
         Access.Products.Delete(productId);
-        // Console.WriteLine($"Product with ID: {productId} deleted successfully.");
         return true;
     }
 
