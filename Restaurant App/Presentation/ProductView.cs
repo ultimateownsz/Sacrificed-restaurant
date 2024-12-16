@@ -84,16 +84,16 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Edit name":
-                    ProductManager.ProductStringValidator(chosenProduct, "name");
+                    ProductManager.ProductEditValidator(chosenProduct, "name", false);
                     break;
                 case "Edit price":
-                    ProductManager.ProductStringValidator(chosenProduct, "price");
+                    ProductManager.ProductEditValidator(chosenProduct, "price", false);
                     break;
                 case "Edit course":
-                    ProductManager.ProductStringValidator(chosenProduct, "course");
+                    ProductManager.ProductEditValidator(chosenProduct, "course", false);
                     break;
                 case "Edit theme":
-                    EditProductTheme(chosenProduct);
+                    ProductManager.ProductEditValidator(chosenProduct, "theme", true);
                     break;
                 case "Delete product":
                     DeleteProduct(chosenProduct);
@@ -102,11 +102,6 @@ static class ProductView
                     return;
             }
         }
-    }
-
-    public static void EditProductTheme(ProductModel oldProduct)
-    {
-
     }
 
     public static void DeleteProduct(ProductModel chosenProduct)
