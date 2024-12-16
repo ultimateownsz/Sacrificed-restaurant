@@ -293,4 +293,21 @@ static class ProductManager
         }
     }
 
+    public static bool DeleteProduct(int productId)
+    {
+        if (productId < 0)
+        {
+            throw new ArgumentOutOfRangeException($"{nameof(productId)} Product ID must be greater than 0.");
+            // return ;
+        }
+
+        if (Access.Products.GetBy<int>("ID", productId) == null)
+        {
+            // Console.WriteLine($"Database does not contain a product with ID: {productId}.");
+            return false;
+        }
+        Access.Products.Delete(productId);
+        // Console.WriteLine($"Product with ID: {productId} deleted successfully.");
+        return true;
+    }
 }
