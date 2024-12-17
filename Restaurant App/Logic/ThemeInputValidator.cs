@@ -1,4 +1,5 @@
 // the presentation layer uses this class to validate the input of the user
+using Project;
 
 public static class ThemeInputValidator
 {
@@ -43,6 +44,27 @@ public static class ThemeInputValidator
             Console.WriteLine("Press any key to retry or ESCAPE to go back");
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
+            {
+                return null;
+            }
+        }
+    }
+
+    public static string GetValidThemeMenu()
+    {
+        List<string> Themes = ThemeMenuManager.GetAllThemes();
+        Themes.Add("No theme");
+
+        while (true)
+        {
+            string banner = "Choose theme:\n\n";
+            var themeName = SelectionPresent.Show(Themes, banner, false).text;
+
+            if (themeName != "")
+            {
+                return themeName;
+            }
+            else
             {
                 return null;
             }
