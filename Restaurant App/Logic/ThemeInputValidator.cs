@@ -50,7 +50,7 @@ public static class ThemeInputValidator
         }
     }
 
-    public static string GetValidThemeMenu()
+    public static string? GetValidThemeMenu()
     {
         List<string> Themes = ThemeMenuManager.GetAllThemes();
         Themes.Add("No theme");
@@ -59,13 +59,14 @@ public static class ThemeInputValidator
         {
             string banner = "Choose theme:\n\n";
             var themeName = SelectionPresent.Show(Themes, banner, false).text;
-
-            if (themeName != "")
+            if(themeName == "No theme") return "0";
+            else if (themeName != "")
             {
                 return themeName;
             }
             else
             {
+                Console.WriteLine("?");
                 return null;
             }
         }

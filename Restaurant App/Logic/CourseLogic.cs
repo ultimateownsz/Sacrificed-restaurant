@@ -5,7 +5,7 @@ using Project;
 
 public class CourseLogic
 {
-    public static string GetValidCourse()
+    public static string? GetValidCourse()
     {
         List<string> courses = new List<string>{"Main", "Dessert", "Appetizer", "Beverage"};
 
@@ -20,6 +20,7 @@ public class CourseLogic
             }
             else
             {
+                Console.WriteLine("lol");
                 return null;
             }
         }
