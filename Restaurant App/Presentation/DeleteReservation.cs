@@ -17,25 +17,27 @@ public static class DeleteReservation
             // Use SelectionPresent to show Yes/No options
             var selectedOption = SelectionPresent.Show(
                 new List<string> { "Yes", "No" },
-                "Delete Reservation\n\nAre you sure?\n"
+                "DELETION\n\nAre you sure?\n"
             ).text;
 
             if (selectedOption == "Yes")
             {
                 // Attempt to delete the specific reservation
                 Access.Reservations.Delete(reservation.ID);
+                Console.Clear();
                 Console.WriteLine("Reservation deleted successfully.");
                 Console.WriteLine("Press any key to return to the reservation list.");
                 Console.ReadKey();
-                return; // Exit after successful deletion
+                //return; // Exit after successful deletion
             }
-            else if (selectedOption == "No")
-            {
-                Console.WriteLine("Reservation deletion cancelled.");
-                Console.WriteLine("Press any key to return to the reservation list.");
-                Console.ReadKey();
-                return; // Exit back to the reservation list
-            }
+            //else if (selectedOption == "No")
+            //{
+            //    Console.WriteLine("Reservation deletion cancelled.");
+            //    Console.WriteLine("Press any key to return to the reservation list.");
+            //    Console.ReadKey();
+            //    return; // Exit back to the reservation list
+            //}
+            return;
         }
     }
 

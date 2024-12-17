@@ -38,7 +38,7 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            var options = new List<string> { "reserve", "view reservations", "logout" };
+            var options = new List<string> { "reserve", "view reservations\n", "logout" };
             var selection = SelectionPresent.Show(options, "USER MENU\n\n").text;
 
             switch (selection)
@@ -46,9 +46,9 @@ static class Menu
                 case "reserve":
                     // Directly call MakingReservation without calendar in Menu
                     MakingReservations.MakingReservation(acc);
-                    return;
+                    break;
 
-                case "view reservations":
+                case "view reservations\n":
                     // MakingReservations.UserOverViewReservation(acc);
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
