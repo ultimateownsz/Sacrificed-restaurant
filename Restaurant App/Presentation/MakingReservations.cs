@@ -23,6 +23,12 @@ namespace Presentation
 
             DateTime selectedDate;
 
+            // Fetch inactive tables
+            var inactiveTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
+                .ToArray();
+
             while (true) // Loop to manage Calendar -> Table Selection navigation
             {
                 // Step 2: Display the calendar and mark unreservable dates
@@ -53,7 +59,7 @@ namespace Presentation
                 while (true) // Inner loop for Table Selection
                 {
                     // Step 4: Select a table
-                    int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, isAdmin);
+                    int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, isAdmin);
 
                     if (selectedTable == -1)
                     {
@@ -95,6 +101,7 @@ namespace Presentation
                 }
             }
         }
+
 
 
 

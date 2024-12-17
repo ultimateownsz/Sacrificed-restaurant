@@ -10,7 +10,7 @@ namespace Project
         {
             DateTime currentDate = initialDate;
 
-            int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests); // Start with the first available day
+            int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
 
             while (true)
             {
@@ -32,16 +32,36 @@ namespace Project
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
                         break;
                     case ConsoleKey.P:
-                        currentDate = currentDate.AddMonths(-1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests); // Reset to first available day
+                        if (currentDate.AddMonths(-1) < DateTime.Today)
+                        {
+                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            Console.WriteLine("You cannot reserve in the past.");
+                        }
+                        else
+                        {
+                            currentDate = currentDate.AddMonths(-1);
+                            selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+                        }
                         break;
                     case ConsoleKey.N:
                         currentDate = currentDate.AddMonths(1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests); // Reset to first available day
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.Enter:
                         DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
-                        return selectedDate; // Return the selected date
+
+                        if (IsDayFullyBooked(selectedDate, guests))
+                        {
+                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This day is fully reserved.");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            return selectedDate;
+                        }
+                        break;
                     case ConsoleKey.B:
                         return DateTime.MinValue; // Go back
                     default:
@@ -49,9 +69,6 @@ namespace Project
                         break;
                 }
             }
-
-
-            throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
@@ -106,15 +123,14 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            Console.WriteLine("\n\nnavigate : <arrows>\nselect   : <enter>\nback     : <b>");
+            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
 
             // Display the "fully reserved" message at the bottom
             if (showFullyReservedMessage)
             {
                 Console.WriteLine("\nThis day is fully reserved.");
-            } 
+            }
         }
-
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
         {
