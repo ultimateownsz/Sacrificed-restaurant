@@ -167,8 +167,6 @@ namespace Presentation
             Console.ResetColor();
         }
 
-
-
         private string GetNumberAt(int x, int y) 
         { 
             if (y < 0 || y >= GridPresent.GetGrid().GetLength(0) || x < 0 || x >= GridPresent.GetGrid().GetLength(1)) return null;

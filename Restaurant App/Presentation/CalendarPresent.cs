@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Presentation;
 
 namespace Project
 {
@@ -9,13 +10,12 @@ namespace Project
         {
             DateTime currentDate = initialDate;
 
-            int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-
-            DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
-
-            bool running = true;
-            while (running)
+            while (true)
             {
+                int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+
+                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+
                 var key = Console.ReadKey(intercept: true);
                 switch (key.Key)
                 {
@@ -33,11 +33,9 @@ namespace Project
                         break;
                     case ConsoleKey.P:
                         currentDate = currentDate.AddMonths(-1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.N:
                         currentDate = currentDate.AddMonths(1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.Enter:
                         if (IsDayFullyBooked(new DateTime(currentDate.Year, currentDate.Month, selectedDay), guests))
@@ -46,31 +44,33 @@ namespace Project
                         }
                         else
                         {
+                            var tableSelector = new TableSelection();
+                            int selectedTable = tableSelector.SelectTable(
+                                availableTables: new[] { 1, 2, 3 }, // Example available tables
+                                reservedTables: new[] { 4, 5 }, // Example reserved tables
+                                isAdmin: isAdmin);
+
+                            if (selectedTable == -1)
+                            {
+                                // User pressed 'B' or 'Esc' in table selection -> return to calendar
+                                break; // Exit table selection and re-display calendar
+                            }
+
+                            Console.WriteLine($"Selected Table: {selectedTable}");
                             return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
                         }
                         break;
                     case ConsoleKey.B:
-                        return DateTime.MinValue; // Indicate returning to the previous menu to select the number of guests
-                    case ConsoleKey.Q:
-                        if (acc.Admin == 1)
-                        {
-                            AdminMenu.AdminStart(acc);
-                        }
-                        else
-                        {
-                            Menu.ShowUserMenu(acc);
-                        }
-                        return DateTime.MinValue;
+                        return DateTime.MinValue; // Go back to the previous menu (e.g., guest selection)
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
-
-                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
             }
 
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
+
 
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
