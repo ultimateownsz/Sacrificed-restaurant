@@ -452,22 +452,48 @@ namespace Presentation
             int guestCount,
             bool isAdmin)
         {
+            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
+            if (table == null)
+                return (false, ConsoleColor.DarkGray, "Invalid table.");
+
+            // Determine if the table is too small or too big
+            bool isTooSmall = guestCount > table.MaxGuests;
+            bool isTooBig = guestCount < table.MinGuests;
+
             // Reserved table
             if (Array.Exists(reservedTables, t => t == tableNumber))
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is already reserved.");
+                return (false, ConsoleColor.DarkGray, "This table is already reserved.");
             }
 
-            // Inactive table
+            // Inactive table with size issues
             if (Array.Exists(inactiveTables, t => t == tableNumber))
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is inactive.");
+                if (isTooSmall)
+                {
+                    return (false, ConsoleColor.DarkGray, "This table is too small and inactive.");
+                }
+
+                if (isTooBig)
+                {
+                    return (false, ConsoleColor.DarkGray, "This table is too big and inactive.");
+                }
+
+                return (false, ConsoleColor.DarkGray, "This table is inactive.");
             }
 
-            // Invalid size for guests
-            if (!isAdmin && !IsTableValidForGuests(tableNumber, guestCount, activeTables))
+            // Table is active but not the right size
+            if (!isAdmin && (isTooSmall || isTooBig))
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too small/big for {guestCount} guests.");
+                if (isTooSmall)
+                {
+                    return (false, ConsoleColor.DarkGray, $"This table is too small for {guestCount} guests.");
+                }
+
+                if (isTooBig)
+                {
+                    return (false, ConsoleColor.DarkGray, $"This table is too big for {guestCount} guests.");
+                }
             }
 
             // Available table
