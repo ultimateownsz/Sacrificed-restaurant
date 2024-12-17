@@ -35,6 +35,19 @@ public static class ReservationDetails
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+
+        while (true)
+        {
+            var orders = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
+
+            if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
+            {
+                Console.Clear();
+                Console.WriteLine("There are no orders for this date.\nPress any key to return...");
+                Console.ReadKey();
+                return;
+            }
+        }
     }
 
     private static string FormatDate(long date)
