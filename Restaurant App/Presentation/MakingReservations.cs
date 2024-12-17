@@ -231,20 +231,22 @@ namespace Presentation
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
-                        productOptions.Add("Cancel"); // Option to cancel and restart
+                        // EMERGENCY MODIFICATION: 1
+                        //productOptions.Add("Cancel"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
-                        if (selectedOption == "Cancel")
-                        {
-                            Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
-                            Console.ReadKey();
-                            i = -1;
-                            guestOrder.Clear();
-                            allOrders.Clear();
-                            break;
-                        }
+                        // EMERGENCY MODIFICATION: 1
+                        //if (selectedOption == "Cancel")
+                        //{
+                        //    Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
+                        //    Console.ReadKey();
+                        //    i = -1;
+                        //    guestOrder.Clear();
+                        //    allOrders.Clear();
+                        //    break;
+                        //}
 
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
@@ -254,15 +256,16 @@ namespace Presentation
                         {
                             guestOrder.Add(selectedProduct);
 
-                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
-                            {
-                                Console.WriteLine("Failed to save the order. Please try again.");
-                                Console.ReadKey();
-                                continue;
-                            }
+                            // EMERGENCY MODIFICATION: 1
+                            //if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                            //{
+                            //    Console.WriteLine("Failed to save the order. Please try again.");
+                            //    Console.ReadKey();
+                            //    continue;
+                            //}
 
-                            Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            Console.ReadKey();
+                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                            //Console.ReadKey();
                             break; // Exit the selection loop for this category
                         }
                         else
@@ -278,7 +281,7 @@ namespace Presentation
                 if (i != -1)
                 {
                     allOrders.AddRange(guestOrder);
-                    Console.WriteLine("\nPress any key to continue to the next guest...");
+                    Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
                 }
             }
