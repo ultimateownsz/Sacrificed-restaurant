@@ -112,7 +112,7 @@ namespace Project
             if (showFullyReservedMessage)
             {
                 Console.WriteLine("\nThis day is fully reserved.");
-            }
+            } 
         }
 
 
