@@ -51,6 +51,8 @@ public static class ReservationDetails
             Console.Clear();
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
 
+            Dictionary<string, int> productCounts = new Dictionary<string, int>();
+
             foreach (var reserv in orders)
             {
                 var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID);
@@ -60,10 +62,23 @@ public static class ReservationDetails
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
                     if (product != null)
                     {
-                        Console.WriteLine($"- Product Name: {product.Name}");
+                        if (productCounts.ContainsKey(product.Name))
+                        {
+                            productCounts[product.Name]++;
+                        }
+                        else
+                        {
+                            productCounts[product.Name] = 1;
+                        }
                     }
                 }
             }
+
+            foreach (var products in productCounts)
+            {
+                Console.WriteLine($"- {products.Value}x {products.Key}");
+            }
+            
             Console.WriteLine("Press any key to return...");
             Console.ReadKey();
             return;
