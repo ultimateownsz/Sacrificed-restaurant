@@ -47,6 +47,26 @@ public static class ReservationDetails
                 Console.ReadKey();
                 return;
             }
+
+            Console.Clear();
+            Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
+
+            foreach (var reserv in orders)
+            {
+                var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID);
+
+                foreach (var req in request)
+                {
+                    var product = Access.Products.GetBy<int?>("ID", req.ID);
+                    if (product != null)
+                    {
+                        Console.WriteLine($"- Product Name: {product.Name}");
+                    }
+                }
+            }
+            Console.WriteLine("Press any key to return...");
+            Console.ReadKey();
+            return;
         }
     }
 
