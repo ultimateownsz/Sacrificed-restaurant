@@ -30,9 +30,11 @@ public static class ReservationDetails
         Console.ReadKey();
     }
 
-    public static void ShowOrders()
+    public static void ShowOrders(UserModel acc)
     {
-        
+        int guests = 1;
+        bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+        DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
     }
 
     private static string FormatDate(long date)
