@@ -48,6 +48,17 @@ static class ThemeMenuManager
         }
     }
 
+    
+    public static List<string?> GetAllThemes()
+    {
+        var themes = Access.Themes.GetAll().Select(t => t.Name).ToList();
+        if (themes.Count > 0)
+        {
+            themes[themes.Count - 1] += "\n\n";
+        }
+        return themes;
+    }
+
     // this method gets all the Theme model attatched to a schedule
     public static ThemeModel? GetThemeByYearAndMonth(int month, int year)
     {
@@ -132,10 +143,5 @@ static class ThemeMenuManager
     {
         var theme = Access.Themes.GetBy<string>("Name", name.Substring(0, 1).ToUpper() + name.Substring(1));
         return theme?.ID;
-    }
-
-    public static bool DoesThemeExist(string themeName)
-    {
-        return Access.Themes.GetAllBy<string>("Name", themeName).Any();
     }
 }
