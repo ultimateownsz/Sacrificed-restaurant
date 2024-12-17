@@ -65,7 +65,7 @@ public static class ReservationDetails
                     {
                         if (productCounts.ContainsKey(product.Name))
                         {
-                            productCounts[product.Name] = Math.Min(productCounts[product.Name] + 1, maxProductCount);
+                            productCounts[product.Name]++;
                         }
                         else
                         {
@@ -77,7 +77,13 @@ public static class ReservationDetails
 
             foreach (var products in productCounts)
             {
-                Console.WriteLine($"- {products.Value}x {products.Key}");
+                int total = products.Value;
+                while (total > 0)
+                {   
+                    int displayCount = Math.Min(total, maxProductCount);
+                    Console.WriteLine($"- {displayCount}x {products.Key}");
+                    total -= displayCount;
+                }
             }
 
             Console.WriteLine("Press any key to return...");
