@@ -66,8 +66,7 @@ namespace Project
 
                             // Table selection
                             var tableSelector = new TableSelection();
-                            int selectedTable = tableSelector.SelectTable(availableTables, reservedTables, acc.Admin == 1);
-
+                            int selectedTable = tableSelector.SelectTable(availableTables, reservedTables, guests, acc.Admin == 1);
                             if (selectedTable == -1)
                             {
                                 // Return to calendar if user pressed 'B'

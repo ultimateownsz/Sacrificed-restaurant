@@ -8,6 +8,7 @@ namespace Presentation
     {
         public static void Show()
         {
+            int guests = 0;
             Console.Clear();
             Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
             Console.WriteLine("Press Esc to return to the admin menu.");
@@ -30,7 +31,7 @@ namespace Presentation
             {
                 while (true)
                 {
-                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables, isAdmin: true);
+                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables, guests, isAdmin: true);
 
                     if (selectedTable == -1)
                     {

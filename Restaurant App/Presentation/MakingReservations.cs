@@ -46,7 +46,7 @@ namespace Presentation
                 .ToArray();
 
             // Step 4: Select a table
-            int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+            int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, guests);
 
             if (selectedTable == -1)
             {
