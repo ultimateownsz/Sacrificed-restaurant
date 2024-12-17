@@ -1,7 +1,14 @@
 ﻿namespace Project;
 internal class SelectionLogic
 {
-    static protected Tuple<T1?, int> ReverseLookup<T1, T2>(Dictionary<T1, T2> dict, T2 target) where T1 : notnull
+    public enum Mode
+    {
+        Single,
+        Multi,
+        Narrow,
+    }
+
+    public static Tuple<T1?, int> ReverseLookup<T1, T2>(Dictionary<T1, T2> dict, T2 target) where T1 : notnull
     {
         int i = 0;
         foreach ((T1 key, T2 value) in dict)
@@ -18,7 +25,7 @@ internal class SelectionLogic
         return new(default, 0);
     }
 
-    static protected Index Next(int size, int current, bool reverse = false)
+    public static Index Next(int size, int current, bool reverse = false)
     {
         current += (reverse) ? -1 : 1;
 
@@ -28,7 +35,7 @@ internal class SelectionLogic
         return current;
     }
 
-    static protected Dictionary<string, bool> ToSelectable(List<string> options, bool reversed)
+    public static Dictionary<string, bool> ToSelectable(List<string> options, SelectionLogic.Mode mode)
     {
         // transform list to dictionary with booleans
         // where the booleans are what's selected
@@ -37,7 +44,13 @@ internal class SelectionLogic
         {
             selection.Add(option, false);
         }
-        selection[options[(reversed) ? options.Count - 1 : 0]] = true;
+        selection[options[(mode ==  SelectionLogic.Mode.Narrow) ? options.Count - 1 : 0]] = true;
+
+        // new termination
+        if (mode == SelectionLogic.Mode.Multi)
+        {
+            selection.Add("continue", false);
+        }
 
         return selection;
     }
