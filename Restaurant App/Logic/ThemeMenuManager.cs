@@ -130,7 +130,7 @@ static class ThemeMenuManager
     
     public static int? GetThemeIDByName(string name)
     {
-        var theme = Access.Themes.GetBy<string>("Name", name);
+        var theme = Access.Themes.GetBy<string>("Name", name.Substring(0, 1).ToUpper() + name.Substring(1));
         return theme?.ID;
     }
 
