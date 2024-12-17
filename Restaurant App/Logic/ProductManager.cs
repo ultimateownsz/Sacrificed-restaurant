@@ -1,5 +1,4 @@
 // this class handles all the logic for adding, updating, and deleting products
-
 using System.Diagnostics;
 using Project;
 
@@ -99,30 +98,30 @@ static class ProductManager
             .ToList();
     }
 
-    public static ProductModel? ConvertStringChoiceToProductModel(string productInfo)
+    public static ProductModel? ConvertStringChoiceToProductModel(string productInfo, string type, string Name)
     {
         productInfo = productInfo.Replace("€", "");
         var parts = productInfo.Split(" - ");
-        if (parts.Length != 4)
-        {
-            throw new ArgumentException($"Could not parse product info: '{productInfo}'");
-        }
-
         decimal price;
+        int? themeID;
 
         if (!decimal.TryParse(parts[1].TrimEnd(' '), out price))
         {
             throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
         }
-
-    int? themeID = ThemeMenuManager.GetThemeIDByName(parts[3]);
+        themeID = parts.Count() switch
+        {
+            4 => ThemeMenuManager.GetThemeIDByName(parts[3]),
+            3 => ThemeMenuManager.GetThemeIDByName(parts[2]),
+            _ => null
+        };
 
         return Access.Products.Read()
             .FirstOrDefault(p =>
                 p.Name == parts[0] &&
                 p.Price == price &&
-                p.Course == parts[2] &&
-                p.ThemeID == themeID);
+                (type == "course" ? p.Course == Name : p.Course == parts[2]) &&
+                (type == "theme" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(Name) : p.ThemeID == themeID));
     }
 
     public static bool UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
@@ -193,14 +192,15 @@ static class ProductManager
             
             if(type == "price")
             {
+                newProductEdit = newProductEdit.Replace('.', ',');
                 decimal temp;
 
                 if 
                 (
                     !string.IsNullOrWhiteSpace(newProductEdit)
+                    && newProductEdit.Contains(',')
                     && decimal.TryParse(newProductEdit, out temp)
-                    && newProductEdit.Contains('.')
-                    && newProductEdit.Trim().Split('.')[1].Length == 2
+                    && newProductEdit.Trim().Split(',')[1].Length == 2
                     && !newProductEdit.Contains(' ')
                 )
                 {
@@ -230,12 +230,12 @@ static class ProductManager
             Console.WriteLine($"\nInvalid {type}...");
             Console.ReadKey();
         }
-
+            
         ProductModel newProduct = new ProductModel
         {
             ID = oldProduct.ID,
             Name = type == "name" ? newProductEdit : oldProduct.Name,
-            Price = type == "price" ? Convert.ToDecimal(newProductEdit) : oldProduct.Price,
+            Price = type == "price" ? decimal.Parse(newProductEdit) : oldProduct.Price,
             Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
             ThemeID = type == "theme" ? ThemeID : oldProduct.ThemeID,
         };
