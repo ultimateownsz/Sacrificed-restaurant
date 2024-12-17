@@ -61,7 +61,7 @@ public static class ReservationDetails
             string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
             Console.Clear();
-            Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
+            Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
             foreach (var reserv in orders)
             {
@@ -103,7 +103,7 @@ public static class ReservationDetails
                 }
             }
 
-            Console.WriteLine("Press any key to return...");
+            Console.WriteLine("\nPress any key to return...");
             Console.ReadKey();
             return;
         }
