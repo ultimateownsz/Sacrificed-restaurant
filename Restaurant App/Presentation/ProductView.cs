@@ -26,15 +26,15 @@ static class ProductView
                 case "Show all products":
                     DisplayProducts();
                     break;
-                case "Choose products theme":
-                    Name = ProductManager.CourseOrThemeValidator("theme");
-                    if (Name == null) break;
-                    DisplayProducts("theme", Name);
-                    break;
-                case "Choose products course\n":
+                case "Choose products course":
                     Name = ProductManager.CourseOrThemeValidator("course");
                     if (Name == null) break;
                     DisplayProducts("course", Name);
+                    break;
+                case "Choose products theme\n":
+                    Name = ProductManager.CourseOrThemeValidator("theme");
+                    if (Name == null) break;
+                    DisplayProducts("theme", Name);
                     break;
                 case "back" or "":
                     return;
@@ -56,15 +56,15 @@ static class ProductView
                 banner = "Choose a product to edit/delete:\n\n";
                 products = ProductManager.GetAllProductInfo().ToList();
             }
-            else if (filterType == "theme")
+            else if (filterType == "course")
             {
-                banner = $"{Name}\n\nChoose a product to edit/delete:\n\n";
-                products = ProductManager.GetAllWithinTheme(Name).ToList();
+                banner = $"{Name}:\n\nChoose a product to edit/delete:\n\n";
+                products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
             }
             else
             {
-                banner = "${Name}\n\nChoose a product to edit/delete:\n\n";
-                products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
+                banner = $"{Name}:\n\nChoose a product to edit/delete:\n\n";
+                products = ProductManager.GetAllWithinTheme(Name).ToList();
             }
                 
             string productSelection = SelectionPresent.Show(products, banner).text;
@@ -74,8 +74,7 @@ static class ProductView
                 return;
             }
 
-            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection);
-
+            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection, filterType, Name);
             if(chosenProduct == null)
             {
                 return;
