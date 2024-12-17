@@ -8,28 +8,71 @@ static class ProductManager
     {
         if (product == null)
         {
-            throw new ArgumentNullException(nameof(product));
-        }
-
-        if (Access.Products.GetBy<int?>("ID", product.ID) != null)
-        {
-            // Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} already exists.");
+            Console.WriteLine("Cant add empty products.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
             return false;
         }
-        Access.Products.Write(product);
-        // Console.WriteLine($"Product: {product.ProductName}, with ID: {product.ProductId} added successfully.");
 
+        if (Access.Products.GetBy<string?>("Name", product.Name) != null)
+        {
+            Console.WriteLine($"{product.Name} already exists.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            return false;
+        }
+
+        Access.Products.Write(product);
         return true;
     }
 
-    //public static bool UpdateProductQuantity(ProductModel product, int newQuantity)
-    //{
+    public static string GetValidNameOrPrice(string type)
+    {
+        while (true)
+        {
+            Console.Clear();
 
-    //    //product.UpdateQuantity(newQuantity);
-    //    ProductsAccess.Update(product);
-    //    return true;
-    //    // Console.WriteLine($"Updated '{product.ProductName} (ID: {product.ProductId}) to quantity {product.Quantity}.");
-    //}
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"Enter {type}: ", Console.ForegroundColor);
+            Console.ForegroundColor = ConsoleColor.White;
+            var productInfo = Console.ReadLine();
+            if(type == "name")
+            {
+                if (!string.IsNullOrWhiteSpace(productInfo) && !productInfo.Any(char.IsDigit))
+                {
+                    productInfo = char.ToUpper(productInfo[0]) + productInfo.Substring(1);
+                    return productInfo;
+                }
+            }
+            else if(type == "price")
+            {
+                productInfo = productInfo.Replace(',', '.');
+                decimal temp;
+                if (
+                    !string.IsNullOrWhiteSpace(productInfo)
+                    && productInfo.Contains('.')
+                    && decimal.TryParse(productInfo, out temp)
+                    && productInfo.Trim().Split('.')[1].Length == 2
+                    && !productInfo.Contains(' '))
+                {
+                    return productInfo;
+                }
+            }
+
+            Console.Clear();            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Enter {type}: {productInfo}", Console.ForegroundColor);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"\nInvalid {type}...");
+            Console.WriteLine("Press any key to retry or ESCAPE to go back");
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
+            {
+                return null;
+            }
+        }
+    }
 
     public static bool DoesProductExist(int? productId)
     {
@@ -71,7 +114,8 @@ static class ProductManager
                 var themeName = p.ThemeID.HasValue
                     ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
                     : "No theme";
-                return $"{p.Name,-18}   {p.Course,-15}   {themeName,-15}   €{p.Price:F2}";
+                var courseName = p.Course ?? "No course";
+                return $"{p.Name,-18}   {courseName,-15}   {themeName,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
@@ -93,6 +137,7 @@ static class ProductManager
         int? themeID = ThemeMenuManager.GetThemeIDByName(theme);
         return Access.Products.GetAllBy("ThemeID", themeID)
             .Select(p => {
+                var courseName = p.Course ?? "No course";
                 return $"{p.Name,-18}   {p.Course,-15}   €{p.Price:F2}";
             })
             .ToList();
@@ -177,56 +222,22 @@ static class ProductManager
                 }
             }
         }
-
-        while(true && !themeEdit)
+        else if(!themeEdit)
         {
-
             Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"Enter new product {type}: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
-            newProductEdit = Console.ReadLine().ToLower();
-            
             if(type == "price")
             {
-                newProductEdit = newProductEdit.Replace('.', ',');
-                decimal temp;
-
-                if 
-                (
-                    !string.IsNullOrWhiteSpace(newProductEdit)
-                    && newProductEdit.Contains(',')
-                    && decimal.TryParse(newProductEdit, out temp)
-                    && newProductEdit.Trim().Split(',')[1].Length == 2
-                    && !newProductEdit.Contains(' ')
-                )
-                {
-                    break;
-                }
+                newProductEdit = GetValidNameOrPrice("price");
             }
             else if(type == "course")
             {
-                if (!string.IsNullOrWhiteSpace(newProductEdit) && !newProductEdit.Any(char.IsDigit) && courseNames.Contains(newProductEdit))
-                {
-                    break;
-                }
+                newProductEdit = CourseLogic.GetValidCourse();
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(newProductEdit) && !newProductEdit.Any(char.IsDigit))
-                {
-                    break;
-                }
+                newProductEdit = GetValidNameOrPrice("name");
             }
-
-            Console.Clear();            
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Enter new product {type}: {newProductEdit}", Console.ForegroundColor);
-            
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"\nInvalid {type}...");
-            Console.ReadKey();
         }
             
         ProductModel newProduct = new ProductModel
@@ -253,12 +264,58 @@ static class ProductManager
         }
     }
 
+    public static ProductModel? ProductValidator()
+    {
+        ProductModel newProduct = new();
+
+        string name = GetValidNameOrPrice("name");
+        if(name == null)
+        {
+            return null;
+        }
+        newProduct.Name = name;
+
+        string course = CourseLogic.GetValidCourse();
+        if(course == null)
+        {
+            return null;
+        }
+        newProduct.Course = course;
+
+        string theme = ThemeInputValidator.GetValidString();
+        if(theme == null)
+        {
+            newProduct.ThemeID = null;
+        }
+        if(!ThemeMenuManager.DoesThemeExist(theme))
+        {
+            newProduct.ThemeID = null;
+        }
+        else
+        {
+            newProduct.ThemeID = ThemeMenuManager.GetThemeIDByName(theme);
+        }
+
+        string price = GetValidNameOrPrice("price");
+        decimal temp;
+        if (decimal.TryParse(price, out temp))
+        {
+            newProduct.Price = decimal.Parse(price);
+        }
+        else
+        {
+            return null;
+        }
+
+        return newProduct;
+    }
+
     public static string? CourseOrThemeValidator(string type)
     {
         string Name;
         if (type == "course")
         {
-            Name = CourseLogic.GetValidString();
+            Name = CourseLogic.GetValidCourse();
             if(Name == null)
             {
                 Console.WriteLine("Failed to filter based on course");
