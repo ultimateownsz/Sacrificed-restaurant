@@ -10,10 +10,12 @@ namespace Project
         {
             DateTime currentDate = initialDate;
 
-            while (true)
-            {
-                int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+            // Find the first available day only once for the current month
+            int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
 
+            bool running = true;
+            while (running)
+            {
                 DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
 
                 var key = Console.ReadKey(intercept: true);
@@ -32,36 +34,53 @@ namespace Project
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
                         break;
                     case ConsoleKey.P:
+                        // Change month and reset day
                         currentDate = currentDate.AddMonths(-1);
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.N:
+                        // Change month and reset day
                         currentDate = currentDate.AddMonths(1);
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         break;
                     case ConsoleKey.Enter:
-                        if (IsDayFullyBooked(new DateTime(currentDate.Year, currentDate.Month, selectedDay), guests))
+                        DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+
+                        if (IsDayFullyBooked(selectedDate, guests))
                         {
                             Console.WriteLine("This day is fully reserved.");
                         }
                         else
                         {
+                            // Real available and reserved tables
+                            var availableTables = Access.Places.Read()
+                                .Where(p => p.Active == 1)
+                                .Select(p => p.ID.Value)
+                                .ToArray();
+
+                            var reservedTables = Access.Reservations
+                                .GetAllBy<DateTime>("Date", selectedDate)
+                                .Where(r => r.PlaceID.HasValue)
+                                .Select(r => r.PlaceID.Value)
+                                .ToArray();
+
+                            // Table selection
                             var tableSelector = new TableSelection();
-                            int selectedTable = tableSelector.SelectTable(
-                                availableTables: new[] { 1, 2, 3 }, // Example available tables
-                                reservedTables: new[] { 4, 5 }, // Example reserved tables
-                                isAdmin: isAdmin);
+                            int selectedTable = tableSelector.SelectTable(availableTables, reservedTables, acc.Admin == 1);
 
                             if (selectedTable == -1)
                             {
-                                // User pressed 'B' or 'Esc' in table selection -> return to calendar
-                                break; // Exit table selection and re-display calendar
+                                // Return to calendar if user pressed 'B'
+                                break;
                             }
-
-                            Console.WriteLine($"Selected Table: {selectedTable}");
-                            return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+                            else
+                            {
+                                return selectedDate; // Confirm date selection
+                            }
                         }
                         break;
                     case ConsoleKey.B:
-                        return DateTime.MinValue; // Go back to the previous menu (e.g., guest selection)
+                        return DateTime.MinValue; // Go back to previous menu
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
@@ -70,8 +89,6 @@ namespace Project
 
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
-
-
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
