@@ -10,9 +10,6 @@ internal class SelectionPresent : SelectionLogic
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
-        Console.WriteLine("Controls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
-
-
         foreach ((string text, bool selected) in selection)
         {
             Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
@@ -21,6 +18,8 @@ internal class SelectionPresent : SelectionLogic
             if (oneline && !selected) continue;
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
         }
+        Console.ResetColor();
+        Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
     }
 
     private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection)
@@ -88,7 +87,6 @@ internal class SelectionPresent : SelectionLogic
                 dynamic dynamicHandle = new ExpandoObject();
                 dynamicHandle.text = trimmedSelection;  // return trimmed value for logic
                 dynamicHandle.index = selected.Item2;
-
                 return dynamicHandle;
             }
         }
