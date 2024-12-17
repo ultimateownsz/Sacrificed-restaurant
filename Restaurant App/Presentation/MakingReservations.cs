@@ -59,7 +59,7 @@ namespace Presentation
                 while (true) // Inner loop for Table Selection
                 {
                     // Step 4: Select a table
-                    int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, isAdmin);
+                    int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, isAdmin);
 
                     if (selectedTable == -1)
                     {
