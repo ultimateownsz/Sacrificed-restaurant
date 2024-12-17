@@ -26,13 +26,13 @@ static class ProductView
                     DisplayProducts();
                     break;
                 case "Choose products course":
-                    Name = ProductManager.CourseOrThemeValidator("course");
+                    Name = CourseLogic.GetValidCourse();
                     if (Name == null) break;
                     DisplayProducts("course", Name);
                     break;
                 case "Choose products theme\n":
-                    Name = ProductManager.CourseOrThemeValidator("theme");
-                    if (Name == null) break;
+                    Name = ThemeInputValidator.GetValidThemeMenu();
+                    if (Name == "fail") break;
                     DisplayProducts("theme", Name);
                     break;
                 case "back" or "":
@@ -128,16 +128,16 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Edit name":
-                    ProductManager.ProductEditValidator(chosenProduct, "name", false);
+                    ProductManager.ProductEditValidator(chosenProduct, "name");
                     break;
                 case "Edit price":
-                    ProductManager.ProductEditValidator(chosenProduct, "price", false);
+                    ProductManager.ProductEditValidator(chosenProduct, "price");
                     break;
                 case "Edit course":
-                    ProductManager.ProductEditValidator(chosenProduct, "course", false);
+                    ProductManager.ProductEditValidator(chosenProduct, "course");
                     break;
                 case "Edit theme":
-                    ProductManager.ProductEditValidator(chosenProduct, "theme", true);
+                    ProductManager.ProductEditValidator(chosenProduct, "theme");
                     break;
                 case "Delete product\n":
                     if(DeleteProduct(chosenProduct))
