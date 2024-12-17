@@ -49,6 +49,8 @@ namespace Project
                             return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
                         }
                         break;
+                    case ConsoleKey.B:
+                        return DateTime.MinValue; // Indicate returning to the previous menu to select the number of guests
                     case ConsoleKey.Q:
                         if (acc.Admin == 1)
                         {
@@ -70,6 +72,7 @@ namespace Project
             throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
 
+
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
@@ -81,6 +84,7 @@ namespace Project
             startDay = startDay == 0 ? 6 : startDay - 1;
 
             DateTime today = DateTime.Today;
+            bool showFullyReservedMessage = false;
 
             for (int i = 0; i < startDay; i++)
                 Console.Write("   ");
@@ -100,9 +104,10 @@ namespace Project
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
+                    // Flag to show the "fully reserved" message if the selected day is fully booked
                     if (isFullyBooked)
                     {
-                        Console.WriteLine("\n\nThis day is fully reserved.");
+                        showFullyReservedMessage = true;
                     }
                 }
                 else if (isFullyBooked)
@@ -120,8 +125,15 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            Console.WriteLine("\n\nnavigate : <arrows>\nselect   : <enter>");
+            Console.WriteLine("\n\nnavigate : <arrows>\nselect   : <enter>\nback     : <b>");
+
+            // Display the "fully reserved" message at the bottom
+            if (showFullyReservedMessage)
+            {
+                Console.WriteLine("\nThis day is fully reserved.");
+            }
         }
+
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
         {
