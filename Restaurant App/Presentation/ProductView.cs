@@ -17,7 +17,6 @@ static class ProductView
         while (true)
         {
             string? Name;
-            Console.Clear();
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Add product":
@@ -55,22 +54,44 @@ static class ProductView
             {
                 banner = "Choose a product to edit/delete:\n\n";
                 products = ProductManager.GetAllProductInfo().ToList();
+                if(products.Count == 0)
+                {
+                    Console.WriteLine($"There are no products in the resturaunt");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                } 
             }
             else if (filterType == "course")
             {
-                banner = $"{Name}:\n\nChoose a product to edit/delete:\n\n";
+                banner = $"Choose a product to edit/delete:\n\n{Name}:\n\n";
                 products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
+                if(products.Count == 0)
+                {
+                    Console.WriteLine($"There are no products in {Name}");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                } 
             }
             else
             {
-                banner = $"{Name}:\n\nChoose a product to edit/delete:\n\n";
+                banner = $"Choose a product to edit/delete:\n\n{Name}:\n\n";
                 products = ProductManager.GetAllWithinTheme(Name).ToList();
+                if(products.Count == 0)
+                {
+                    Console.WriteLine($"There are no products in the {Name} theme");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                } 
             }
-                
+
             string productSelection = SelectionPresent.Show(products, banner).text;
 
             if(productSelection == "")
             {
+                Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
 
