@@ -98,7 +98,7 @@ namespace Presentation
 
             // Automatically place "X" on the first available table
             (cursorX, cursorY) = FindFirstAvailableCoordinates(activeTables, inactiveTables, reservedTables, guestCount);
-            HighlightNumber(activeTables, reservedTables, isAdminMode, guestCount);
+            HighlightNumber(activeTables, reservedTables, inactiveTables, guestCount, isAdminMode);
         }
 
 
@@ -126,7 +126,7 @@ namespace Presentation
         }
 
 
-        private void HighlightNumber(int[] activeTables, int[] reservedTables, bool isAdmin, int guestCount)
+        private void HighlightNumber(int[] activeTables, int[] reservedTables, int[] inactiveTables, int guestCount, bool isAdmin)
         {
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
@@ -142,16 +142,24 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Use the helper method to validate the table
-                var (isValid, tableColor, message) = ValidateTable(currentTable, guestCount, activeTables, reservedTables, isAdmin);
+                // Validate the table and get its properties
+                var (isValid, tableColor, message) = ValidateTable(
+                    currentTable,
+                    guestCount,
+                    activeTables,
+                    reservedTables,
+                    inactiveTables,
+                    isAdmin
+                );
 
-                // Display the message above controls
+                // Display the message above the controls
                 DisplayMessage(message);
 
-                // Flash "X" on the table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, isValid ? ConsoleColor.Yellow : tableColor);
+                // Flash the "X" on the table
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
             }
         }
+
 
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
         {
@@ -475,11 +483,11 @@ namespace Presentation
             {
                 if (isTooSmall)
                 {
-                    message = $"Table {tableNumber} is too small and inactive.";
+                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.";
                 }
                 else if (isTooBig)
                 {
-                    message = $"Table {tableNumber} is too big and inactive.";
+                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.";
                 }
                 else
                 {
@@ -591,7 +599,7 @@ namespace Presentation
                             int tableNumber = int.Parse(selectedNumber);
 
                             // Use the helper method to validate the table
-                            var (isValid, _, message) = ValidateTable(tableNumber, guestCount, activeTables, reservedTables, isAdmin);
+                            var (isValid, _, message) = ValidateTable(tableNumber, guestCount, activeTables, reservedTables, inactiveTables, isAdmin);
 
                             if (!isValid)
                             {
@@ -611,7 +619,7 @@ namespace Presentation
                     cursorX = nextX;
                     cursorY = nextY;
 
-                    HighlightNumber(activeTables, reservedTables, isAdmin, guestCount);
+                    HighlightNumber(activeTables, reservedTables, inactiveTables, guestCount, isAdmin);
                 }
             }
             finally
