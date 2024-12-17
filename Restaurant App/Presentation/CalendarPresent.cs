@@ -34,19 +34,6 @@ namespace Project
                     case ConsoleKey.DownArrow:
                         selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
                         break;
-                    case ConsoleKey.P: // Previous month
-                        currentDate = currentDate.AddMonths(-1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-                        break;
-                    case ConsoleKey.N: // Next month
-                        currentDate = currentDate.AddMonths(1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-                        break;
-                    case ConsoleKey.Enter: // Select date
-                        return new DateTime(currentDate.Year, currentDate.Month, selectedDay);
-                    case ConsoleKey.Escape:
-                    case ConsoleKey.Q: // Quit
-                        if (acc.Admin == 1)
                     case ConsoleKey.P:
                         if (currentDate.AddMonths(-1) < DateTime.Today)
                         {
@@ -80,6 +67,18 @@ namespace Project
                         break;
                     case ConsoleKey.B:
                         return DateTime.MinValue; // Go back
+                    case ConsoleKey.Escape:
+                    case ConsoleKey.Q: // Quit
+                        if (acc.Admin == 1)
+                        {
+                            Console.WriteLine("Admin exiting...");
+                            return DateTime.MinValue;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Exiting...");
+                            return DateTime.MinValue;
+                        }
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
