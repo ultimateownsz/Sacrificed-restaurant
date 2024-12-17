@@ -34,6 +34,7 @@ static class AdminMenu
                     ThemeView.ThemedEditing();
                     break;
                 case "show orders":
+                    ReservationDetails.ShowOrders(acc);
                     break;
                 case "(de)activate tables\n":
                     AdminTableControlPresent.Show();
