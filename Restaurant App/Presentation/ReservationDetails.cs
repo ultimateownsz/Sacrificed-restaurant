@@ -30,6 +30,11 @@ public static class ReservationDetails
         Console.ReadKey();
     }
 
+    public static void ShowOrders()
+    {
+        
+    }
+
     private static string FormatDate(long date)
     {
         // Format the date from ddMMyyyy (e.g., 12122024) to dd/MM/yyyy
