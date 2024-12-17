@@ -58,7 +58,7 @@ public static class ReservationDetails
             Dictionary<string, int> productCounts = new Dictionary<string, int>();
             const int maxProductCount = 15;
 
-            string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage"], "ORDERS\n").text;
+            string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
             Console.Clear();
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
@@ -72,6 +72,11 @@ public static class ReservationDetails
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
                     if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                     {
+                        if ("Back" == selectionMenu)
+                        {
+                            return;
+                        }
+
                         if (category == selectionMenu)
                         {
                             if (productCounts.ContainsKey(product.Name))
