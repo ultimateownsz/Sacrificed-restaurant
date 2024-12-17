@@ -48,23 +48,20 @@ public static class ReservationDetails
                 return;
             }
 
-            switch (SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage"], "ORDERS").text)
+            Dictionary<int, string> productsCategories = new Dictionary<int, string>
             {
-                case "Appetizer":
-                    break;
-                case "Main":
-                    break;
-                case "Dessert":
-                    break;
-                case "Beverage":
-                    break;
-            }
+                { 1, "Main" },
+                { 3, "Beverage" },
+                { 5, "Appetizer" },
+                { 8, "Dessert" }
+            };
+            Dictionary<string, int> productCounts = new Dictionary<string, int>();
+            const int maxProductCount = 15;
+
+            string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage"], "ORDERS\n").text;
 
             Console.Clear();
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
-
-            Dictionary<string, int> productCounts = new Dictionary<string, int>();
-            const int maxProductCount = 15;
 
             foreach (var reserv in orders)
             {
@@ -73,15 +70,18 @@ public static class ReservationDetails
                 foreach (var req in request)
                 {
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
-                    if (product != null)
+                    if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                     {
-                        if (productCounts.ContainsKey(product.Name))
+                        if (category == selectionMenu)
                         {
-                            productCounts[product.Name]++;
-                        }
-                        else
-                        {
-                            productCounts[product.Name] = 1;
+                            if (productCounts.ContainsKey(product.Name))
+                            {
+                                productCounts[product.Name]++;
+                            }
+                            else
+                            {
+                                productCounts[product.Name] = 1;
+                            }
                         }
                     }
                 }
