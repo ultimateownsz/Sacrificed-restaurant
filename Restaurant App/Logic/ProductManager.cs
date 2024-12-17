@@ -71,7 +71,7 @@ static class ProductManager
                 var themeName = p.ThemeID.HasValue
                     ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
                     : "No theme";
-                return $"{p.Name} - {p.Price}€ - {p.Course} - {themeName}";
+                return $"{p.Name,-18}   {p.Course,-15}   {themeName,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
@@ -83,7 +83,7 @@ static class ProductManager
                 var themeName = p.ThemeID.HasValue
                     ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
                     : "No theme";
-                return $"{p.Name} - {p.Price}€ - {themeName}";
+                return $"{p.Name,-18}   {themeName,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
@@ -93,7 +93,7 @@ static class ProductManager
         int? themeID = ThemeMenuManager.GetThemeIDByName(theme);
         return Access.Products.GetAllBy("ThemeID", themeID)
             .Select(p => {
-                return $"{p.Name} - {p.Price}€ - {p.Course}";
+                return $"{p.Name,-18}   {p.Course,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
@@ -101,18 +101,19 @@ static class ProductManager
     public static ProductModel? ConvertStringChoiceToProductModel(string productInfo, string type, string Name)
     {
         productInfo = productInfo.Replace("€", "");
-        var parts = productInfo.Split(" - ");
+        var parts = productInfo.Split(new[] { "   " }, StringSplitOptions.None);
+        parts = parts.Select(p => p.Trim()).Where(p => !string.IsNullOrWhiteSpace(p)).ToArray();
         decimal price;
         int? themeID;
 
-        if (!decimal.TryParse(parts[1].TrimEnd(' '), out price))
+        if (!decimal.TryParse(parts.Last().TrimEnd(' '), out price))
         {
             throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
         }
         themeID = parts.Count() switch
         {
-            4 => ThemeMenuManager.GetThemeIDByName(parts[3]),
-            3 => ThemeMenuManager.GetThemeIDByName(parts[2]),
+            4 => ThemeMenuManager.GetThemeIDByName(parts[2]),
+            3 => ThemeMenuManager.GetThemeIDByName(parts[1]),
             _ => null
         };
 
@@ -120,7 +121,7 @@ static class ProductManager
             .FirstOrDefault(p =>
                 p.Name == parts[0] &&
                 p.Price == price &&
-                (type == "course" ? p.Course == Name : p.Course == parts[2]) &&
+                (type == "course" ? p.Course == Name : p.Course == parts[1]) &&
                 (type == "theme" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(Name) : p.ThemeID == themeID));
     }
 
@@ -172,9 +173,6 @@ static class ProductManager
                 {
                     ThemeID = ThemeMenuManager.GetThemeIDByName(newThemeName);
                     newProductEdit = newThemeName;
-                    Console.WriteLine(ThemeID);
-                    Console.WriteLine(oldProduct.ThemeID);
-                    Console.ReadKey();
                     break;
                 }
             }
