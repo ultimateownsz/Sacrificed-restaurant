@@ -4,6 +4,7 @@ using Project;
 
 static class ProductManager
 {
+    //This Method is used to add products
     public static bool AddProduct(ProductModel product)
     {
         if (product == null)
@@ -26,6 +27,7 @@ static class ProductManager
         return true;
     }
 
+    //This Method is used to validate and ask the user for a price or a name for the product
     public static string GetValidNameOrPrice(string type)
     {
         while (true)
@@ -82,7 +84,7 @@ static class ProductManager
         return Access.Products.GetBy<int?>("ID", productId.Value) != null;
     }
 
-
+    //This Method deletes a product and all the related requests
     public static bool DeleteProductAndRelatedRequests(int? productId)
     {
         var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
@@ -109,6 +111,7 @@ static class ProductManager
             return Access.Products.GetAllBy<string>("Course", category);
     }
 
+    //This Method is gets the info of all the products and formalets them in a nice way
      public static List<string> GetAllProductInfo()
     {
         return Access.Products.Read()
@@ -121,6 +124,7 @@ static class ProductManager
             .ToList();
     }
 
+    //This Method is gets the info of all the products within a course and formalets them in a nice way
     public static List<string> GetAllWithinCourse(string course)
     {
         return Access.Products.GetAllBy("Course", course)
@@ -133,6 +137,7 @@ static class ProductManager
             .ToList();
     }
 
+    //This Method is gets the info of all the products within a theme and formalets them in a nice way
     public static List<string> GetAllWithinTheme(string? theme)
     {
         int? themeID;
@@ -152,6 +157,7 @@ static class ProductManager
             .ToList();
     }
 
+    //This Method converts the chosen product by the user into a ProductModel
     public static ProductModel? ConvertStringChoiceToProductModel(string productInfo, string type, string name)
     {
         productInfo = productInfo.Replace("€", "");
@@ -184,6 +190,7 @@ static class ProductManager
                 (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == themeID));
     }
 
+    //This Method updates a product in the db
     public static bool UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
     {
         var existingProduct = Access.Products.GetBy<int?>("ID", oldProduct.ID);
@@ -197,7 +204,8 @@ static class ProductManager
         Access.Products.Update(newProduct);
         return true;
     }
-    
+
+    //This Method validates the edit the user wants to make to a product based on the type of edit
     public static void ProductEditValidator(ProductModel oldProduct, string type)
     {
         string newProductEdit;
@@ -272,6 +280,7 @@ static class ProductManager
         }
     }
 
+    //This Method validates all the info of a new product and then puts that info in a ProductModel
     public static ProductModel? ProductValidator()
     {
         ProductModel newProduct = new();
@@ -318,6 +327,7 @@ static class ProductManager
         return newProduct;
     }
 
+    //This Method Deletes a product from the db
     public static bool DeleteProduct(int productId)
     {
         if (productId < 0)
