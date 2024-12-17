@@ -21,69 +21,45 @@ namespace Presentation
             string banner = "How many guests will be coming?\n\n";
             int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
 
-            // Step 2: Display the calendar and mark unreservable dates
+            // Step 2: Display the calendar and get the selected date
             DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+            if (selectedDate == DateTime.MinValue) return; // User chose to go back
 
-            if (selectedDate == DateTime.MinValue)
-            {
-                return;
-            }
-
-            // Step 3: Filter available tables based on the number of guests
-            TableSelection tableSelection = new();
-            int[] availableTables = guests switch
-            {
-                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                5 or 6 => new int[] { 2, 3 },
-                _ => Array.Empty<int>()
-            };
+            // Step 3: Filter available and reserved tables
+            var availableTables = Access.Places.Read()
+                .Where(p => p.Active == 1)
+                .Select(p => p.ID.Value)
+                .ToArray();
 
             var reservedTables = Access.Reservations
                 .GetAllBy<DateTime>("Date", selectedDate)
                 .Where(r => r?.PlaceID != null)
-                .Select(r => r!.PlaceID!.Value)
+                .Select(r => r!.PlaceID.Value)
                 .ToArray();
 
             // Step 4: Select a table
+            TableSelection tableSelection = new();
             int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, guests);
-
-            if (selectedTable == -1)
-            {
-                Console.WriteLine("Returning to the calendar...");
-                return;
-            }
+            if (selectedTable == -1) return; // User pressed 'B' to return
 
             // Step 5: Save the reservation
-            int reservationId;
-            if (acc.ID.HasValue)
-            {
-                reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
-            }
-            else
-            {
-                Console.WriteLine("Error: User ID is null. Unable to create reservation.");
-                return;
-            }
+            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
             if (reservationId == 0)
             {
                 Console.WriteLine("Failed to create a reservation. Please try again.");
                 return;
             }
 
+            // Step 6: Take orders for the reservation
             var orders = TakeOrders(selectedDate, acc, reservationId, guests);
             if (orders.Count > 0)
             {
                 PrintReceipt(orders, reservationId, acc);
-
-                // Prompt the user to press Enter to return to the menu
-                Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
-                while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
-                {
-                    // Do nothing, just wait for Enter
-                }
+                Console.WriteLine("\nPress Enter to return to the menu...");
+                while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter) { }
             }
         }
+
 
 
         // public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)

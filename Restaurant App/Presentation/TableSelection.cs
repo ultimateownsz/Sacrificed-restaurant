@@ -104,7 +104,7 @@ namespace Presentation
 
             // Automatically find table 1 and place the "X" on it
             (cursorX, cursorY) = FindTableCoordinates(1); // Dynamically set the cursor to table 1's coordinates
-            HighlightNumber(availableTables, reservedTables);
+            HighlightNumber(availableTables, reservedTables, guests);
         }
 
 
@@ -142,7 +142,7 @@ namespace Presentation
 
 
 
-        private void HighlightNumber(int[] activeTables, int[] reservedTables)
+        private void HighlightNumber(int[] activeTables, int[] reservedTables, int guestCount)
         {
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
@@ -161,20 +161,41 @@ namespace Presentation
                 // Check database for table status
                 var table = Access.Places.Read().FirstOrDefault(p => p.ID == currentTable);
 
-                if (table == null || table.Active == 0 || Array.Exists(reservedTables, table => table == currentTable))
+                // Logic to determine table color
+                bool isReserved = Array.Exists(reservedTables, t => t == currentTable);
+                bool isDeactivated = table == null || table.Active == 0;
+                bool isInvalidSize = !IsTableValidForGuests(currentTable, guestCount, activeTables);
+
+                ConsoleColor tableColor = ConsoleColor.Red; // Default to red for invalid tables
+
+                if (!isReserved && !isDeactivated && !isInvalidSize)
                 {
-                    // Mark deactivated or reserved tables as red
-                    ConsoleColor tableColor = ConsoleColor.Red;
-                    _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, activeTables, reservedTables);
-                    return;
+                    tableColor = ConsoleColor.Green; // Table is valid and available
                 }
 
-                // Otherwise, highlight active and available tables
-                ConsoleColor color = Array.Exists(activeTables, table => table == currentTable) ? ConsoleColor.Green : ConsoleColor.Red;
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, color, activeTables, reservedTables);
+                // Start the flash highlighting task
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor, activeTables, reservedTables);
             }
 
             Console.ResetColor();
+        }
+
+        private bool IsTableValidForGuests(int tableNumber, int guestCount, int[] activeTables)
+        {
+            // Validate the table size for the given guest count
+            if (!Array.Exists(activeTables, t => t == tableNumber))
+                return false;
+
+            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
+            if (table == null || table.Active == 0) return false;
+
+            return guestCount switch
+            {
+                1 or 2 => tableNumber == 1 || tableNumber == 4 || tableNumber == 5 || tableNumber == 8 || tableNumber == 9 || tableNumber == 11 || tableNumber == 12 || tableNumber == 15,
+                3 or 4 => tableNumber == 6 || tableNumber == 7 || tableNumber == 10 || tableNumber == 13 || tableNumber == 14,
+                5 or 6 => tableNumber == 2 || tableNumber == 3,
+                _ => false
+            };
         }
 
         private string GetNumberAt(int x, int y) 
@@ -492,7 +513,7 @@ namespace Presentation
                         cursorX = nextX;
                         cursorY = nextY;
 
-                        HighlightNumber(availableTables, reservedTables); // Dynamically update flashing
+                        HighlightNumber(availableTables, reservedTables, guests); // Dynamically update flashing
                     }
                 }
             }
