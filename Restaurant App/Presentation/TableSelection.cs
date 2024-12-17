@@ -421,7 +421,7 @@ namespace Presentation
                     {
                         StopFlashing(); // Ensure flashing stops
                         ResetConsoleToDefault(); // Reset colors and clean up screen
-                        return -1; // Return -1 to indicate cancellation
+                        return -1; // Return -1 to indicate going back
                     }
 
                     int nextX = cursorX, nextY = cursorY;
@@ -453,43 +453,7 @@ namespace Presentation
                             }
 
                             int tableNumber = int.Parse(selectedNumber);
-
-                            // Check if the table is deactivated
-                            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
-                            if (table != null && table.Active == 0)
-                            {
-                                if (isAdmin)
-                                {
-                                    // Admins can reactivate tables
-                                    return tableNumber;
-                                }
-                                else
-                                {
-                                    // Users cannot interact with deactivated tables
-                                    Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($"Table {tableNumber} is unavailable. It is deactivated.");
-                                    Console.ResetColor();
-                                    continue; // Retry selection
-                                }
-                            }
-
-                            if (!Array.Exists(availableTables, t => t == tableNumber) ||
-                                Array.Exists(reservedTables, t => t == tableNumber))
-                            {
-                                // Display the error message for unavailable or reserved tables
-                                Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Table {tableNumber} is unavailable. Please select another table.");
-                                Console.ResetColor();
-                                continue;
-                            }
-
-                            SelectedTable = tableNumber;
-
-                            StopFlashing(); // Stop flashing task
-                            ResetConsoleToDefault(); // Reset colors and clean up screen
-                            return SelectedTable; // Return the valid table number
+                            return tableNumber; // Return the valid selected table
                     }
 
                     // Ensure valid cursor movement
@@ -522,5 +486,6 @@ namespace Presentation
                 Console.CursorVisible = true; // Restore the cursor visibility
             }
         }
+
     }
 }
