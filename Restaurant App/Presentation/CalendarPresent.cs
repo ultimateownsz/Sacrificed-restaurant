@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Presentation;
 
 namespace Project
 {
@@ -9,15 +10,15 @@ namespace Project
         {
             DateTime currentDate = initialDate;
 
-            // Default to the current day if selectable, otherwise find the first available day
             int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+            // Console.Clear(); // Clear any lingering output before rendering the calendar
+            // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
 
-            // Immediately display the calendar
-            DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
 
-            bool running = true;
-            while (running)
+            while (true)
             {
+                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+
                 var key = Console.ReadKey(intercept: true);
                 switch (key.Key)
                 {
@@ -46,47 +47,59 @@ namespace Project
                     case ConsoleKey.Escape:
                     case ConsoleKey.Q: // Quit
                         if (acc.Admin == 1)
+                    case ConsoleKey.P:
+                        if (currentDate.AddMonths(-1) < DateTime.Today)
                         {
-                            AdminMenu.AdminStart(acc); // Pass acc to admin menu (if user is admin)
+                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            Console.WriteLine("You cannot reserve in the past.");
                         }
                         else
                         {
-                            Menu.ShowUserMenu(acc); // Pass acc to ShowUserMenu
+                            currentDate = currentDate.AddMonths(-1);
+                            selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
                         }
-                        return DateTime.MinValue; // Return an invalid date to indicate cancellation
+                        break;
+                    case ConsoleKey.N:
+                        currentDate = currentDate.AddMonths(1);
+                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+                        break;
+                    case ConsoleKey.Enter:
+                        DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+
+                        if (IsDayFullyBooked(selectedDate, guests))
+                        {
+                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This day is fully reserved.");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            return selectedDate;
+                        }
+                        break;
+                    case ConsoleKey.B:
+                        return DateTime.MinValue; // Go back
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
-
-                // Update calendar display after any key press
-                DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
             }
-
-            throw new InvalidOperationException("Calendar navigation exited unexpectedly.");
         }
-
-        // The rest of the methods (DisplayCalendar, FindFirstAvailableDay, NavigateToAvailableDay, IsDaySelectable, HasAvailableTablesForGuests) remain unchanged.
-    
-
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
-
-            // Display calendar days layout
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
+
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
-
-            // Adjust for 0-based index for Monday start
             startDay = startDay == 0 ? 6 : startDay - 1;
 
-            // Get today for comparison
             DateTime today = DateTime.Today;
+            bool showFullyReservedMessage = false;
 
-            // Print spaces for the first week
             for (int i = 0; i < startDay; i++)
                 Console.Write("   ");
 
@@ -94,37 +107,33 @@ namespace Project
             {
                 DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
 
-                // Check if the day is in the past (only for non-admin users)
                 bool isPast = !isAdmin && dateToCheck < today;
+                bool isFullyBooked = IsDayFullyBooked(dateToCheck, guests);
 
-                // Check if the day has no available tables for the guest count
-                bool hasNoAvailableTables = !HasAvailableTablesForGuests(dateToCheck, guests);
-
-                // Apply dark gray for past days
                 if (isPast)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                }
-                // Apply light gray for busy/unavailable days
-                else if (hasNoAvailableTables)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
                 else if (day == selectedDay)
                 {
-                    // Highlight the selected day
                     Console.ForegroundColor = ConsoleColor.Yellow;
+
+                    // Flag to show the "fully reserved" message if the selected day is fully booked
+                    if (isFullyBooked)
+                    {
+                        showFullyReservedMessage = true;
+                    }
+                }
+                else if (isFullyBooked)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
                 else
                 {
-                    // Reset to the default console color
                     Console.ResetColor();
                 }
 
-                // Print the day
                 Console.Write($"{day,2} ");
-
-                // Reset color after printing
                 Console.ResetColor();
 
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
@@ -132,6 +141,13 @@ namespace Project
 
             Console.WriteLine("\n\nControls:\n\nNavigate : <arrows>\nSelect   : <enter>\nExit : <escape>");
             //Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
+            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
+
+            // Display the "fully reserved" message at the bottom
+            if (showFullyReservedMessage)
+            {
+                Console.WriteLine("\nThis day is fully reserved.");
+            }
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
@@ -150,28 +166,24 @@ namespace Project
             throw new InvalidOperationException("No available days in the current month.");
         }
 
-
         private static int NavigateToAvailableDay(DateTime currentDate, int startDay, bool isAdmin, int guests, int direction)
         {
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int day = startDay;
 
-            // Loop to find the next available day
             while (true)
             {
                 day += direction;
 
-                // Wrap around to the next/previous month if out of bounds
                 if (day < 1 || day > daysInMonth)
                 {
-                    return startDay; // Redirect to the current day if no valid day is found
+                    return startDay;
                 }
 
-                // Check if the current date is selectable
                 DateTime dateToCheck = new DateTime(currentDate.Year, currentDate.Month, day);
                 if (IsDaySelectable(dateToCheck, isAdmin, guests))
                 {
-                    return day; // Found a valid day
+                    return day;
                 }
             }
         }
@@ -180,20 +192,21 @@ namespace Project
         {
             DateTime today = DateTime.Today;
 
-            // Non-admin users cannot select past days
             if (!isAdmin && dateToCheck < today)
             {
                 return false;
             }
 
-            // Check if there are available tables for the selected guest count on this day
-            return HasAvailableTablesForGuests(dateToCheck, guests);
+            return HasAvailableTablesForGuests(dateToCheck, guests) || IsDayFullyBooked(dateToCheck, guests);
         }
 
+        private static bool IsDayFullyBooked(DateTime date, int guests)
+        {
+            return !HasAvailableTablesForGuests(date, guests);
+        }
 
         private static bool HasAvailableTablesForGuests(DateTime date, int guests)
         {
-            // Get the tables suitable for the given guest count
             var availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -202,25 +215,21 @@ namespace Project
                 _ => Array.Empty<int>()
             };
 
-            // Fetch all active tables
             var activeTables = Access.Places.Read()
                 .Where(p => p.Active == 1)
                 .Select(p => p.ID.Value)
                 .ToHashSet();
 
-            // Get all reserved tables for the specified date
             var reservedTables = Access.Reservations
                 .GetAllBy<DateTime>("Date", date)
                 .Where(r => r?.PlaceID != null)
                 .Select(r => r!.PlaceID!.Value)
                 .ToHashSet();
 
-            // Check if any tables are both active and available for the given guest count
             return availableTables
                 .Intersect(activeTables)
                 .Except(reservedTables)
                 .Any();
         }
-
     }
 }
