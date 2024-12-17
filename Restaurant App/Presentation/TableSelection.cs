@@ -143,7 +143,7 @@ namespace Presentation
                 int currentTable = int.Parse(currentNumber);
 
                 // Use the helper method to validate the table
-                var (isValid, tableColor, message) = ValidateTable(currentTable, activeTables, reservedTables, inactiveTables: Array.Empty<int>(), guestCount, isAdmin);
+                var (isValid, tableColor, message) = ValidateTable(currentTable, guestCount, activeTables, reservedTables, isAdmin);
 
                 // Display the message above controls
                 DisplayMessage(message);
@@ -444,48 +444,43 @@ namespace Presentation
         }
 
 
-        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(int tableNumber, int guestCount, int[] activeTables, int[] reservedTables)
+        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
+            int tableNumber, 
+            int guestCount, 
+            int[] activeTables, 
+            int[] reservedTables, 
+            bool isAdmin)
         {
-            // Default state
-            bool isValid = false;
-            ConsoleColor tableColor = ConsoleColor.DarkGray;
-            string message = $"Table {tableNumber} is inactive.";
-
-            // Determine if the table is reserved
+            // Check if the table is reserved
             if (Array.Exists(reservedTables, t => t == tableNumber))
             {
-                message = $"Table {tableNumber} is already reserved.";
-                return (isValid, tableColor, message);
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is already reserved.");
             }
 
-            // Determine if the table is active and valid for the given guest count
-            if (Array.Exists(activeTables, t => t == tableNumber))
+            // Check if the table is active
+            if (!Array.Exists(activeTables, t => t == tableNumber))
             {
-                int[] availableTables = guestCount switch
-                {
-                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                    5 or 6 => new int[] { 2, 3 },
-                    _ => Array.Empty<int>()
-                };
-
-                if (Array.Exists(availableTables, t => t == tableNumber))
-                {
-                    isValid = true;
-                    tableColor = ConsoleColor.Gray; // Colorless for available tables
-                    message = ""; // No message for valid tables
-                }
-                else
-                {
-                    bool isTooSmall = !Array.Exists(availableTables, t => t == tableNumber) && guestCount > 2;
-                    message = isTooSmall
-                        ? $"Table {tableNumber} is too small for {guestCount} guests."
-                        : $"Table {tableNumber} is too big for {guestCount} guests.";
-                }
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is inactive.");
             }
 
-            return (isValid, tableColor, message);
+            // Check if the table size is valid for guests
+            bool isTooSmall = guestCount > 4 && Array.Exists(new[] { 1, 4, 5, 8, 9, 11, 12, 15 }, t => t == tableNumber);
+            bool isTooBig = guestCount <= 2 && Array.Exists(new[] { 6, 7, 10, 13, 14 }, t => t == tableNumber);
+
+            if (isTooSmall)
+            {
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too small for {guestCount} guests.");
+            }
+
+            if (isTooBig)
+            {
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too big for {guestCount} guests.");
+            }
+
+            // If everything is valid
+            return (true, ConsoleColor.Gray, "");
         }
+
 
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
@@ -538,7 +533,7 @@ namespace Presentation
                             int tableNumber = int.Parse(selectedNumber);
 
                             // Use the helper method to validate the table
-                            var (isValid, _, message) = ValidateTable(tableNumber, activeTables, reservedTables, inactiveTables, guestCount, isAdmin);
+                            var (isValid, _, message) = ValidateTable(tableNumber, guestCount, activeTables, reservedTables, isAdmin);
 
                             if (!isValid)
                             {
