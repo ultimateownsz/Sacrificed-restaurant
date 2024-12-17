@@ -52,6 +52,7 @@ public static class ReservationDetails
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
 
             Dictionary<string, int> productCounts = new Dictionary<string, int>();
+            const int maxProductCount = 15;
 
             foreach (var reserv in orders)
             {
@@ -64,7 +65,7 @@ public static class ReservationDetails
                     {
                         if (productCounts.ContainsKey(product.Name))
                         {
-                            productCounts[product.Name]++;
+                            productCounts[product.Name] = Math.Min(productCounts[product.Name] + 1, maxProductCount);
                         }
                         else
                         {
@@ -78,7 +79,7 @@ public static class ReservationDetails
             {
                 Console.WriteLine($"- {products.Value}x {products.Key}");
             }
-            
+
             Console.WriteLine("Press any key to return...");
             Console.ReadKey();
             return;
