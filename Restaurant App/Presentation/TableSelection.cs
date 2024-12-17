@@ -373,15 +373,22 @@ namespace Presentation
         //     }
         // }
 
-            private void StopFlashing()
+        private void StopFlashing()
+        {
+            if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
-                if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
-                {
-                    flashCancellationTokenSource.Cancel();
-                    flashCancellationTokenSource.Dispose();
-                    flashCancellationTokenSource = null; // Prevent further access
-                }
+                flashCancellationTokenSource.Cancel();
+                flashCancellationTokenSource.Dispose();
+                flashCancellationTokenSource = null; // Prevent further access
             }
+        }
+
+        private void ClearCursorArea()
+        {
+            Console.SetCursorPosition(cursorX, cursorY);
+            Console.Write(new string(' ', 2)); // Clear a two-character wide area for table numbers or "X"
+            Console.ResetColor();
+        }
 
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, bool isAdmin = false)
@@ -396,17 +403,25 @@ namespace Presentation
             {
                 while (true)
                 {
+                    // Show instructions at the bottom of the screen
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    Console.WriteLine("(B)ack"); // Display "Back" option at the bottom
+                    Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1)); // Display "Back" option at the bottom
 
                     var key = Console.ReadKey(true);
+
+                    // Clear any error message
+                    ClearErrorMessage();
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
                         StopFlashing();
                         ResetConsoleToDefault();
-                        return -1; // Exit with "Back"
+                        
+                        // Clear the residual table number or X from the screen
+                        ClearCursorArea();
+
+                        return -1; // Exit and return "Back"
                     }
 
                     int nextX = cursorX, nextY = cursorY;
@@ -432,25 +447,26 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
+                            // Handle table reservation logic
                             if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
                                 // Reserved table
                                 ShowErrorMessage($"Table {tableNumber} is already reserved.");
-                                continue; // Do not block movement
+                                continue;
                             }
 
                             if (Array.Exists(inactiveTables, t => t == tableNumber))
                             {
                                 // Inactive table
                                 ShowErrorMessage($"Table {tableNumber} is inactive.");
-                                continue; // Do not block movement
+                                continue;
                             }
 
                             if (!Array.Exists(activeTables, t => t == tableNumber))
                             {
                                 // Invalid table
-                                ShowErrorMessage($"Table {tableNumber} is not available.");
-                                continue; // Do not block movement
+                                ShowErrorMessage($"Table {tableNumber} is not available for selection.");
+                                continue;
                             }
 
                             StopFlashing(); // Stop flashing task
@@ -474,6 +490,8 @@ namespace Presentation
                 ResetConsoleToDefault();
                 Console.CursorVisible = true;
             }
-}
+        }
+
+
     }
 }
