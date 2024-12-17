@@ -59,12 +59,14 @@ static class ProductManager
                 }
             }
 
-            Console.Clear();            
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Enter {type}: {productInfo}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"\nInvalid {type}...");
+            if(type == "price") Console.WriteLine($"\nThe product price must have 2 decimals and no letters or symbols...");
+            else Console.WriteLine($"\nThe product name must have no number or symbols...");
             Console.WriteLine("Press any key to retry or ESCAPE to go back");
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
@@ -184,62 +186,52 @@ static class ProductManager
         return true;
     }
     
-    public static void ProductEditValidator(ProductModel oldProduct, string type, bool themeEdit)
+    public static void ProductEditValidator(ProductModel oldProduct, string type)
     {
-        List<string> courseNames = new List<string>{"main", "dessert", "appetizer", "beverage"};
-        string newProductEdit = "";
+        string newProductEdit;
         int? ThemeID = null;
 
-        if(themeEdit)
+        Console.Clear();
+        if(type == "theme")
         {
-            while(true)
+            newProductEdit = ThemeInputValidator.GetValidThemeMenu();
+            if(newProductEdit == "No theme")
             {
-                string newThemeName = ThemeInputValidator.GetValidString();
-                if(newThemeName == null)
-                {
-                    Console.WriteLine("The theme has not been updated.");
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                    return;
-                }
-                if(!ThemeMenuManager.DoesThemeExist(newThemeName))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("This theme doesn't exist.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Press any key to retry or escape to go back");
-
-                    if (Console.ReadKey(true).Key == ConsoleKey.Escape)
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    ThemeID = ThemeMenuManager.GetThemeIDByName(newThemeName);
-                    newProductEdit = newThemeName;
-                    break;
-                }
+                newProductEdit = null;
             }
-        }
-        else if(!themeEdit)
-        {
-            Console.Clear();
-
-            if(type == "price")
+            else if(newProductEdit == null)
             {
-                newProductEdit = GetValidNameOrPrice("price");
-            }
-            else if(type == "course")
-            {
-                newProductEdit = CourseLogic.GetValidCourse();
+                return;
             }
             else
             {
-                newProductEdit = GetValidNameOrPrice("name");
+                ThemeID = ThemeMenuManager.GetThemeIDByName(newProductEdit);
             }
         }
-            
+        else if(type == "price")
+        {
+            newProductEdit = GetValidNameOrPrice("price");
+        }
+        else if(type == "course")
+        {
+            newProductEdit = CourseLogic.GetValidCourse();
+        }
+        else
+        {
+            newProductEdit = GetValidNameOrPrice("name");
+        }
+
+        Console.Clear();
+        if(type != "theme" && newProductEdit == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Failed to update the {type}");
+            Console.WriteLine("Press any key to continue..."); 
+            Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+        
         ProductModel newProduct = new ProductModel
         {
             ID = oldProduct.ID,
@@ -252,15 +244,19 @@ static class ProductManager
         Console.Clear();
         if(UpdateProduct(oldProduct, newProduct))
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"The {type} has been updated to {newProductEdit}");
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Failed to update the {type}");
             Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey(); 
+            Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 
@@ -282,12 +278,12 @@ static class ProductManager
         }
         newProduct.Course = course;
 
-        string theme = ThemeInputValidator.GetValidString();
+        string theme = ThemeInputValidator.GetValidThemeMenu();
         if(theme == null)
         {
-            newProduct.ThemeID = null;
+            return null;
         }
-        if(!ThemeMenuManager.DoesThemeExist(theme))
+        if(theme == "No theme")
         {
             newProduct.ThemeID = null;
         }
@@ -308,44 +304,6 @@ static class ProductManager
         }
 
         return newProduct;
-    }
-
-    public static string? CourseOrThemeValidator(string type)
-    {
-        string Name;
-        if (type == "course")
-        {
-            Name = CourseLogic.GetValidCourse();
-            if(Name == null)
-            {
-                Console.WriteLine("Failed to filter based on course");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                return null;
-            }
-            return Name;
-        }
-        else if (type == "theme")
-        {
-            Name = ThemeInputValidator.GetValidString();
-            if(Name == null)
-            {
-                Console.WriteLine("Failed to filter based on theme");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                return null;
-            }
-            if(!ThemeMenuManager.DoesThemeExist(Name))
-            {
-                return null;
-            }
-            return Name;
-
-        }
-        else
-        {
-            return null;
-        }
     }
 
     public static bool DeleteProduct(int productId)
