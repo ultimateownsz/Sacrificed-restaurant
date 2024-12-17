@@ -11,6 +11,9 @@ namespace Project
             DateTime currentDate = initialDate;
 
             int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+            // Console.Clear(); // Clear any lingering output before rendering the calendar
+            // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
+
 
             while (true)
             {

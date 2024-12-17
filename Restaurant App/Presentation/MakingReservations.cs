@@ -36,9 +36,11 @@ namespace Presentation
 
                 if (selectedDate == DateTime.MinValue)
                 {
+                    Console.Clear(); // Ensure no residual data is left
                     Console.WriteLine("Returning to the previous menu...");
                     return; // Exit completely if user presses back from the calendar
                 }
+
 
                 // Step 3: Filter available tables based on the number of guests
                 TableSelection tableSelection = new();

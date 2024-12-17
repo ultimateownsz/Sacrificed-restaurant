@@ -126,24 +126,31 @@ namespace Presentation
 
             while (!token.IsCancellationRequested)
             {
+                // Flash the current table with "X"
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
-                Console.Write("X "); // Flashing "X"
+                Console.Write("X ");
                 await Task.Delay(500);
 
                 if (token.IsCancellationRequested) break;
 
+                // Revert back to the table number
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2)); // Revert to table number
+                Console.Write(tableNumber.ToString().PadRight(2));
                 await Task.Delay(500);
             }
 
-            Console.SetCursorPosition(x, y);
-            Console.ForegroundColor = tableColor;
-            Console.Write(tableNumber.ToString().PadRight(2));
+            if (!token.IsCancellationRequested)
+            {
+                Console.SetCursorPosition(x, y);
+                Console.ForegroundColor = tableColor;
+                Console.Write("  "); // Clear the flashing output
+            }
+
             Console.ResetColor();
         }
+
 
 
         private void ShowErrorMessage(string message)
@@ -377,24 +384,31 @@ namespace Presentation
         {
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
-                flashCancellationTokenSource.Cancel();
+                flashCancellationTokenSource.Cancel(); // Cancel the token
                 flashCancellationTokenSource.Dispose();
-                flashCancellationTokenSource = null; // Prevent further access
+                flashCancellationTokenSource = null; // Avoid reuse
             }
+
+            // Clear any lingering "X" or number at the cursor's location
+            ClearCursorArea();
         }
 
         private void ClearCursorArea()
         {
-            Console.SetCursorPosition(cursorX, cursorY);
-            Console.Write(new string(' ', 2)); // Clear a two-character wide area for table numbers or "X"
-            Console.ResetColor();
+            if (!string.IsNullOrEmpty(GetNumberAt(cursorX, cursorY)))
+            {
+                Console.SetCursorPosition(cursorX, cursorY);
+                Console.Write("  "); // Clear the area
+                Console.ResetColor();
+            }
         }
+
 
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, bool isAdmin = false)
         {
-            EnsureConsoleSize(); // Ensure the console size is adequate
-            ShowGrid(activeTables, inactiveTables, reservedTables, isAdminMode: isAdmin); // Show tables with proper coloring
+            EnsureConsoleSize();
+            ShowGrid(activeTables, inactiveTables, reservedTables, isAdminMode: isAdmin);
             Console.CursorVisible = false;
 
             int lastX = cursorX, lastY = cursorY;
@@ -403,26 +417,19 @@ namespace Presentation
             {
                 while (true)
                 {
-                    // Show instructions at the bottom of the screen
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1)); // Display "Back" option at the bottom
+                    Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1));
 
                     var key = Console.ReadKey(true);
 
-                    // Clear any error message
-                    ClearErrorMessage();
-
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
-                        StopFlashing();
-                        ResetConsoleToDefault();
-                        
-                        // Clear the residual table number or X from the screen
-                        ClearCursorArea();
-
-                        return -1; // Exit and return "Back"
+                        StopFlashing(); // Immediately stop any flashing tasks
+                        ResetConsoleToDefault(); // Clear the screen to reset it
+                        return -1; // Exit and return to the calendar
                     }
+
 
                     int nextX = cursorX, nextY = cursorY;
 
@@ -447,41 +454,36 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
-                            // Handle table reservation logic
                             if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
-                                // Reserved table
                                 ShowErrorMessage($"Table {tableNumber} is already reserved.");
                                 continue;
                             }
 
                             if (Array.Exists(inactiveTables, t => t == tableNumber))
                             {
-                                // Inactive table
                                 ShowErrorMessage($"Table {tableNumber} is inactive.");
                                 continue;
                             }
 
                             if (!Array.Exists(activeTables, t => t == tableNumber))
                             {
-                                // Invalid table
                                 ShowErrorMessage($"Table {tableNumber} is not available for selection.");
                                 continue;
                             }
 
-                            StopFlashing(); // Stop flashing task
-                            ResetConsoleToDefault(); // Reset colors and clean up the screen
-                            return tableNumber; // Valid table selected
+                            StopFlashing();
+                            ResetConsoleToDefault();
+                            return tableNumber;
                     }
 
-                    // Update the table highlight after moving
                     UpdateTableHighlight(lastX, lastY, nextX, nextY, activeTables, reservedTables);
                     lastX = nextX;
                     lastY = nextY;
                     cursorX = nextX;
                     cursorY = nextY;
 
-                    HighlightNumber(activeTables, reservedTables, isAdmin); // Update the highlight dynamically
+                    HighlightNumber(activeTables, reservedTables, isAdmin);
                 }
             }
             finally
@@ -491,7 +493,5 @@ namespace Presentation
                 Console.CursorVisible = true;
             }
         }
-
-
     }
 }
