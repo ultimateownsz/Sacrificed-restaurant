@@ -134,18 +134,26 @@ static class ProductManager
             .ToList();
     }
 
-    public static List<string> GetAllWithinTheme(string theme)
+    public static List<string> GetAllWithinTheme(string? theme)
     {
-        int? themeID = ThemeMenuManager.GetThemeIDByName(theme);
+        int? themeID;
+        
+        if (theme != "0")
+        {
+            themeID = ThemeMenuManager.GetThemeIDByName(theme);
+        }
+        else
+        {
+            themeID = 0;
+        }
         return Access.Products.GetAllBy("ThemeID", themeID)
             .Select(p => {
-                var courseName = p.Course ?? "No course";
                 return $"{p.Name,-18}   {p.Course,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
 
-    public static ProductModel? ConvertStringChoiceToProductModel(string productInfo, string type, string Name)
+    public static ProductModel? ConvertStringChoiceToProductModel(string productInfo, string type, string name)
     {
         productInfo = productInfo.Replace("€", "");
         var parts = productInfo.Split(new[] { "   " }, StringSplitOptions.None);
@@ -168,8 +176,9 @@ static class ProductManager
             .FirstOrDefault(p =>
                 p.Name == parts[0] &&
                 p.Price == price &&
-                (type == "course" ? p.Course == Name : p.Course == parts[1]) &&
-                (type == "theme" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(Name) : p.ThemeID == themeID));
+                (type == "course" ? p.Course == name : p.Course == parts[1]) &&
+                (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == (name == "0" ? 0 : themeID))
+                );
     }
 
     public static bool UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
@@ -195,7 +204,7 @@ static class ProductManager
         if(type == "theme")
         {
             newProductEdit = ThemeInputValidator.GetValidThemeMenu();
-            if(newProductEdit == "No theme")
+            if(newProductEdit == "0")
             {
                 newProductEdit = null;
             }
@@ -283,7 +292,7 @@ static class ProductManager
         {
             return null;
         }
-        if(theme == "No theme")
+        if(theme == "0")
         {
             newProduct.ThemeID = null;
         }
