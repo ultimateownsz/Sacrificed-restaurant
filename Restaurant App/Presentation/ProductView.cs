@@ -20,7 +20,7 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Add product":
-                    
+                    AddProduct();
                     break;
                 case "Show all products":
                     DisplayProducts();
@@ -56,9 +56,11 @@ static class ProductView
                 products = ProductManager.GetAllProductInfo().ToList();
                 if(products.Count == 0)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in the resturaunt");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
+                    Console.ForegroundColor = ConsoleColor.White;
                     return;
                 } 
             }
@@ -68,9 +70,11 @@ static class ProductView
                 products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
                 if(products.Count == 0)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in {Name}");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
+                    Console.ForegroundColor = ConsoleColor.White;
                     return;
                 } 
             }
@@ -80,9 +84,11 @@ static class ProductView
                 products = ProductManager.GetAllWithinTheme(Name).ToList();
                 if(products.Count == 0)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in the {Name} theme");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
+                    Console.ForegroundColor = ConsoleColor.White;
                     return;
                 } 
             }
@@ -102,11 +108,6 @@ static class ProductView
             }
             DeleteOrEditChoice(chosenProduct);
         }
-    }
-
-    public static void AddProduct(ProductModel product)
-    {
-
     }
     
     public static void DeleteOrEditChoice(ProductModel chosenProduct)
@@ -153,17 +154,54 @@ static class ProductView
         Console.Clear();
         if(ProductManager.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{chosenProduct.Name} has been deleted.");
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
             return true;
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Failed to delete {chosenProduct.Name}.");
             Console.WriteLine("Press any key to continue..."); 
             Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
             return false;
         }
     }
+
+    public static void AddProduct()
+    {
+        ProductModel? newProduct = ProductManager.ProductValidator();
+        Console.Clear();
+        if(newProduct == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Invalid product info.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+        else if(ProductManager.AddProduct(newProduct))
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{newProduct.Name} has been Added.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Failed to Add {newProduct.Name}.");
+            Console.WriteLine("Press any key to continue..."); 
+            Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+    } 
 }
