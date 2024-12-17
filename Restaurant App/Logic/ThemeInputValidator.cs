@@ -30,6 +30,7 @@ public static class ThemeInputValidator
 
             if (!string.IsNullOrWhiteSpace(themeName) && !themeName.Any(char.IsDigit))
             {
+                themeName = char.ToUpper(themeName[0]) + themeName.Substring(1);
                 return themeName;
             }
 
