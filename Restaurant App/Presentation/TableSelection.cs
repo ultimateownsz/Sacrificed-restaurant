@@ -142,36 +142,14 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Determine table color and message
-                ConsoleColor tableColor = ConsoleColor.DarkGray;
-                string message = "";
-
-                if (Array.Exists(reservedTables, t => t == currentTable))
-                {
-                    message = $"Table {currentTable} is already reserved.";
-                }
-                else if (Array.Exists(activeTables, t => t == currentTable))
-                {
-                    if (!IsTableValidForGuests(currentTable, guestCount, activeTables))
-                    {
-                        message = $"Table {currentTable} is too small/big for {guestCount} guests.";
-                    }
-                    else
-                    {
-                        tableColor = ConsoleColor.Gray; // Highlight available tables as colorless
-                        message = ""; // No message needed
-                    }
-                }
-                else
-                {
-                    message = $"Table {currentTable} is inactive.";
-                }
+                // Use the helper method to validate the table
+                var (isValid, tableColor, message) = ValidateTable(currentTable, activeTables, reservedTables, inactiveTables: Array.Empty<int>(), guestCount, isAdmin);
 
                 // Display the message above controls
                 DisplayMessage(message);
 
                 // Flash "X" on the table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, isValid ? ConsoleColor.Yellow : tableColor);
             }
         }
 
@@ -466,6 +444,35 @@ namespace Presentation
         }
 
 
+        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
+            int tableNumber,
+            int[] activeTables,
+            int[] reservedTables,
+            int[] inactiveTables,
+            int guestCount,
+            bool isAdmin)
+        {
+            // Reserved table
+            if (Array.Exists(reservedTables, t => t == tableNumber))
+            {
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is already reserved.");
+            }
+
+            // Inactive table
+            if (Array.Exists(inactiveTables, t => t == tableNumber))
+            {
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is inactive.");
+            }
+
+            // Invalid size for guests
+            if (!isAdmin && !IsTableValidForGuests(tableNumber, guestCount, activeTables))
+            {
+                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too small/big for {guestCount} guests.");
+            }
+
+            // Available table
+            return (true, isAdmin ? ConsoleColor.Green : ConsoleColor.Gray, "");
+        }
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
         {
@@ -516,25 +523,13 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
-                            if (!isAdmin)
+                            // Use the helper method to validate the table
+                            var (isValid, _, message) = ValidateTable(tableNumber, activeTables, reservedTables, inactiveTables, guestCount, isAdmin);
+
+                            if (!isValid)
                             {
-                                if (Array.Exists(reservedTables, t => t == tableNumber))
-                                {
-                                    ShowErrorMessage($"Table {tableNumber} is already reserved.");
-                                    continue;
-                                }
-
-                                if (Array.Exists(inactiveTables, t => t == tableNumber))
-                                {
-                                    ShowErrorMessage($"Table {tableNumber} is inactive.");
-                                    continue;
-                                }
-
-                                if (!IsTableValidForGuests(tableNumber, guestCount, activeTables))
-                                {
-                                    ShowErrorMessage($"Table {tableNumber} is too small/big for {guestCount} guests.");
-                                    continue;
-                                }
+                                ShowErrorMessage(message);
+                                continue;
                             }
 
                             StopFlashing();
