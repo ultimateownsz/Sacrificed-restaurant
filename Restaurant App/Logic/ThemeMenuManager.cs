@@ -130,7 +130,8 @@ static class ThemeMenuManager
     
     public static int? GetThemeIDByName(string name)
     {
-        return Access.Themes.GetAllBy<string>("Name", name).Select(theme => theme.ID).FirstOrDefault();
+        var theme = Access.Themes.GetBy<string>("Name", name);
+        return theme?.ID;
     }
 
     public static bool DoesThemeExist(string themeName)
