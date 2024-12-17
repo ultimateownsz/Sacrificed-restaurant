@@ -108,8 +108,6 @@ namespace Presentation
         }
 
 
-
-
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor, int[] availableTables, int[] reservedTables)
         {
             var token = flashCancellationTokenSource.Token;
