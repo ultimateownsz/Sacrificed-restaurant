@@ -57,7 +57,7 @@ public static class ReservationDetails
 
                 foreach (var req in request)
                 {
-                    var product = Access.Products.GetBy<int?>("ID", req.ID);
+                    var product = Access.Products.GetBy<int?>("ID", req.ProductID);
                     if (product != null)
                     {
                         Console.WriteLine($"- Product Name: {product.Name}");
