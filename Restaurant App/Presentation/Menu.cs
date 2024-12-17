@@ -54,7 +54,7 @@ static class Menu
             if (selection.text == null)
             {
                 Console.WriteLine(" Return to main menu");
-                Thread.Sleep(1500);  // wait 1,5 seconds before you return to main menu
+                // Thread.Sleep(1500);  // wait 1,5 seconds before you return to main menu
                 return;
             }
             

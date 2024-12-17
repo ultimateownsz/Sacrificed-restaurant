@@ -420,7 +420,7 @@ namespace Presentation
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
                     Console.WriteLine("Controls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
-                    Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1));
+                    // Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1));
 
                     var key = Console.ReadKey(true);
 

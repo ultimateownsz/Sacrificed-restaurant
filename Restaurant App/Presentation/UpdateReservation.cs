@@ -28,14 +28,14 @@ public static class UpdateReservation
                         Console.Clear();
                         if (UpdateReservationDate(reservation))
                             Console.WriteLine("\nDate updated successfully.");
-                            Thread.Sleep(1500);
+                            // Thread.Sleep(1500);
                         break;
 
                     case "Table":
                         Console.Clear();
                         if (UpdateTableID(reservation))
                             Console.WriteLine("\nTable number updated successfully.");
-                            Thread.Sleep(1500);
+                            // Thread.Sleep(1500);
                         break;
 
                     case "Back":
