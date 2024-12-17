@@ -48,6 +48,18 @@ public static class ReservationDetails
                 return;
             }
 
+            switch (SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage"], "ORDERS").text)
+            {
+                case "Appetizer":
+                    break;
+                case "Main":
+                    break;
+                case "Dessert":
+                    break;
+                case "Beverage":
+                    break;
+            }
+
             Console.Clear();
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}");
 
