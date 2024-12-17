@@ -152,13 +152,22 @@ namespace Presentation
                     isAdmin
                 );
 
-                // Display the message above the controls
-                DisplayMessage(message);
+                // Only display the message if the user is not an admin
+                if (!isAdmin)
+                {
+                    DisplayMessage(message);
+                }
+                else
+                {
+                    // Clear the message area for admins
+                    ClearErrorMessage();
+                }
 
                 // Flash the "X" on the table
                 _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
             }
         }
+
 
 
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
