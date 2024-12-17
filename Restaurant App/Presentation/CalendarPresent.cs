@@ -6,85 +6,168 @@ namespace Project
 {
     public class CalendarPresent
     {
+        // public static DateTime Show(DateTime initialDate, bool isAdmin, int guests, UserModel acc)
+        // {
+        //     DateTime currentDate = initialDate;
+
+        //     int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+        //     // Console.Clear(); // Clear any lingering output before rendering the calendar
+        //     // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
+
+
+        //     while (true)
+        //     {
+        //         DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+
+        //         var key = Console.ReadKey(intercept: true);
+        //         switch (key.Key)
+        //         {
+        //             case ConsoleKey.LeftArrow:
+        //                 selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -1);
+        //                 break;
+        //             case ConsoleKey.RightArrow:
+        //                 selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 1);
+        //                 break;
+        //             case ConsoleKey.UpArrow:
+        //                 selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -7);
+        //                 break;
+        //             case ConsoleKey.DownArrow:
+        //                 selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
+        //                 break;
+        //             case ConsoleKey.P:
+        //                 if (currentDate.AddMonths(-1) < DateTime.Today)
+        //                 {
+        //                     Console.SetCursorPosition(0, Console.CursorTop + 2);
+        //                     Console.WriteLine("You cannot reserve in the past.");
+        //                 }
+        //                 else
+        //                 {
+        //                     currentDate = currentDate.AddMonths(-1);
+        //                     selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+        //                 }
+        //                 break;
+        //             case ConsoleKey.N:
+        //                 currentDate = currentDate.AddMonths(1);
+        //                 selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
+        //                 break;
+        //             case ConsoleKey.Enter:
+        //                 DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+
+        //                 if (IsDayFullyBooked(selectedDate, guests))
+        //                 {
+        //                     Console.SetCursorPosition(0, Console.CursorTop + 2);
+        //                     Console.ForegroundColor = ConsoleColor.Red;
+        //                     Console.WriteLine("This day is fully reserved.");
+        //                     Console.ResetColor();
+        //                 }
+        //                 else
+        //                 {
+        //                     return selectedDate;
+        //                 }
+        //                 break;
+        //             case ConsoleKey.B:
+        //                 return DateTime.MinValue; // Go back
+        //             case ConsoleKey.Escape:
+        //             case ConsoleKey.Q: // Quit
+        //                 if (acc.Admin == 1)
+        //                 {
+        //                     Console.WriteLine("Admin exiting...");
+        //                     return DateTime.MinValue;
+        //                 }
+        //                 else
+        //                 {
+        //                     Console.WriteLine("Exiting...");
+        //                     return DateTime.MinValue;
+        //                 }
+        //             default:
+        //                 Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+        //                 break;
+        //         }
+        //     }
+        // }
         public static DateTime Show(DateTime initialDate, bool isAdmin, int guests, UserModel acc)
         {
             DateTime currentDate = initialDate;
-
             int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-            // Console.Clear(); // Clear any lingering output before rendering the calendar
-            // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
-
+            bool isMonthMode = false; // Track current mode
+            bool tabPressed = false;  // prevent tab spamming
 
             while (true)
             {
+                Console.Clear();
+                // Display calendar with current mode information
                 DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+                Console.WriteLine($"\n\n\n{(isMonthMode ? "Month" : "Day")} mode: <Tab>");
 
-                var key = Console.ReadKey(intercept: true);
-                switch (key.Key)
+                // Display controls based on the mode
+                if (isMonthMode)
+                    Console.WriteLine("\nControls:\nPrevious Month : ←\nNext Month : →\nExit : <Escape>");
+                else
+                    Console.WriteLine("\nControls:\nNavigate : ← ↑ → ↓\nSelect : <Enter>\nExit : <Escape>");
+
+                // Read key input
+                var key = Console.ReadKey(intercept: true).Key;
+
+                if (key == ConsoleKey.Tab && !tabPressed)
                 {
-                    case ConsoleKey.LeftArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -1);
-                        break;
-                    case ConsoleKey.RightArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 1);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -7);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
-                        break;
-                    case ConsoleKey.P:
-                        if (currentDate.AddMonths(-1) < DateTime.Today)
-                        {
-                            Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            Console.WriteLine("You cannot reserve in the past.");
-                        }
-                        else
-                        {
-                            currentDate = currentDate.AddMonths(-1);
-                            selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-                        }
-                        break;
-                    case ConsoleKey.N:
-                        currentDate = currentDate.AddMonths(1);
-                        selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-                        break;
-                    case ConsoleKey.Enter:
-                        DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+                    isMonthMode = !isMonthMode; // Toggle mode
+                    tabPressed = true;  // lock the key input temporarily
+                }
+                else if (key != ConsoleKey.Tab)
+                {
+                    // reset tabpressed when any other key is pressed
+                    tabPressed = false;
+                }
 
-                        if (IsDayFullyBooked(selectedDate, guests))
-                        {
-                            Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This day is fully reserved.");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            return selectedDate;
-                        }
-                        break;
-                    case ConsoleKey.B:
-                        return DateTime.MinValue; // Go back
-                    case ConsoleKey.Escape:
-                    case ConsoleKey.Q: // Quit
-                        if (acc.Admin == 1)
-                        {
-                            Console.WriteLine("Admin exiting...");
-                            return DateTime.MinValue;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Exiting...");
-                            return DateTime.MinValue;
-                        }
-                    default:
-                        Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
-                        break;
+                if (isMonthMode)
+                {
+                    // Handle Month Navigation
+                    switch (key)
+                    {
+                        case ConsoleKey.LeftArrow:
+                            if (currentDate.AddMonths(-1) >= DateTime.Today || isAdmin)
+                                currentDate = currentDate.AddMonths(-1);
+                            else
+                                Console.WriteLine("You cannot go to a past month.");
+                            break;
+                        case ConsoleKey.RightArrow:
+                            currentDate = currentDate.AddMonths(1);
+                            break;
+                        case ConsoleKey.Escape:
+                            return DateTime.MinValue; // Exit
+                    }
+                }
+                else
+                {
+                    // Handle Day Navigation
+                    switch (key)
+                    {
+                        case ConsoleKey.LeftArrow:
+                            selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -1);
+                            break;
+                        case ConsoleKey.RightArrow:
+                            selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 1);
+                            break;
+                        case ConsoleKey.UpArrow:
+                            selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, -7);
+                            break;
+                        case ConsoleKey.DownArrow:
+                            selectedDay = NavigateToAvailableDay(currentDate, selectedDay, isAdmin, guests, 7);
+                            break;
+                        case ConsoleKey.Enter:
+                            DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
+                            if (IsDayFullyBooked(selectedDate, guests))
+                                Console.WriteLine("This day is fully reserved.");
+                            else
+                                return selectedDate; // Return selected date
+                            break;
+                        case ConsoleKey.Escape:
+                            return DateTime.MinValue; // Exit
+                    }
                 }
             }
         }
+
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
@@ -137,10 +220,6 @@ namespace Project
 
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
-
-            Console.WriteLine("\n\nControls:\n\nNavigate : <arrows>\nSelect   : <enter>\nExit : <escape>");
-            //Console.WriteLine("\nUse Arrow Keys to Navigate, Enter to Select Date, P for Previous Month, N for Next Month, Q to Quit.");
-            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
 
             // Display the "fully reserved" message at the bottom
             if (showFullyReservedMessage)
