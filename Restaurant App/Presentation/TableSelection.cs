@@ -40,12 +40,10 @@ namespace Presentation
             throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
         }
 
-        public void ShowGrid(int[] activeTables, int[] inactiveTables, int[] reservedTables, bool isAdminMode, int guestCount)
+        public void ShowGrid(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount, bool isAdminMode = false)
         {
             tableColors.Clear();
             ClearGrid();
-
-            bool xPlaced = false;
 
             for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
             {
@@ -57,31 +55,34 @@ namespace Presentation
                         int tableNumber = int.Parse(number);
                         x += number.Length - 1;
 
-                        // Determine table color
-                        if (Array.Exists(reservedTables, t => t == tableNumber))
+                        // Determine color based on the table's state
+                        if (isAdminMode)
                         {
-                            tableColors[tableNumber] = ConsoleColor.DarkGray; // Reserved
-                        }
-                        else if (Array.Exists(inactiveTables, t => t == tableNumber))
-                        {
-                            tableColors[tableNumber] = ConsoleColor.DarkGray; // Inactive
-                        }
-                        else if (!IsTableValidForGuests(tableNumber, guestCount, activeTables))
-                        {
-                            tableColors[tableNumber] = ConsoleColor.DarkGray; // Invalid for guest size
+                            tableColors[tableNumber] = Array.Exists(activeTables, t => t == tableNumber)
+                                ? ConsoleColor.Green
+                                : ConsoleColor.Red;
                         }
                         else
                         {
-                            tableColors[tableNumber] = ConsoleColor.Green; // Available
-                            if (!xPlaced)
+                            if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
-                                // Automatically place "X" on the first available table
-                                cursorX = x - (number.Length - 1);
-                                cursorY = y;
-                                xPlaced = true;
+                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Reserved
+                            }
+                            else if (Array.Exists(inactiveTables, t => t == tableNumber))
+                            {
+                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Inactive
+                            }
+                            else if (!IsTableValidForGuests(tableNumber, guestCount, activeTables))
+                            {
+                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Invalid size
+                            }
+                            else
+                            {
+                                tableColors[tableNumber] = ConsoleColor.Gray; // Available
                             }
                         }
 
+                        // Display the table
                         Console.SetCursorPosition(x - (number.Length - 1), y);
                         Console.ForegroundColor = tableColors[tableNumber];
                         Console.Write(number);
@@ -95,16 +96,37 @@ namespace Presentation
                 }
             }
 
-            // Highlight the first available table with "X"
-            HighlightNumber(activeTables, reservedTables, false);
+            // Automatically place "X" on the first available table
+            (cursorX, cursorY) = FindFirstAvailableCoordinates(activeTables, inactiveTables, reservedTables, guestCount);
+            HighlightNumber(activeTables, reservedTables, isAdminMode, guestCount);
         }
 
 
+        private (int, int) FindFirstAvailableCoordinates(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount)
+        {
+            for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
+            {
+                for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
+                {
+                    string number = GetNumberAt(x, y);
+                    if (!string.IsNullOrEmpty(number))
+                    {
+                        int tableNumber = int.Parse(number);
+                        if (!Array.Exists(reservedTables, t => t == tableNumber) &&
+                            !Array.Exists(inactiveTables, t => t == tableNumber) &&
+                            IsTableValidForGuests(tableNumber, guestCount, activeTables))
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+
+            return FindTableCoordinates(1); // Fallback to table 1 if no available tables
+        }
 
 
-
-
-        private void HighlightNumber(int[] activeTables, int[] reservedTables, bool isAdmin = false)
+        private void HighlightNumber(int[] activeTables, int[] reservedTables, bool isAdmin, int guestCount)
         {
             if (flashCancellationTokenSource != null && !flashCancellationTokenSource.IsCancellationRequested)
             {
@@ -120,10 +142,36 @@ namespace Presentation
             {
                 int currentTable = int.Parse(currentNumber);
 
-                // Always highlight yellow when navigating over a table
-                ConsoleColor highlightColor = ConsoleColor.Yellow;
+                // Determine table color and message
+                ConsoleColor tableColor = ConsoleColor.DarkGray;
+                string message = "";
 
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, highlightColor);
+                if (Array.Exists(reservedTables, t => t == currentTable))
+                {
+                    message = $"Table {currentTable} is already reserved.";
+                }
+                else if (Array.Exists(activeTables, t => t == currentTable))
+                {
+                    if (!IsTableValidForGuests(currentTable, guestCount, activeTables))
+                    {
+                        message = $"Table {currentTable} is too small/big for {guestCount} guests.";
+                    }
+                    else
+                    {
+                        tableColor = ConsoleColor.Gray; // Highlight available tables as colorless
+                        message = ""; // No message needed
+                    }
+                }
+                else
+                {
+                    message = $"Table {currentTable} is inactive.";
+                }
+
+                // Display the message above controls
+                DisplayMessage(message);
+
+                // Flash "X" on the table
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
             }
         }
 
@@ -153,6 +201,15 @@ namespace Presentation
                 Console.Write("  "); // Clear the flashing output
             }
 
+            Console.ResetColor();
+        }
+
+        private void DisplayMessage(string message)
+        {
+            int messageY = GridPresent.GetGrid().GetLength(0); // Position above controls
+            Console.SetCursorPosition(0, messageY);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message.PadRight(Console.WindowWidth - 1)); // Clear previous message with padding
             Console.ResetColor();
         }
 
@@ -413,7 +470,7 @@ namespace Presentation
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
         {
             EnsureConsoleSize();
-            ShowGrid(activeTables, inactiveTables, reservedTables, isAdmin, guestCount);
+            ShowGrid(activeTables, inactiveTables, reservedTables, guestCount, isAdmin);
             Console.CursorVisible = false;
 
             int lastX = cursorX, lastY = cursorY;
@@ -492,7 +549,7 @@ namespace Presentation
                     cursorX = nextX;
                     cursorY = nextY;
 
-                    HighlightNumber(activeTables, reservedTables, isAdmin);
+                    HighlightNumber(activeTables, reservedTables, isAdmin, guestCount);
                 }
             }
             finally
