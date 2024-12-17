@@ -8,41 +8,71 @@ namespace Restaurant_App_Unittesting
     {
         // Test valid input
         [TestMethod]
-        public void TestInputHelper_ValidInput()
+        [DataRow("12345678", true)] // Valid input
+        [DataRow("87654321", true)] // Another valid input
+        public void TestInputHelper_ValidInput(string input, bool expectedResult)
         {
             // Arrange
-            string input = "12345678";
+            bool isValid = true;
 
-            // Act
-            var result = InputHelper.GetValidatedInput<string>(input, input =>
-                input.Length == 8 ? (input, null) : (null, "Invalid length")
-            );
+            try
+            {
+                // Act
+                var result = InputHelper.GetValidatedInput<string>(
+                    input,
+                    input => input.Length == 8 && int.TryParse(input, out _) 
+                        ? (input, null) 
+                        : (null, "Invalid input")
+                );
+            }
+            catch (ArgumentException)
+            {
+                isValid = false;
+            }
 
             // Assert
-            Assert.AreEqual("12345678", result);
+            Assert.AreEqual(expectedResult, isValid);
         }
 
         // Test invalid input
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestInputHelper_InvalidInput()
+        [DataRow("123", false)]         // Too short
+        [DataRow("abcdefgh", false)]    // Non-numeric
+        [DataRow("", false)]            // Empty string
+        [DataRow(null, false)]          // Null input
+        public void TestInputHelper_InvalidInput(string input, bool expectedResult)
         {
             // Arrange
-            string input = "123";
+            bool isValid = true;
 
-            // Act
-            InputHelper.GetValidatedInput<string>(input, input =>
-                input.Length == 8 ? (input, null) : (null, "Invalid length")
-            );
+            try
+            {
+                // Act
+                var result = InputHelper.GetValidatedInput<string>(
+                    input,
+                    input => !string.IsNullOrEmpty(input) && input.Length == 8 && int.TryParse(input, out _)
+                        ? (input, null)
+                        : (null, "Invalid input")
+                );
+            }
+            catch (ArgumentException)
+            {
+                isValid = false;
+            }
 
-            // Exception expected
+            // Assert
+            Assert.AreEqual(expectedResult, isValid);
         }
 
+        // Supporting InputHelper
         public static class InputHelper
         {
-            public static T GetValidatedInput<T>(string prompt, Func<string, (T? result, string? error)> validateAndParse)
+            public static T GetValidatedInput<T>(string input, Func<string, (T? result, string? error)> validateAndParse)
             {
-                var (result, error) = validateAndParse(prompt);
+                if (string.IsNullOrEmpty(input))
+                    throw new ArgumentException("Input cannot be null or empty.");
+
+                var (result, error) = validateAndParse(input);
                 if (error != null) throw new ArgumentException(error);
                 return result!;
             }
