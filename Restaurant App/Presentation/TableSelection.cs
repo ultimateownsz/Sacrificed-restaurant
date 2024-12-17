@@ -445,40 +445,98 @@ namespace Presentation
 
 
         private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
-            int tableNumber, 
-            int guestCount, 
-            int[] activeTables, 
-            int[] reservedTables, 
+            int tableNumber,
+            int guestCount,
+            int[] activeTables,
+            int[] reservedTables,
+            int[] inactiveTables,
             bool isAdmin)
         {
-            // Check if the table is reserved
-            if (Array.Exists(reservedTables, t => t == tableNumber))
+            bool isReserved = Array.Exists(reservedTables, t => t == tableNumber);
+            bool isInactive = Array.Exists(inactiveTables, t => t == tableNumber);
+            bool isActive = Array.Exists(activeTables, t => t == tableNumber);
+
+            // Determine if the table size is valid
+            bool isTooSmall = guestCount > GetMaxGuestsForTable(tableNumber);
+            bool isTooBig = guestCount < GetMinGuestsForTable(tableNumber);
+
+            // Construct the message and color based on the conditions
+            string message = "";
+            ConsoleColor tableColor;
+
+            if (isReserved && isActive)
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is already reserved.");
+                message = $"Table {tableNumber} is already reserved.";
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message);
             }
 
-            // Check if the table is active
-            if (!Array.Exists(activeTables, t => t == tableNumber))
+            if (isInactive)
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is inactive.");
+                if (isTooSmall)
+                {
+                    message = $"Table {tableNumber} is too small and inactive.";
+                }
+                else if (isTooBig)
+                {
+                    message = $"Table {tableNumber} is too big and inactive.";
+                }
+                else
+                {
+                    message = $"Table {tableNumber} is inactive.";
+                }
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message);
             }
-
-            // Check if the table size is valid for guests
-            bool isTooSmall = guestCount > 4 && Array.Exists(new[] { 1, 4, 5, 8, 9, 11, 12, 15 }, t => t == tableNumber);
-            bool isTooBig = guestCount <= 2 && Array.Exists(new[] { 6, 7, 10, 13, 14 }, t => t == tableNumber);
 
             if (isTooSmall)
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too small for {guestCount} guests.");
+                message = $"Table {tableNumber} is too small for {guestCount} guests.";
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message);
             }
 
             if (isTooBig)
             {
-                return (false, ConsoleColor.DarkGray, $"Table {tableNumber} is too big for {guestCount} guests.");
+                message = $"Table {tableNumber} is too big for {guestCount} guests.";
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message);
             }
 
-            // If everything is valid
-            return (true, ConsoleColor.Gray, "");
+            // If the table passes all checks
+            if (isActive && !isReserved)
+            {
+                tableColor = ConsoleColor.Gray; // Available tables are colorless
+                message = ""; // No message needed for valid tables
+                return (true, tableColor, message);
+            }
+
+            // Default case: invalid table
+            message = $"Table {tableNumber} is not available for selection.";
+            tableColor = ConsoleColor.DarkGray;
+            return (false, tableColor, message);
+        }
+
+        private int GetMaxGuestsForTable(int tableNumber)
+        {
+            return tableNumber switch
+            {
+                1 or 4 or 5 or 8 or 9 or 11 or 12 or 15 => 2, // Tables for 1-2 guests
+                6 or 7 or 10 or 13 or 14 => 4, // Tables for 3-4 guests
+                2 or 3 => 6, // Tables for 5-6 guests
+                _ => 0 // Invalid table number
+            };
+        }
+
+        private int GetMinGuestsForTable(int tableNumber)
+        {
+            return tableNumber switch
+            {
+                1 or 4 or 5 or 8 or 9 or 11 or 12 or 15 => 1, // Tables for 1-2 guests
+                6 or 7 or 10 or 13 or 14 => 3, // Tables for 3-4 guests
+                2 or 3 => 5, // Tables for 5-6 guests
+                _ => int.MaxValue // Invalid table number
+            };
         }
 
 
