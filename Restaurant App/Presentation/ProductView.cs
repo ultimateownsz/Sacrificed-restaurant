@@ -2,6 +2,8 @@ using Project;
 
 static class ProductView
 {
+
+    //This is the main menu for product managment, its nothing special
     public static void ProductMainMenu()
     {
         string banner = $"PRODUCT MENU\n\n";
@@ -16,7 +18,7 @@ static class ProductView
 
         while (true)
         {
-            string? Name;
+            string? name;
             switch (SelectionPresent.Show(options, banner).text)
             {
                 case "Add product":
@@ -26,14 +28,28 @@ static class ProductView
                     DisplayProducts();
                     break;
                 case "Choose products course":
-                    Name = CourseLogic.GetValidCourse();
-                    if (Name == null) break;
-                    DisplayProducts("course", Name);
+                    while(true)
+                    {                   
+                        name = CourseLogic.GetValidCourse();
+                        if (name == null)
+                        {
+                            Console.WriteLine("");
+                            break;
+                        }
+                        DisplayProducts("course", name);
+                    }
                     break;
                 case "Choose products theme\n":
-                    Name = ThemeInputValidator.GetValidThemeMenu();
-                    if (Name == "fail") break;
-                    DisplayProducts("theme", Name);
+                    while(true)
+                    {
+                        name = ThemeInputValidator.GetValidThemeMenu();
+                        if (name == null)
+                        {
+                            Console.WriteLine("");
+                            break;
+                        }
+                        DisplayProducts("theme", name);
+                    }
                     break;
                 case "back" or "":
                     return;
@@ -42,8 +58,8 @@ static class ProductView
 
     }
 
-    // Display all products
-    public static void DisplayProducts(string filterType = "", string Name = "")
+    // Display all products based on filter type
+    public static void DisplayProducts(string filterType = "", string name = "")
     {
         ProductModel? chosenProduct;
         string banner;
@@ -66,12 +82,12 @@ static class ProductView
             }
             else if (filterType == "course")
             {
-                banner = $"Choose a product to edit/delete:\n\n{Name}:\n\n";
-                products = ProductManager.GetAllWithinCategoryNew(Name).ToList();
+                banner = $"Choose a product to edit/delete:\n\n{name}:\n\n";
+                products = ProductManager.GetAllWithinCourse(name).ToList();
                 if(products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"There are no products in {Name}");
+                    Console.WriteLine($"There are no products in {name}");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
@@ -80,12 +96,19 @@ static class ProductView
             }
             else
             {
-                banner = $"Choose a product to edit/delete:\n\n{Name}:\n\n";
-                products = ProductManager.GetAllWithinTheme(Name).ToList();
+                if(name == "0")
+                {
+                    banner = $"Choose a product to edit/delete:\n\nNo theme:\n\n";
+                }
+                else
+                {
+                    banner = $"Choose a product to edit/delete:\n\n{name}:\n\n";
+                }
+                products = ProductManager.GetAllWithinTheme(name).ToList();
                 if(products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"There are no products in the {Name} theme");
+                    Console.WriteLine($"There are no products in the {name} theme");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
@@ -101,9 +124,10 @@ static class ProductView
                 return;
             }
 
-            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection, filterType, Name);
+            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection, filterType, name);
             if(chosenProduct == null)
             {
+                Console.WriteLine("rizz");
                 return;
             }
             DeleteOrEditChoice(chosenProduct);
@@ -151,6 +175,15 @@ static class ProductView
 
     public static bool DeleteProduct(ProductModel chosenProduct)
     {
+        Console.Clear();
+        string banner = $"Do you want to delete {chosenProduct.Name}\n\n";
+        List<string> options = new List<string>{"Yes", "No"};
+        string selection = SelectionPresent.Show(options, banner, false).text;
+        if(selection == "No" || selection == "")
+        {
+            Console.WriteLine("fix");
+            return false;
+        }
         Console.Clear();
         if(ProductManager.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {

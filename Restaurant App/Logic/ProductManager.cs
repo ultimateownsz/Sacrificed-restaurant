@@ -114,21 +114,20 @@ static class ProductManager
         return Access.Products.Read()
             .Select(p => {
                 var themeName = p.ThemeID.HasValue
-                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
-                    : "No theme";
-                var courseName = p.Course ?? "No course";
-                return $"{p.Name,-18}   {courseName,-15}   {themeName,-15}   €{p.Price:F2}";
+                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    : null;
+                return $"{p.Name,-18}   {p.Course,-15}   {themeName,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
 
-    public static List<string> GetAllWithinCategoryNew(string course)
+    public static List<string> GetAllWithinCourse(string course)
     {
         return Access.Products.GetAllBy("Course", course)
             .Select(p => {
                 var themeName = p.ThemeID.HasValue
-                    ? Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
-                    : "No theme";
+                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    : null;
                 return $"{p.Name,-18}   {themeName,-15}   €{p.Price:F2}";
             })
             .ToList();
@@ -165,20 +164,24 @@ static class ProductManager
         {
             throw new ArgumentException($"Could not parse price from product info: '{productInfo}'");
         }
-        themeID = parts.Count() switch
+        if(name == "0") themeID = 0;
+        else
         {
-            4 => ThemeMenuManager.GetThemeIDByName(parts[2]),
-            3 => ThemeMenuManager.GetThemeIDByName(parts[1]),
-            _ => null
-        };
+            themeID = parts.Count() switch
+            {
+                4 => ThemeMenuManager.GetThemeIDByName(parts[2]),
+                3 => ThemeMenuManager.GetThemeIDByName(parts[1]),
+                _ => null
+            };
+        }
+        if(themeID == null) themeID = 0;
 
         return Access.Products.Read()
             .FirstOrDefault(p =>
                 p.Name == parts[0] &&
                 p.Price == price &&
                 (type == "course" ? p.Course == name : p.Course == parts[1]) &&
-                (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == (name == "0" ? 0 : themeID))
-                );
+                (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == themeID));
     }
 
     public static bool UpdateProduct(ProductModel oldProduct, ProductModel newProduct)
@@ -294,7 +297,7 @@ static class ProductManager
         }
         if(theme == "0")
         {
-            newProduct.ThemeID = null;
+            newProduct.ThemeID = 0;
         }
         else
         {
