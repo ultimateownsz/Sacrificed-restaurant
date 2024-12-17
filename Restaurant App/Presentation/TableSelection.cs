@@ -444,61 +444,49 @@ namespace Presentation
         }
 
 
-        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
-            int tableNumber,
-            int[] activeTables,
-            int[] reservedTables,
-            int[] inactiveTables,
-            int guestCount,
-            bool isAdmin)
+        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(int tableNumber, int guestCount, int[] activeTables, int[] reservedTables)
         {
-            var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
-            if (table == null)
-                return (false, ConsoleColor.DarkGray, "Invalid table.");
+            // Default state
+            bool isValid = false;
+            ConsoleColor tableColor = ConsoleColor.DarkGray;
+            string message = $"Table {tableNumber} is inactive.";
 
-            // Determine if the table is too small or too big
-            bool isTooSmall = guestCount > table.MaxGuests;
-            bool isTooBig = guestCount < table.MinGuests;
-
-            // Reserved table
+            // Determine if the table is reserved
             if (Array.Exists(reservedTables, t => t == tableNumber))
             {
-                return (false, ConsoleColor.DarkGray, "This table is already reserved.");
+                message = $"Table {tableNumber} is already reserved.";
+                return (isValid, tableColor, message);
             }
 
-            // Inactive table with size issues
-            if (Array.Exists(inactiveTables, t => t == tableNumber))
+            // Determine if the table is active and valid for the given guest count
+            if (Array.Exists(activeTables, t => t == tableNumber))
             {
-                if (isTooSmall)
+                int[] availableTables = guestCount switch
                 {
-                    return (false, ConsoleColor.DarkGray, "This table is too small and inactive.");
+                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                    5 or 6 => new int[] { 2, 3 },
+                    _ => Array.Empty<int>()
+                };
+
+                if (Array.Exists(availableTables, t => t == tableNumber))
+                {
+                    isValid = true;
+                    tableColor = ConsoleColor.Gray; // Colorless for available tables
+                    message = ""; // No message for valid tables
                 }
-
-                if (isTooBig)
+                else
                 {
-                    return (false, ConsoleColor.DarkGray, "This table is too big and inactive.");
-                }
-
-                return (false, ConsoleColor.DarkGray, "This table is inactive.");
-            }
-
-            // Table is active but not the right size
-            if (!isAdmin && (isTooSmall || isTooBig))
-            {
-                if (isTooSmall)
-                {
-                    return (false, ConsoleColor.DarkGray, $"This table is too small for {guestCount} guests.");
-                }
-
-                if (isTooBig)
-                {
-                    return (false, ConsoleColor.DarkGray, $"This table is too big for {guestCount} guests.");
+                    bool isTooSmall = !Array.Exists(availableTables, t => t == tableNumber) && guestCount > 2;
+                    message = isTooSmall
+                        ? $"Table {tableNumber} is too small for {guestCount} guests."
+                        : $"Table {tableNumber} is too big for {guestCount} guests.";
                 }
             }
 
-            // Available table
-            return (true, isAdmin ? ConsoleColor.Green : ConsoleColor.Gray, "");
+            return (isValid, tableColor, message);
         }
+
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
         {
