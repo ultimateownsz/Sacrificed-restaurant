@@ -135,7 +135,7 @@ namespace Presentation
 
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
-                Console.Write(tableNumber.ToString().PadRight(2)); // Revert back to table number
+                Console.Write(tableNumber.ToString().PadRight(2)); // Revert to table number
                 await Task.Delay(500);
             }
 
@@ -148,13 +148,20 @@ namespace Presentation
 
         private void ShowErrorMessage(string message)
         {
-            Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 3);
+            int messageY = GridPresent.GetGrid().GetLength(0) + 3; // Display error message one line below the (B)ack
+            Console.SetCursorPosition(0, messageY);
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(message);
+            Console.WriteLine(message.PadRight(Console.WindowWidth - 1)); // Clear previous message with padding
             Console.ResetColor();
-            Console.ReadKey(intercept: true); // Wait for any key to continue
         }
 
+        private void ClearErrorMessage()
+        {
+            int messageY = GridPresent.GetGrid().GetLength(0) + 3; // Same line as the error message
+            Console.SetCursorPosition(0, messageY);
+            Console.WriteLine(new string(' ', Console.WindowWidth - 1)); // Clear the error message
+            Console.SetCursorPosition(cursorX, cursorY); // Reset the cursor to its original position
+        }
 
         private bool IsTableValidForGuests(int tableNumber, int guestCount, int[] activeTables)
         {
@@ -379,8 +386,8 @@ namespace Presentation
 
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, bool isAdmin = false)
         {
-            EnsureConsoleSize();
-            ShowGrid(activeTables, inactiveTables, reservedTables, isAdminMode: isAdmin);
+            EnsureConsoleSize(); // Ensure the console size is adequate
+            ShowGrid(activeTables, inactiveTables, reservedTables, isAdminMode: isAdmin); // Show tables with proper coloring
             Console.CursorVisible = false;
 
             int lastX = cursorX, lastY = cursorY;
@@ -391,7 +398,7 @@ namespace Presentation
                 {
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    Console.WriteLine("(B)ack");
+                    Console.WriteLine("(B)ack"); // Display "Back" option at the bottom
 
                     var key = Console.ReadKey(true);
 
@@ -427,34 +434,38 @@ namespace Presentation
 
                             if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
+                                // Reserved table
                                 ShowErrorMessage($"Table {tableNumber} is already reserved.");
-                                continue;
+                                continue; // Do not block movement
                             }
 
                             if (Array.Exists(inactiveTables, t => t == tableNumber))
                             {
+                                // Inactive table
                                 ShowErrorMessage($"Table {tableNumber} is inactive.");
-                                continue;
+                                continue; // Do not block movement
                             }
 
                             if (!Array.Exists(activeTables, t => t == tableNumber))
                             {
+                                // Invalid table
                                 ShowErrorMessage($"Table {tableNumber} is not available.");
-                                continue;
+                                continue; // Do not block movement
                             }
 
-                            StopFlashing();
-                            ResetConsoleToDefault();
+                            StopFlashing(); // Stop flashing task
+                            ResetConsoleToDefault(); // Reset colors and clean up the screen
                             return tableNumber; // Valid table selected
                     }
 
+                    // Update the table highlight after moving
                     UpdateTableHighlight(lastX, lastY, nextX, nextY, activeTables, reservedTables);
                     lastX = nextX;
                     lastY = nextY;
                     cursorX = nextX;
                     cursorY = nextY;
 
-                    HighlightNumber(activeTables, reservedTables, isAdmin); // Update the highlight
+                    HighlightNumber(activeTables, reservedTables, isAdmin); // Update the highlight dynamically
                 }
             }
             finally
@@ -463,6 +474,6 @@ namespace Presentation
                 ResetConsoleToDefault();
                 Console.CursorVisible = true;
             }
-        }
+}
     }
 }
