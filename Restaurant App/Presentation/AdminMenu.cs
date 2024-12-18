@@ -23,8 +23,8 @@ static class AdminMenu
             // Check if Escape was pressed
             if (selection.text == null)
             {
-                Console.WriteLine(" Exiting Admin Menu...");  // optional message to show the user what is happening
-                Thread.Sleep(1500);  // use this to wait 1,5 seconds before returning to menu
+                // Console.WriteLine(" Exiting Admin Menu...");  // optional message to show the user what is happening
+                // Thread.Sleep(1500);  // use this to wait 1,5 seconds before returning to menu
                 return;
             }
 
