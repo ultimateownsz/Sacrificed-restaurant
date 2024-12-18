@@ -65,7 +65,11 @@ public static class ReservationDetails
 
             foreach (var reserv in orders)
             {
-                var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID);
+                var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID).ToList();
+                
+                int currentPage = 0;
+                int itemsPerPage = 5;
+                int totalPages = (int)Math.Ceiling((double)request.Count / itemsPerPage);
 
                 foreach (var req in request)
                 {
