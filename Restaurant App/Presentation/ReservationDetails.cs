@@ -69,9 +69,6 @@ public static class ReservationDetails
             {
                 var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID).ToList();
 
-                int totalPages = (int)Math.Ceiling((double)request.Count / itemsPerPage);
-                var currentPageReserv = request.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
-
                 foreach (var req in request)
                 {
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
@@ -97,7 +94,10 @@ public static class ReservationDetails
                 }
             }
 
-            // var orderOptions = RequestLogic.GenerateMenuOptions(currentPageReserv, currentPage, itemsPerPage);
+            int totalPages = (int)Math.Ceiling((double)request.Count / itemsPerPage);
+            var currentPageReserv = request.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+
+            var orderOptions = RequestLogic.GenerateMenuOptions(currentPageReserv, currentPage, itemsPerPage);
             var selectedOrders = SelectionPresent.Show(orderOptions, "ORDERS\n").text;
 
             if (selectedOrders == "Next page >>")
@@ -112,7 +112,7 @@ public static class ReservationDetails
                 continue;
             }
 
-            if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations))
+            if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedOrders))
             {
                 foreach (var products in productCounts)
                 {
