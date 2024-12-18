@@ -40,7 +40,7 @@ static class ProductManager
             var productInfo = Console.ReadLine();
             if(type == "name")
             {
-                if (!string.IsNullOrWhiteSpace(productInfo) && !productInfo.Any(char.IsDigit))
+                if (!string.IsNullOrWhiteSpace(productInfo) && !productInfo.Any(char.IsDigit)) // validate the name
                 {
                     productInfo = char.ToUpper(productInfo[0]) + productInfo.Substring(1);
                     return productInfo;
@@ -50,7 +50,7 @@ static class ProductManager
             {
                 productInfo = productInfo.Replace(',', '.');
                 decimal temp;
-                if (
+                if (                                    // validate the price
                     !string.IsNullOrWhiteSpace(productInfo)
                     && productInfo.Contains('.')
                     && decimal.TryParse(productInfo, out temp)
@@ -69,7 +69,7 @@ static class ProductManager
             Console.WriteLine($"\nInvalid {type}...");
             if(type == "price") Console.WriteLine($"\nThe product price must have 2 decimals and no letters or symbols...");
             else Console.WriteLine($"\nThe product name must have no number or symbols...");
-            Console.WriteLine("Press any key to retry or ESCAPE to go back");
+            Console.WriteLine("Press any key to retry or ESCAPE to go back"); // give the user the option to exit after making a mistake
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
             {
@@ -117,7 +117,7 @@ static class ProductManager
         return Access.Products.Read()
             .Select(p => {
                 var themeName = p.ThemeID.HasValue
-                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name //If the themeID is 0 then instead of leaving it empty, it writes "No theme"
                     : null;
                 return $"{p.Name,-18}   {p.Course,-15}   {themeName,-15}   €{p.Price:F2}";
             })
@@ -130,7 +130,7 @@ static class ProductManager
         return Access.Products.GetAllBy("Course", course)
             .Select(p => {
                 var themeName = p.ThemeID.HasValue
-                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name
+                    ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name //If the themeID is 0 then instead of leaving it empty, it writes "No theme"
                     : null;
                 return $"{p.Name,-18}   {themeName,-15}   €{p.Price:F2}";
             })
@@ -285,21 +285,21 @@ static class ProductManager
     {
         ProductModel newProduct = new();
 
-        string name = GetValidNameOrPrice("name");
+        string name = GetValidNameOrPrice("name"); //ask for the name
         if(name == null)
         {
             return null;
         }
         newProduct.Name = name;
 
-        string course = CourseLogic.GetValidCourse();
+        string course = CourseLogic.GetValidCourse(); //ask for the course
         if(course == null)
         {
             return null;
         }
         newProduct.Course = course;
 
-        string theme = ThemeInputValidator.GetValidThemeMenu();
+        string theme = ThemeInputValidator.GetValidThemeMenu(); //ask for the theme
         if(theme == null)
         {
             return null;
@@ -313,7 +313,7 @@ static class ProductManager
             newProduct.ThemeID = ThemeMenuManager.GetThemeIDByName(theme);
         }
 
-        string price = GetValidNameOrPrice("price");
+        string price = GetValidNameOrPrice("price"); //ask for the price
         decimal temp;
         if (decimal.TryParse(price, out temp))
         {
@@ -324,7 +324,7 @@ static class ProductManager
             return null;
         }
 
-        return newProduct;
+        return newProduct; //return the new model
     }
 
     //This Method Deletes a product from the db
@@ -338,11 +338,9 @@ static class ProductManager
 
         if (Access.Products.GetBy<int>("ID", productId) == null)
         {
-            // Console.WriteLine($"Database does not contain a product with ID: {productId}.");
             return false;
         }
         Access.Products.Delete(productId);
-        // Console.WriteLine($"Product with ID: {productId} deleted successfully.");
         return true;
     }
 }
