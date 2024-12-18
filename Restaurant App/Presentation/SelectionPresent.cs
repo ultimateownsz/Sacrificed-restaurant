@@ -1,131 +1,139 @@
 ﻿namespace Project;
-using System.Dynamic;
-
 internal class SelectionPresent
 {
-    private static void _update(string banner, Dictionary<string, bool> selection, 
-        ref Tuple<List<string?>, List<int?>> multiselect, SelectionLogic.Mode mode)
+    private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
+        string banner, SelectionLogic.Mode mode)
     {
-        Console.Clear(); 
+
+        // banner & colour initialization
+        Console.Clear();
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write(banner, Console.ForegroundColor);
+        Console.WriteLine(banner + "\n");
 
-        Console.WriteLine(
-            (mode == SelectionLogic.Mode.Single)
-            ? "(select an option)"
-            : "(select multiple options)"
-            );
-
-        foreach ((string text, bool selected) in selection)
+        foreach ((string text, SelectionLogic.Selectable selectable) in selection)
         {
-            Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
-            string prefix = (selected) ? "-> " : "";
+            // colouring (priority-sensitive)
+            Console.ForegroundColor =
+                (selectable.selected && selectable.highlighted)
+                // selected and highlighted
+                ? ConsoleColor.Cyan : (selectable.selected)
+                // only selected
+                ? ConsoleColor.Blue : (selectable.highlighted)
+                // only highlighted
+                ? ConsoleColor.DarkCyan : (ConsoleColor.White);
 
-            if (mode == SelectionLogic.Mode.Multi)
-            {
-                Console.ForegroundColor = (multiselect.Item1.Contains(text)) ? ConsoleColor.Yellow : ConsoleColor.White;
-                if (text == selection.Keys.ElementAt(selection.Count() - 1))
-                    Console.WriteLine(); // segment the continue statement 
-            }
-            
-           
+            // marker
+            string prefix = (selectable.selected) ? ">" : "";
+            string suffix = (selectable.selected) ? "" : "";
+            if (mode == SelectionLogic.Mode.Scroll && !selectable.selected) continue;
 
-            if (mode == SelectionLogic.Mode.Narrow && !selected) continue;
-            Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
+            // output
+            Console.WriteLine($"{prefix} {text} {suffix}");
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 
-    private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection, 
-        ref Tuple<List<string?>, List<int?>> multiselect, SelectionLogic.Mode mode)
+    private static SelectionLogic.Interaction _update(
+        Dictionary<string, SelectionLogic.Selectable> selection, SelectionLogic.Mode mode)
     {
-        var current = SelectionLogic.ReverseLookup<string, bool>(selection, true);
-        
-
-        switch (Console.ReadKey().Key)
+        ConsoleKey capture;
+        switch (capture = Console.ReadKey().Key)
         {
+            // movement
             case ConsoleKey.DownArrow:
-
-                selection[current.Item1 ?? ""] = false;
-                selection[selection.ElementAt(SelectionLogic.Next(selection.Count, current.Item2)).Key] = true;
-                break;
-
             case ConsoleKey.UpArrow:
 
-                selection[current.Item1 ?? ""] = false;
-                selection[selection.ElementAt(SelectionLogic.Next(selection.Count, current.Item2, true)).Key] = true;
-                break;
+                // 2D-movement
+                SelectionLogic.Iterate(selection,
+                    reverse: (capture != ConsoleKey.DownArrow));
 
-            case ConsoleKey.Enter:
-                
-                Console.ForegroundColor = ConsoleColor.White;
-                if (mode == SelectionLogic.Mode.Multi)
-                {
-                    if (current.Item1 == "continue")
-                    {
-                        return new("", -1);
-                    }
+                return SelectionLogic.Interaction.Moved;
 
-                    // select & deselect
-                    if (multiselect.Item1.Contains(current.Item1))
-                    {
-                        multiselect.Item1.Remove(current.Item1);
-                        multiselect.Item2.Remove(current.Item2);
-                    }
-                    else
-                    {
-                        multiselect.Item1.Add(current.Item1);
-                        multiselect.Item2.Add(current.Item2);
-                    }
-
-                    return new("", 0);
-                }
-
-                return new(current.Item1, current.Item2);
-
-            // hmm.. somebody toucha ma code, and destabilized it
-            // I won't touch it for now, but I will find you, and I will kill you.
+            // actions
             case ConsoleKey.Escape:
-            case ConsoleKey.B:
+                return SelectionLogic.Interaction.Terminated;
 
-                Console.ForegroundColor = ConsoleColor.White;
-                return new("", -1);
+            case ConsoleKey.Spacebar:
+            case ConsoleKey.Enter:
+
+                // terminate
+                if (mode != SelectionLogic.Mode.Multi)
+                    return SelectionLogic.Interaction.Selected;
+
+                // continuous
+                SelectionLogic.Mark(selection);
+                return SelectionLogic.Interaction.Marked;
+
+
+            // safeguard
+            default:
+                return SelectionLogic.Interaction.None;
         }
-
-        return null;
     }
 
-    public static dynamic Show(List<string?> options, string banner = "", 
-        SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
+    public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
+        string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
-        // if you don't understand it, don't touch it..
-        Tuple<string?, int?>? selected;
-        Tuple<List<string?>, List<int?>> multiselect = new(new(), new());
-        dynamic dynamicHandle = new ExpandoObject();
+        // initialization
+        Dictionary<string, SelectionLogic.Selectable> selection =
+            SelectionLogic.ToSelectables(options, preselected, mode);
 
-        if (mode == SelectionLogic.Mode.Narrow) options.Reverse();
-        Dictionary<string, bool> selection = SelectionLogic.ToSelectable(options, mode);
+        // currently selected
+        IEnumerable<KeyValuePair<string, SelectionLogic.Selectable>> selected;
 
+        // loop
         while (true)
         {
-            // update screen
-            _update(banner, selection, ref multiselect, mode);
+            // formatting
+            _display(selection, banner, mode);
 
-            if ((selected = _read(selection, ref multiselect, mode)) != null)
+            // capture & handle interaction
+            switch (_update(selection, mode))
             {
-                if (mode == SelectionLogic.Mode.Multi)
-                {
-                    if (selected.Item2 == -1)
+                case SelectionLogic.Interaction.Marked:
+
+                    // interrupt and prevent nest
+                    selected = selection.Where(x => x.Value.selected == true);
+                    if (selected.ElementAt(0).Key != "continue")
+                        break;
+
+                    // prepare reading-phase
+                    var list = new List<SelectionLogic.Selection>();
+                    selection.Remove("continue");
+
+                    // read highlighted input
+                    foreach (var selectable in selection.Where(x => x.Value.highlighted == true))
                     {
-                        dynamicHandle.text = multiselect.Item1;
-                        dynamicHandle.index = multiselect.Item2;
-                        return dynamicHandle;
-                    } 
-                    continue;
-                }
-                
-                dynamicHandle.text = selected.Item1;
-                dynamicHandle.index = selected.Item2;
-                return dynamicHandle;
+                        list.Add(new SelectionLogic.Selection()
+                        {
+                            text = selectable.Key,
+                            index = selectable.Value.index
+                        });
+                    }
+
+                    Console.Clear();
+                    return list;
+
+                case SelectionLogic.Interaction.Moved:
+                    break;
+
+                case SelectionLogic.Interaction.Selected:
+
+                    Console.Clear();
+                    selected = selection.Where(x => x.Value.selected == true);
+                    return new()
+                    {
+                        new SelectionLogic.Selection()
+                        {
+                            text = selected.Select(x => x.Key).ElementAt(0),
+                            index = selected.Select(x => x.Value.index).ElementAt(0)
+                        }
+                    };
+
+                case SelectionLogic.Interaction.Terminated:
+
+                    Console.Clear();
+                    return new();
             }
         }
     }

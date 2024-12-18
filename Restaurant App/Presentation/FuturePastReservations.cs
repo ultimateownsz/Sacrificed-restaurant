@@ -51,7 +51,7 @@ namespace Presentation
                 // format improvement
                 reservationOptions.Add("Back");
                 
-                string selectedReservation = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // displaying the info as opions to choose
+                string selectedReservation = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS\n\n(click to edit)\n").ElementAt(0).text; // displaying the info as opions to choose
 
                 if (selectedReservation == "Back")
                 {
@@ -102,7 +102,7 @@ namespace Presentation
                                             .ToList(); // making sure there are 20 reservations per page
 
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
-                var selectedReservations = SelectionPresent.Show(reservationOptions, "RESERVATIONS\n\n(click to edit)\n").text; // making use of SelectionPresent.Show
+                var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS\n\n(click to edit)\n").ElementAt(0).text; // making use of SelectionPresent.Show
 
                 if (selectedReservations == "Back")
                 {

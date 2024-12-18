@@ -91,8 +91,8 @@ internal class RegisterUser
             {
                 while (true)
                 {
-                    string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
+                    string banner = "Choose which information you'd like to change:";
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner: banner).ElementAt(0).text)
                     {
                         case "first name":
                             Console.Clear();

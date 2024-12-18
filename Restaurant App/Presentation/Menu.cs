@@ -11,7 +11,7 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["login", "register\n", "exit"], "MAIN MENU\n\n").text)
+            switch (SelectionPresent.Show(["login", "register\n", "exit"], banner: "MAIN MENU").ElementAt(0).text)
             {
                 case "login":
                     if (MenuLogic.Login() == "continue")
@@ -40,7 +40,7 @@ static class Menu
             Console.Clear();
             var options = new List<string> { 
                 "reserve", "view reservations", "specify diet/allergies\n", "logout" };
-            var selection = SelectionPresent.Show(options, "USER MENU\n\n").text;
+            var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
             switch (selection)
             {

@@ -18,8 +18,8 @@ namespace Presentation
 
             // Step 1: Ask for the number of guests
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
-            int guests = options.Count() - SelectionPresent.Show(options, banner, SelectionLogic.Mode.Narrow).index;
+            string banner = "How many guests will be coming?";
+            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
             // Step 2: Display the calendar and mark unreservable dates
             DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
@@ -235,7 +235,7 @@ namespace Presentation
                         //productOptions.Add("Cancel"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, banner).text;
+                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
 
                         // EMERGENCY MODIFICATION: 1
                         //if (selectedOption == "Cancel")

@@ -43,7 +43,7 @@ public static class UpdateReservation
         string confirmChoice = "UPDATE RESERVATION\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
@@ -72,7 +72,7 @@ public static class UpdateReservation
         string confirmChoice = "UPDATE RESERVATION\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();

@@ -25,7 +25,7 @@ static class ThemeView
                 // Menu to choose actions for a month with a theme attached
                 string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:\n\n";
                 List<string> options2 = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
-                int selection = SelectionPresent.Show(options2, banner2).index;
+                int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
                 if (selection == 0)
                 {
@@ -164,7 +164,7 @@ static class ThemeView
             //    return 0; // Indicate going back
             //}
 
-            month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths).index;
+            month = 1 + SelectionPresent.Show(optionsMonths, banner: bannerMonths).ElementAt(0).index;
             if (month == 0)
             {
                 return 0; // Ensure a return value for the back option
