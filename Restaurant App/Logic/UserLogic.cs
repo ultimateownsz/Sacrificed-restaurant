@@ -39,23 +39,27 @@ public class UserLogic
         return null;
     }
 
-    public static bool IsEmailValid(string email)
+    public static (bool isValid, string? message) IsEmailValid(string email)
     {
-        foreach (var mail in Access.Users.Read().Select(o => o.Email))
+        // Query the database to check for email existence
+        var existingUser = Access.Users.GetBy<string>("Email", email);
+
+        if (existingUser != null)
         {
-            if (mail == email)
-                return false;
+            return (false, "This email already exists. Please use a different email.");
         }
-        string localPart = @"^[\wz]+";              // starts with letters, numbers or underscores
-        string atSymbol = @"@";                     // requires '@'
-        string domain = @"([\w]+\.)+";              // requires a domain name with at least one '.'
-        string topLevelDomain = @"[\w-]{2,4}$";     // ends with 2-4 characters (e.g., .com, .org)
 
-        string emailPattern = $"{localPart}{atSymbol}{domain}{topLevelDomain}";
+        // Validate email format using regex
+        string emailPattern = @"^[\w\.\-+]+@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$";
+        if (!Regex.IsMatch(email, emailPattern))
+        {
+            return (false, "The email format is invalid. Please enter a valid email address (e.g., example@domain.com).");
+        }
 
-        return Regex.IsMatch(email, emailPattern);
-        //  return Regex.IsMatch(email, @"^[\wz]+@([\w]+\.)+[\w\w-]{2,4}$");
+        return (true, null); // Email is valid
     }
+
+
 
     public static bool IsPasswordValid(string password)
     {
