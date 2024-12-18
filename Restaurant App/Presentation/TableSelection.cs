@@ -351,9 +351,9 @@ namespace Presentation
             return (startX, startY);
         }
 
-        private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] availableTables, int[] reservedTables)
+        private void UpdateTableHighlight(int prevX, int prevY, int currX, int currY, int[] activeTables, int[] reservedTables)
         {
-            // Restore the previous table's original color
+            // Restore the previous table's original color and ID
             if (prevX != -1 && prevY != -1)
             {
                 string prevNumber = GetNumberAt(prevX, prevY);
@@ -364,27 +364,23 @@ namespace Presentation
                     {
                         Console.SetCursorPosition(prevX, prevY);
                         Console.ForegroundColor = prevColor;
-                        Console.Write(prevNumber.PadRight(2));
+                        Console.Write(prevNumber.PadRight(2)); // Ensure table ID is restored
                     }
                 }
             }
 
-            // Highlight the current table with "X"
+            // Highlight the current table with "X" and yellow color
             string currNumber = GetNumberAt(currX, currY);
             if (!string.IsNullOrEmpty(currNumber))
             {
                 int currTable = int.Parse(currNumber);
 
-                // Determine the color for "X" based on table status
-                ConsoleColor currColor = ConsoleColor.Red; // Default red
-                if (Array.Exists(availableTables, table => table == currTable) && !Array.Exists(reservedTables, table => table == currTable))
-                {
-                    currColor = ConsoleColor.Green; // Available and not reserved
-                }
-
                 Console.SetCursorPosition(currX, currY);
-                Console.ForegroundColor = currColor;
-                Console.Write("X ");
+                Console.ForegroundColor = ConsoleColor.Yellow; // Highlight current table
+                Console.Write(currNumber.PadRight(2));
+
+                // Start flashing "X" on the current table
+                _ = FlashHighlightAsync(currTable, currX, currY, ConsoleColor.Yellow);
             }
 
             Console.ResetColor();
@@ -444,7 +440,7 @@ namespace Presentation
             {
                 flashCancellationTokenSource.Cancel(); // Cancel the token
                 flashCancellationTokenSource.Dispose();
-                flashCancellationTokenSource = null; // Avoid reuse
+                flashCancellationTokenSource = new CancellationTokenSource(); // Reset for future use
             }
 
             // Clear any lingering "X" or number at the cursor's location
@@ -456,10 +452,19 @@ namespace Presentation
             if (!string.IsNullOrEmpty(GetNumberAt(cursorX, cursorY)))
             {
                 Console.SetCursorPosition(cursorX, cursorY);
-                Console.Write("  "); // Clear the area
+                string tableNumber = GetNumberAt(cursorX, cursorY);
+                if (!string.IsNullOrEmpty(tableNumber))
+                {
+                    if (tableColors.TryGetValue(int.Parse(tableNumber), out ConsoleColor originalColor))
+                    {
+                        Console.ForegroundColor = originalColor;
+                        Console.Write(tableNumber.PadRight(2)); // Restore the table ID
+                    }
+                }
                 Console.ResetColor();
             }
         }
+
 
 
         private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
@@ -565,7 +570,6 @@ namespace Presentation
             Console.CursorVisible = false;
 
             int lastX = cursorX, lastY = cursorY;
-            string lastMessage = ""; // To track the last displayed message
 
             try
             {
@@ -580,8 +584,8 @@ namespace Presentation
 
                     if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
                     {
-                        StopFlashing();
-                        ResetConsoleToDefault();
+                        StopFlashing(); // Cancel all flashing tasks
+                        ResetConsoleToDefault(); // Clear and reset the screen
                         return -1;
                     }
 
@@ -608,20 +612,17 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
+                            // Validate the table
                             var (isValid, _, message) = ValidateTable(tableNumber, guestCount, activeTables, reservedTables, inactiveTables, isAdmin);
 
-                            if (!isValid)
+                            if (!isValid && !isAdmin)
                             {
-                                if (lastMessage != message)
-                                {
-                                    DisplayMessage(message);
-                                    lastMessage = message;
-                                }
+                                ShowErrorMessage(message);
                                 continue;
                             }
 
-                            StopFlashing();
-                            ResetConsoleToDefault();
+                            StopFlashing(); // Stop any flashing tasks
+                            ResetConsoleToDefault(); // Clear screen
                             return tableNumber;
                     }
 
@@ -637,7 +638,7 @@ namespace Presentation
             }
             finally
             {
-                StopFlashing();
+                StopFlashing(); // Stop flashing on exit
                 ResetConsoleToDefault();
                 Console.CursorVisible = true;
             }
