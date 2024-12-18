@@ -426,7 +426,7 @@ namespace Presentation
 
                     var key = Console.ReadKey(true);
 
-                    if (key.Key == ConsoleKey.Escape)  // removed to make the menus more consistent
+                    if (key.Key == ConsoleKey.Escape)  // removed the b to make the menus more consistent
                     {
                         StopFlashing(); // Immediately stop any flashing tasks
                         ResetConsoleToDefault(); // Clear the screen to reset it
