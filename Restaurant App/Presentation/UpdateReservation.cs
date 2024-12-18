@@ -72,7 +72,7 @@ public static class UpdateReservation
         string confirmChoice = "UPDATE RESERVATION\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Delete\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel\n", "Back"], confirmChoice).text)
             {
                 case "Date":
                     Console.Clear();
@@ -90,7 +90,7 @@ public static class UpdateReservation
                     Console.ReadKey();
                     break;
                 
-                case "Delete\n":
+                case "Cancel\n":
                     Console.Clear();
                     if (DeleteReservation(reservation))
                     {
@@ -197,14 +197,14 @@ public static class UpdateReservation
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            Console.WriteLine("Reservation deleted succesfully.");
+            Console.WriteLine("Reservation cancelled succesfully.");
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();
             return true; // Deletion was succesfull
         }
         else if (choice.text == "No")
         {
-            Console.WriteLine("Deletion cancelled.");
+            Console.WriteLine("Reservation not cancelled.");
         }
 
         return false; // Deletion was cancelled
