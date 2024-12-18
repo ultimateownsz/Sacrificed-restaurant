@@ -16,74 +16,97 @@ namespace Presentation
         {
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
-            // Step 1: Ask for the number of guests
+            // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
             int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
-            // Step 2: Display the calendar and mark unreservable dates
-            DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+            DateTime selectedDate;
 
-            if (selectedDate == DateTime.MinValue)
-            {
-                return;
-            }
-
-            // Step 3: Filter available tables based on the number of guests
-            TableSelection tableSelection = new();
-            int[] availableTables = guests switch
-            {
-                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                5 or 6 => new int[] { 2, 3 },
-                _ => Array.Empty<int>()
-            };
-
-            var reservedTables = Access.Reservations
-                .GetAllBy<DateTime>("Date", selectedDate)
-                .Where(r => r?.PlaceID != null)
-                .Select(r => r!.PlaceID!.Value)
+            // Fetch inactive tables
+            var inactiveTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
                 .ToArray();
 
-            // Step 4: Select a table
-            int selectedTable = tableSelection.SelectTable(availableTables, reservedTables);
+            while (true) // Loop to manage Calendar -> Table Selection navigation
+            {
+                // Step 2: Display the calendar and mark unreservable dates
+                selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
-            if (selectedTable == -1)
-            {
-                Console.WriteLine("Returning to the calendar...");
-                return;
-            }
-
-            // Step 5: Save the reservation
-            int reservationId;
-            if (acc.ID.HasValue)
-            {
-                reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
-            }
-            else
-            {
-                Console.WriteLine("Error: User ID is null. Unable to create reservation.");
-                return;
-            }
-            if (reservationId == 0)
-            {
-                Console.WriteLine("Failed to create a reservation. Please try again.");
-                return;
-            }
-
-            var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-            if (orders.Count > 0)
-            {
-                PrintReceipt(orders, reservationId, acc);
-
-                // Prompt the user to press Enter to return to the menu
-                Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
-                while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
+                if (selectedDate == DateTime.MinValue)
                 {
-                    // Do nothing, just wait for Enter
+                    Console.Clear(); // Ensure no residual data is left
+                    Console.WriteLine("Returning to the previous menu...");
+                    return; // Exit completely if user presses back from the calendar
+                }
+
+
+                // Step 3: Filter available tables based on the number of guests
+                TableSelection tableSelection = new();
+                int[] availableTables = guests switch
+                {
+                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                    5 or 6 => new int[] { 2, 3 },
+                    _ => Array.Empty<int>()
+                };
+
+                var reservedTables = Access.Reservations
+                    .GetAllBy<DateTime>("Date", selectedDate)
+                    .Where(r => r?.PlaceID != null)
+                    .Select(r => r!.PlaceID!.Value)
+                    .ToArray();
+
+                while (true) // Inner loop for Table Selection
+                {
+                    // Step 4: Select a table
+                    int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+
+                    if (selectedTable == -1)
+                    {
+                        Console.WriteLine("Returning to date selection...");
+                        break; // Break the inner loop and return to the calendar
+                    }
+
+                    // Step 5: Save the reservation
+                    int reservationId;
+                    if (acc.ID.HasValue)
+                    {
+                        reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                        return;
+                    }
+
+                    if (reservationId == 0)
+                    {
+                        Console.WriteLine("Failed to create a reservation. Please try again.");
+                        continue; // Retry table selection
+                    }
+
+                    var orders = TakeOrders(selectedDate, acc, reservationId, guests);
+                    if (orders.Count > 0)
+                    {
+                        PrintReceipt(orders, reservationId, acc);
+
+                        // Prompt the user to press Enter to return to the menu
+                        Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
+                        {
+                            // Do nothing, just wait for Enter
+                        }
+                        return; // Exit after completing reservation
+                    }
                 }
             }
         }
+
+
+
+
 
 
         // public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
