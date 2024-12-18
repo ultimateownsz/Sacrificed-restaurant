@@ -141,7 +141,7 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}, or go (b)ack";
+        string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
@@ -158,18 +158,19 @@ static class ThemeView
 
             //Console.WriteLine("\n(b)ack")
             //var key = Console.ReadKey(intercept: true);
-            
+
             //if (key.Key == ConsoleKey.B)
             //{
             //    return 0; // Indicate going back
             //}
 
-            month = 1 + SelectionPresent.Show(optionsMonths, banner: bannerMonths).ElementAt(0).index;
-            if (month == 0)
+            var selection = SelectionPresent.Show(optionsMonths, banner: bannerMonths);
+            if (selection.Count == 0)
             {
                 return 0; // Ensure a return value for the back option
             }
 
+            month = selection.ElementAt(0).index;
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");

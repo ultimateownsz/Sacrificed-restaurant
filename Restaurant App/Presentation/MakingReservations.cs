@@ -304,7 +304,7 @@ namespace Presentation
                 if (i != -1)
                 {
                     allOrders.AddRange(guestOrder);
-                    Console.WriteLine("\nPress any key to continue...");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
             }

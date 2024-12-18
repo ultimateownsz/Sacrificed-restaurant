@@ -9,7 +9,6 @@ internal class SelectionPresent
         public ConsoleColor Tertiary   = ConsoleColor.DarkCyan;
         public ConsoleColor Base       = ConsoleColor.White;
     }
-
     private static Palette palette = new Palette();
 
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
@@ -149,20 +148,26 @@ internal class SelectionPresent
 
                     Console.Clear();
 
-                    // message for Danilo probablement
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("WWARNING");
+                    Console.WriteLine("WWARNING\n");
 
                     Console.ForegroundColor = palette.Base;
                     Console.WriteLine(
-                        "\nMenu termination has merely been structured but" +
-                        "\nis not implemented properly. Awaiting further development" +
-                        "\n\nPress any key to continue..."
+                        "You are about to attempt a menu termination,\n"+
+                        "however this functionality has been rather \n"+
+                        "buggy due to our retarded ahh approach in\n"+
+                        "making the most non-modular code imaginable.\n\n"
                         );
 
-                    Console.ReadKey();
-                    break;
+                    Console.Write("Would you like to proceed? [might cause a crash] (y/N)");
+                    switch (Console.ReadKey().KeyChar)
+                    {
+                        case 'y':
+                            return new();
 
+                        default:
+                            continue;
+                    }
 
             }
         }
