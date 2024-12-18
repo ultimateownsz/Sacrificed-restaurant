@@ -57,6 +57,8 @@ public static class ReservationDetails
             };
             Dictionary<string, int> productCounts = new Dictionary<string, int>();
             const int maxProductCount = 15;
+            int currentPage = 0;
+            int itemsPerPage = 5;
 
             string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
@@ -66,10 +68,9 @@ public static class ReservationDetails
             foreach (var reserv in orders)
             {
                 var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID).ToList();
-                
-                int currentPage = 0;
-                int itemsPerPage = 5;
+
                 int totalPages = (int)Math.Ceiling((double)request.Count / itemsPerPage);
+                var currentPageReserv = request.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
 
                 foreach (var req in request)
                 {
@@ -96,16 +97,35 @@ public static class ReservationDetails
                 }
             }
 
-            foreach (var products in productCounts)
+            // var orderOptions = RequestLogic.GenerateMenuOptions(currentPageReserv, currentPage, itemsPerPage);
+            var selectedOrders = SelectionPresent.Show(orderOptions, "ORDERS\n").text;
+
+            if (selectedOrders == "Next page >>")
             {
-                int total = products.Value;
-                while (total > 0)
-                {   
-                    int displayCount = Math.Min(total, maxProductCount);
-                    Console.WriteLine($"- {displayCount}x {products.Key}");
-                    total -= displayCount;
+                currentPage = Math.Min(currentPage + 1, totalPages -1);
+                continue;
+            }
+
+            if (selectedOrders == "<< Previous page")
+            {
+                currentPage = Math.Max(currentPage - 1, 0);
+                continue;
+            }
+
+            if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations))
+            {
+                foreach (var products in productCounts)
+                {
+                    int total = products.Value;
+                    while (total > 0)
+                    {   
+                        int displayCount = Math.Min(total, maxProductCount);
+                        Console.WriteLine($"- {displayCount}x {products.Key}");
+                        total -= displayCount;
+                    }
                 }
             }
+
 
             Console.WriteLine("\nPress any key to return...");
             Console.ReadKey();
