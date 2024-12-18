@@ -12,20 +12,27 @@ internal class AllergyLogic
     // I/O methods
     public struct Input()
     {
-        public List<string>? selected;
+        public List<string>? Allergies;
     }
 
     public struct Output()
     {
-        public List<string?> allergies = new();
+        public List<string?> Allergies = new();
+        public List<string?> Highlights = new();
     }
-    private static Output _constr_output()
+    private static Output _constr_output(int? id)
     {
         // model -> string
         var output = new Output();
-        Access.Allergies.Read().ForEach(
-            m => output.allergies?.Add(m?.Name));
         
+        // add all allergies
+        Access.Allergies.Read().ForEach(
+            x => output.Allergies?.Add(x?.Name));
+
+        // add those the user has
+        foreach (AllerlinkModel? model in Access.Allerlinks.Read().Where(x => x.EntityID == id))
+            output.Highlights.Add(Access.Allergies.GetBy<int?>("ID", model?.AllergyID)?.Name);
+
         return output;
     }
 
@@ -48,11 +55,11 @@ internal class AllergyLogic
     {
         // value initialization
         var input = new Input();
-        var output = _constr_output();
+        var output = _constr_output(id);
 
         // I/O swap
         AllergyPresent.Show(ref input, ref output);
-        List<AllergyModel> models = ToModels(input.selected);
+        List<AllergyModel> models = ToModels(input.Allergies);
 
         // deletion of old data
         foreach (var allergy in Access.Allerlinks.GetAllBy<int>("EntityID", id ?? -1))
