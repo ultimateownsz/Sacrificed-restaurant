@@ -94,7 +94,7 @@ public static class UpdateReservation
                     Console.Clear();
                     if (DeleteReservation(reservation))
                     {
-                        return;
+                        return; // Exit after deletion
                     }
                     break;
                
@@ -200,7 +200,7 @@ public static class UpdateReservation
             Console.WriteLine("Reservation deleted succesfully.");
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();
-            return true;
+            return true; // Deletion was succesfull
         }
     }
 
