@@ -45,6 +45,7 @@ static class ThemeView
                     if(themeName == "0")
                     {
                         ThemeMenuManager.DeleteMonthTheme(month, year);
+                        themeName = "No Theme";
                     }
                     else if(themeName == null)
                     {
