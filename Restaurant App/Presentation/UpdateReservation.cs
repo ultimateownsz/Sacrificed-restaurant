@@ -72,7 +72,7 @@ public static class UpdateReservation
         string confirmChoice = "UPDATE RESERVATION\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table", "Delete\n", "Back"], confirmChoice).text)
             {
                 case "Date":
                     Console.Clear();
@@ -82,12 +82,20 @@ public static class UpdateReservation
                     Console.ReadKey();
                     break;
                
-                case "Table\n":
+                case "Table":
                     Console.Clear();
                     UpdateTableID(reservation);
                     Console.WriteLine("\nTable number process ended successfully.");
                     Console.WriteLine("Press any key to return.");
                     Console.ReadKey();
+                    break;
+                
+                case "Delete\n":
+                    Console.Clear();
+                    if (DeleteReservation(reservation))
+                    {
+                        return;
+                    }
                     break;
                
                 // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
@@ -178,6 +186,21 @@ public static class UpdateReservation
             {
                 Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
             }
+        }
+    }
+
+    private static bool DeleteReservation(ReservationModel reservation)
+    {
+        var options = new List<string> { "Yes", "No "};
+        var choice = SelectionPresent.Show(options, "Are you sure?\n");
+
+        if (choice.text == "Yes");
+        {
+            Access.Reservations.Delete(reservation.ID);
+            Console.WriteLine("Reservation deleted succesfully.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return true;
         }
     }
 
