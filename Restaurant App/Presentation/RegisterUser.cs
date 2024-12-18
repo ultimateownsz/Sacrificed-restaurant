@@ -11,33 +11,37 @@ internal class RegisterUser
     public static void CreateAccount(bool admin = false)
     {
         Console.Clear();
+        Console.WriteLine("Controls:\nExit     : <escape>\n");
         Console.WriteLine("Please enter the following information:\n");
 
         TryCatchHelper.EscapeKeyException(() =>
         {
-        // Use InputHelper.GetValidatedInput for streamlined input handling
-        string firstName = InputHelper.GetValidatedInput<string>(
-        "First name: ",
-        input => InputHelper.InputNotNull(input, "First name")
-        );
-        string lastName = InputHelper.GetValidatedInput<string>(
-        "Last name: ",
-        input => InputHelper.InputNotNull(input, "Last name")
-        );
-        string email = InputHelper.GetValidatedInput<string>(
-            "Email: ",
-            input => UserLogic.IsEmailValid(input) ? (input, null) : (null, "Invalid email address, try again!")
-        );
-        string password = InputHelper.GetValidatedInput<string>(
-            "Password (8-16 characters): ",
-            input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password needs to have between 8-16 characters):")
-        );
-        string phoneNumber = InputHelper.GetValidatedInput<string>(
-            "Phone number (10 numbers): ",
-            input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Invalid phone number.")
-        );
+            // Use InputHelper.GetValidatedInput for streamlined input handling
+            string firstName = InputHelper.GetValidatedInput<string>(
+            "First name: ",
+            input => InputHelper.InputNotNull(input, "First name")
+            );
+            string lastName = InputHelper.GetValidatedInput<string>(
+            "Last name: ",
+            input => InputHelper.InputNotNull(input, "Last name")
+            );
+            string email = InputHelper.GetValidatedInput<string>(
+            "Email (e.g., example@domain.com): ",
+            input =>
+            {
+                var (isValid, message) = UserLogic.IsEmailValid(input);
+                return isValid ? (input, null) : (null, message);
+            });
+            string password = InputHelper.GetValidatedInput<string>(
+                "Password (8-16 characters, must include letters and numbers): ",
+                input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers.")
+            );
+            string phoneNumber = InputHelper.GetValidatedInput<string>(
+                "Phone number (10 digits): ",
+                input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890).")
+            );
 
-        ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+            ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
         });
     }
 
@@ -46,14 +50,22 @@ internal class RegisterUser
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Your information:\n");
+            Console.WriteLine("Please review your information:\n");
             Console.WriteLine($"First name: {firstName}");
             Console.WriteLine($"Last name: {lastName}");
             Console.WriteLine($"Email: {email}");
             Console.WriteLine($"Password: {password}");
             Console.WriteLine($"Phone Number: {phoneNumber}\n");
-            string banner = "Are you sure this is correct?\n\n";
-            switch (SelectionPresent.Show(["Yes", "No"], banner).text)
+            Console.WriteLine("Do you want to change anything?\n");
+            Console.WriteLine("");
+            Console.ReadKey();
+
+            dynamic selection = SelectionPresent.Show(["\nYes", "No", "\nBack"]);
+
+            
+            if (selection.text == null) return;  // escape is pressed
+            
+            switch (selection.text)
             {
                 case "Yes":
                     SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
@@ -63,12 +75,10 @@ internal class RegisterUser
                     (firstName, lastName, email, password, phoneNumber) = EditInformation(firstName, lastName, email, password, phoneNumber);
                     break;
                 
-                default:
-                    Console.WriteLine("Invalid choice. Please select 'Yes' or 'No'.");
+                case "Back":
                     break;
             }
         }
-        
     }
 
     private static void SaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
@@ -85,7 +95,6 @@ internal class RegisterUser
 
         Access.Users.Write(account);
         Console.WriteLine("\nYour account is successfully registered!");
-        Thread.Sleep(1000);
     }
 
     private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(
@@ -112,22 +121,25 @@ internal class RegisterUser
 
             case "Email":
                 email = InputHelper.GetValidatedInput<string>(
-                    "Email: ",
-                    input => UserLogic.IsEmailValid(input) ? (input, null) : (null, "Invalid email address.")
-                );
+                    "Email (e.g., example@domain.com): ",
+                    input =>
+                    {
+                        var (isValid, message) = UserLogic.IsEmailValid(input);
+                        return isValid ? (input, null) : (null, message);
+                    });
                 break;
 
             case "Password":
                 password = InputHelper.GetValidatedInput<string>(
-                    "Password (8-16 characters): ",
-                    input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Invalid password.")
+                    "Password (8-16 characters, must include letters and numbers): ",
+                    input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers.")
                 );
                 break;
 
             case "Phone number":
                 phoneNumber = InputHelper.GetValidatedInput<string>(
-                    "Phone number (10 numbers): ",
-                    input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Invalid phone number.")
+                    "Phone number (10 digits): ",
+                    input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890).")
                 );
                 break;
         }
