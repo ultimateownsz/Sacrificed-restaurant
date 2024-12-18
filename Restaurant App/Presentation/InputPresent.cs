@@ -36,17 +36,18 @@ public static class InputHelper
             // display error message
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Invalid input: {error}");
-            Console.ResetColor();
 
             // show remaining attempts
             int remainingAttempts = maxAttempts - attempt;
             if (remainingAttempts > 0)
             {
-                Console.WriteLine($"Attempts remaining: {remainingAttempts}\n");
+                Console.WriteLine($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
+                Console.ResetColor();
             }
             else
             {
                 // Throw exception after last attempt
+                Console.WriteLine("Too many invalid attempts. Operation will now be canceled.\n");
                 Thread.Sleep(1500);
                 throw new OperationCanceledException("Too many invalid attempts.");
             }
@@ -105,7 +106,7 @@ public static class InputHelper
     public static (string? result, string? error) InputNotNull(string input, string fieldName)
     {
         return string.IsNullOrWhiteSpace(input)
-            ? (null, $"{fieldName} cannot be empty.")
+            ? (null, $"{fieldName} cannot be empty. Please enter a {fieldName}.")
             : (input, null);
     }
 }
