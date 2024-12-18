@@ -11,11 +11,14 @@ public class ReservationMenuLogic
         // Could do something here
     }
 
-    public string GetCurrentMenu()
+    public ThemeModel? GetCurrentTheme(DateTime selectedDate)
     {
-        CurrentTheme = Access.Themes.GetBy<int>("ID", 1);
+        int month = selectedDate.Month;
+        int year = selectedDate.Year;
+        ThemeModel theme = ThemeMenuManager.GetThemeByYearAndMonth(month, year);
+        CurrentTheme = Access.Themes.GetBy<int?>("ID", theme.ID);
         if(CurrentTheme is not null)
-            return CurrentTheme.Name;
+            return CurrentTheme;
         else
             return null;
     }
