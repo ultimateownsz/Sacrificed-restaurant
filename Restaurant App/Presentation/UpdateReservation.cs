@@ -194,7 +194,7 @@ public static class UpdateReservation
         var options = new List<string> { "Yes", "No "};
         var choice = SelectionPresent.Show(options, "Are you sure?\n\n");
 
-        if (choice.text == "Yes");
+        if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
             Console.WriteLine("Reservation deleted succesfully.");
@@ -202,6 +202,12 @@ public static class UpdateReservation
             Console.ReadKey();
             return true; // Deletion was succesfull
         }
+        else if (choice.text == "No")
+        {
+            Console.WriteLine("Deletion cancelled.");
+        }
+
+        return false; // Deletion was cancelled
     }
 
     private static void UdpateReservationAmount(ReservationModel reservation)
