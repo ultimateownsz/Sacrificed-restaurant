@@ -57,9 +57,7 @@ public static class ReservationDetails
             };
             Dictionary<string, int> productCounts = new Dictionary<string, int>();
             const int maxProductCount = 15;
-            // int currentPage = 0;
-            // int itemsPerPage = 5;
-
+            
             string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
             Console.Clear();
@@ -94,29 +92,6 @@ public static class ReservationDetails
                 }
             }
 
-            // var n = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
-            // var list = Access.Requests.GetAllBy<int?>("ID", n.)
-
-            // int totalPages = (int)Math.Ceiling((double)request.Count / itemsPerPage);
-            // var currentPageReserv = request.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
-
-            // var orderOptions = RequestLogic.GenerateMenuOptions(currentPageReserv, currentPage, itemsPerPage);
-            // var selectedOrders = SelectionPresent.Show(orderOptions, "ORDERS\n").text;
-
-            // if (selectedOrders == "Next page >>")
-            // {
-            //     currentPage = Math.Min(currentPage + 1, totalPages -1);
-            //     continue;
-            // }
-
-            // if (selectedOrders == "<< Previous page")
-            // {
-            //     currentPage = Math.Max(currentPage - 1, 0);
-            //     continue;
-            // }
-
-            // if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedOrders))
-            // {
             foreach (var products in productCounts)
             {
                 int total = products.Value;
@@ -127,7 +102,6 @@ public static class ReservationDetails
                     total -= displayCount;
                 }
             }
-            // }
 
             Console.WriteLine("\nPress any key to return...");
             Console.ReadKey();
