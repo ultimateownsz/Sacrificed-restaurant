@@ -417,7 +417,7 @@ namespace Presentation
         private void EnsureConsoleSize()
         {
             const int requiredWidth = 140;
-            const int requiredHeight = 30;
+            const int requiredHeight = 45;
             // Try to maximize the console window
             // MaximizeConsoleWindow();
 
