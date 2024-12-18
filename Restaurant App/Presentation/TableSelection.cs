@@ -201,19 +201,15 @@ namespace Presentation
 
 
 
-        private void DisplayMessage(string message)
+        private void DisplayMessage(string message, ConsoleColor color)
         {
-            int messageY = GridPresent.GetGrid().GetLength(0) + 1; // Position above controls
+            int messageY = GridPresent.GetGrid().GetLength(0); // Position above controls
             Console.SetCursorPosition(0, messageY);
-
-            // Clear previous message completely
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, messageY);
-
-            Console.ForegroundColor = ConsoleColor.Red; // Highlight the message
-            Console.WriteLine(message);
+            Console.ForegroundColor = color; // Use the provided color
+            Console.WriteLine(message.PadRight(Console.WindowWidth - 1)); // Clear previous message with padding
             Console.ResetColor();
         }
+
 
 
 
@@ -475,7 +471,7 @@ namespace Presentation
 
 
 
-        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
+        private (bool isValid, ConsoleColor tableColor, string message, ConsoleColor messageColor) ValidateTable(
             int tableNumber,
             int guestCount,
             int[] activeTables,
@@ -491,62 +487,64 @@ namespace Presentation
             bool isTooSmall = guestCount > GetMaxGuestsForTable(tableNumber);
             bool isTooBig = guestCount < GetMinGuestsForTable(tableNumber);
 
-            // Construct the message and color based on the conditions
             string message = "";
             ConsoleColor tableColor;
+            ConsoleColor messageColor = ConsoleColor.Red; // Default to red for errors
 
             if (isReserved && isActive)
             {
                 message = $"Table {tableNumber} is already reserved.";
-                tableColor = ConsoleColor.Red;
-                return (false, tableColor, message);
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message, messageColor);
             }
 
             if (isInactive)
             {
                 if (isTooSmall)
                 {
-                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.\n";
+                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.";
                 }
                 else if (isTooBig)
                 {
-                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.\n";
+                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.";
                 }
                 else
                 {
-                    message = $"Table {tableNumber} is inactive.\n";
+                    message = $"Table {tableNumber} is inactive.";
                 }
-                tableColor = ConsoleColor.Red;
-                return (false, tableColor, message);
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message, messageColor);
             }
 
             if (isTooSmall)
             {
-                message = $"Table {tableNumber} is too small for {guestCount} guests.\n";
-                tableColor = ConsoleColor.Red;
-                return (false, tableColor, message);
+                message = $"Table {tableNumber} is too small for {guestCount} guests.";
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message, messageColor);
             }
 
             if (isTooBig)
             {
-                message = $"Table {tableNumber} is too big for {guestCount} guests.\n";
-                tableColor = ConsoleColor.Red;
-                return (false, tableColor, message);
+                message = $"Table {tableNumber} is too big for {guestCount} guests.";
+                tableColor = ConsoleColor.DarkGray;
+                return (false, tableColor, message, messageColor);
             }
 
             // If the table passes all checks
             if (isActive && !isReserved)
             {
-                tableColor = ConsoleColor.Green; // Available tables are colorless
-                message = ""; // No message needed for valid tables
-                return (true, tableColor, message);
+                tableColor = ConsoleColor.Gray; // Available tables are colorless
+                message = $"Table {tableNumber} can be reserved."; // Positive message
+                messageColor = ConsoleColor.Green; // Green for success
+                return (true, tableColor, message, messageColor);
             }
 
             // Default case: invalid table
-            message = $"Table {tableNumber} is not available for selection.\n";
-            tableColor = ConsoleColor.Red;
-            return (false, tableColor, message);
+            message = $"Table {tableNumber} is not available for selection.";
+            tableColor = ConsoleColor.DarkGray;
+            return (false, tableColor, message, messageColor);
         }
+
 
         private int GetMaxGuestsForTable(int tableNumber)
         {
