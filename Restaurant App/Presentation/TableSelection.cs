@@ -155,6 +155,7 @@ namespace Presentation
                 if (!isAdmin && !string.IsNullOrEmpty(message))
                 {
                     DisplayMessage(message); // Show the message above controls
+                    Console.WriteLine("\n");
                 }
                 else
                 {
@@ -200,17 +201,32 @@ namespace Presentation
         }
 
 
-
-        private void DisplayMessage(string message, ConsoleColor color)
+        private void DisplayMessage(string message)
         {
-            int messageY = GridPresent.GetGrid().GetLength(0); // Position above controls
+            int messageY = GridPresent.GetGrid().GetLength(0) + 1; // Position above controls
             Console.SetCursorPosition(0, messageY);
-            Console.ForegroundColor = color; // Use the provided color
-            Console.WriteLine(message.PadRight(Console.WindowWidth - 1)); // Clear previous message with padding
+
+            // Clear previous message completely
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, messageY);
+
+            // Check the message content to determine the color
+            if (message.Contains("can be reserved", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.ForegroundColor = ConsoleColor.Green; // Green for available tables
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // Red for errors or other messages
+            }
+
+            // Display the message
+            Console.WriteLine(message);
             Console.ResetColor();
+
+            // Print a newline
+            Console.WriteLine();
         }
-
-
 
 
 
@@ -471,7 +487,7 @@ namespace Presentation
 
 
 
-        private (bool isValid, ConsoleColor tableColor, string message, ConsoleColor messageColor) ValidateTable(
+        private (bool isValid, ConsoleColor tableColor, string message) ValidateTable(
             int tableNumber,
             int guestCount,
             int[] activeTables,
@@ -489,60 +505,58 @@ namespace Presentation
 
             string message = "";
             ConsoleColor tableColor;
-            ConsoleColor messageColor = ConsoleColor.Red; // Default to red for errors
 
             if (isReserved && isActive)
             {
-                message = $"Table {tableNumber} is already reserved.";
-                tableColor = ConsoleColor.DarkGray;
-                return (false, tableColor, message, messageColor);
+                message = $"Table {tableNumber} is already reserved.\n";
+                tableColor = ConsoleColor.Red;
+                return (false, tableColor, message);
             }
 
             if (isInactive)
             {
                 if (isTooSmall)
                 {
-                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.";
+                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.\n";
                 }
                 else if (isTooBig)
                 {
-                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.";
+                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.\n";
                 }
                 else
                 {
-                    message = $"Table {tableNumber} is inactive.";
+                    message = $"Table {tableNumber} is inactive.\n";
                 }
-                tableColor = ConsoleColor.DarkGray;
-                return (false, tableColor, message, messageColor);
+                tableColor = ConsoleColor.Red;
+                return (false, tableColor, message);
             }
 
             if (isTooSmall)
             {
-                message = $"Table {tableNumber} is too small for {guestCount} guests.";
-                tableColor = ConsoleColor.DarkGray;
-                return (false, tableColor, message, messageColor);
+                message = $"Table {tableNumber} is too small for {guestCount} guests.\n";
+                tableColor = ConsoleColor.Red;
+                return (false, tableColor, message);
             }
 
             if (isTooBig)
             {
-                message = $"Table {tableNumber} is too big for {guestCount} guests.";
-                tableColor = ConsoleColor.DarkGray;
-                return (false, tableColor, message, messageColor);
+                message = $"Table {tableNumber} is too big for {guestCount} guests.\n";
+                tableColor = ConsoleColor.Red;
+                return (false, tableColor, message);
             }
 
             // If the table passes all checks
             if (isActive && !isReserved)
             {
-                tableColor = ConsoleColor.Gray; // Available tables are colorless
-                message = $"Table {tableNumber} can be reserved."; // Positive message
-                messageColor = ConsoleColor.Green; // Green for success
-                return (true, tableColor, message, messageColor);
+                tableColor = ConsoleColor.Green; // Available tables are colorless
+                message = $"Table {tableNumber} can be reserved.\n"; // Add positive message
+                return (true, tableColor, message);
             }
 
             // Default case: invalid table
-            message = $"Table {tableNumber} is not available for selection.";
-            tableColor = ConsoleColor.DarkGray;
-            return (false, tableColor, message, messageColor);
+            message = $"Table {tableNumber} is not available for selection.\n";
+            tableColor = ConsoleColor.Red;
+            return (false, tableColor, message);
         }
 
 
@@ -583,7 +597,7 @@ namespace Presentation
                 {
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    Console.WriteLine("Controls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
+                    Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
                     Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1));
 
                     var key = Console.ReadKey(true);
@@ -630,6 +644,7 @@ namespace Presentation
                             if (!isValid && !isAdmin)
                             {
                                 DisplayMessage(message); // Always display above controls
+                                Console.WriteLine("\n");
                                 continue;
                             }
 
