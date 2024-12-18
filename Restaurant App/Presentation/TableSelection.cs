@@ -66,19 +66,19 @@ namespace Presentation
                         {
                             if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
-                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Reserved
+                                tableColors[tableNumber] = ConsoleColor.Red; // Reserved
                             }
                             else if (Array.Exists(inactiveTables, t => t == tableNumber))
                             {
-                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Inactive
+                                tableColors[tableNumber] = ConsoleColor.Red; // Inactive
                             }
                             else if (!IsTableValidForGuests(tableNumber, guestCount, activeTables))
                             {
-                                tableColors[tableNumber] = ConsoleColor.DarkGray; // Invalid size
+                                tableColors[tableNumber] = ConsoleColor.Red; // Invalid size
                             }
                             else
                             {
-                                tableColors[tableNumber] = ConsoleColor.Gray; // Available
+                                tableColors[tableNumber] = ConsoleColor.Green; // Available
                             }
                         }
 
@@ -143,7 +143,7 @@ namespace Presentation
                 int currentTable = int.Parse(currentNumber);
 
                 // Validate the table and get its properties
-                var (isValid, tableColor, message) = ValidateTable(
+                var (isValid, _, message) = ValidateTable(
                     currentTable,
                     guestCount,
                     activeTables,
@@ -153,55 +153,57 @@ namespace Presentation
                 );
 
                 // Only display the message if the user is not an admin
-                if (!isAdmin)
+                if (!isAdmin && !string.IsNullOrEmpty(message))
                 {
-                    DisplayMessage(message);
-                }
-                else
-                {
-                    // Clear the message area for admins
-                    ClearErrorMessage();
+                    DisplayMessage(message); // Show message above controls
                 }
 
-                // Flash the "X" on the table
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, tableColor);
+                // Flash the "X" and the table number in yellow
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Yellow);
             }
         }
-
 
 
         private async Task FlashHighlightAsync(int tableNumber, int x, int y, ConsoleColor tableColor)
         {
             var token = flashCancellationTokenSource.Token;
 
-            while (!token.IsCancellationRequested)
+            try
             {
-                Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = tableColor;
-                Console.Write("X ");
-                await Task.Delay(500);
+                while (!token.IsCancellationRequested)
+                {
+                    // Flash the "X"
+                    Console.SetCursorPosition(x, y);
+                    Console.ForegroundColor = tableColor;
+                    Console.Write("X ");
+                    await Task.Delay(500, token); // Use token to cancel delay
 
-                if (token.IsCancellationRequested) break;
+                    if (token.IsCancellationRequested) break;
 
+                    // Revert back to the table ID
+                    Console.SetCursorPosition(x, y);
+                    Console.ForegroundColor = tableColor;
+                    Console.Write(tableNumber.ToString().PadRight(2));
+                    await Task.Delay(500, token); // Use token to cancel delay
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Task was canceled; ensure the table ID is restored
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = tableColor;
                 Console.Write(tableNumber.ToString().PadRight(2));
-                await Task.Delay(500);
             }
-
-            if (!token.IsCancellationRequested)
+            finally
             {
-                Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = tableColor;
-                Console.Write("  "); // Clear the flashing output
+                Console.ResetColor();
             }
-
-            Console.ResetColor();
         }
+
 
         private void DisplayMessage(string message)
         {
-            int messageY = GridPresent.GetGrid().GetLength(0); // Position above controls
+            int messageY = GridPresent.GetGrid().GetLength(0) + 1; // Position above controls
             Console.SetCursorPosition(0, messageY);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message.PadRight(Console.WindowWidth - 1)); // Clear previous message with padding
@@ -556,7 +558,6 @@ namespace Presentation
         }
 
 
-
         public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
         {
             EnsureConsoleSize();
@@ -564,6 +565,7 @@ namespace Presentation
             Console.CursorVisible = false;
 
             int lastX = cursorX, lastY = cursorY;
+            string lastMessage = ""; // To track the last displayed message
 
             try
             {
@@ -606,12 +608,15 @@ namespace Presentation
 
                             int tableNumber = int.Parse(selectedNumber);
 
-                            // Use the helper method to validate the table
                             var (isValid, _, message) = ValidateTable(tableNumber, guestCount, activeTables, reservedTables, inactiveTables, isAdmin);
 
                             if (!isValid)
                             {
-                                ShowErrorMessage(message);
+                                if (lastMessage != message)
+                                {
+                                    DisplayMessage(message);
+                                    lastMessage = message;
+                                }
                                 continue;
                             }
 
