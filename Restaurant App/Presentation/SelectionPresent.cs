@@ -6,9 +6,15 @@ internal class SelectionPresent
     private static void _update(string banner, Dictionary<string, bool> selection, 
         ref Tuple<List<string?>, List<int?>> multiselect, SelectionLogic.Mode mode)
     {
-        Console.Clear();
+        Console.Clear(); 
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
+
+        Console.WriteLine(
+            (mode == SelectionLogic.Mode.Single)
+            ? "(select an option)"
+            : "(select multiple options)"
+            );
 
         foreach ((string text, bool selected) in selection)
         {
@@ -16,8 +22,14 @@ internal class SelectionPresent
             string prefix = (selected) ? "-> " : "";
 
             if (mode == SelectionLogic.Mode.Multi)
+            {
                 Console.ForegroundColor = (multiselect.Item1.Contains(text)) ? ConsoleColor.Yellow : ConsoleColor.White;
+                if (text == selection.Keys.ElementAt(selection.Count() - 1))
+                    Console.WriteLine(); // segment the continue statement 
+            }
             
+           
+
             if (mode == SelectionLogic.Mode.Narrow && !selected) continue;
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
         }
@@ -53,6 +65,7 @@ internal class SelectionPresent
                         return new("", -1);
                     }
 
+                    // select & deselect
                     if (multiselect.Item1.Contains(current.Item1))
                     {
                         multiselect.Item1.Remove(current.Item1);
@@ -81,7 +94,7 @@ internal class SelectionPresent
         return null;
     }
 
-    public static dynamic Show(List<string> options, string banner = "", 
+    public static dynamic Show(List<string?> options, string banner = "", 
         SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
         // if you don't understand it, don't touch it..
@@ -106,8 +119,7 @@ internal class SelectionPresent
                         dynamicHandle.text = multiselect.Item1;
                         dynamicHandle.index = multiselect.Item2;
                         return dynamicHandle;
-                    }
-                    
+                    } 
                     continue;
                 }
                 

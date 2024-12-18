@@ -3,8 +3,10 @@
 namespace Project.Presentation;
 internal class AllergyPresent
 {
-    public static void Show(ref AllergyLogic.Input input, ref AllergyLogic.Output output)
-    {
+    public static List<string> Show(ref AllergyLogic.Input input, ref AllergyLogic.Output output)
+        => input.selected = SelectionPresent.Show(
+            Access.Allergies.Read().Select(x => x.Name).ToList(),
+                "DIET/ALLERGIES\n\n", SelectionLogic.Mode.Multi
+            ).text;
 
-    }
 }

@@ -35,16 +35,17 @@ internal class SelectionLogic
         return current;
     }
 
-    public static Dictionary<string, bool> ToSelectable(List<string> options, SelectionLogic.Mode mode)
+    public static Dictionary<string, bool> ToSelectable(List<string?> options, SelectionLogic.Mode mode)
     {
         // transform list to dictionary with booleans
         // where the booleans are what's selected
         Dictionary<string, bool> selection = new();
         foreach (var option in options)
         {
+            if (option == null) continue;
             selection.Add(option, false);
         }
-        selection[options[(mode ==  SelectionLogic.Mode.Narrow) ? options.Count - 1 : 0]] = true;
+        selection[options[(mode ==  SelectionLogic.Mode.Narrow) ? options.Count - 1 : 0] ?? "<NULL> OPTION"] = true;
 
         // new termination
         if (mode == SelectionLogic.Mode.Multi)
