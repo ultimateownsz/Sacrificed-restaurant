@@ -192,7 +192,7 @@ public static class UpdateReservation
     private static bool DeleteReservation(ReservationModel reservation)
     {
         var options = new List<string> { "Yes", "No "};
-        var choice = SelectionPresent.Show(options, "Are you sure?\n");
+        var choice = SelectionPresent.Show(options, "Are you sure?\n\n");
 
         if (choice.text == "Yes");
         {
