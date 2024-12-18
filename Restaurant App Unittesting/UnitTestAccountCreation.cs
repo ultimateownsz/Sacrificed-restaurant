@@ -8,7 +8,6 @@ namespace Restaurant_App_Unittesting
     public class AccountTests
     {
         // Email validation tests
-        // Email validation tests
         [TestMethod]
         [DataRow("test@example.com", true)]      // Valid email
         [DataRow("test@example.com", true)]      // Valid email
@@ -21,14 +20,9 @@ namespace Restaurant_App_Unittesting
             bool result = SimulateIsEmailValid(email);
 
             // Assert
-            // Act
-            bool result = SimulateIsEmailValid(email);
-
-            // Assert
             Assert.AreEqual(expectedResult, result);
         }
 
-        // Password validation tests
         // Password validation tests
         [TestMethod]
         [DataRow("12345678", true)]              // Valid password length
@@ -41,14 +35,9 @@ namespace Restaurant_App_Unittesting
             bool result = SimulateIsPasswordValid(password);
 
             // Assert
-            // Act
-            bool result = SimulateIsPasswordValid(password);
-
-            // Assert
             Assert.AreEqual(expectedResult, result);
         }
 
-        // Phone number validation tests
         // Phone number validation tests
         [TestMethod]
         [DataRow("1234567890", true)]               // Valid phone number
@@ -61,14 +50,9 @@ namespace Restaurant_App_Unittesting
             bool result = SimulateIsPhoneNumberValid(phoneNumber);
 
             // Assert
-            // Act
-            bool result = SimulateIsPhoneNumberValid(phoneNumber);
-
-            // Assert
             Assert.AreEqual(expectedResult, result);
         }
 
-        // User account creation test
         // User account creation test
         [TestMethod]
         public void TestUserAccountCreation()
@@ -82,7 +66,6 @@ namespace Restaurant_App_Unittesting
 
             // Act
             var account = SimulateCreateUserAccount(firstName, lastName, email, password, phoneNumber);
-            var account = SimulateCreateUserAccount(firstName, lastName, email, password, phoneNumber);
 
             // Assert
             Assert.AreEqual(firstName, account.FirstName);
@@ -95,7 +78,6 @@ namespace Restaurant_App_Unittesting
         }
 
         // Admin account creation test
-        // Admin account creation test
         [TestMethod]
         public void TestAdminAccountCreation()
         {
@@ -107,7 +89,6 @@ namespace Restaurant_App_Unittesting
             string phoneNumber = "87654321";
 
             // Act
-            var account = SimulateCreateAdminAccount(firstName, lastName, email, password, phoneNumber);
             var account = SimulateCreateAdminAccount(firstName, lastName, email, password, phoneNumber);
 
             // Assert
