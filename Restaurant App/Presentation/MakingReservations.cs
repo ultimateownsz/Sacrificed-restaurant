@@ -166,7 +166,7 @@ namespace Presentation
     //         {
     //             if (j == reservationIndex)
     //             {
-    //                 Console.ForegroundColor = ConsoleColor.Yellow;
+    //                 Console.ForegroundColor = ConsoleColor.Blue;
     //                 Console.WriteLine($"> Reservation: {userReservations[j].Date}"); // Highlight selected item
     //                 Console.ResetColor();
     //             }
@@ -250,7 +250,7 @@ namespace Presentation
                     while (true)
                     {
                         Console.Clear();
-                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:\n\n";
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();

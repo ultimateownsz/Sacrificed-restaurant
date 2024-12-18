@@ -23,7 +23,7 @@ static class ThemeView
             if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
-                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:\n\n";
+                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
@@ -75,8 +75,8 @@ static class ThemeView
             Console.Clear();
             Console.WriteLine("Select a year to edit its themes:\n");
 
-            // Highlight the currently selected year in yellow
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            // Highlight the currently selected year in Blue
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(availableYears[currentIndex]);
             Console.ResetColor();
 
@@ -141,7 +141,7 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}, or go (b)ack\n\n";
+        string bannerMonths = $"Select month in {year}, or go (b)ack";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();

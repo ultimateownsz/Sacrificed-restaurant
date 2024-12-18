@@ -56,24 +56,12 @@ internal class SelectionLogic
 
         // insert default submit in multi-select mode
         if (mode == Mode.Multi)
-        {
-
-            // remove last item
-            var label = dict.ElementAt(dict.Count() - 1);
-            dict.Remove(label.Key);
-
-            // separate options from utilities
-            dict[label.Key + '\n'] = label.Value;
-
-            // insert option
             dict["continue"] = new()
             {
                 index = c++,
                 selected = false,
                 highlighted = false
             };
-
-        }
 
         // set default & return
         int index = (mode == Mode.Scroll) ? c - 1 : 0;

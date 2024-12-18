@@ -163,8 +163,8 @@ namespace Presentation
                 }
 
 
-                // Flash the "X" and the table number in yellow
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Yellow);
+                // Flash the "X" and the table number in Blue
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Blue);
             }
         }
 
@@ -175,9 +175,9 @@ namespace Presentation
 
             while (!token.IsCancellationRequested)
             {
-                // Flash the "X" in yellow
+                // Flash the "X" in Blue
                 Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write("X ");
                 await Task.Delay(500);
 
@@ -391,14 +391,14 @@ namespace Presentation
                 }
             }
 
-            // Highlight the current table with "X" and set to yellow
+            // Highlight the current table with "X" and set to Blue
             string currNumber = GetNumberAt(currX, currY);
             if (!string.IsNullOrEmpty(currNumber))
             {
                 int currTable = int.Parse(currNumber);
 
                 Console.SetCursorPosition(currX, currY);
-                Console.ForegroundColor = ConsoleColor.Yellow; // Highlight as yellow
+                Console.ForegroundColor = ConsoleColor.Blue; // Highlight as Blue
                 Console.Write("X ");
             }
 

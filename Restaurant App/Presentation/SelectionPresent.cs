@@ -1,35 +1,50 @@
 ﻿namespace Project;
 internal class SelectionPresent
 {
+
+    public struct Palette()
+    {
+        public ConsoleColor Primary    = ConsoleColor.Blue;
+        public ConsoleColor Secondary  = ConsoleColor.Cyan;
+        public ConsoleColor Tertiary   = ConsoleColor.DarkCyan;
+        public ConsoleColor Base       = ConsoleColor.White;
+    }
+
+    private static Palette palette = new Palette();
+
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
         string banner, SelectionLogic.Mode mode)
     {
 
         // banner & colour initialization
         Console.Clear();
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ForegroundColor = palette.Base;
         Console.WriteLine(banner + "\n");
 
-        foreach ((string text, SelectionLogic.Selectable selectable) in selection)
+        foreach (((string text, SelectionLogic.Selectable selectable), int index) in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
             Console.ForegroundColor =
                 (selectable.selected && selectable.highlighted)
                 // selected and highlighted
-                ? ConsoleColor.Cyan : (selectable.selected)
+                ? palette.Secondary : (selectable.selected)
                 // only selected
-                ? ConsoleColor.Blue : (selectable.highlighted)
+                ? palette.Primary   : (selectable.highlighted)
                 // only highlighted
-                ? ConsoleColor.DarkCyan : (ConsoleColor.White);
+                ? palette.Tertiary  : (palette.Base);
 
             // marker
             string prefix = (selectable.selected) ? ">" : "";
             string suffix = (selectable.selected) ? "" : "";
+            
+            // conditional statements for method-complexity
             if (mode == SelectionLogic.Mode.Scroll && !selectable.selected) continue;
+            if ((index == selection.Count() - 1) && mode == SelectionLogic.Mode.Multi) 
+                Console.WriteLine();
 
             // output
             Console.WriteLine($"{prefix} {text} {suffix}");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = palette.Base;
         }
     }
 
@@ -133,7 +148,22 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
-                    return new();
+
+                    // message for Danilo probablement
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("WWARNING");
+
+                    Console.ForegroundColor = palette.Base;
+                    Console.WriteLine(
+                        "\nMenu termination has merely been structured but" +
+                        "\nis not implemented properly. Awaiting further development" +
+                        "\n\nPress any key to continue..."
+                        );
+
+                    Console.ReadKey();
+                    break;
+
+
             }
         }
     }
