@@ -197,7 +197,7 @@ public static class UpdateReservation
             Console.WriteLine("You cannot cancel a reservation that is in the past.");
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();
-            return false; // Cancellation not allowed
+            return false; // Cant cancel a past reservation
         }
 
         // Confirm deletion
