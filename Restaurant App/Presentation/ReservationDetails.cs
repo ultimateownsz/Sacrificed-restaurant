@@ -99,23 +99,27 @@ public static class ReservationDetails
                 }
             }
 
+            double grandTotalPrice = 0;
+
             Console.Clear();
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
-            string[] headers = { "Appetizers", "Main", "Dessert", "Beverage"};
-            Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", headers[0], headers[1], headers[2], headers[3]);
+            string[] headers = { "Appetizers", "Main", "Dessert", "Beverage", "Total Price" };
+            Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", headers[0], headers[1], headers[2], headers[3], headers[4]);
 
             int maxRows = Math.Max(
                 Math.Max(categoriesCount["Appetizer"].Count, categoriesCount["Main"].Count),
                 Math.Max(categoriesCount["Dessert"].Count, categoriesCount["Beverage"].Count)
+                // Math.Max(categoriesCount["Total Price"].Count)
             );
 
             var appetizers = categoriesCount["Appetizer"].ToList();
             var mains = categoriesCount["Main"].ToList();
             var desserts = categoriesCount["Dessert"].ToList();
             var beverages = categoriesCount["Beverage"].ToList();
+            // var totalPrice = categoriesCount["Total Price"].ToList();
 
-            List<string> menuOptions = new List<string>();
+            // List<string> menuOptions = new List<string>();
             
             for (int i = 0; i < maxRows; i++)
             {
@@ -123,9 +127,31 @@ public static class ReservationDetails
                 string main = i < mains.Count ? $"{mains[i].Value}x {mains[i].Key}" : "";
                 string dessert = i < desserts.Count ? $"{desserts[i].Value}x {desserts[i].Key}" : "";
                 string beverage = i < beverages.Count ? $"{beverages[i].Value}x {beverages[i].Key}" : "";
+                double totalPrice = 0;
 
-                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}\n";
-                // menuOptions.Add(gridRow);
+                if (i < appetizers.Count)
+                {
+
+                }
+
+                if (i < mains.Count)
+                {
+
+                }
+
+                if (i < desserts.Count)
+                {
+
+                }
+
+                if (i < beverages.Count)
+                {
+
+                }
+
+                grandTotalPrice += totalPrice;
+
+                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{totalPrice,-30:C}\n";
                 Console.WriteLine(gridRow);
             }
 
