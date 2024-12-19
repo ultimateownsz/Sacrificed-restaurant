@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 
 namespace Project;
 public static class ReservationDetails
@@ -131,22 +130,30 @@ public static class ReservationDetails
 
                 if (i < appetizers.Count)
                 {
-
+                    ProductModel? product = Access.Products.GetBy<string>("Course", appetizers[i].Key);
+                    appetizer = $"{appetizers[i].Value}x {appetizers[i].Key}";
+                    totalPrice += appetizers[i].Value * (product?.Price ?? 0);
                 }
 
                 if (i < mains.Count)
                 {
-
+                    ProductModel? product = Access.Products.GetBy<string>("Course", mains[i].Key);
+                    main = $"{mains[i].Value}x {mains[i].Key}";
+                    totalPrice += mains[i].Value * (product?.Price ?? 0);
                 }
 
                 if (i < desserts.Count)
                 {
-
+                    ProductModel? product = Access.Products.GetBy<string>("Course", desserts[i].Key);
+                    dessert = $"{desserts[i].Value}x {desserts[i].Key}";
+                    totalPrice += desserts[i].Value * (product?.Price ?? 0);
                 }
 
                 if (i < beverages.Count)
                 {
-
+                    ProductModel? product = Access.Products.GetBy<string>("Course", beverages[i].Key);
+                    beverage = $"{beverages[i].Value}x {beverages[i].Key}";
+                    totalPrice += beverages[i].Value * (product?.Price ?? 0);
                 }
 
                 grandTotalPrice += totalPrice;
