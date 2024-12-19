@@ -114,6 +114,8 @@ public static class ReservationDetails
             var mains = categoriesCount["Main"].ToList();
             var desserts = categoriesCount["Dessert"].ToList();
             var beverages = categoriesCount["Beverage"].ToList();
+
+            List<string> menuOptions = new List<string>();
             
             for (int i = 0; i < maxRows; i++)
             {
@@ -122,7 +124,18 @@ public static class ReservationDetails
                 string dessert = i < desserts.Count ? $"{desserts[i].Value}x {desserts[i].Key}" : "";
                 string beverage = i < beverages.Count ? $"{beverages[i].Value}x {beverages[i].Key}" : "";
 
-                Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", appetizer, main, dessert, beverage);
+                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}\n";
+                menuOptions.Add(gridRow);
+                Console.WriteLine(gridRow);
+            }
+
+            menuOptions.Add("Back");
+
+            string selectionMenu = SelectionPresent.Show(menuOptions, "ORDERS\n\n").text;
+
+            if (selectionMenu == "Back")
+            {
+                return;
             }
 
             // foreach (var products in productCounts)
@@ -136,9 +149,9 @@ public static class ReservationDetails
             //     }
             // }
 
-            Console.WriteLine("\nPress any key to return...");
-            Console.ReadKey();
-            return;
+            // Console.WriteLine("\nPress any key to return...");
+            // Console.ReadKey();
+            // return;
         }
     }
 
