@@ -46,8 +46,19 @@ public static class ReservationDetails
             {
                 Console.Clear();
                 Console.WriteLine("There are no orders for this date.\nPress any key to return...");
-                Console.ReadKey();
-                return;
+                Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+                ConsoleKeyInfo emptyOrders = Console.ReadKey();
+                switch (emptyOrders.Key)
+                {
+                    case ConsoleKey.B:
+                        return;
+                    case ConsoleKey.P:
+                        selectedDate = selectedDate.AddDays(-1);
+                        break;
+                    case ConsoleKey.N:
+                        selectedDate = selectedDate.AddDays(1);
+                        break;
+                }
             }
 
             Dictionary<int, string> productsCategories = new Dictionary<int, string>
