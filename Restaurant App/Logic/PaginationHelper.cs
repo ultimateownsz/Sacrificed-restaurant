@@ -6,13 +6,18 @@ namespace Project.Logic
 {
     public static class PaginationHelper
     {
-        public static T? Paginate<T>(List<T> items, int itemsPerPage, Func<T, string> formatItem)
+        public static string PaginateWithArrowKeys<T>(
+            List<T> items,
+            int itemsPerPage,
+            Func<T, string> formatItem
+        )
         {
             int currentPage = 0;
             int totalPages = (int)Math.Ceiling((double)items.Count / itemsPerPage);
 
             while (true)
             {
+                // Clear console and show current page info
                 Console.Clear();
                 Console.WriteLine($"Page {currentPage + 1} of {totalPages}\n");
 
@@ -20,42 +25,34 @@ namespace Project.Logic
                 var pageItems = items.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
 
                 // Display items
-                for (int i = 0; i < pageItems.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}. {formatItem(pageItems[i])}");
-                }
+                var menuOptions = pageItems.Select(formatItem).ToList();
 
                 // Add navigation options
-                if (currentPage > 0) Console.WriteLine("P. Previous Page");
-                if (currentPage < totalPages - 1) Console.WriteLine("N. Next Page");
-                Console.WriteLine("B. Back");
+                if (currentPage > 0) menuOptions.Add("<< Previous Page");
+                if (currentPage < totalPages - 1) menuOptions.Add("Next Page >>");
+                menuOptions.Add("Back");
 
-                // Handle user input
-                Console.Write("\nSelect an option: ");
-                string input = Console.ReadLine()?.Trim();
+                // Display options and capture user selection
+                var selection = SelectionPresent.Show(menuOptions, "Select an option:\n");
 
-                if (int.TryParse(input, out int selectedIndex) &&
-                    selectedIndex > 0 && selectedIndex <= pageItems.Count)
+                // Handle navigation options
+                if (selection.text == "Back")
+                    return null;
+
+                if (selection.text == "Next Page >>")
                 {
-                    return pageItems[selectedIndex - 1];
+                    currentPage = Math.Min(currentPage + 1, totalPages - 1);
+                    continue;
                 }
-                else if (input?.ToUpper() == "P" && currentPage > 0)
+
+                if (selection.text == "<< Previous Page")
                 {
-                    currentPage--;
+                    currentPage = Math.Max(currentPage - 1, 0);
+                    continue;
                 }
-                else if (input?.ToUpper() == "N" && currentPage < totalPages - 1)
-                {
-                    currentPage++;
-                }
-                else if (input?.ToUpper() == "B")
-                {
-                    return default; // User chose to cancel
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please try again.");
-                    Console.ReadKey();
-                }
+
+                // Return selected item (non-navigation option)
+                return selection.text;
             }
         }
     }
