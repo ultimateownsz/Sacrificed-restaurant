@@ -45,7 +45,7 @@ public static class ReservationDetails
             if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
             {
                 Console.Clear();
-                Console.WriteLine("There are no orders for this date.\nPress any key to return...");
+                Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
                 Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
                 ConsoleKeyInfo emptyOrders = Console.ReadKey();
                 switch (emptyOrders.Key)
