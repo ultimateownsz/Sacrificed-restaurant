@@ -207,7 +207,7 @@ public static class UpdateReservation
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            Console.WriteLine("Reservation cancelled successfully.");
+            Console.WriteLine($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();
             return true; // Deletion was successful
