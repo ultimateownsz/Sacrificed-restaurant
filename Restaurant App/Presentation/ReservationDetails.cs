@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 namespace Project;
 public static class ReservationDetails
 {
@@ -55,13 +57,21 @@ public static class ReservationDetails
                 { 5, "Appetizer" },
                 { 8, "Dessert" }
             };
-            Dictionary<string, int> productCounts = new Dictionary<string, int>();
-            const int maxProductCount = 15;
+            // Dictionary<string, int> productCounts = new Dictionary<string, int>();
+            // const int maxProductCount = 15;
             
-            string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
+            // string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
-            Console.Clear();
-            Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
+            Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
+            {
+                { "Appetizer", new Dictionary<string, int>() },
+                { "Main", new Dictionary<string, int>() },
+                { "Dessert", new Dictionary<string, int>() },
+                { "Beverage", new Dictionary<string, int>() }
+            };
+
+            // Console.Clear();
+            // Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
             foreach (var reserv in orders)
             {
@@ -72,36 +82,59 @@ public static class ReservationDetails
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
                     if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                     {
-                        if ("Back" == selectionMenu)
-                        {
-                            return;
-                        }
+                        // if ("Back" == selectionMenu)
+                        // {
+                        //     return;
+                        // }
 
-                        if (category == selectionMenu)
+                        if (categoriesCount[category].ContainsKey(product.Name))
                         {
-                            if (productCounts.ContainsKey(product.Name))
-                            {
-                                productCounts[product.Name]++;
-                            }
-                            else
-                            {
-                                productCounts[product.Name] = 1;
-                            }
+                            categoriesCount[category][product.Name]++;
+                        }
+                        else
+                        {
+                            categoriesCount[category][product.Name] = 1;
                         }
                     }
                 }
             }
 
-            foreach (var products in productCounts)
+            Console.Clear();
+            Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
+
+            string[] headers = { "Appetizers", "Main", "Dessert", "Beverage"};
+            Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", headers[0], headers[1], headers[2], headers[3]);
+
+            int maxRows = Math.Max(
+                Math.Max(categoriesCount["Appetizer"].Count, categoriesCount["Main"].Count),
+                Math.Max(categoriesCount["Dessert"].Count, categoriesCount["Beverage"].Count)
+            );
+
+            var appetizers = categoriesCount["Appetizer"].ToList();
+            var mains = categoriesCount["Main"].ToList();
+            var desserts = categoriesCount["Dessert"].ToList();
+            var beverages = categoriesCount["Beverage"].ToList();
+            
+            for (int i = 0; i < maxRows; i++)
             {
-                int total = products.Value;
-                while (total > 0)
-                {   
-                    int displayCount = Math.Min(total, maxProductCount);
-                    Console.WriteLine($"- {displayCount}x {products.Key}");
-                    total -= displayCount;
-                }
+                string appetizer = i < appetizers.Count ? $"{appetizers[i].Value}x {appetizers[i].Key}" : "";
+                string main = i < mains.Count ? $"{mains[i].Value}x {mains[i].Key}" : "";
+                string dessert = i < desserts.Count ? $"{desserts[i].Value}x {desserts[i].Key}" : "";
+                string beverage = i < beverages.Count ? $"{beverages[i].Value}x {beverages[i].Key}" : "";
+
+                Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", appetizer, main, dessert, beverage);
             }
+
+            // foreach (var products in productCounts)
+            // {
+            //     int total = products.Value;
+            //     while (total > 0)
+            //     {   
+            //         int displayCount = Math.Min(total, maxProductCount);
+            //         Console.WriteLine($"- {displayCount}x {products.Key}");
+            //         total -= displayCount;
+            //     }
+            // }
 
             Console.WriteLine("\nPress any key to return...");
             Console.ReadKey();
