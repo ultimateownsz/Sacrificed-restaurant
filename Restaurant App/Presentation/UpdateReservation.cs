@@ -191,23 +191,34 @@ public static class UpdateReservation
 
     private static bool DeleteReservation(ReservationModel reservation)
     {
-        var options = new List<string> { "Yes", "No "};
-        var choice = SelectionPresent.Show(options, "Are you sure?\n\n");
+        // Check if the reservation date is in the past
+        if (reservation.Date < DateTime.Today)
+        {
+            Console.WriteLine("You cannot cancel a reservation that is in the past.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return false; // Cancellation not allowed
+        }
+
+        // Confirm deletion
+        var options = new List<string> { "Yes", "No" };
+        var choice = SelectionPresent.Show(options, "Are you sure you want to cancel this reservation?\n\n");
 
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            Console.WriteLine("Reservation cancelled succesfully.");
+            Console.WriteLine("Reservation cancelled successfully.");
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();
-            return true; // Deletion was succesfull
+            return true; // Deletion was successful
         }
-        else if (choice.text == "No")
+        else
         {
             Console.WriteLine("Reservation not cancelled.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return false; // Deletion was cancelled
         }
-
-        return false; // Deletion was cancelled
     }
 
     private static void UdpateReservationAmount(ReservationModel reservation)
