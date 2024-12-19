@@ -68,10 +68,6 @@ public static class ReservationDetails
                 { 5, "Appetizer" },
                 { 8, "Dessert" }
             };
-            // Dictionary<string, int> productCounts = new Dictionary<string, int>();
-            // const int maxProductCount = 15;
-            
-            // string selectionMenu = SelectionPresent.Show(["Appetizer", "Main", "Dessert", "Beverage\n", "Back"], "ORDERS\n\n").text;
 
             Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
             {
@@ -80,9 +76,6 @@ public static class ReservationDetails
                 { "Dessert", new Dictionary<string, int>() },
                 { "Beverage", new Dictionary<string, int>() }
             };
-
-            // Console.Clear();
-            // Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
             foreach (var reserv in orders)
             {
@@ -93,10 +86,6 @@ public static class ReservationDetails
                     var product = Access.Products.GetBy<int?>("ID", req.ProductID);
                     if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                     {
-                        // if ("Back" == selectionMenu)
-                        // {
-                        //     return;
-                        // }
 
                         if (categoriesCount[category].ContainsKey(product.Name))
                         {
@@ -140,26 +129,6 @@ public static class ReservationDetails
                 Console.WriteLine(gridRow);
             }
 
-            // menuOptions.Add("Back");
-
-            // string selectionMenu = SelectionPresent.Show(menuOptions, "ORDERS\n\n").text;
-
-            // if (selectionMenu == "Back")
-            // {
-            //     return;
-            // }
-
-            // foreach (var products in productCounts)
-            // {
-            //     int total = products.Value;
-            //     while (total > 0)
-            //     {   
-            //         int displayCount = Math.Min(total, maxProductCount);
-            //         Console.WriteLine($"- {displayCount}x {products.Key}");
-            //         total -= displayCount;
-            //     }
-            // }
-
             Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
             ConsoleKeyInfo key = Console.ReadKey(true);
             switch (key.Key)
@@ -176,10 +145,4 @@ public static class ReservationDetails
         }
     }
 
-    // private static string FormatDate(long date)
-    // {
-    //     // Format the date from ddMMyyyy (e.g., 12122024) to dd/MM/yyyy
-    //     string dateString = date.ToString("D8"); // Ensure it's 8 digits long
-    //     return $"{dateString.Substring(0, 2)}/{dateString.Substring(2, 2)}/{dateString.Substring(4)}";
-    // }
 }
