@@ -72,7 +72,7 @@ public static class UpdateReservation
         string confirmChoice = "UPDATE RESERVATION\n\n";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Cancel\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation\n", "Back"], confirmChoice).text)
             {
                 case "Date":
                     Console.Clear();
@@ -90,7 +90,7 @@ public static class UpdateReservation
                     Console.ReadKey();
                     break;
                 
-                case "Cancel\n":
+                case "Cancel reservation\n":
                     Console.Clear();
                     if (DeleteReservation(reservation))
                     {
