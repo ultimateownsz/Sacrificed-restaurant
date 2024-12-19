@@ -149,9 +149,17 @@ public static class ReservationDetails
             //     }
             // }
 
-            Console.WriteLine("\nPress any key to return...");
-            Console.ReadKey();
-            return;
+            Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            switch (key.Key)
+            {
+                case ConsoleKey.B:
+                    return;
+                case ConsoleKey.P:
+                    break;
+                case ConsoleKey.N:
+                    break;
+            }
         }
     }
 
