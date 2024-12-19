@@ -156,8 +156,10 @@ public static class ReservationDetails
                 case ConsoleKey.B:
                     return;
                 case ConsoleKey.P:
+                    selectedDate = selectedDate.AddDays(-1);
                     break;
                 case ConsoleKey.N:
+                    selectedDate = selectedDate.AddDays(1);
                     break;
             }
         }
