@@ -31,7 +31,15 @@ namespace Presentation
                 while (true)
                 {
                     var emptyReservedTables = Array.Empty<int>();
-                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables, emptyReservedTables, isAdmin: true);
+
+                    // Call SelectTable with isAdmin set to true
+                    int selectedTable = tableSelection.SelectTable(
+                        activeTables,
+                        inactiveTables,
+                        emptyReservedTables,
+                        guestCount: 0, // No guest count needed for admin
+                        isAdmin: true
+                    );
 
                     if (selectedTable == -1)
                     {
