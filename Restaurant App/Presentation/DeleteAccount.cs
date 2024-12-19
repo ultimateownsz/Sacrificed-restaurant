@@ -1,7 +1,4 @@
-using Project;
-using Project.Presentation;
 using Project.Logic;
-using System.Linq;
 
 namespace Project.Presentation
 {
@@ -11,7 +8,7 @@ namespace Project.Presentation
         {
             while (true)
             {
-                var activeAccounts = DeleteAccountLogic.GetActiveAccounts(); // Get active accounts
+                var activeAccounts = DeleteAccountLogic.GetActiveAccounts();
                 if (activeAccounts == null || !activeAccounts.Any())
                 {
                     Console.WriteLine("No accounts found.");
@@ -19,44 +16,32 @@ namespace Project.Presentation
                 }
 
                 // Exclude the current logged-in account
-                var accountsToDisplay = activeAccounts.Where(acc => acc.ID != currentUser.ID).ToList();
+                var accountsToDisplay = activeAccounts
+                    .Where(acc => acc.ID != currentUser.ID)
+                    .OrderBy(acc => acc.FirstName)
+                    .ToList();
 
-                // Sort accounts by first name alphabetically
-                var sortedAccounts = accountsToDisplay.OrderBy(acc => acc.FirstName).ToList();
+                // Use PaginationHelper to display accounts with arrow key navigation
+                var selectedText = PaginationHelper.PaginateWithArrowKeys(
+                    accountsToDisplay,
+                    10, // Items per page
+                    acc => $"{acc.FirstName} {acc.LastName} ({(acc.Admin == 1 ? "Admin" : "User")})"
+                );
 
-                int currentPage = 0;
-                int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
+                if (selectedText == null) // User chose "Back"
+                    return;
 
-                while (true)
+                // Find the selected account
+                var selectedAccount = accountsToDisplay.FirstOrDefault(acc =>
+                    $"{acc.FirstName} {acc.LastName} ({(acc.Admin == 1 ? "Admin" : "User")})" == selectedText);
+
+                if (selectedAccount != null)
                 {
-                    // Generate and display the menu options
-                    var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                    var selection = SelectionPresent.Show(options, "ACCOUNTS\n\n");
-
-                    string selectedText = selection.text;
-
-                    // Handle user navigation and actions
-                    if (selectedText == "Back")
-                        return;
-
-                    if (selectedText == "Next Page >>")
-                    {
-                        currentPage = Math.Min(currentPage + 1, totalPages - 1); // Avoid exceeding total pages
-                        continue;
-                    }
-
-                    if (selectedText == "<< Previous Page")
-                    {
-                        currentPage = Math.Max(currentPage - 1, 0); // Avoid going below page 0
-                        continue;
-                    }
-
-                    // Call the logic layer to delete an account
-                    if (DeleteAccountLogic.DeleteAccount(currentUser, currentPage, sortedAccounts, selectedText))
+                    // Confirm and delete the selected account
+                    if (DeleteAccountLogic.ConfirmAndDelete(selectedAccount))
                     {
                         Console.WriteLine("Press any key to refresh...");
                         Console.ReadKey();
-                        break; // Refresh list after deletion
                     }
                 }
             }
