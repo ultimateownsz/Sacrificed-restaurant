@@ -122,10 +122,10 @@ public static class ReservationDetails
             
             for (int i = 0; i < maxRows; i++)
             {
-                string appetizer = i < appetizers.Count ? $"{appetizers[i].Value}x {appetizers[i].Key}" : "";
-                string main = i < mains.Count ? $"{mains[i].Value}x {mains[i].Key}" : "";
-                string dessert = i < desserts.Count ? $"{desserts[i].Value}x {desserts[i].Key}" : "";
-                string beverage = i < beverages.Count ? $"{beverages[i].Value}x {beverages[i].Key}" : "";
+                string appetizer = "";
+                string main = "";
+                string dessert = "";
+                string beverage = "";
                 double totalPrice = 0;
 
                 if (i < appetizers.Count)
@@ -158,7 +158,7 @@ public static class ReservationDetails
 
                 grandTotalPrice += totalPrice;
 
-                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{totalPrice,-30:C}\n";
+                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{grandTotalPrice,-30:C}\n";
                 Console.WriteLine(gridRow);
             }
 
