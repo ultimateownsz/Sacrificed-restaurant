@@ -131,10 +131,6 @@ public static class ReservationDetails
                 if (i < appetizers.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Name", appetizers[i].Key);
-                    if (product == null)
-                    {
-                        System.Console.WriteLine($"Could not find product for appetizer {appetizers[i].Key}");
-                    }
                     appetizer = $"{appetizers[i].Value}x {appetizers[i].Key}";
                     totalPrice += appetizers[i].Value * (product?.Price ?? 0);
                 }
@@ -142,10 +138,6 @@ public static class ReservationDetails
                 if (i < mains.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Name", mains[i].Key);
-                    if (product == null)
-                    {
-                        System.Console.WriteLine($"Could not find product for appetizer {mains[i].Key}");
-                    }
                     main = $"{mains[i].Value}x {mains[i].Key}";
                     totalPrice += mains[i].Value * (product?.Price ?? 0);
                 }
@@ -153,10 +145,6 @@ public static class ReservationDetails
                 if (i < desserts.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Name", desserts[i].Key);
-                    if (product == null)
-                    {
-                        System.Console.WriteLine($"Could not find product for appetizer {desserts[i].Key}");
-                    }
                     dessert = $"{desserts[i].Value}x {desserts[i].Key}";
                     totalPrice += desserts[i].Value * (product?.Price ?? 0);
                 }
@@ -164,10 +152,6 @@ public static class ReservationDetails
                 if (i < beverages.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Name", beverages[i].Key);
-                    if (product == null)
-                    {
-                        System.Console.WriteLine($"Could not find product for appetizer {beverages[i].Key}");
-                    }
                     beverage = $"{beverages[i].Value}x {beverages[i].Key}";
                     totalPrice += beverages[i].Value * (product?.Price ?? 0);
                 }
