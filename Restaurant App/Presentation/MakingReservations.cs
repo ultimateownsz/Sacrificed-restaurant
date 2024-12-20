@@ -294,12 +294,7 @@ namespace Presentation
                             Console.ReadKey();
                         }
                     }
-
-                    // if (i == -1) break;
                 }
-
-                // if (i != -1)
-                // {
                 allOrders.AddRange(guestOrder);
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
