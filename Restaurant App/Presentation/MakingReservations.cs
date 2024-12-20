@@ -332,6 +332,7 @@ namespace Presentation
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"");
             Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
+            Console.WriteLine($"Reservation ID:          {reservationId}");
             Console.WriteLine("===============================");
         }
 
