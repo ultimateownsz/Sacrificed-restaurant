@@ -104,7 +104,7 @@ public static class ReservationDetails
             Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
             string[] headers = { "Appetizers", "Main", "Dessert", "Beverage", "Total Price" };
-            Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}", headers[0], headers[1], headers[2], headers[3], headers[4]);
+            Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}{4,-30}", headers[0], headers[1], headers[2], headers[3], headers[4]);
 
             int maxRows = Math.Max(
                 Math.Max(categoriesCount["Appetizer"].Count, categoriesCount["Main"].Count),
@@ -130,7 +130,11 @@ public static class ReservationDetails
 
                 if (i < appetizers.Count)
                 {
-                    ProductModel? product = Access.Products.GetBy<string>("Course", appetizers[i].Key);
+                    ProductModel? product = Access.Products.GetBy<string>("Price", appetizers[i].Key);
+                    if (product == null)
+                    {
+                        System.Console.WriteLine($"Could not find product for appetizer {appetizers[i].Key}");
+                    }
                     appetizer = $"{appetizers[i].Value}x {appetizers[i].Key}";
                     totalPrice += appetizers[i].Value * (product?.Price ?? 0);
                 }
@@ -138,6 +142,10 @@ public static class ReservationDetails
                 if (i < mains.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Course", mains[i].Key);
+                    if (product == null)
+                    {
+                        System.Console.WriteLine($"Could not find product for appetizer {mains[i].Key}");
+                    }
                     main = $"{mains[i].Value}x {mains[i].Key}";
                     totalPrice += mains[i].Value * (product?.Price ?? 0);
                 }
@@ -145,6 +153,10 @@ public static class ReservationDetails
                 if (i < desserts.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Course", desserts[i].Key);
+                    if (product == null)
+                    {
+                        System.Console.WriteLine($"Could not find product for appetizer {desserts[i].Key}");
+                    }
                     dessert = $"{desserts[i].Value}x {desserts[i].Key}";
                     totalPrice += desserts[i].Value * (product?.Price ?? 0);
                 }
@@ -152,13 +164,17 @@ public static class ReservationDetails
                 if (i < beverages.Count)
                 {
                     ProductModel? product = Access.Products.GetBy<string>("Course", beverages[i].Key);
+                    if (product == null)
+                    {
+                        System.Console.WriteLine($"Could not find product for appetizer {beverages[i].Key}");
+                    }
                     beverage = $"{beverages[i].Value}x {beverages[i].Key}";
                     totalPrice += beverages[i].Value * (product?.Price ?? 0);
                 }
 
                 grandTotalPrice += totalPrice;
 
-                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{grandTotalPrice,-30:C}\n";
+                string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{totalPrice,-30:C}\n";
                 Console.WriteLine(gridRow);
             }
 
