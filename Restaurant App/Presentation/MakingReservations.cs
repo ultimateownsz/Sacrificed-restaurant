@@ -255,13 +255,13 @@ namespace Presentation
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
                         // EMERGENCY MODIFICATION: 1
-                        productOptions.Add("Cancel"); // Option to cancel and restart
+                        productOptions.Add("Skip this course"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
                         // EMERGENCY MODIFICATION: 1
-                        if (selectedOption == "Cancel")
+                        if (selectedOption == "Skip this course")
                         {
                            Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
                            Console.ReadKey();
