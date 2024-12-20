@@ -255,7 +255,7 @@ namespace Presentation
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
                         // EMERGENCY MODIFICATION: 1
-                        productOptions.Add("Skip this course"); // Option to cancel and restart
+                        productOptions.Add("Skip this course"); // Option to skip the course
 
                         // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner).text;
@@ -263,7 +263,7 @@ namespace Presentation
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           Console.WriteLine("Selection of this course has been skipped. Proceeding to the next one...");
+                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
                            Console.ReadKey();
                            break;
                         }
