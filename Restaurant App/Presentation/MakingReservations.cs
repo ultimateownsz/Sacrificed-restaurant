@@ -263,11 +263,8 @@ namespace Presentation
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
+                           Console.WriteLine("Selection of this course has been skipped. Proceeding to the next one...");
                            Console.ReadKey();
-                           i = -1;
-                           guestOrder.Clear();
-                           allOrders.Clear();
                            break;
                         }
 
@@ -298,15 +295,15 @@ namespace Presentation
                         }
                     }
 
-                    if (i == -1) break;
+                    // if (i == -1) break;
                 }
 
-                if (i != -1)
-                {
-                    allOrders.AddRange(guestOrder);
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                }
+                // if (i != -1)
+                // {
+                allOrders.AddRange(guestOrder);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                // }
             }
 
             return allOrders; // Return the collected orders
