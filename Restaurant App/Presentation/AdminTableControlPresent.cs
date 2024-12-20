@@ -30,7 +30,16 @@ namespace Presentation
             {
                 while (true)
                 {
-                    int selectedTable = tableSelection.SelectTable(activeTables, inactiveTables, isAdmin: true);
+                    var emptyReservedTables = Array.Empty<int>();
+
+                    // Call SelectTable with isAdmin set to true
+                    int selectedTable = tableSelection.SelectTable(
+                        activeTables,
+                        inactiveTables,
+                        emptyReservedTables,
+                        guestCount: 0, // No guest count needed for admin
+                        isAdmin: true
+                    );
 
                     if (selectedTable == -1)
                     {
@@ -74,8 +83,8 @@ namespace Presentation
             }
             finally
             {
-                Console.CursorVisible = true; // Restore the cursor visibility
-                Console.Clear(); // Clear the console before exiting
+                Console.CursorVisible = true; 
+                Console.Clear();
             }
         }
     }
