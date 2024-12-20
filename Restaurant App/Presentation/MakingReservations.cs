@@ -255,21 +255,21 @@ namespace Presentation
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
                         // EMERGENCY MODIFICATION: 1
-                        //productOptions.Add("Cancel"); // Option to cancel and restart
+                        productOptions.Add("Cancel"); // Option to cancel and restart
 
                         // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner).text;
 
                         // EMERGENCY MODIFICATION: 1
-                        //if (selectedOption == "Cancel")
-                        //{
-                        //    Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
-                        //    Console.ReadKey();
-                        //    i = -1;
-                        //    guestOrder.Clear();
-                        //    allOrders.Clear();
-                        //    break;
-                        //}
+                        if (selectedOption == "Cancel")
+                        {
+                           Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
+                           Console.ReadKey();
+                           i = -1;
+                           guestOrder.Clear();
+                           allOrders.Clear();
+                           break;
+                        }
 
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
