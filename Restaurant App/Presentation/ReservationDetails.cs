@@ -72,10 +72,10 @@ public static class ReservationDetails
                         return;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
-                        break; // Exit the loop and re-check orders
+                        break;
                     case ConsoleKey.N:
                         selectedDate = selectedDate.AddDays(1);
-                        break; // Exit the loop and re-check orders
+                        break;
                 }
             }
         }
@@ -132,16 +132,12 @@ public static class ReservationDetails
         int maxRows = Math.Max(
             Math.Max(categoriesCount["Appetizer"].Count, categoriesCount["Main"].Count),
             Math.Max(categoriesCount["Dessert"].Count, categoriesCount["Beverage"].Count)
-            // Math.Max(categoriesCount["Total Price"].Count)
         );
 
         var appetizers = categoriesCount["Appetizer"].ToList();
         var mains = categoriesCount["Main"].ToList();
         var desserts = categoriesCount["Dessert"].ToList();
         var beverages = categoriesCount["Beverage"].ToList();
-        // var totalPrice = categoriesCount["Total Price"].ToList();
-
-        // List<string> menuOptions = new List<string>();
         
         for (int i = 0; i < maxRows; i++)
         {
@@ -188,20 +184,6 @@ public static class ReservationDetails
         string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
         string padRow = grandTotalRow.PadLeft(143);
         Console.WriteLine(padRow);
-
-        // Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
-        // ConsoleKeyInfo key = Console.ReadKey(true);
-        // switch (key.Key)
-        // {
-        //     case ConsoleKey.B:
-        //         return;
-        //     case ConsoleKey.P:
-        //         selectedDate = selectedDate.AddDays(-1);
-        //         break;
-        //     case ConsoleKey.N:
-        //         selectedDate = selectedDate.AddDays(1);
-        //         break;
-        // }
     }
 
 }
