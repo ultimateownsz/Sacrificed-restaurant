@@ -130,7 +130,7 @@ public static class ReservationDetails
 
                 if (i < appetizers.Count)
                 {
-                    ProductModel? product = Access.Products.GetBy<string>("Price", appetizers[i].Key);
+                    ProductModel? product = Access.Products.GetBy<string>("Name", appetizers[i].Key);
                     if (product == null)
                     {
                         System.Console.WriteLine($"Could not find product for appetizer {appetizers[i].Key}");
@@ -141,7 +141,7 @@ public static class ReservationDetails
 
                 if (i < mains.Count)
                 {
-                    ProductModel? product = Access.Products.GetBy<string>("Course", mains[i].Key);
+                    ProductModel? product = Access.Products.GetBy<string>("Name", mains[i].Key);
                     if (product == null)
                     {
                         System.Console.WriteLine($"Could not find product for appetizer {mains[i].Key}");
@@ -152,7 +152,7 @@ public static class ReservationDetails
 
                 if (i < desserts.Count)
                 {
-                    ProductModel? product = Access.Products.GetBy<string>("Course", desserts[i].Key);
+                    ProductModel? product = Access.Products.GetBy<string>("Name", desserts[i].Key);
                     if (product == null)
                     {
                         System.Console.WriteLine($"Could not find product for appetizer {desserts[i].Key}");
@@ -163,7 +163,7 @@ public static class ReservationDetails
 
                 if (i < beverages.Count)
                 {
-                    ProductModel? product = Access.Products.GetBy<string>("Course", beverages[i].Key);
+                    ProductModel? product = Access.Products.GetBy<string>("Name", beverages[i].Key);
                     if (product == null)
                     {
                         System.Console.WriteLine($"Could not find product for appetizer {beverages[i].Key}");
