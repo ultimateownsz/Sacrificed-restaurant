@@ -162,6 +162,10 @@ public static class ReservationDetails
                 Console.WriteLine(gridRow);
             }
 
+            string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
+            string padRow = grandTotalRow.PadLeft(143);
+            Console.WriteLine(padRow);
+
             Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
             ConsoleKeyInfo key = Console.ReadKey(true);
             switch (key.Key)
