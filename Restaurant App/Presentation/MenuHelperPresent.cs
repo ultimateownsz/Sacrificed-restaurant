@@ -18,7 +18,7 @@ public static class MenuHelperPresent
         Console.SetCursorPosition(0, startLine);
         
         // add dynamic guidance for the currently selected option
-        Console.WriteLine("GUIDANCE:\n\n");
+        Console.WriteLine("HELP:\n");
         if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < options.Count)
         {
             string currentOption = options[selectedIndex.Value];
