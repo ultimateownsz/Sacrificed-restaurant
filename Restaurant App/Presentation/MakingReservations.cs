@@ -88,7 +88,7 @@ namespace Presentation
                 .Select(r => r!.PlaceID!.Value)
                 .ToArray();
 
-            return tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, isAdmin);
+            return tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
         }
 
         private static int SaveReservation(DateTime selectedDate, int selectedTable, UserModel acc)
