@@ -69,8 +69,19 @@ internal class SelectionPresent : SelectionLogic
             // update screen
             _update(banner, selection, oneline);
 
-            // Show options and controls at the bottom of the terminal
-            MenuHelperPresent.Show(options);
+            // determine the currently selected index
+            int? selectedIndex = null;
+            foreach (var item in selection)
+            {
+                if (item.Value)  // the selected option
+                {
+                    selectedIndex = options.IndexOf(item.Key);
+                    break;
+                }
+            }
+
+            // Show controls with dynamic feedback for the selected option
+            MenuHelperPresent.ShowHelp(options, selectedIndex);
 
             if ((selected = _read(selection)) != null)
             {
