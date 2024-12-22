@@ -1,21 +1,33 @@
 public static class MenuHelperPresent
 {   
-    public static void Show(List<string> options)
+    // Dictionary for key-to-action mappings (static controls)
+    private static readonly Dictionary<string, string> StaticControls = new Dictionary<string, string>
     {
-        // // Determine where to position the controls
-        int startLine = Console.WindowHeight - (options.Count + 6);  // addional margin
-        Console.SetCursorPosition(0, startLine);
+        { "Navigate", "<arrows>" },
+        { "Select", "<enter>" },
+        { "Exit", "<escape>" }
+    };
+    
+    public static void ShowHelp(List<string> options, int? selectedIndex)
+    {
+        // Calculate the footer start position
+        int startLine = Console.WindowHeight - (StaticControls.Count + 6);  // addional margin
 
         // Clear the space before displaying new controls
         ClearFooterSpace(startLine, Console.WindowHeight);
-
         Console.SetCursorPosition(0, startLine);
-        Console.WriteLine("\nOPTIONS:");
-        foreach (var option in options)
+        
+        // add dynamic guidance for the currently selected option
+        Console.WriteLine("GUIDANCE:\n\n");
+        if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < options.Count)
         {
-            Console.WriteLine($"{option[0]}     : <arrows>");
-            Console.WriteLine($"{option[1]}     : <enter>");
-            Console.WriteLine($"{option[3]}     : <escape>");
+            string currentOption = options[selectedIndex.Value];
+            Console.WriteLine($"Current Option: {currentOption}");
+            Console.WriteLine($"Press <enter> to select {currentOption}.");
+        }
+        else
+        {
+            Console.WriteLine($"No valid option selected.");
         }
     }
 
