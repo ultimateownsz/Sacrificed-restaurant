@@ -19,7 +19,7 @@ internal class SelectionPresent : SelectionLogic
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
         }
         Console.ResetColor();
-        Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
+        // Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
     }
 
     private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection)
@@ -68,6 +68,9 @@ internal class SelectionPresent : SelectionLogic
         {
             // update screen
             _update(banner, selection, oneline);
+
+            // Show options and controls at the bottom of the terminal
+            MenuHelperPresent.Show(options);
 
             if ((selected = _read(selection)) != null)
             {
