@@ -599,7 +599,8 @@ namespace Presentation
                     Console.ResetColor();
                     // Console.WriteLine("Controls:\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>");
                     // Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
-                    MenuHelperPresent.Show();
+                    NavigationHelperPresent.Reset();
+                    NavigationHelperPresent.ShowHelp();
 
                     // \n is not possible with this, perhaps we should use the spectre console to make these functionalities more modulair since I could not integrated any modularity
                     // Console.WriteLine("Controls: Navigate: <arrows>, select: <enter>, exit: <escape>".PadRight(Console.WindowWidth - 1));

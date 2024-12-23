@@ -15,9 +15,14 @@ public static class NavigationHelperPresent
         navigationControls[action] = key; // This should add or update the key-value pair
     }
 
-    public static void Reset()
+    public static void Clear()
     {
         navigationControls.Clear();
+    }
+
+    public static void Reset()
+    {
+        // navigationControls.Clear();
         navigationControls.Add("Navigate", "<arrows>");
         navigationControls.Add("Select", "<enter>");
         navigationControls.Add("Exit", "<escape>");
@@ -124,7 +129,7 @@ public static class NavigationHelperPresent
         // Set cursor position and display the message
         Console.SetCursorPosition(0, startLine);
         Console.ForegroundColor = ConsoleColor.Red; // Highlight feedback in red
-        Console.WriteLine($"FEEDBACK: {message}");
+        Console.WriteLine($"MESSAGE: {message}");
         Console.ResetColor(); // Reset the color to default
 
         // pause for the specified delay
