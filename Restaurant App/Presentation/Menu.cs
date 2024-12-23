@@ -18,6 +18,7 @@ static class Menu
 
             if (selection.text == null)
             {
+                Console.Clear();
                 Environment.Exit(0);
                 return;
             }
@@ -34,6 +35,7 @@ static class Menu
                     continue;
                 
                 case "Exit":
+                    Console.Clear();
                     Environment.Exit(0);
                     return;
                 
