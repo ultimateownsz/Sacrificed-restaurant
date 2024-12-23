@@ -77,6 +77,17 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
+            int footerHeight = MenuHelperPresent.GetFooterHeight();  // returns the height of the help footer
+            int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
+            
+            // ensure there's enough space to display the calendar
+            if (availableHeight < 0)
+            {
+                Console.WriteLine("Console window is too small to display the calendar and controls.");
+                return;
+            }
+
+            // Calculate and print the calendar header
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
 
@@ -126,20 +137,26 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            // Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
-            // Console.WriteLine("\n\n\nControls:");
-            Console.WriteLine("\n\n\n-Controls:");
-            Console.WriteLine($"{ "Navigate",-15} : <arrows>");
-            Console.WriteLine($"{ "Select",-15} : <enter>");
-            Console.WriteLine($"{ "Next month",-15} : <n>");
-            Console.WriteLine($"{ "Previous month",-15} : <p>");
-            Console.WriteLine($"{ "Exit",-15} : <escape>");
+            // reserve space for the footer
+            int calendarHeight = Console.CursorTop;
+            if (calendarHeight + footerHeight > Console.WindowHeight)
+            {
+                Console.WriteLine("\nNot enough space to display the calendar and controls.");
+                return;
+            }
+            Console.SetCursorPosition(0, availableHeight);
 
-            // Display the "fully reserved" message at the bottom
+            // Display the "fully reserved" message before the footer
             if (showFullyReservedMessage)
             {
                 Console.WriteLine("\nThis day is fully reserved.");
             }
+
+            // Display the footer
+            MenuHelperPresent.UpdateDict("Previous month", "<p>");
+            MenuHelperPresent.UpdateDict("Next month", "<n>");
+            MenuHelperPresent.ShowHelp();
+
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
