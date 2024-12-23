@@ -81,7 +81,7 @@ internal class SelectionPresent : SelectionLogic
             }
 
             // Show controls with dynamic feedback for the selected option
-            MenuHelperPresent.ShowHelp(options, selectedIndex);
+            MenuHelperPresent.SelectionHelp(options, selectedIndex);
 
             if ((selected = _read(selection)) != null)
             {
