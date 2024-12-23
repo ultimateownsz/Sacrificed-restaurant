@@ -7,10 +7,7 @@ public static class NavigationHelperPresent
     {
         { "Navigate", "<arrows>" },
         { "Select", "<enter>" },
-        { "Exit", "<escape>" },
-        { "Previous", "<p>"},
-        { "Next", "<n>"},
-        { "Reset", "<r>"}
+        { "Exit", "<escape>" }
     };
 
     public static void AddOptions(string action, string key)
@@ -25,60 +22,6 @@ public static class NavigationHelperPresent
         navigationControls.Add("Select", "<enter>");
         navigationControls.Add("Exit", "<escape>");
     }
-    
-    // public static void SelectionHelp(List<string> options, int? selectedIndex)
-    // {
-    //     // Calculate the footer start position
-    //     int footerHeight = StaticControls.Count + 4;  // show number of controls + margin
-    //     int startLine = Console.WindowHeight - footerHeight;
-
-    //     // Clear the space before displaying new controls
-    //     ClearFooterSpace(startLine, Console.WindowHeight);
-    //     Console.SetCursorPosition(0, startLine);
-
-    //     // add dynamic guidance for the currently selected option
-    //     Console.WriteLine("HELP:\n");
-    //     if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < options.Count)
-    //     {
-    //         var selectedOption = options[selectedIndex.Value];
-
-    //         // fetch the "select" action from the dictionary
-    //         if (StaticControls.TryGetValue("Select", out var selectKey))
-    //         {
-    //             Console.WriteLine($"Press {selectKey} to select \"{selectedOption}\".");
-    //         }
-    //     }
-    //     else
-    //     {
-    //         Console.WriteLine($"No valid option selected.");
-    //     }
-    // }
-
-    // public static void ShowHelp(string? actionKey = null)
-    // {
-        
-    //     // Calculate the footer start position
-    //     int footerHeight = StaticControls.Count + 4; // Number of controls + margin
-    //     int startLine = Console.WindowHeight - footerHeight;
-
-    //     // Clear the space before displaying new controls
-    //     ClearFooterSpace(startLine, Console.WindowHeight);
-
-    //     // Move the cursor to the start of the footer
-    //     Console.SetCursorPosition(0, startLine);
-
-    //     // Calculate dynamic padding for alignment
-    //     int maxKeyLength = StaticControls.Keys.Max(key => key.Length) + 2; // Add padding for spacing
-    //     int maxValueLength = StaticControls.Values.Max(value => value.Length);
-
-    //     Console.WriteLine("\nHELP:\n");
-
-    //    if (!string.IsNullOrEmpty(actionKey) && StaticControls.TryGetValue(actionKey, out var controlValue))
-    //     {
-    //         // Show only the specific action if a valid key is provided
-    //         Console.WriteLine($"Press {controlValue} to {actionKey.ToLower()}.");
-    //     }
-    // }
 
     public static void ShowHelp(
         List<string>? options = null,
@@ -90,6 +33,22 @@ public static class NavigationHelperPresent
         {
             DisplayFeedback(feedbackMessage);
         }
+
+        // Preprocess options to strip out newlines
+        if (options != null)
+        {
+            options = options.Select(option => option.Replace("\n", " ")).ToList();
+        }
+
+        // Split navigationControls into dynamic and static controls
+        var dynamicControls = navigationControls
+        .Where(c => c.Key != "Navigate" && c.Key != "Select" && c.Key != "Exit")
+        .OrderBy(c => c.Key)
+        .ToList();
+
+        var staticControls = navigationControls
+        .Where(c => c.Key == "Navigate" || c.Key == "Select" || c.Key == "Exit")
+        .ToList();
         
         // Calculate the footer start position
         int footerHeight = GetFooterHeight();
@@ -98,52 +57,51 @@ public static class NavigationHelperPresent
         ClearFooterSpace(startLine, Console.WindowHeight);
         Console.SetCursorPosition(0, startLine);
 
-        Console.WriteLine("\nHELP:\n");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("\nHELP\n");
+        Console.ResetColor();
 
-        // if (actionKeys != null && actionKeys.Any())
-        // {
-        //     // Display each actionKey that exists in the dictionary
-        //     foreach (var actionKey in actionKeys)
-        //     {
-        //         if (navigationControls.TryGetValue(actionKey, out var controlValue))
-        //         {
-        //             Console.WriteLine($"Press {controlValue} to {actionKey.ToLower()}.");
-        //         }
-        //     }
-        // }
-        // // Show only a specific action if actionKey is provided
-        // if (!string.IsNullOrEmpty(actionKey) && navigationControls.TryGetValue(actionKey, out var controlValue))
-        // {
-        //     // Console.WriteLine($"Selected option: {actionKey}");
-        //     Console.WriteLine($"Press {controlValue} to {actionKey.ToLower()}.");
-        // }
         if (selectedIndex.HasValue && options != null && selectedIndex.Value >= 0 && selectedIndex.Value < options.Count)
         {
             // Show only if selection menu is used
             string selectedOption = options[selectedIndex.Value];
             if (navigationControls.TryGetValue("Select", out var selectKey))
             {
-                Console.WriteLine($"Press {selectKey} to select {selectedOption}.");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Press {selectKey} to select \"{selectedOption}\".");
+                Console.ResetColor();
             }
             if (navigationControls.TryGetValue("Navigate", out var navKey))
             {
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Press {navKey} to navigate options.");
             }
             if (navigationControls.TryGetValue("Exit", out var exitKey))
             {
                 Console.WriteLine($"Press {exitKey} to exit.");
+                Console.ResetColor();
             }
         }
         else
         {
             // Show all controls if no specific actionKey is provided
-            foreach (var control in navigationControls.OrderBy(c => c.Key))
+            // Show dynamic controls first
+            foreach (var control in dynamicControls)
             {
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
+                Console.ResetColor();
+            }
+
+            // Followed by static controls
+            foreach (var control in staticControls)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
+                Console.ResetColor();
             }
         }
     }
-
 
     public static int GetFooterHeight()
     {
