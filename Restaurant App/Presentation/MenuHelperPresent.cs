@@ -1,17 +1,17 @@
 public static class MenuHelperPresent
 {   
     // Dictionary for key-to-action mappings (static controls)
-    private static readonly Dictionary<string, string> StaticControls = new Dictionary<string, string>
+    private static readonly Dictionary<string, string> StaticControls = new()
     {
         { "Navigate", "<arrows>" },
         { "Select", "<enter>" },
         { "Exit", "<escape>" }
     };
     
-    public static void ShowHelp(List<string> options, int? selectedIndex)
+    public static void SelectionHelp(List<string> options, int? selectedIndex)
     {
         // Calculate the footer start position
-        int startLine = Console.WindowHeight - (StaticControls.Count + 6);  // addional margin
+        int startLine = Console.WindowHeight - (StaticControls.Count + 4);  // addional margin
 
         // Clear the space before displaying new controls
         ClearFooterSpace(startLine, Console.WindowHeight);
@@ -28,6 +28,15 @@ public static class MenuHelperPresent
         else
         {
             Console.WriteLine($"No valid option selected.");
+        }
+    }
+
+    public static void Show()
+    {
+        Console.WriteLine("\nHELP:\n");
+        foreach (var control in StaticControls)
+        {
+            Console.WriteLine($"{control.Key,-10}: {control.Value}");
         }
     }
 
