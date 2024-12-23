@@ -14,7 +14,6 @@ namespace Project
             // Console.Clear(); // Clear any lingering output before rendering the calendar
             // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
 
-
             while (true)
             {
                 DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
@@ -37,8 +36,9 @@ namespace Project
                     case ConsoleKey.P:
                         if (currentDate.AddMonths(-1) < DateTime.Today)
                         {
-                            Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            Console.WriteLine("You cannot reserve in the past.");
+                            // Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            // Console.WriteLine("You cannot reserve in the past.");
+                            NavigationHelperPresent.DisplayFeedback("You cannot reserve in the past.");
                         }
                         else
                         {
@@ -57,7 +57,7 @@ namespace Project
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This day is fully reserved.");
+                            NavigationHelperPresent.DisplayFeedback("This day is fully reserved.");
                             Console.ResetColor();
                         }
                         else
@@ -68,7 +68,7 @@ namespace Project
                     case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
                     default:
-                        Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                        NavigationHelperPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
             }
@@ -77,13 +77,13 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
-            int footerHeight = MenuHelperPresent.GetFooterHeight();  // returns the height of the help footer
+            int footerHeight = NavigationHelperPresent.GetFooterHeight();  // returns the height of the help footer
             int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
             
             // ensure there's enough space to display the calendar
             if (availableHeight < 0)
             {
-                Console.WriteLine("Console window is too small to display the calendar and controls.");
+                NavigationHelperPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
                 return;
             }
 
@@ -141,7 +141,7 @@ namespace Project
             int calendarHeight = Console.CursorTop;
             if (calendarHeight + footerHeight > Console.WindowHeight)
             {
-                Console.WriteLine("\nNot enough space to display the calendar and controls.");
+                NavigationHelperPresent.DisplayFeedback("\nNot enough space to display the calendar and controls.");
                 return;
             }
             Console.SetCursorPosition(0, availableHeight);
@@ -149,14 +149,14 @@ namespace Project
             // Display the "fully reserved" message before the footer
             if (showFullyReservedMessage)
             {
-                Console.WriteLine("\nThis day is fully reserved.");
+                NavigationHelperPresent.DisplayFeedback("\nThis day is fully reserved.");
             }
 
             // Display the footer
-            MenuHelperPresent.UpdateDict("Previous month", "<p>");
-            MenuHelperPresent.UpdateDict("Next month", "<n>");
-            MenuHelperPresent.ShowHelp();
-
+            NavigationHelperPresent.Reset();
+            NavigationHelperPresent.AddOptions("Previous month", "<p>");
+            NavigationHelperPresent.AddOptions("Next month", "<n>");
+            NavigationHelperPresent.ShowHelp();
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
