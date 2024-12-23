@@ -84,13 +84,15 @@ static class ThemeView
             Console.WriteLine(availableYears[currentIndex]);
             Console.ResetColor();
 
-            // Navigation options
-            // Console.WriteLine("\n(r)eset, (b)ack");
-            Console.WriteLine("\nControls  :\n");
-            Console.WriteLine("Navigate    : <arrows>");
-            Console.WriteLine("Select      : <enter>");
-            Console.WriteLine("Reset a year: <R>");
-            Console.WriteLine("Exit        : <escape>");
+            // Display the footer
+            NavigationHelperPresent.Reset();
+            NavigationHelperPresent.AddOptions("Reset a year", "<r>");
+            NavigationHelperPresent.ShowHelp();
+            // Console.WriteLine("\nControls  :\n");
+            // Console.WriteLine("Navigate    : <arrows>");
+            // Console.WriteLine("Select      : <enter>");
+            // Console.WriteLine("Reset a year: <R>");
+            // Console.WriteLine("Exit        : <escape>");
 
             // Display any error or info messages
             if (!string.IsNullOrEmpty(message))
@@ -103,7 +105,7 @@ static class ThemeView
             switch (key.Key)
             {
                 case ConsoleKey.UpArrow:
-                    message = string.Empty; // Clear message on valid navigation
+                    // message = string.Empty; // Clear message on valid navigation
                     if (currentIndex < availableYears.Count - 1)
                     {
                         currentIndex++;
