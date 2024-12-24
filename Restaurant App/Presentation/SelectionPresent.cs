@@ -4,14 +4,24 @@ using System.Reflection;
 
 internal class SelectionPresent : SelectionLogic
 {
-    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline)
+    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
     {
-        Console.Clear();
+        // only clear the menu selection area
+        ClearMenuArea(menuStartLine, selection.Count);
+
+        // Move the cursor to the menu start line (top of the terminal)
+        Console.SetCursorPosition(0, menuStartLine);
+
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner, Console.ForegroundColor);
 
         foreach ((string text, bool selected) in selection)
         {
+            // Clear the current line completely to prevent residual text
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop);
+
+            // print the current option
             Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
             string prefix = (selected) ? "-> " : "";
 
@@ -64,10 +74,18 @@ internal class SelectionPresent : SelectionLogic
         
         Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
+        // // Determine menu placement
+        // int reservedLines = NavigationHelperPresent.GetFooterHeight(); // Help section height
+        // int menuStartLine = Console.WindowHeight - reservedLines - options.Count - 2; // Menu placement
+        // menuStartLine = Math.Max(menuStartLine, 0);
+
+        // Place the menu at the top of the terminal
+        int menuStartLine = 2; // Leave some space for the banner and instructions
+
         while (true)
         {
             // update screen
-            _update(banner, selection, oneline);
+            _update(banner, selection, oneline, menuStartLine);
 
             // determine the currently selected index
             int? selectedIndex = null;
@@ -80,7 +98,7 @@ internal class SelectionPresent : SelectionLogic
                 }
             }
 
-            // Show controls with dynamic feedback for the selected option
+            // Show help section with dynamic feedback for the selected option
             NavigationHelperPresent.ShowHelp(options, selectedIndex);
 
             if ((selected = _read(selection)) != null)
@@ -104,5 +122,17 @@ internal class SelectionPresent : SelectionLogic
                 return dynamicHandle;
             }
         }
+    }
+
+    // clear only the menu area
+    private static void ClearMenuArea(int menuStartLine, int menuHeight)
+    {
+        for (int i = 0; i < menuHeight; i++)
+        {
+            if (i >= Console.WindowHeight) break; // prevent out of bounds
+            Console.SetCursorPosition(0, menuStartLine + i);
+            Console.Write(new string(' ', Console.WindowWidth)); // clear the line
+        }
+        Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
     }
 }
