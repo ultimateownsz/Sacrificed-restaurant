@@ -20,14 +20,6 @@ public static class NavigationHelperPresent
         navigationControls.Clear();
     }
 
-    public static void Reset()
-    {
-        // navigationControls.Clear();
-        navigationControls.Add("Navigate", "<arrows>");
-        navigationControls.Add("Select", "<enter>");
-        navigationControls.Add("Exit", "<escape>");
-    }
-
     public static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
