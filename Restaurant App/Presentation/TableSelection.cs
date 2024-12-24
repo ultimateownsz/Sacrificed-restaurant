@@ -597,13 +597,11 @@ namespace Presentation
                 {
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    // Console.WriteLine("Controls:\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>");
-                    // Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
-                    NavigationHelperPresent.Reset();
+                    NavigationHelperPresent.Clear();
+                    NavigationHelperPresent.AddOptions("Navigate", "<arrows>");
+                    NavigationHelperPresent.AddOptions("Select", "<enter>");
+                    NavigationHelperPresent.AddOptions("Exit", "<escape>");
                     NavigationHelperPresent.ShowHelp();
-
-                    // \n is not possible with this, perhaps we should use the spectre console to make these functionalities more modulair since I could not integrated any modularity
-                    // Console.WriteLine("Controls: Navigate: <arrows>, select: <enter>, exit: <escape>".PadRight(Console.WindowWidth - 1));
 
                     var key = Console.ReadKey(true);
 
