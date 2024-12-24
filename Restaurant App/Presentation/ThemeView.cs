@@ -85,7 +85,7 @@ static class ThemeView
             Console.ResetColor();
 
             // Display the footer
-            NavigationHelperPresent.Reset();
+            NavigationHelperPresent.Clear();
             NavigationHelperPresent.AddOptions("Reset a year", "<r>");
             NavigationHelperPresent.ShowHelp();
             // Console.WriteLine("\nControls  :\n");
