@@ -153,9 +153,11 @@ namespace Project
             }
 
             // Display the footer
-            NavigationHelperPresent.Reset();
+            NavigationHelperPresent.Clear();
             NavigationHelperPresent.AddOptions("Previous month", "<p>");
             NavigationHelperPresent.AddOptions("Next month", "<n>");
+            NavigationHelperPresent.AddOptions("Select date", "<enter>");
+            NavigationHelperPresent.AddOptions("Back", "<escape>");
             NavigationHelperPresent.ShowHelp();
         }
 
