@@ -10,9 +10,7 @@ static class UserLogin
     private static string? request_email()
     {
         ControlsHelperPresent.Clear();
-        ControlsHelperPresent.ResetToDefault();
         ControlsHelperPresent.AddOptions("Exit", "<escape>");
-        ControlsHelperPresent.ShowHelp();
 
         string? email = null;
 
@@ -22,7 +20,8 @@ static class UserLogin
             email = InputHelper.GetValidatedInput<string?>(
                 "Email: ", // Pass the prompt here
                 input => InputHelper.InputNotNull(input, "Email cannot be empty."),
-                menuTitle: "LOGIN"
+                menuTitle: "LOGIN",
+                showHelpAction: () => ControlsHelperPresent.ShowHelp()
             );
         });
 
@@ -37,12 +36,10 @@ static class UserLogin
     private static string? request_password(string? email)
     {
         // ControlsHelperPresent.Clear();
-        ControlsHelperPresent.ResetToDefault();
         ControlsHelperPresent.AddOptions("Exit", "<escape>");
-        ControlsHelperPresent.ShowHelp();
         
         // Display the email above the password prompt
-        Console.SetCursorPosition(1, 1);
+        Console.SetCursorPosition(0, 0);
         foreach (var input in userInput)
         {
             Console.WriteLine(input);
@@ -68,6 +65,7 @@ static class UserLogin
                         Console.WriteLine("");
                         Console.WriteLine(input);
                     }
+                    ControlsHelperPresent.ShowHelp();
                 }
             );
         });
@@ -75,6 +73,9 @@ static class UserLogin
         if (password == null) return null;  // Escape key pressed
 
         userInput.Add($"Password: {new string('*', password.Length)}"); // Mask password and store it
+        
+        ControlsHelperPresent.ResetToDefault();
+        userInput.Clear(); // Clear the stored inputs
 
         return password; // Valid password entered
     }
@@ -99,10 +100,11 @@ static class UserLogin
         else
         {
             // Invalid credentials
+            Console.Clear();
             ControlsHelperPresent.Clear();
-            ControlsHelperPresent.ResetToDefault();
             ControlsHelperPresent.AddOptions("Exit", "<escape>");
             ControlsHelperPresent.ShowHelp();
+            ControlsHelperPresent.ResetToDefault();
 
             Console.ForegroundColor = ConsoleColor.Red;
             // Display all stored inputs for user reference

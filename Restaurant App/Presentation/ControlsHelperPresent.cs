@@ -34,13 +34,12 @@ public static class ControlsHelperPresent
     internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
-        string? feedbackMessage = null,
-        int footerStartLine = -1)  // pass the recalculated footer start line
+        string? feedbackMessage = null)  // pass the recalculated footer start line
     {
-        if (footerStartLine == -1)
-        {
-            footerStartLine = Console.WindowHeight - GetFooterHeight();  // default position
-        }
+        // if (footerStartLine == -1)
+        // {
+        //     footerStartLine = Console.WindowHeight - GetFooterHeight();  // default position
+        // }
 
         // ClearFooterSpace(footerStartLine, Console.WindowHeight);
         // Console.SetCursorPosition(0, footerStartLine);
