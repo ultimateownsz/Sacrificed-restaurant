@@ -597,11 +597,11 @@ namespace Presentation
                 {
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
-                    NavigationHelperPresent.Clear();
-                    NavigationHelperPresent.AddOptions("Navigate", "<arrows>");
-                    NavigationHelperPresent.AddOptions("Select", "<enter>");
-                    NavigationHelperPresent.AddOptions("Exit", "<escape>");
-                    NavigationHelperPresent.ShowHelp();
+                    ControlsHelperPresent.Clear();
+                    ControlsHelperPresent.AddOptions("Navigate", "<arrows>");
+                    ControlsHelperPresent.AddOptions("Select", "<enter>");
+                    ControlsHelperPresent.AddOptions("Exit", "<escape>");
+                    ControlsHelperPresent.ShowHelp();
 
                     var key = Console.ReadKey(true);
 
