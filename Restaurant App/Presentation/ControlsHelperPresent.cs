@@ -1,15 +1,19 @@
 using Dapper;
 
-public static class NavigationHelperPresent
+public static class ControlsHelperPresent
 {   
-    // Dictionary for key-to-action mappings (static controls)
-    private static readonly Dictionary<string, string> navigationControls = new()
+    // default navigation controls
+    private static readonly Dictionary<string, string> defaultNavigationControls = new()
     {
         { "Navigate", "<arrows>" },
         { "Select", "<enter>" },
         { "Exit", "<escape>" }
     };
 
+    // Active navigation controls (modifiable)
+    private static Dictionary<string, string> navigationControls = new(defaultNavigationControls);
+
+    // Add options to the navigation controls
     public static void AddOptions(string action, string key)
     {
         navigationControls[action] = key; // This should add or update the key-value pair
@@ -20,11 +24,27 @@ public static class NavigationHelperPresent
         navigationControls.Clear();
     }
 
-    public static void ShowHelp(
+    // Reset to default options
+    public static void ResetToDefault()
+    {
+        navigationControls = new Dictionary<string, string>(defaultNavigationControls);
+    }
+
+
+    internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
-        string? feedbackMessage = null)
+        string? feedbackMessage = null,
+        int footerStartLine = -1)  // pass the recalculated footer start line
     {
+        if (footerStartLine == -1)
+        {
+            footerStartLine = Console.WindowHeight - GetFooterHeight();  // default position
+        }
+
+        // ClearFooterSpace(footerStartLine, Console.WindowHeight);
+        // Console.SetCursorPosition(0, footerStartLine);
+        
         // Display feedback if provided
         if (!string.IsNullOrWhiteSpace(feedbackMessage))
         {
@@ -55,7 +75,6 @@ public static class NavigationHelperPresent
         Console.SetCursorPosition(0, startLine);
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("\nHELP\n");
         Console.ResetColor();
 
         if (selectedIndex.HasValue && options != null && selectedIndex.Value >= 0 && selectedIndex.Value < options.Count)
