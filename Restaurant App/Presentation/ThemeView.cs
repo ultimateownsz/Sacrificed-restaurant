@@ -72,7 +72,7 @@ static class ThemeView
         }
 
         int currentIndex = currentYearIndex;
-        string message = string.Empty; // Message for errors or additional info
+        // string message = string.Empty; // Message for errors or additional info
 
         while (true)
         {
@@ -85,9 +85,10 @@ static class ThemeView
             Console.ResetColor();
 
             // Display the footer
-            NavigationHelperPresent.Clear();
-            NavigationHelperPresent.AddOptions("Reset a year", "<r>");
-            NavigationHelperPresent.ShowHelp();
+            ControlsHelperPresent.Clear();
+            ControlsHelperPresent.ResetToDefault();
+            ControlsHelperPresent.AddOptions("Reset a year", "<r>");
+            ControlsHelperPresent.ShowHelp();
             // Console.WriteLine("\nControls  :\n");
             // Console.WriteLine("Navigate    : <arrows>");
             // Console.WriteLine("Select      : <enter>");
@@ -95,10 +96,10 @@ static class ThemeView
             // Console.WriteLine("Exit        : <escape>");
 
             // Display any error or info messages
-            if (!string.IsNullOrEmpty(message))
-            {
-                Console.WriteLine($"\n{message}");
-            }
+            // if (!string.IsNullOrEmpty(message))
+            // {
+            //     Console.WriteLine($"\n{message}");
+            // }
 
             var key = Console.ReadKey(intercept: true);
 
@@ -122,22 +123,24 @@ static class ThemeView
                 case ConsoleKey.DownArrow:
                     if (currentIndex > 0)
                     {
-                        message = string.Empty; // Clear message on valid navigation
+                        // message = string.Empty; // Clear message on valid navigation
                         currentIndex--;
                     }
                     else
                     {
-                        message = "Cannot navigate to years in the past.";
+                        ControlsHelperPresent.DisplayFeedback("Cannot navigate to years in the past.");
+                        // message = "Cannot navigate to years in the past.";
                     }
                     break;
 
                 case ConsoleKey.LeftArrow:
                 case ConsoleKey.RightArrow:
-                    message = "You can only navigate using the Up and Down arrows.";
+                    ControlsHelperPresent.DisplayFeedback("You can only navigate using the Up and Down arrows.");
+                    // message = "You can only navigate using the Up and Down arrows.";
                     break;
 
                 case ConsoleKey.R:
-                    message = string.Empty; // Clear message on reset
+                    // message = string.Empty; // Clear message on reset
                     currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
@@ -148,7 +151,8 @@ static class ThemeView
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    message = "Invalid input. Use <arrows>, <r>, <escape>, or <enter>.";
+                    ControlsHelperPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.");
+                    // message = "Invalid input. Use <arrows>, <r>, <escape>, or <enter>.";
                     break;
             }
         }
