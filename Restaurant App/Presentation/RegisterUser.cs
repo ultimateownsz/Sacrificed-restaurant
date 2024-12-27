@@ -19,11 +19,13 @@ internal class RegisterUser
             // Use InputHelper.GetValidatedInput for streamlined input handling
             string firstName = InputHelper.GetValidatedInput<string>(
             "First name: ",
-            input => InputHelper.InputNotNull(input, "First name")
+            input => InputHelper.InputNotNull(input, "First name"),
+            menuTitle: "REGISTER"
             );
             string lastName = InputHelper.GetValidatedInput<string>(
             "Last name: ",
-            input => InputHelper.InputNotNull(input, "Last name")
+            input => InputHelper.InputNotNull(input, "Last name"),
+            menuTitle: "REGISTER"
             );
             string email = InputHelper.GetValidatedInput<string>(
             "Email (e.g., example@domain.com): ",
@@ -31,14 +33,18 @@ internal class RegisterUser
             {
                 var (isValid, message) = UserLogic.IsEmailValid(input);
                 return isValid ? (input, null) : (null, message);
-            });
+            },
+            menuTitle: "REGISTER"
+            );
             string password = InputHelper.GetValidatedInput<string>(
                 "Password (8-16 characters, must include letters and numbers): ",
-                input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers.")
+                input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers."),
+                menuTitle: "REGISTER"
             );
             string phoneNumber = InputHelper.GetValidatedInput<string>(
                 "Phone number (10 digits): ",
-                input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890).")
+                input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890)."),
+                menuTitle: "REGISTER"
             );
 
             ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
@@ -108,14 +114,16 @@ internal class RegisterUser
             case "First name":
                 firstName = InputHelper.GetValidatedInput<string>(
                     "First name: ",
-                    input => InputHelper.InputNotNull(input, "First name")
+                    input => InputHelper.InputNotNull(input, "First name"),
+                    menuTitle: "EDIT USER INFORMATION"
                 );
                 break;
 
             case "Last name":
                 lastName = InputHelper.GetValidatedInput<string>(
                     "Last name: ",
-                    input => InputHelper.InputNotNull(input, "Last name")
+                    input => InputHelper.InputNotNull(input, "Last name"),
+                    menuTitle: "EDIT USER INFORMATION"
                 );
                 break;
 
@@ -126,20 +134,23 @@ internal class RegisterUser
                     {
                         var (isValid, message) = UserLogic.IsEmailValid(input);
                         return isValid ? (input, null) : (null, message);
-                    });
+                    },
+                    menuTitle: "EDIT USER INFORMATION");
                 break;
 
             case "Password":
                 password = InputHelper.GetValidatedInput<string>(
                     "Password (8-16 characters, must include letters and numbers): ",
-                    input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers.")
+                    input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers."),
+                    menuTitle: "EDIT USER INFORMATION"
                 );
                 break;
 
             case "Phone number":
                 phoneNumber = InputHelper.GetValidatedInput<string>(
                     "Phone number (10 digits): ",
-                    input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890).")
+                    input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890)."),
+                    menuTitle: "EDIT USER INFORMATION"
                 );
                 break;
         }
