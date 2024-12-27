@@ -61,15 +61,51 @@ public class UserLogic
 
 
 
-    public static bool IsPasswordValid(string password)
+    public static (bool isValid, string? error) IsPasswordValid(string password)
     {
-        return password.Length <= 16 && password.Length >= 8;
+            if (string.IsNullOrWhiteSpace(password))
+        {
+            return (false, "Password cannot be empty.");
+        }
+
+        if (password.Length < 8 || password.Length > 16)
+        {
+            return (false, "Password must be between 8 and 16 characters long.");
+        }
+
+        if (!password.Any(char.IsLetter))
+        {
+            return (false, "Password must contain at least one letter.");
+        }
+
+        if (!password.Any(char.IsDigit))
+        {
+            return (false, "Password must contain at least one number.");
+        }
+        return (true, null); // Password is valid
     }
 
-    public static bool IsPhoneNumberValid(string phoneNumber)
+    public static (bool isValid, string? error) IsPhoneNumberValid(string phoneNumber)
     {
-        return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 10;
+        if (phoneNumber.Length != 10)
+        {
+            return (false, "Phone number must be exactly 10 digits long.");
+        }
+        if (!phoneNumber.StartsWith("06"))
+        {
+            return (false, "Phone number must start with '06'.");
+        }
+        if (!phoneNumber.All(char.IsDigit))
+        {
+            return (false, "Phone number must contain only digits.");
+        }
+        if (phoneNumber == "0612345678") // Example of an excluded number
+        {
+            return (false, "This phone number is not allowed.");
+        }
+        return (true, null); // Valid phone number
     }
+
 
     public static UserModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
