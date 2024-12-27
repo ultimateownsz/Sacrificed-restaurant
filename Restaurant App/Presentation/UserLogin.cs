@@ -4,11 +4,15 @@ using Project;
 static class UserLogin
 {
     private static UserLogic userLogic = new();
+
+    private static List<string> userInput = new(); // List to store the email and password
     
     private static string? request_email()
     {
-        Console.Clear();
-        Console.WriteLine("LOGIN\n");
+        ControlsHelperPresent.Clear();
+        ControlsHelperPresent.ResetToDefault();
+        ControlsHelperPresent.AddOptions("Exit", "<escape>");
+        ControlsHelperPresent.ShowHelp();
 
         string? email = null;
 
@@ -17,11 +21,14 @@ static class UserLogin
         {
             email = InputHelper.GetValidatedInput<string?>(
                 "Email: ", // Pass the prompt here
-                input => InputHelper.InputNotNull(input, "Email cannot be empty.")
+                input => InputHelper.InputNotNull(input, "Email cannot be empty."),
+                menuTitle: "LOGIN"
             );
         });
 
         if (email == null) return null; // Escape key pressed
+
+        userInput.Add($"Email: {email}"); // Store the email in the list
 
         return email; // Valid email entered
     }
@@ -29,25 +36,45 @@ static class UserLogin
 
     private static string? request_password(string? email)
     {
-        Console.Clear();
-        Console.WriteLine("LOGIN\n");
+        // ControlsHelperPresent.Clear();
+        ControlsHelperPresent.ResetToDefault();
+        ControlsHelperPresent.AddOptions("Exit", "<escape>");
+        ControlsHelperPresent.ShowHelp();
+        
+        // Display the email above the password prompt
+        Console.SetCursorPosition(1, 1);
+        foreach (var input in userInput)
+        {
+            Console.WriteLine(input);
+        }
 
-        Console.WriteLine($"Email: {email}");  // Keep the email visible above the password prompt
+        string? password = null;
 
         Console.ForegroundColor = ConsoleColor.Yellow;
-        
-        // Use TryCatchHelper to handle Escape key exceptions during password input
-        string? password = null;
+        Console.ResetColor();
 
         TryCatchHelper.EscapeKeyException(() =>
         {
             password = InputHelper.GetValidatedInput<string?>(
                 "Password: ",
-                input => InputHelper.InputNotNull(input, "Password cannot be empty.")  // Validation failure
+                input => InputHelper.InputNotNull(input, "Password cannot be empty."),
+                menuTitle: "LOGIN",
+                showHelpAction: () =>
+                {
+                    // Display the email above the password prompt
+                    // Console.SetCursorPosition(0, 0);
+                    foreach (var input in userInput)
+                    {
+                        Console.WriteLine("");
+                        Console.WriteLine(input);
+                    }
+                }
             );
         });
 
         if (password == null) return null;  // Escape key pressed
+
+        userInput.Add($"Password: {new string('*', password.Length)}"); // Mask password and store it
 
         return password; // Valid password entered
     }
@@ -72,12 +99,17 @@ static class UserLogin
         else
         {
             // Invalid credentials
-            Console.Clear();
-            Console.WriteLine("LOGIN\n");
+            ControlsHelperPresent.Clear();
+            ControlsHelperPresent.ResetToDefault();
+            ControlsHelperPresent.AddOptions("Exit", "<escape>");
+            ControlsHelperPresent.ShowHelp();
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Email: {email}");
-            Console.WriteLine($"Password: {password}");
+            // Display all stored inputs for user reference
+            foreach (var input in userInput)
+            {
+                Console.WriteLine(input);
+            }
 
             Console.ResetColor();
             Console.WriteLine("\nInvalid credentials, returning...");
