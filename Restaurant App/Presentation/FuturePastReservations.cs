@@ -35,7 +35,7 @@ namespace Presentation
                     if (!reservations.Any())
                     {
                         Console.Clear();
-                        Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                        ControlsHelperPresent.DisplayFeedback("There are no reservations for this date.\nPress any key to return...");
                         Console.ReadKey();
                         return;
                     }
@@ -96,7 +96,7 @@ namespace Presentation
 
                 if (userReservations == null || !userReservations.Any())
                 {
-                    Console.WriteLine("You have no reservations.\nPress any key to return...");
+                    ControlsHelperPresent.DisplayFeedback("You have no reservations.\nPress any key to return...");
                     Console.ReadKey();
                     return;
                 }

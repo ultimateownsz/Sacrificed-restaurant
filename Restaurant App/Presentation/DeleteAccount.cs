@@ -18,7 +18,7 @@ namespace Project.Presentation
 
                 if (activeAccounts == null || !activeAccounts.Any())
                 {
-                    Console.WriteLine("No accounts available to delete.");
+                    ControlsHelperPresent.DisplayFeedback("No accounts available to delete.");
                     Console.WriteLine("\nPress any key to return to the previous menu...");
                     Console.ReadKey();
                     return;
@@ -71,7 +71,7 @@ namespace Project.Presentation
                             }
                             else
                             {
-                                Console.WriteLine("\nFailed to delete the account. Press any key to continue...");
+                                ControlsHelperPresent.DisplayFeedback("\nFailed to delete the account. Press any key to continue...");
                                 Console.ReadKey();
                             }
                             break;

@@ -192,7 +192,7 @@ static class ThemeView
 
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
-                Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
+                ControlsHelperPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.");
                 Console.ReadKey();
             }
             else
