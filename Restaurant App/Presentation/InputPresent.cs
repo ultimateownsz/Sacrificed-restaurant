@@ -42,7 +42,7 @@ public static class InputHelper
                 throw new OperationCanceledException("Input process was canceled by pressing 'Escape' key.");
             }
 
-             // Validate input
+            // Validate input
             var (result, error) = validateAndParse(input);
 
             if (error == null && result != null)
@@ -51,20 +51,20 @@ public static class InputHelper
             }
 
             // display error message
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Invalid input: {error}");
+            // Console.ForegroundColor = ConsoleColor.Red;
+            ControlsHelperPresent.DisplayFeedback($"Invalid input: {error}");
 
             // show remaining attempts
             int remainingAttempts = maxAttempts - attempt;
             if (remainingAttempts > 0)
             {
-                Console.WriteLine($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
-                Console.ResetColor();
+                ControlsHelperPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
+                // Console.ResetColor();
             }
             else
             {
                 // Throw exception after last attempt
-                Console.WriteLine("Too many invalid attempts. Operation will now be canceled.\n");
+                ControlsHelperPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.\n");
                 Thread.Sleep(1500);
                 throw new OperationCanceledException("Too many invalid attempts.");
             }
