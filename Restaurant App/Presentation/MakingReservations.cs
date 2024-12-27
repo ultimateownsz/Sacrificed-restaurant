@@ -13,51 +13,35 @@ namespace Presentation
 
         public static void MakingReservation(UserModel acc)
         {
-            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
-
-            // Step 1: Select the number of guests using arrow keys
-            int guests = GetGuestCount();
-            if (guests == -1) // Escape key pressed during selection
+            TryCatchHelper.EscapeKeyException(() =>
             {
-                Console.WriteLine("Guest selection canceled. Returning to the main menu...");
-                return;
-            }
+                bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
-            DateTime selectedDate;
+                // Step 1: Select the number of guests
+                int guests = TryCatchHelper.EscapeKeyWithResult(GetGuestCount, -1, "Guest selection canceled.");
+                if (guests == -1) return;
 
-            var inactiveTables = Access.Places.Read()
-                .Where(p => p.Active == 0)
-                .Select(p => p.ID.Value)
-                .ToArray();
-
-            while (true)
-            {
                 // Step 2: Calendar selection
-                selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
-                if (selectedDate == DateTime.MinValue)
-                {
-                    Console.WriteLine("Returning to the previous menu...");
-                    return; // Escape pressed
-                }
+                DateTime selectedDate = TryCatchHelper.EscapeKeyWithResult(() => SelectDate(guests, isAdmin, acc), DateTime.MinValue, "Returning to the main menu...");
+                if (selectedDate == DateTime.MinValue) return;
 
                 // Step 3: Table selection
-                int selectedTable = SelectTable(selectedDate, guests, inactiveTables, isAdmin);
-                if (selectedTable == -1) continue; // Return to the calendar view
+                int selectedTable = TryCatchHelper.EscapeKeyWithResult(() => SelectTable(selectedDate, guests, isAdmin), -1, "Table selection canceled.");
+                if (selectedTable == -1) return;
 
                 // Step 4: Save reservation
-                int reservationId = SaveReservation(selectedDate, selectedTable, acc);
-                if (reservationId == 0) continue;
+                int reservationId = TryCatchHelper.EscapeKeyWithResult(() => SaveReservation(selectedDate, selectedTable, acc), 0, "Reservation not saved.");
+                if (reservationId == 0) return;
 
                 // Step 5: Take orders
-                var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                if (orders.Count > 0)
+                var orders = TryCatchHelper.EscapeKeyWithResult(() => TakeOrders(reservationId, guests), new List<ProductModel>(), "Order process canceled.");
+                if (orders.Any())
                 {
                     PrintReceipt(orders, reservationId, acc);
                     Console.WriteLine("\nPress Enter to return to the main menu...");
                     while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
-                    return;
                 }
-            }
+            });
         }
 
         private static int GetGuestCount()
@@ -66,19 +50,25 @@ namespace Presentation
             string banner = "How many guests will be coming?\n\n";
 
             dynamic result = SelectionPresent.Show(options, banner, true);
-            if (result.index == -1) return -1; // Escape pressed
-            return options.Count - result.index;
+            if (result?.index == -1) 
+                throw new OperationCanceledException(); // Escape key pressed or invalid input
+            return result?.index != null ? options.Count - result.index : -1;
         }
 
-        private static int SelectTable(DateTime selectedDate, int guests, int[] inactiveTables, bool isAdmin)
+        private static DateTime SelectDate(int guests, bool isAdmin, UserModel acc)
+        {
+            return CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+        }
+
+        private static int SelectTable(DateTime selectedDate, int guests, bool isAdmin)
         {
             TableSelection tableSelection = new();
 
             int[] availableTables = guests switch
             {
-                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
-                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
-                5 or 6 => new int[] { 2, 3 },
+                1 or 2 => [1, 4, 5, 8, 9, 11, 12, 15],
+                3 or 4 => [6, 7, 10, 13, 14],
+                5 or 6 => [2, 3],
                 _ => Array.Empty<int>()
             };
 
@@ -88,7 +78,7 @@ namespace Presentation
                 .Select(r => r!.PlaceID!.Value)
                 .ToArray();
 
-            return tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+            return tableSelection.SelectTable(availableTables, [], reservedTables, guests, isAdmin);
         }
 
         private static int SaveReservation(DateTime selectedDate, int selectedTable, UserModel acc)
@@ -108,10 +98,10 @@ namespace Presentation
             return reservationId;
         }
 
-        public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
+        public static List<ProductModel> TakeOrders(int reservationId, int guests)
         {
-            List<string> categories = new() { "Appetizer", "Main", "Dessert", "Beverage" };
             List<ProductModel> allOrders = new();
+            List<string> categories = new() { "Appetizer", "Main", "Dessert", "Beverage" };
 
             Console.WriteLine("This month's theme is:");
             string theme = reservationMenuLogic.GetCurrentMenu() ?? "No theme available.";
@@ -129,10 +119,12 @@ namespace Presentation
                     productOptions.Add("Cancel");
 
                     dynamic selection = SelectionPresent.Show(productOptions, banner).text;
-                    if (selection == "Cancel") return new List<ProductModel>();
+                    // Check for null or cancellation
+                    if (selection?.text == null || selection?.text == "Cancel") 
+                        throw new OperationCanceledException(); 
 
                     var selectedProduct = products.FirstOrDefault(p => 
-                        selection.StartsWith(p.Name) && selection.Contains($"{p.Price:0.00}"));
+                        selection?.text?.StartsWith(p.Name) == true && selection?.text?.Contains($"{p.Price:0.00}") == true);
 
                     if (selectedProduct != null && selectedProduct.ID.HasValue)
                     {
