@@ -6,14 +6,15 @@ internal class SelectionPresent : SelectionLogic
 {
     private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
     {
-        // only clear the menu selection area
+        Console.Clear();
+        // clear the menu selection area
         ClearMenuArea(menuStartLine, selection.Count);
 
         // Move the cursor to the menu start line (top of the terminal)
         Console.SetCursorPosition(0, menuStartLine);
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write(banner, Console.ForegroundColor);
+        Console.Write(banner);  // Display the banner
 
         foreach ((string text, bool selected) in selection)
         {
@@ -22,8 +23,8 @@ internal class SelectionPresent : SelectionLogic
             Console.SetCursorPosition(0, Console.CursorTop);
 
             // print the current option
-            Console.ForegroundColor = (selected) ? ConsoleColor.Yellow : ConsoleColor.White;
-            string prefix = (selected) ? "-> " : "";
+            Console.ForegroundColor = selected ? ConsoleColor.Yellow : ConsoleColor.White;
+            string prefix = selected ? "-> " : "";
 
             if (oneline && !selected) continue;
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
@@ -74,16 +75,15 @@ internal class SelectionPresent : SelectionLogic
         
         Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
-        // // Determine menu placement
-        // int reservedLines = NavigationHelperPresent.GetFooterHeight(); // Help section height
-        // int menuStartLine = Console.WindowHeight - reservedLines - options.Count - 2; // Menu placement
-        // menuStartLine = Math.Max(menuStartLine, 0);
-
-        // Place the menu at the top of the terminal
-        int menuStartLine = 2; // Leave some space for the banner and instructions
+        int lastWindowHeight = Console.WindowHeight;  // track the initial terminal height
+        int reservedLines = ControlsHelperPresent.GetFooterHeight();
 
         while (true)
         {
+             // Always render at the top of the terminal
+            int menuStartLine = 0; // Fixed start at the top
+            Console.SetCursorPosition(0, menuStartLine);
+
             // update screen
             _update(banner, selection, oneline, menuStartLine);
 
@@ -99,7 +99,7 @@ internal class SelectionPresent : SelectionLogic
             }
 
             // Show help section with dynamic feedback for the selected option
-            NavigationHelperPresent.ShowHelp(options, selectedIndex);
+            ControlsHelperPresent.ShowHelp(options, selectedIndex);
 
             if ((selected = _read(selection)) != null)
             {
@@ -127,10 +127,11 @@ internal class SelectionPresent : SelectionLogic
     // clear only the menu area
     private static void ClearMenuArea(int menuStartLine, int menuHeight)
     {
-        for (int i = 0; i < menuHeight; i++)
+        int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
+        for (int i = menuStartLine; i < endLine; i++)
         {
-            if (i >= Console.WindowHeight) break; // prevent out of bounds
-            Console.SetCursorPosition(0, menuStartLine + i);
+            // if (i >= Console.WindowHeight) break; // prevent out of bounds
+            Console.SetCursorPosition(0, i);
             Console.Write(new string(' ', Console.WindowWidth)); // clear the line
         }
         Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
