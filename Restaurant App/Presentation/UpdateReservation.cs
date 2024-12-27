@@ -22,6 +22,11 @@ public static class UpdateReservation
                 string menuTitle = "UPDATE RESERVATION\n\n";
                 dynamic selection = SelectionPresent.Show(options, menuTitle);
 
+                if (selection.text == null)
+                {
+                    return;
+                }
+
                 switch(selection.text)
                 {
                     case "Date":
