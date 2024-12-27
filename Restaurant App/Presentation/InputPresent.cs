@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Xml.XPath;
 
 public static class InputHelper
@@ -7,12 +8,28 @@ public static class InputHelper
     ///</summary>
     public static T GetValidatedInput<T>(
         string prompt,
-        Func<string, (T? result, string? error)> validateAndParse)
+        Func<string, (T? result, string? error)> validateAndParse,
+        int reservedLines = 3,
+        string? menuTitle = null,
+        Action? showHelpAction = null)
     {
-        int maxAttempts = 2;  // allow only one valid entry
+        int maxAttempts = 2;  // allow 2 attempts
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
+            // Clear the input area, including space for the menu title
+            ClearInputArea(reservedLines);
+
+            // Display the menu title at the top
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine(menuTitle);
+
+             // Optionally show the help section
+            showHelpAction?.Invoke();
+
+            // Display the prompt at the reserved space
+            Console.SetCursorPosition(0, reservedLines);
+
             // display the prompt in yellow
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(prompt);
@@ -53,6 +70,21 @@ public static class InputHelper
             }
         }
         throw new OperationCanceledException("Input failed");
+    }
+
+    // Clears the input area and reserves space for prompts.
+    public static void ClearInputArea(int reservedLines, int startLine = 0, int? preserveStartLine = null, int? preserveEndLine = null)
+    {
+        for (int i = startLine; i < Console.WindowHeight - reservedLines + 1; i++) // clear reserved lines + input line
+        {
+            // Skip clearing lines that need to be preserved
+            if (preserveStartLine.HasValue && preserveEndLine.HasValue && i >= preserveStartLine && i <= preserveEndLine)
+                continue;
+
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth)); // clear each line
+        }
+        Console.SetCursorPosition(0, startLine); // Reset the cursor to the start line
     }
 
     /// <summary>
