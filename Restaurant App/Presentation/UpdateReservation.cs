@@ -40,7 +40,7 @@ public static class UpdateReservation
 
     public static void UpdateReservationAdmin(ReservationModel reservation)
     {
-        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}\n";
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}\n\n";
         while (true)
         {
             switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
@@ -69,7 +69,7 @@ public static class UpdateReservation
 
     public static void UpdateReservationUser(ReservationModel reservation)
     {
-        string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}\n";
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}\n\n";
         while (true)
         {
             switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
