@@ -18,7 +18,7 @@ public static class TryCatchHelper
         /// <summary>
         /// Handles exceptions for functions that return a value with Escape key support.
         /// </summary>
-        public static T EscapeKeyWithResult<T>(Func<T> action, T defaultValue = default, string cancelMessage = "Returning to the previous menu...")
+        public static T EscapeKeyWithResult<T>(Func<T> action, T defaultValue = default!, string cancelMessage = "Returning to the previous menu...")
         {
             try
             {
