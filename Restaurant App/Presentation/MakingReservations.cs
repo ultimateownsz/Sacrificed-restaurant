@@ -118,7 +118,7 @@ namespace Presentation
                     var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
                     productOptions.Add("Cancel");
 
-                    dynamic selection = SelectionPresent.Show(productOptions, banner).text;
+                    dynamic selection = SelectionPresent.Show(productOptions, banner);
                     // Check for null or cancellation
                     if (selection?.text == null || selection?.text == "Cancel") 
                         throw new OperationCanceledException(); 
