@@ -62,7 +62,7 @@ internal class SelectionPresent : SelectionLogic
             // case ConsoleKey.B:
 
                 Console.ForegroundColor = ConsoleColor.White;
-                return new("", -1);
+                return new(null, -1); // Return null text and -1 index for Escape
         }
 
         return null;
