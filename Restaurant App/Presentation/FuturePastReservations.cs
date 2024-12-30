@@ -143,13 +143,13 @@ namespace Presentation
 
                     if (selectedReservation != null)
                     {
-                        string banner = $"You selected {selectedOption}\n\n";
-                        var action = SelectionPresent.Show(new List<string> { "Update Reservation", "\nBack" }, banner).text;
+                        // string banner = $"You selected {selectedOption}\n\n";
+                        // var action = SelectionPresent.Show(new List<string> { "Update Reservation", "\nBack" }, banner).text;
 
-                        if (action == "Update Reservation")
-                        {
-                            UpdateReservation.Show(selectedReservation, false);
-                        }
+                        // if (action == "Update Reservation")
+                        // {
+                        UpdateReservation.Show(selectedReservation, false);
+                        // }
                     }
                 }
             });
