@@ -40,7 +40,7 @@ public static class UpdateReservation
 
     public static void UpdateReservationAdmin(ReservationModel reservation)
     {
-        string confirmChoice = "UPDATE RESERVATION\n\n";
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date}\n";
         while (true)
         {
             switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
