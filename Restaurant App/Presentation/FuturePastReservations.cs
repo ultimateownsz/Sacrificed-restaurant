@@ -126,19 +126,6 @@ namespace Presentation
                     var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
                     UpdateReservation.Show(selectedResModel, false);
                     Console.WriteLine($"You selected the {selectedReservations}\n\n");
-
-                    // if (selectedResModel != null)
-                    // {
-                    //    var banner = $"You selected the {selectedReservations}\n\n";
-                    //    switch (SelectionPresent.Show(new List<string> { "Update Reservation" }, banner).text)
-                    //    {
-                    //        case "Update Reservation":
-                    //            UpdateReservation.Show(selectedResModel, false);
-                    //            break;
-                    //    }
-                    //    Console.WriteLine("Press any key to return...");
-                    //    Console.ReadKey();
-                    // }
                     break;
                 }
             }
