@@ -32,7 +32,8 @@ public class ReservationLogic
 
         // Check if there is already an existing reservation on the same date and place
         var existingReservation = Access.Reservations.GetAllBy<DateTime>("Date", date)
-                                                    .FirstOrDefault(r => r?.PlaceID == placeId);
+            .FirstOrDefault(r => r?.PlaceID == placeId && r?.Date == date);
+
         if (existingReservation != null)
         {
             Console.WriteLine($"ERROR: There is already a reservation for PlaceID {placeId} on Date {date.ToShortDateString()}.");
@@ -125,21 +126,30 @@ public class ReservationLogic
     
     public bool RemoveReservation(int id)
     {
-        
-        if (Access.Reservations.GetBy<int>("ID", id) == null)
+        var reservation = Access.Reservations.GetBy<int>("ID", id);
+        if (reservation == null)
         {
             return false;
         }
-        else
+
+        var success = Access.Reservations.Delete(id);
+        if (!success)
         {
-            Access.Reservations.Delete(id);
-            return true;
+            return false;
         }
+
+        return true;
     }
+
 
     public IEnumerable<ReservationModel?> GetUserReservations(int? userID)
     {
-        return Access.Reservations.GetAllBy<int?>("UserID", userID);
+        var reservations = Access.Reservations.GetAllBy<int?>("UserID", userID);
+        if (reservations == null)
+        {
+            return Enumerable.Empty<ReservationModel?>();
+        }
+        return reservations;
     }
 
     public static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
@@ -155,21 +165,41 @@ public class ReservationLogic
     public static string? GetThemeByReservation(int reservationID)
     {
         var productID = Access.Requests.GetBy<int?>("ReservationID", reservationID)?.ProductID;
+        if (productID == null) return "No product associated with this reservation";
+
         var themeID = Access.Products.GetBy<int?>("ID", productID)?.ThemeID;
-        return Access.Themes.GetBy<int?>("ID", themeID)?.Name;
+        if (themeID == null) return "No theme associated with this product";
+
+        return Access.Themes.GetBy<int?>("ID", themeID)?.Name ?? "Theme not found";
     }
+
 
     public static string FormatAccount(ReservationModel reservation)
     {
+        if (reservation.Date == null || reservation.PlaceID == null || reservation.ID == null)
+        {
+            return "Invalid Reservation Data";
+        }
         return $"Reservation on {reservation.Date:yyyy-MM-dd} at Table {reservation.PlaceID} (ID: {reservation.ID})";
     }
 
     public static List<string> GenerateMenuOptions(List<ReservationModel> accounts, int currentPage, int totalPages)
     {
+        if (accounts == null || !accounts.Any())
+        {
+            return new List<string> { "No reservations available", "Back" };
+        }
+
+        if (currentPage < 0 || currentPage >= totalPages)
+        {
+            throw new ArgumentOutOfRangeException("Invalid page number");
+        }
+
         var options = accounts.Select(FormatAccount).ToList();
         if (currentPage > 0) options.Add("Previous Page");
         if (currentPage < totalPages - 1) options.Add("Next Page");
         options.Add("Back");
         return options;
     }
+
 }
