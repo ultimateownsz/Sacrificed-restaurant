@@ -32,7 +32,7 @@ static class AdminMenu
             switch (selection.text)
             {
                 case "View reservations (date)":
-                    ShowReservations.Show(acc);
+                    FuturePastReservations.Show(acc, true);
                     break;
                 case "Create (admin account)":
                     RegisterUser.CreateAccount(true);

@@ -5,7 +5,7 @@ public static class ShowReservations
 {
     public static void Show(UserModel acc)
     {
-        FuturePastResrvations.Show(acc, true); // using the new method
+        FuturePastReservations.Show(acc, true); // using the new method
     }
 
     public static void ShowReservationOptions(ReservationModel reservation)
@@ -16,9 +16,9 @@ public static class ShowReservations
             var selectedOption = SelectionPresent.Show(
                 new List<string> 
                 { 
-                    "View Details", 
-                    "Update Reservation", 
-                    "Delete Reservation\n", 
+                    "View reservation (details)", 
+                    "Update reservation", 
+                    "Delete reservation\n", 
                     "Back" 
                 },
                 $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\n"
@@ -27,15 +27,15 @@ public static class ShowReservations
             // Handle the chosen action
             switch (selectedOption)
             {
-                case "View Details":
+                case "View reservation (details)":
                     ReservationDetails.ShowDetails(reservation);
                     break;
 
-                case "Update Reservation":
+                case "Update reservation":
                     UpdateReservation.Show(reservation, true); // Boolean to check for admin
                     break;
 
-                case "Delete Reservation":
+                case "Delete reservation":
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
                 
