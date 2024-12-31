@@ -9,8 +9,7 @@ namespace Presentation
         public static void Show()
         {
             Console.Clear();
-            Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
-            Console.WriteLine("Press Esc to return to the admin menu.");
+            Console.WriteLine("Press 'Enter' to toggle table state.");
 
             var tableSelection = new TableSelection();
             Console.CursorVisible = false;
@@ -53,7 +52,7 @@ namespace Presentation
                     if (isSuccess)
                     {
                         Console.Clear();
-                        Console.WriteLine($"Table {selectedTable} state toggled successfully.");
+                        // ControlHelpPresent.DisplayFeedback($"Table {selectedTable} state toggled successfully.", "bottom", "success");
 
                         if (Access.Places.Read().FirstOrDefault(p => p.ID == selectedTable)?.Active == 0)
                         {
@@ -75,9 +74,9 @@ namespace Presentation
                     else
                     {
                         Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Failed to toggle table {selectedTable}'s state. Please try again.");
-                        Console.ResetColor();
+                        // Console.ForegroundColor = ConsoleColor.Red;
+                        ControlHelpPresent.DisplayFeedback($"Failed to toggle table {selectedTable}'s state. Please try again.");
+                        // Console.ResetColor();
                     }
                 }
             }
