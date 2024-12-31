@@ -21,7 +21,7 @@ static class AdminMenu
                 "Delete (accounts)",
                 "Update (themes)",
                 "(De)activate tables\n",
-                "Back"
+                "Logout",
             ], "ADMIN MENU\n\n");
 
             // Check if Escape was pressed
@@ -50,7 +50,7 @@ static class AdminMenu
                 case "(De)activate tables":
                     AdminTableControlPresent.Show();
                     break;
-                case "Back":
+                case "Logout":
                     return;
             }
         } while (true);
