@@ -34,16 +34,9 @@ public static class ControlHelpPresent
     internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
-        string? feedbackMessage = null)  // pass the recalculated footer start line
+        string? feedbackMessage = null,  // pass the recalculated footer start line
+        List<string>? helpfulTips = null) // new optional parameter for helpful tips for the user
     {
-        // if (footerStartLine == -1)
-        // {
-        //     footerStartLine = Console.WindowHeight - GetFooterHeight();  // default position
-        // }
-
-        // ClearFooterSpace(footerStartLine, Console.WindowHeight);
-        // Console.SetCursorPosition(0, footerStartLine);
-        
         // Display feedback if provided
         if (!string.IsNullOrWhiteSpace(feedbackMessage))
         {
@@ -116,6 +109,16 @@ public static class ControlHelpPresent
                 Console.ResetColor();
             }
         }
+
+        if (helpfulTips != null && helpfulTips.Count > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            foreach (string tip in helpfulTips)
+            {
+                Console.WriteLine($"TIP: {tip}");
+            }
+            Console.ResetColor();
+        }
     }
 
     public static int GetFooterHeight()
@@ -124,21 +127,35 @@ public static class ControlHelpPresent
     }
 
     // this method is used to show direct feedback to the user what went wrong, it is shown below in the terminal too
-    public static void DisplayFeedback(string message, string position = "bottom", int delayMS = 2000)
+    public static void DisplayFeedback(
+        string message,
+        string position = "bottom",
+        int delayMS = 2000,
+        ConsoleColor color = ConsoleColor.Red,
+        ConsoleColor bgColor = ConsoleColor.Black)
     {
         // the message is not null or empty
         if (string.IsNullOrWhiteSpace(message))
             return;
 
         // calculate the start line based on the position
-        int startLine = position.ToLower() == "top" ? 0 : Console.WindowHeight - 2;
+        // int startLine = position.ToLower() == "top" ? 0 : Console.WindowHeight - 2;
+
+        int startLine = position.ToLower() switch
+        {
+            "top" => 0,
+            "center" => Console.WindowHeight / 2,
+            _ => Console.WindowHeight - 2, // Default to bottom
+        };
 
         // clear the feedback area
         ClearFeedbackSpace(startLine);
 
         // Set cursor position and display the message
         Console.SetCursorPosition(0, startLine);
-        Console.ForegroundColor = ConsoleColor.Red; // Highlight feedback in red
+        // Console.ForegroundColor = ConsoleColor.Red; // Highlight feedback in red
+        Console.BackgroundColor = bgColor; // Set the background color
+        Console.ForegroundColor = color; // Set the foreground color
         Console.WriteLine($"MESSAGE: {message}");
         Console.ResetColor(); // Reset the color to default
 
