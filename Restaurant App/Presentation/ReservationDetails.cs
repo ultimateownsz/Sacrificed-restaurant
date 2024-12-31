@@ -4,36 +4,44 @@ public static class ReservationDetails
     public static void ShowDetails(ReservationModel reservation)
     {
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.ResetToDefault();
+        ControlHelpPresent.ShowHelp();
 
         // Fetch the account details for the user
         var account = Access.Reservations.GetBy<int?>("UserID", reservation.UserID);
 
-        // Ensure data exists
+        // Display feedback if user details cannot be retrieved
         if (account == null)
         {
-            Console.WriteLine("Unable to retrieve user details.");
-            Console.WriteLine("Press any key to return to the reservations list.");
+            ControlHelpPresent.DisplayFeedback("Unable to retrieve user details. Press any key to return...");
             Console.ReadKey();
             return;
         }
 
-        // Display the details
-        Console.WriteLine("Reservation Details");
-        Console.WriteLine("-------------------");
-        // Console.WriteLine($"Name: {account.FirstName} {account.LastName}");
-        Console.WriteLine();
-        Console.WriteLine($"Reservation Date: {reservation.Date.ToString()}");
-        Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
-        Console.WriteLine("More details may appear in the future...");
+        // Display the reservation details
+        Console.SetCursorPosition(0, 0); // Ensure content is displayed at the top
+        Console.WriteLine("=========== Reservation Details =============================");
+        Console.WriteLine($"Reservation Date     : {reservation.Date:yyyy-MM-dd}");
+        Console.WriteLine($"Assigned Table Number:  {reservation.PlaceID}");
+        Console.WriteLine($"User                 : {GetUserFullName(reservation.UserID)}");
+        Console.WriteLine("\nMore details may appear in the future...");
+        Console.WriteLine("==============================================================");
 
-        Console.WriteLine("\nPress any key to return to the reservations list.");
+        // Show navigation options in the footer
+        Console.WriteLine("\nPress any key to return to the reservations list...");
         Console.ReadKey();
     }
 
-    private static string FormatDate(long date)
+    private static string GetUserFullName(int? userID)
     {
-        // Format the date from ddMMyyyy (e.g., 12122024) to dd/MM/yyyy
-        string dateString = date.ToString("D8"); // Ensure it's 8 digits long
-        return $"{dateString.Substring(0, 2)}/{dateString.Substring(2, 2)}/{dateString.Substring(4)}";
+        var account = Access.Users.GetBy<int?>("ID", userID);
+        if (account != null)
+        {
+            return $"{account.FirstName} {account.LastName}";
+        }
+
+        ControlHelpPresent.DisplayFeedback($"User with ID {userID} not found.");
+        return "Unknown User";
     }
 }
