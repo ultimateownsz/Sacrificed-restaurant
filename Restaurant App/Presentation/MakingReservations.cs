@@ -144,6 +144,9 @@ namespace Presentation
         private static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 

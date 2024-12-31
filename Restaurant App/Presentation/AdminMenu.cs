@@ -10,6 +10,10 @@ static class AdminMenu
         {
             Console.Clear();
 
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
+
             // Display menu and get selection
             dynamic selection = SelectionPresent.Show([
                 "View reservations (date)",

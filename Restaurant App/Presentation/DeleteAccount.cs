@@ -29,6 +29,10 @@ namespace Project.Presentation
                 do
                 {
                     Console.Clear();
+
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.ResetToDefault();
+                    ControlHelpPresent.ShowHelp();
                     // prepare options for the current page
                     var options = DeleteAccountLogic.GenerateMenuOptions(activeAccounts, currentPage);
 

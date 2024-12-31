@@ -10,6 +10,9 @@ public static class UpdateReservation
         TryCatchHelper.EscapeKeyException(() =>
         {
             Console.Clear();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
             Console.WriteLine("Update Reservation Details");
             Console.WriteLine("--------------------------");
 

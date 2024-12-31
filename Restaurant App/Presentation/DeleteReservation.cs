@@ -10,6 +10,10 @@ public static class DeleteReservation
         {
             // Clear the console and display the confirmation menu
             Console.Clear();
+
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
             var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
             string userFullName = GetUserFullName(account?.ID);
             // Console.WriteLine($"Are you sure?");
