@@ -116,19 +116,30 @@ public static class ControlHelpPresent
         return navigationControls.Count + 4; // Number of controls + header + margin
     }
 
-    // this method is used to show direct feedback to the user what went wrong, it is shown below in the terminal too
+    /// <summary>
+    /// Displays feedback to the user in the console, with different colors for errors, tips, and success messages.
+    /// </summary>
+    /// <param name="message">The feedback message to display.</param>
+    /// <param name="position">Where the feedback should be displayed ("top", "center", or "bottom").</param>
+    /// <param name="feedbackType">The type of feedback. Options are "error", "tip", or "success".</param>
+    /// <param name="delayMS">Optional delay in milliseconds for how long the message should be displayed.</param>
     public static void DisplayFeedback(
         string message,
         string position = "bottom",
-        bool isTip = false,
+        string feedbackType = "error", // Default is "error"
         int? delayMS = null) // new parameter to differentiate between errors and tips
     {
         // the message is not null or empty
         if (string.IsNullOrWhiteSpace(message))
             return;
 
-        // Set text color based on the type of feedback
-        ConsoleColor textColor = isTip ? ConsoleColor.Cyan : ConsoleColor.Red;
+        // Determine the color based on feedback type
+        ConsoleColor textColor = feedbackType.ToLower() switch
+        {
+            "tip" => ConsoleColor.Cyan,
+            "success" => ConsoleColor.Green,
+            _ => ConsoleColor.Red, // Default to error
+        };
 
         // calculate the start line based on the position
         // int startLine = position.ToLower() == "top" ? 0 : Console.WindowHeight - 2;
@@ -146,7 +157,7 @@ public static class ControlHelpPresent
         // Set cursor position and display the message
         Console.SetCursorPosition(0, startLine);
         Console.ForegroundColor = textColor; // Set the foreground color
-        Console.WriteLine($"{(isTip ? "TIP" : "ERROR")}: {message}");
+        Console.WriteLine($"{feedbackType.ToUpper()}: {message}");
         Console.ResetColor(); // Reset the color to default
 
         // pause for the specified delay
