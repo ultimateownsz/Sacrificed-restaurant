@@ -19,7 +19,7 @@ namespace Project.Presentation
                 if (activeAccounts == null || !activeAccounts.Any())
                 {
                     ControlHelpPresent.DisplayFeedback("No accounts available to delete.");
-                    Console.WriteLine("\nPress any key to return to the previous menu...");
+                    ControlHelpPresent.DisplayFeedback("\nPress any key to return to the previous menu...", "bottom", "tip");
                     Console.ReadKey();
                     return;
                 }
@@ -65,7 +65,7 @@ namespace Project.Presentation
                             bool success = DeleteAccountLogic.DeleteAccount(currentUser, selection.text, activeAccounts, currentPage);
                             if (success)
                             {
-                                Console.WriteLine("\nAccount successfully deleted. Press any key to refresh...");
+                                ControlHelpPresent.DisplayFeedback("\nAccount successfully deleted. Press any key to refresh...", "bottom", "success");
                                 Console.ReadKey();
                                 activeAccounts = DeleteAccountLogic.GetActiveAccounts()
                                     .Where(acc => acc.ID != currentUser.ID)

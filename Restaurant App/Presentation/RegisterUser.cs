@@ -114,7 +114,7 @@ internal class RegisterUser
             ShowAccountDetails(firstName, lastName, email, password, phoneNumber);
 
             // Pause for the user to review the account details
-            Console.WriteLine("\nPress any key to continue to continue...");
+            ControlHelpPresent.DisplayFeedback("\nPress any key to continue to continue...", "bottom", "tip");
             Console.ReadKey(intercept: true); // Wait for user input to proceed
 
             // add navigation options for the confirmation menu
@@ -136,7 +136,7 @@ internal class RegisterUser
 
             if (selection.text == null || selection.text == "Save and return")
             {
-                Console.WriteLine("\nSaving your account...");
+                ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
                 SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
                 return;
             }
@@ -233,7 +233,7 @@ internal class RegisterUser
         };
 
         Access.Users.Write(account);
-        Console.WriteLine("\nYour account has been successfully updated!");
+        ControlHelpPresent.DisplayFeedback("\nYour account has been successfully updated!", "bottom", "success");
     }
 
     // private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(

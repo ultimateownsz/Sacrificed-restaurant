@@ -33,7 +33,7 @@ static class ThemeView
                     {
                         themeName = ThemeInputValidator.GetValidString();
                         ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-                        Console.WriteLine($"The theme has been updated to {themeName}");
+                        ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", "success");
                     }
                     );
                 }
@@ -41,17 +41,17 @@ static class ThemeView
                 {
                     ThemeMenuLogic.DeleteMonthTheme(month, year);
                     Console.Clear();
-                    Console.WriteLine("This theme has been deleted");
+                    ControlHelpPresent.DisplayFeedback("This theme has been deleted", "bottom", "success");
                 }
             }
             else
             {
                 themeName = ThemeInputValidator.GetValidString();
                 ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-                Console.WriteLine($"The theme has been updated to {themeName}");
+                ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", feedbackType: "success");
             }
 
-            // ControlHelpPresent.DisplayFeedback("Go back to previous menu, or press any key to keep editing...", "bottom", true);
+            ControlHelpPresent.DisplayFeedback("Go back to previous menu, or press any key to keep editing...", "bottom", feedbackType: "tip");
 
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape);
 

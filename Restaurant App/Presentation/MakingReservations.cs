@@ -38,7 +38,7 @@ namespace Presentation
                 if (orders.Any())
                 {
                     PrintReceipt(orders, reservationId, acc);
-                    Console.WriteLine("\nPress Enter to return to the main menu...");
+                    ControlHelpPresent.DisplayFeedback("\nPress 'Enter' to return to the previous menu...", "bottom", "tip");
                     while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
                 }
             });
@@ -85,7 +85,7 @@ namespace Presentation
         {
             if (!acc.ID.HasValue)
             {
-                ControlHelpPresent.DisplayFeedback("Error: User ID is null. Unable to create reservation.");
+                ControlHelpPresent.DisplayFeedback("User ID is null. Unable to create reservation.");
                 return 0;
             }
 
@@ -134,7 +134,7 @@ namespace Presentation
                             continue;
                         }
                         allOrders.Add(selectedProduct);
-                        Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                        ControlHelpPresent.DisplayFeedback($"{selectedProduct.Name} added successfully!", "bottom", "success");
                     }
                 }
             }
@@ -147,6 +147,8 @@ namespace Presentation
             ControlHelpPresent.Clear();
             ControlHelpPresent.ResetToDefault();
             ControlHelpPresent.ShowHelp();
+
+            Console.SetCursorPosition(0, 0);
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 

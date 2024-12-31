@@ -11,11 +11,11 @@ public static class UpdateProducts
         
         if (ProductLogic.AddProduct(product) == false)
         {
-            Console.WriteLine($"Product: {product.Name}, with ID: {product.ID} already exists.");
+            ControlHelpPresent.DisplayFeedback($"Product: {product.Name}, with ID: {product.ID} already exists.", "bottom", "error");
         }
         else
         {
-            Console.WriteLine($"Product: {product.Name}, with ID: {product.ID} added.");
+            ControlHelpPresent.DisplayFeedback($"Product: {product.Name}, with ID: {product.ID} added.", "bottom", "success");
         }
     }
 
@@ -23,7 +23,7 @@ public static class UpdateProducts
     {
         if (ProductLogic.DeleteProduct(productId))
         {
-            Console.WriteLine($"Product with ID: {productId} deleted.");
+            ControlHelpPresent.DisplayFeedback($"Product with ID: {productId} deleted.", "bottom", "success");
         }
     } 
 }

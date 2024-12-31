@@ -35,14 +35,14 @@ public static class UpdateReservation
                     case "Date":
                         Console.Clear();
                         if (UpdateReservationDate(reservation))
-                            Console.WriteLine("\nDate updated successfully.");
+                            ControlHelpPresent.DisplayFeedback("\nDate updated successfully.", "bottom", "success");
                             // Thread.Sleep(1500);
                         break;
 
                     case "Table":
                         Console.Clear();
                         if (UpdateTableID(reservation))
-                            Console.WriteLine("\nTable number updated successfully.");
+                            ControlHelpPresent.DisplayFeedback("\nTable number updated successfully.", "bottom", "success");
                             // Thread.Sleep(1500);
                         break;
 
@@ -161,7 +161,7 @@ public static class UpdateReservation
     return TryCatchHelper.EscapeKeyWithResult(() =>
     {
         string input = InputHelper.GetValidatedInput<string>(
-            "Enter new Reservation Date (DD/MM/YYYY) or press Escape to cancel: ",
+            "Enter new Reservation Date (DD/MM/YYYY): ",
             input =>
             {
                 // if (string.IsNullOrEmpty(input))
@@ -298,7 +298,7 @@ public static class UpdateReservation
 
             if (string.IsNullOrEmpty(newAmountInput))
             {
-                Console.WriteLine("Reservation Amount not updated.");
+                ControlHelpPresent.DisplayFeedback("Reservation Amount not updated.");
                 break;
             }
             else if (int.TryParse(newAmountInput, out int newAmount))
@@ -316,7 +316,7 @@ public static class UpdateReservation
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a valid number.");
+                ControlHelpPresent.DisplayFeedback("Invalid input. Please enter a valid number.", "bottom", "error");
             }
         }
     }

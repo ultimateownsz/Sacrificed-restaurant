@@ -14,7 +14,7 @@ public static class ReservationDetails
         // Display feedback if user details cannot be retrieved
         if (account == null)
         {
-            ControlHelpPresent.DisplayFeedback("Unable to retrieve user details. Press any key to return...");
+            ControlHelpPresent.DisplayFeedback("Unable to retrieve user details. Press any key to return...", "bottom", "tip");
             Console.ReadKey();
             return;
         }
@@ -29,7 +29,7 @@ public static class ReservationDetails
         Console.WriteLine("==============================================================");
 
         // Show navigation options in the footer
-        Console.WriteLine("\nPress any key to return to the reservations list...");
+        ControlHelpPresent.DisplayFeedback("\nPress any key to return to the reservations list...", "bottom", "tip");
         Console.ReadKey();
     }
 

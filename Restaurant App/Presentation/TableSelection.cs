@@ -166,6 +166,7 @@ namespace Presentation
                 // Flash the "X" and the table number in yellow
                 _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Yellow);
             }
+            Console.ResetColor();
         }
 
 
@@ -179,6 +180,7 @@ namespace Presentation
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("X ");
+                Console.ResetColor();
                 await Task.Delay(500);
 
                 if (token.IsCancellationRequested) break;
