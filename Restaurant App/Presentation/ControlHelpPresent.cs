@@ -34,8 +34,8 @@ public static class ControlHelpPresent
     internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
-        string? feedbackMessage = null,  // pass the recalculated footer start line
-        List<string>? helpfulTips = null) // new optional parameter for helpful tips for the user
+        string? feedbackMessage = null)  // pass the recalculated footer start line
+        
     {
         // Display feedback if provided
         if (!string.IsNullOrWhiteSpace(feedbackMessage))
@@ -109,16 +109,6 @@ public static class ControlHelpPresent
                 Console.ResetColor();
             }
         }
-
-        if (helpfulTips != null && helpfulTips.Count > 0)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            foreach (string tip in helpfulTips)
-            {
-                Console.WriteLine($"TIP: {tip}");
-            }
-            Console.ResetColor();
-        }
     }
 
     public static int GetFooterHeight()
@@ -130,13 +120,15 @@ public static class ControlHelpPresent
     public static void DisplayFeedback(
         string message,
         string position = "bottom",
-        int delayMS = 2000,
-        ConsoleColor color = ConsoleColor.Red,
-        ConsoleColor bgColor = ConsoleColor.Black)
+        bool isTip = false,
+        int? delayMS = null) // new parameter to differentiate between errors and tips
     {
         // the message is not null or empty
         if (string.IsNullOrWhiteSpace(message))
             return;
+
+        // Set text color based on the type of feedback
+        ConsoleColor textColor = isTip ? ConsoleColor.Cyan : ConsoleColor.Red;
 
         // calculate the start line based on the position
         // int startLine = position.ToLower() == "top" ? 0 : Console.WindowHeight - 2;
@@ -153,16 +145,15 @@ public static class ControlHelpPresent
 
         // Set cursor position and display the message
         Console.SetCursorPosition(0, startLine);
-        // Console.ForegroundColor = ConsoleColor.Red; // Highlight feedback in red
-        Console.BackgroundColor = bgColor; // Set the background color
-        Console.ForegroundColor = color; // Set the foreground color
-        Console.WriteLine($"MESSAGE: {message}");
+        Console.ForegroundColor = textColor; // Set the foreground color
+        Console.WriteLine($"{(isTip ? "TIP" : "ERROR")}: {message}");
         Console.ResetColor(); // Reset the color to default
 
         // pause for the specified delay
+        delayMS = 2000;
         if (delayMS > 0)
         {
-            Task.Delay(delayMS).Wait();  // blocking delay
+            Task.Delay(delayMS ?? 2000).Wait();  // blocking delay
         }
     }
 
