@@ -1,6 +1,6 @@
 using Dapper;
 
-public static class ControlsHelperPresent
+public static class ControlHelpPresent
 {   
     // default navigation controls
     private static readonly Dictionary<string, string> defaultNavigationControls = new()

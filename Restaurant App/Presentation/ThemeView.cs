@@ -85,10 +85,10 @@ static class ThemeView
             Console.ResetColor();
 
             // Display the footer
-            ControlsHelperPresent.Clear();
-            ControlsHelperPresent.ResetToDefault();
-            ControlsHelperPresent.AddOptions("Reset a year", "<r>");
-            ControlsHelperPresent.ShowHelp();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.AddOptions("Reset a year", "<r>");
+            ControlHelpPresent.ShowHelp();
             // Console.WriteLine("\nControls  :\n");
             // Console.WriteLine("Navigate    : <arrows>");
             // Console.WriteLine("Select      : <enter>");
@@ -128,14 +128,14 @@ static class ThemeView
                     }
                     else
                     {
-                        ControlsHelperPresent.DisplayFeedback("Cannot navigate to years in the past.");
+                        ControlHelpPresent.DisplayFeedback("Cannot navigate to years in the past.");
                         // message = "Cannot navigate to years in the past.";
                     }
                     break;
 
                 case ConsoleKey.LeftArrow:
                 case ConsoleKey.RightArrow:
-                    ControlsHelperPresent.DisplayFeedback("You can only navigate using the Up and Down arrows.");
+                    ControlHelpPresent.DisplayFeedback("You can only navigate using the Up and Down arrows.");
                     // message = "You can only navigate using the Up and Down arrows.";
                     break;
 
@@ -151,7 +151,7 @@ static class ThemeView
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    ControlsHelperPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.");
+                    ControlHelpPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.");
                     // message = "Invalid input. Use <arrows>, <r>, <escape>, or <enter>.";
                     break;
             }
@@ -192,7 +192,7 @@ static class ThemeView
 
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
-                ControlsHelperPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.");
+                ControlHelpPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.");
                 Console.ReadKey();
             }
             else

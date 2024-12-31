@@ -85,14 +85,14 @@ namespace Presentation
         {
             if (!acc.ID.HasValue)
             {
-                Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                ControlHelpPresent.DisplayFeedback("Error: User ID is null. Unable to create reservation.");
                 return 0;
             }
 
             int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
             if (reservationId == 0)
             {
-                Console.WriteLine("Failed to save reservation. Try again.");
+                ControlHelpPresent.DisplayFeedback("Failed to save reservation. Try again.");
                 return 0;
             }
             return reservationId;
@@ -130,7 +130,7 @@ namespace Presentation
                     {
                         if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                         {
-                            Console.WriteLine("Failed to save the order. Try again.");
+                            ControlHelpPresent.DisplayFeedback("Failed to save the order. Try again.");
                             continue;
                         }
                         allOrders.Add(selectedProduct);

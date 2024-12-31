@@ -52,19 +52,19 @@ public static class InputHelper
 
             // display error message
             // Console.ForegroundColor = ConsoleColor.Red;
-            ControlsHelperPresent.DisplayFeedback($"Invalid input: {error}");
+            ControlHelpPresent.DisplayFeedback($"Invalid input: {error}");
 
             // show remaining attempts
             int remainingAttempts = maxAttempts - attempt;
             if (remainingAttempts > 0)
             {
-                ControlsHelperPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
+                ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
                 // Console.ResetColor();
             }
             else
             {
                 // Throw exception after last attempt
-                ControlsHelperPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.\n");
+                ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.\n");
                 Thread.Sleep(1500);
                 throw new OperationCanceledException("Too many invalid attempts.");
             }

@@ -38,7 +38,7 @@ namespace Project
                         {
                             // Console.SetCursorPosition(0, Console.CursorTop + 2);
                             // Console.WriteLine("You cannot reserve in the past.");
-                            ControlsHelperPresent.DisplayFeedback("You cannot reserve in the past.");
+                            ControlHelpPresent.DisplayFeedback("You cannot reserve in the past.");
                         }
                         else
                         {
@@ -57,7 +57,7 @@ namespace Project
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
                             Console.ForegroundColor = ConsoleColor.Red;
-                            ControlsHelperPresent.DisplayFeedback("This day is fully reserved.");
+                            ControlHelpPresent.DisplayFeedback("This day is fully reserved.");
                             Console.ResetColor();
                         }
                         else
@@ -68,7 +68,7 @@ namespace Project
                     case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
                     default:
-                        ControlsHelperPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                        ControlHelpPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
             }
@@ -77,13 +77,13 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
-            int footerHeight = ControlsHelperPresent.GetFooterHeight();  // returns the height of the help footer
+            int footerHeight = ControlHelpPresent.GetFooterHeight();  // returns the height of the help footer
             int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
             
             // ensure there's enough space to display the calendar
             if (availableHeight < 0)
             {
-                ControlsHelperPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
+                ControlHelpPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
                 return;
             }
 
@@ -141,7 +141,7 @@ namespace Project
             int calendarHeight = Console.CursorTop;
             if (calendarHeight + footerHeight > Console.WindowHeight)
             {
-                ControlsHelperPresent.DisplayFeedback("\nNot enough space to display the calendar and controls.");
+                ControlHelpPresent.DisplayFeedback("\nNot enough space to display the calendar and controls.");
                 return;
             }
             Console.SetCursorPosition(0, availableHeight);
@@ -149,16 +149,16 @@ namespace Project
             // Display the "fully reserved" message before the footer
             if (showFullyReservedMessage)
             {
-                ControlsHelperPresent.DisplayFeedback("\nThis day is fully reserved.");
+                ControlHelpPresent.DisplayFeedback("\nThis day is fully reserved.");
             }
 
             // Display the footer
-            ControlsHelperPresent.Clear();
-            ControlsHelperPresent.AddOptions("Previous month", "<p>");
-            ControlsHelperPresent.AddOptions("Next month", "<n>");
-            ControlsHelperPresent.AddOptions("Select date", "<enter>");
-            ControlsHelperPresent.AddOptions("Back", "<escape>");
-            ControlsHelperPresent.ShowHelp();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Previous month", "<p>");
+            ControlHelpPresent.AddOptions("Next month", "<n>");
+            ControlHelpPresent.AddOptions("Select date", "<enter>");
+            ControlHelpPresent.AddOptions("Back", "<escape>");
+            ControlHelpPresent.ShowHelp();
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)

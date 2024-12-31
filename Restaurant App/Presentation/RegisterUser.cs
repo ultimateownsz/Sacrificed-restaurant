@@ -10,9 +10,9 @@ internal class RegisterUser
 {
     public static void CreateAccount(bool admin = false)
     {
-        ControlsHelperPresent.Clear();
-        ControlsHelperPresent.AddOptions("Back", "<escape>");
-        ControlsHelperPresent.ShowHelp();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Back", "<escape>");
+        ControlHelpPresent.ShowHelp();
         Console.WriteLine("Please enter the following information:\n");
 
         TryCatchHelper.EscapeKeyException(() =>
@@ -22,13 +22,13 @@ internal class RegisterUser
             "First name: ",
             input => InputHelper.InputNotNull(input, "First name"),
             menuTitle: "REGISTER",
-            showHelpAction: () => ControlsHelperPresent.ShowHelp()
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string lastName = InputHelper.GetValidatedInput<string>(
             "Last name: ",
             input => InputHelper.InputNotNull(input, "Last name"),
             menuTitle: "REGISTER",
-            showHelpAction: () => ControlsHelperPresent.ShowHelp()
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string email = InputHelper.GetValidatedInput<string>(
                 "Email (e.g., example@domain.com): ",
@@ -39,14 +39,14 @@ internal class RegisterUser
                     {
                         if (message != null)
                         {
-                            ControlsHelperPresent.DisplayFeedback(message);
+                            ControlHelpPresent.DisplayFeedback(message);
                         }
                         return (null, null);
                     }
                     return (input, null);
                 },
                 menuTitle: "REGISTER",
-                showHelpAction: () => ControlsHelperPresent.ShowHelp()
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string password = InputHelper.GetValidatedInput<string>(
             "Password (8-16 characters, must include letters and numbers): ",
@@ -57,14 +57,14 @@ internal class RegisterUser
                 {
                     if (message != null)
                     {
-                        ControlsHelperPresent.DisplayFeedback(message); // Show feedback to the user
+                        ControlHelpPresent.DisplayFeedback(message); // Show feedback to the user
                     }
                     return (null, null); // Return null to prompt the user again
                 }
                 return (input, null); // Return valid input
             },
             menuTitle: "REGISTER",
-            showHelpAction: () => ControlsHelperPresent.ShowHelp()
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
         );
             string phoneNumber = InputHelper.GetValidatedInput<string>(
                 "Phone number (10 digits): ",
@@ -75,17 +75,17 @@ internal class RegisterUser
                     {
                         if (error != null)
                         {
-                            ControlsHelperPresent.DisplayFeedback(error);
+                            ControlHelpPresent.DisplayFeedback(error);
                         }
                         return (null, null);
                     }
                     return (input, null);
                 },
                 menuTitle: "REGISTER",
-                showHelpAction: () => ControlsHelperPresent.ShowHelp()
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
 
-            ControlsHelperPresent.ResetToDefault();
+            ControlHelpPresent.ResetToDefault();
 
             ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
         });
@@ -115,7 +115,7 @@ internal class RegisterUser
             Console.ReadKey(intercept: true); // Wait for user input to proceed
 
             // add navigation options for the confirmation menu
-            ControlsHelperPresent.ShowHelp();
+            ControlHelpPresent.ShowHelp();
 
             List<string> options = new()
             {
@@ -164,7 +164,7 @@ internal class RegisterUser
                         {
                             if (message != null)
                             {
-                                ControlsHelperPresent.DisplayFeedback(message);
+                                ControlHelpPresent.DisplayFeedback(message);
                             }
                             return (null, null);
                         }
@@ -182,7 +182,7 @@ internal class RegisterUser
                         {
                             if (message != null)
                             {
-                                ControlsHelperPresent.DisplayFeedback(message); // Show feedback to the user
+                                ControlHelpPresent.DisplayFeedback(message); // Show feedback to the user
                             }
                             return (null, null); // Return null to prompt the user again
                         }
@@ -200,14 +200,14 @@ internal class RegisterUser
                             {
                                 if (error != null)
                                 {
-                                    ControlsHelperPresent.DisplayFeedback(error);
+                                    ControlHelpPresent.DisplayFeedback(error);
                                 }
                                 return (null, null);
                             }
                             return (input, null);
                         },
                         menuTitle: "REGISTER",
-                        showHelpAction: () => ControlsHelperPresent.ShowHelp()
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
                     );
                     break;
 
@@ -236,7 +236,7 @@ internal class RegisterUser
     // private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(
     //     string firstName, string lastName, string email, string password, string phoneNumber)
     // {
-    //     ControlsHelperPresent.ShowHelp();
+    //     ControlHelpPresent.ShowHelp();
     //     string banner = "Choose which information you'd like to change:\n\n";
     //     string fieldToChange = SelectionPresent.Show([ "First name", "Last name", "Email", "Password", "Phone number" ], banner).text;
 
@@ -247,7 +247,7 @@ internal class RegisterUser
     //                 "First name: ",
     //                 input => InputHelper.InputNotNull(input, "First name"),
     //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlsHelperPresent.ShowHelp()
+    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
     //             );
     //             break;
 
@@ -256,7 +256,7 @@ internal class RegisterUser
     //                 "Last name: ",
     //                 input => InputHelper.InputNotNull(input, "Last name"),
     //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlsHelperPresent.ShowHelp()
+    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
     //             );
     //             break;
 
@@ -269,7 +269,7 @@ internal class RegisterUser
     //                     return isValid ? (input, null) : (null, message);
     //                 },
     //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlsHelperPresent.ShowHelp());
+    //                 showHelpAction: () => ControlHelpPresent.ShowHelp());
     //             break;
 
     //         case "Password":
@@ -277,7 +277,7 @@ internal class RegisterUser
     //                 "Password (8-16 characters, must include letters and numbers): ",
     //                 input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers."),
     //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlsHelperPresent.ShowHelp()
+    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
     //             );
     //             break;
 
@@ -286,11 +286,11 @@ internal class RegisterUser
     //                 "Phone number (10 digits): ",
     //                 input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890)."),
     //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlsHelperPresent.ShowHelp()
+    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
     //             );
     //             break;
     //     }
-    //     ControlsHelperPresent.ResetToDefault();
+    //     ControlHelpPresent.ResetToDefault();
 
     //     return (firstName, lastName, email, password, phoneNumber);
     // }

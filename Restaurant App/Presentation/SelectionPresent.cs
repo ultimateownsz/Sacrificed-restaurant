@@ -76,7 +76,7 @@ internal class SelectionPresent : SelectionLogic
         Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
         int lastWindowHeight = Console.WindowHeight;  // track the initial terminal height
-        int reservedLines = ControlsHelperPresent.GetFooterHeight();
+        int reservedLines = ControlHelpPresent.GetFooterHeight();
 
         while (true)
         {
@@ -99,7 +99,7 @@ internal class SelectionPresent : SelectionLogic
             }
 
             // Show help section with dynamic feedback for the selected option
-            ControlsHelperPresent.ShowHelp(options, selectedIndex);
+            ControlHelpPresent.ShowHelp(options, selectedIndex);
 
             if ((selected = _read(selection)) != null)
             {

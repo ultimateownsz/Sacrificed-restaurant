@@ -9,8 +9,8 @@ static class UserLogin
     
     private static string? request_email()
     {
-        ControlsHelperPresent.Clear();
-        ControlsHelperPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Exit", "<escape>");
 
         string? email = null;
 
@@ -21,7 +21,7 @@ static class UserLogin
                 "Email: ", // Pass the prompt here
                 input => InputHelper.InputNotNull(input, "Email cannot be empty."),
                 menuTitle: "LOGIN",
-                showHelpAction: () => ControlsHelperPresent.ShowHelp()
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
         });
 
@@ -35,8 +35,8 @@ static class UserLogin
 
     private static string? request_password(string? email)
     {
-        // ControlsHelperPresent.Clear();
-        ControlsHelperPresent.AddOptions("Exit", "<escape>");
+        // ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Exit", "<escape>");
         
         // Display the email above the password prompt
         Console.SetCursorPosition(0, 0);
@@ -65,7 +65,7 @@ static class UserLogin
                         Console.WriteLine("");
                         Console.WriteLine(input);
                     }
-                    ControlsHelperPresent.ShowHelp();
+                    ControlHelpPresent.ShowHelp();
                 }
             );
         });
@@ -74,7 +74,7 @@ static class UserLogin
 
         userInput.Add($"Password: {new string('*', password.Length)}"); // Mask password and store it
         
-        ControlsHelperPresent.ResetToDefault();
+        ControlHelpPresent.ResetToDefault();
         userInput.Clear(); // Clear the stored inputs
 
         return password; // Valid password entered
@@ -101,10 +101,10 @@ static class UserLogin
         {
             // Invalid credentials
             Console.Clear();
-            ControlsHelperPresent.Clear();
-            ControlsHelperPresent.AddOptions("Exit", "<escape>");
-            ControlsHelperPresent.ShowHelp();
-            ControlsHelperPresent.ResetToDefault();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Exit", "<escape>");
+            ControlHelpPresent.ShowHelp();
+            ControlHelpPresent.ResetToDefault();
 
             Console.ForegroundColor = ConsoleColor.Red;
             // Display all stored inputs for user reference
@@ -114,7 +114,7 @@ static class UserLogin
             }
 
             Console.ResetColor();
-            ControlsHelperPresent.DisplayFeedback("\nInvalid credentials, returning...");
+            ControlHelpPresent.DisplayFeedback("\nInvalid credentials, returning...");
             return null;
         }
 
