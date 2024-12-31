@@ -52,7 +52,7 @@ public static class InputHelper
 
             // display error message
             // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Invalid input: {error}");
+            // ControlHelpPresent.DisplayFeedback($"Invalid input: {error}");
 
             // show remaining attempts
             int remainingAttempts = maxAttempts - attempt;
