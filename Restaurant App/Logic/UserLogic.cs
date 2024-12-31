@@ -99,10 +99,11 @@ public class UserLogic
         {
             return (false, "Phone number must contain only digits.");
         }
-        if (phoneNumber == "0612345678") // Example of an excluded number
-        {
-            return (false, "This phone number is not allowed.");
-        }
+        // if (phoneNumber == "0612345678") // Example of an excluded number
+        // {
+        //     return (false, "The phone number '0612345678' is reserved for special purposes and cannot be used. Please enter a different phone number.");
+
+        // }
         return (true, null); // Valid phone number
     }
 
