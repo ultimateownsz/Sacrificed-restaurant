@@ -227,6 +227,10 @@ namespace Presentation
                 {
                     Console.Clear();
 
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.ResetToDefault();
+                    ControlHelpPresent.ShowHelp();
+
                     var currentPageReservations = reservations
                         .Skip(currentPage * itemsPerPage)
                         .Take(itemsPerPage)
@@ -248,7 +252,7 @@ namespace Presentation
 
                     if (string.IsNullOrEmpty(selectedOption) || selectedOption.Equals("Back", StringComparison.OrdinalIgnoreCase))
                         return;
-
+                    
                     if (selectedOption == "Next Page >>")
                     {
                         currentPage = Math.Min(currentPage + 1, totalPages - 1);
@@ -261,11 +265,24 @@ namespace Presentation
                         continue;
                     }
 
-                    var selectedReservation = currentPageReservations
-                        .FirstOrDefault(r =>
-                            isAdmin
-                                ? selectedOption.StartsWith($"{currentPageReservations.IndexOf(r) + 1 + currentPage * itemsPerPage}.")
-                                : ReservationLogic.FormatAccount(r) == selectedOption);
+                    ReservationModel? selectedReservation = null;
+                    if (isAdmin)
+                    {
+                        string[] splitSelection = selectedOption.Split('.');
+                        if (splitSelection.Length > 0 && int.TryParse(splitSelection[0], out int selectedIndex))
+                        {
+                            if (selectedIndex > 0 && selectedIndex <= currentPageReservations.Count)
+                            {
+                                selectedReservation = currentPageReservations[selectedIndex - 1];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        selectedReservation = currentPageReservations
+                            .FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedOption);
+                    }
+
 
                     if (selectedReservation != null)
                     {
