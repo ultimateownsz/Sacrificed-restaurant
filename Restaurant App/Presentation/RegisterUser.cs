@@ -84,11 +84,14 @@ internal class RegisterUser
                 menuTitle: "REGISTER",
                 showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
-
+            // reset help to default before confirming and saving the account
             ControlHelpPresent.ResetToDefault();
 
             ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
         });
+        // make sure controls are displayed again when escaping or returning
+        ControlHelpPresent.ResetToDefault();
+        ControlHelpPresent.ShowHelp();
     }
 
     private static void ShowAccountDetails(string firstName, string lastName, string email, string password, string phoneNumber)
