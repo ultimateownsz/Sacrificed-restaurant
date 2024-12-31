@@ -7,10 +7,12 @@ static class UserLogin
 
     private static List<string> userInput = new(); // List to store the email and password
     
+    // Method to request email from the user
     private static string? request_email()
     {
         ControlHelpPresent.Clear();
         ControlHelpPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.ShowHelp();
 
         string? email = null;
 
@@ -25,7 +27,16 @@ static class UserLogin
             );
         });
 
-        if (email == null) return null; // Escape key pressed
+        // Reset the navigation controls to default when escape key is pressed
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.ResetToDefault();
+        ControlHelpPresent.ShowHelp();
+
+        if (email == null)
+        {
+            userInput.Clear(); // Clear inputs on escape key
+            return null; // Escape key pressed
+        }
 
         userInput.Add($"Email: {email}"); // Store the email in the list
 
@@ -35,8 +46,9 @@ static class UserLogin
 
     private static string? request_password(string? email)
     {
-        // ControlHelpPresent.Clear();
+        ControlHelpPresent.Clear();
         ControlHelpPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.ShowHelp();
         
         // Display the email above the password prompt
         Console.SetCursorPosition(0, 0);
@@ -70,7 +82,14 @@ static class UserLogin
             );
         });
 
-        if (password == null) return null;  // Escape key pressed
+        ControlHelpPresent.ResetToDefault();
+        ControlHelpPresent.ShowHelp();
+
+        if (password == null)
+        {
+            userInput.Clear(); // Clear inputs on escape key
+            return null;  // Escape key pressed
+        }
 
         userInput.Add($"Password: {new string('*', password.Length)}"); // Mask password and store it
         
@@ -83,6 +102,10 @@ static class UserLogin
 
     public static UserModel? Start()
     {
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
         // Request email
         string? email = request_email();
         if (email == null) return null; // Escape key pressed during email input
