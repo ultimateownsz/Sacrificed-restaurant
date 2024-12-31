@@ -44,14 +44,14 @@ static class ThemeView
                     Console.WriteLine("This theme has been deleted");
                 }
             }
-            // else
-            // {
-            //     themeName = ThemeInputValidator.GetValidString();
-            //     ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-            //     Console.WriteLine($"The theme has been updated to {themeName}");
-            // }
+            else
+            {
+                themeName = ThemeInputValidator.GetValidString();
+                ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
+                Console.WriteLine($"The theme has been updated to {themeName}");
+            }
 
-            Console.WriteLine("Press <escape> to go back to admin menu, or press any key to keep editing...");
+            // ControlHelpPresent.DisplayFeedback("Go back to previous menu, or press any key to keep editing...", "bottom", true);
 
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape);
 
@@ -77,7 +77,7 @@ static class ThemeView
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("Use the up and down arrow keys to select a year to edit it's themes:\n");
+            Console.WriteLine("Select a year to edit its themes:\n");
 
             // Highlight the currently selected year in yellow
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -89,17 +89,6 @@ static class ThemeView
             ControlHelpPresent.ResetToDefault();
             ControlHelpPresent.AddOptions("Reset a year", "<r>");
             ControlHelpPresent.ShowHelp();
-            // Console.WriteLine("\nControls  :\n");
-            // Console.WriteLine("Navigate    : <arrows>");
-            // Console.WriteLine("Select      : <enter>");
-            // Console.WriteLine("Reset a year: <R>");
-            // Console.WriteLine("Exit        : <escape>");
-
-            // Display any error or info messages
-            // if (!string.IsNullOrEmpty(message))
-            // {
-            //     Console.WriteLine($"\n{message}");
-            // }
 
             var key = Console.ReadKey(intercept: true);
 
@@ -135,7 +124,7 @@ static class ThemeView
 
                 case ConsoleKey.LeftArrow:
                 case ConsoleKey.RightArrow:
-                    ControlHelpPresent.DisplayFeedback("You can only navigate using the Up and Down arrows.");
+                    ControlHelpPresent.DisplayFeedback("You can only navigate using the 'Up' and 'Down' <arrows>.");
                     // message = "You can only navigate using the Up and Down arrows.";
                     break;
 
@@ -161,7 +150,7 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}, or press <escape>\n\n";
+        string bannerMonths = $"Select month in {year}\n\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuLogic.GetMonthThemeName(m, year))
             .ToList();
