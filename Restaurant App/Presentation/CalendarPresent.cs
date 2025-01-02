@@ -38,7 +38,7 @@ namespace Project
                         {
                             // Console.SetCursorPosition(0, Console.CursorTop + 2);
                             // Console.WriteLine("You cannot reserve in the past.");
-                            ControlHelpPresent.DisplayFeedback("You cannot reserve in the past.");
+                            ControlHelpPresent.DisplayFeedback("You cannot reserve in the past. Only future dates are available.");
                         }
                         else
                         {
