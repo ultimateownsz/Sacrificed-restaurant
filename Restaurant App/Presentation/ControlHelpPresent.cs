@@ -130,19 +130,7 @@ public static class ControlHelpPresent
         int? delayMS = null) // new parameter to differentiate between errors and tips
     {
         // the message is not null or empty
-        if (string.IsNullOrWhiteSpace(message))
-            return;
-
-        // Determine the color based on feedback type
-        ConsoleColor textColor = feedbackType.ToLower() switch
-        {
-            "tip" => ConsoleColor.Cyan,
-            "success" => ConsoleColor.Green,
-            _ => ConsoleColor.Red, // Default to error
-        };
-
-        // calculate the start line based on the position
-        // int startLine = position.ToLower() == "top" ? 0 : Console.WindowHeight - 2;
+        if (string.IsNullOrWhiteSpace(message)) return;
 
         int startLine = position.ToLower() switch
         {
@@ -154,10 +142,21 @@ public static class ControlHelpPresent
         // clear the feedback area
         ClearFeedbackSpace(startLine);
 
-        // Set cursor position and display the message
+        // Determine the color based on feedback type
+        ConsoleColor textColor = feedbackType.ToLower() switch
+        {
+            "tip" => ConsoleColor.Cyan,
+            "success" => ConsoleColor.Green,
+            _ => ConsoleColor.Red, // Default to error
+        };
+
+
+        // Safely display the message with feedback type
         Console.SetCursorPosition(0, startLine);
         Console.ForegroundColor = textColor; // Set the foreground color
-        Console.WriteLine($"{feedbackType.ToUpper()}: {message}");
+
+        // Unicode U+200B displays a zero-width space to prevent line wrapping
+        Console.WriteLine($"\u200B{feedbackType.ToUpper()}: {message}");
         Console.ResetColor(); // Reset the color to default
 
         // pause for the specified delay
@@ -172,14 +171,22 @@ public static class ControlHelpPresent
     {
         // check if start line is within bounds
         startLine = Math.Max(0, startLine);
-        int endLine = Math.Min(Console.WindowHeight, startLine + 2); // feedback occupies two lines max
+
+
+        int linesToClear = GetFooterHeight(); // feedback occupies two lines max
+        int endLine = Math.Min(Console.WindowHeight, startLine + linesToClear); // feedback occupies two lines max
     
         // clear the feedback space
         for (int i = startLine; i < endLine; i++)
         {
+            // safely move the cursor to the start of the line
             Console.SetCursorPosition(0, i);
+
+            // Clear the line by writing spaces across the console width
             Console.Write(new string(' ', Console.WindowWidth));
         }
+        // Reset the cursor to the start of the first cleared line
+        Console.SetCursorPosition(0, startLine);
     }
 
     private static void ClearFooterSpace(int startLine, int endLine)
