@@ -27,6 +27,7 @@ public static class UpdateReservation
 
                 if (selection.text == null || selection.text == "Back")
                 {
+                    ControlHelpPresent.DisplayFeedback("Update reservation canceled...", "bottom", "success");
                     return;
                 }
 
@@ -35,6 +36,7 @@ public static class UpdateReservation
                     case "Date":
                         // Console.Clear();
                         UpdateReservationDate(reservation);
+                        ControlHelpPresent.ResetToDefault();
                         // if (UpdateReservationDate(reservation))
                         //     ControlHelpPresent.DisplayFeedback("\nReservation date updated successfully.", "bottom", "success");
                         //     // Thread.Sleep(1500);
@@ -42,6 +44,7 @@ public static class UpdateReservation
 
                     case "Table":
                         UpdateTableID(reservation);
+                        ControlHelpPresent.ResetToDefault();
                         // Console.Clear();
                         // if (UpdateTableID(reservation))
                         //     ControlHelpPresent.DisplayFeedback("\nTable number updated successfully.", "bottom", "success");
