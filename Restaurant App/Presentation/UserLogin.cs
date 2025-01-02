@@ -116,8 +116,10 @@ static class UserLogin
 
         // Check credentials
         UserModel? acc = UserLogic.CheckLogin(email.ToLower(), password);
+        string? loginMessage = acc!.Admin.HasValue && acc.Admin.Value > 0 ? $"Logged in as admin ({acc.FirstName})." : $"Logged in as {acc.FirstName}.";
         if (acc != null)
         {
+            ControlHelpPresent.DisplayFeedback(loginMessage, "bottom", "success");
             return acc; // Successful login
         }
         else

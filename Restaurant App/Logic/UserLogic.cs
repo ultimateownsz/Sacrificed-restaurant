@@ -26,11 +26,11 @@ public class UserLogic
             // tough to segment, badly designed.
             if (acc.Admin == 1)
             {
-                Console.WriteLine("Logged in as Admin.");
+                // Console.WriteLine("Logged in as Admin.");
             }
             else
             {
-                Console.WriteLine("Logged in as a User.");
+                // Console.WriteLine("Logged in as a User.");
             }
 
             return acc;
