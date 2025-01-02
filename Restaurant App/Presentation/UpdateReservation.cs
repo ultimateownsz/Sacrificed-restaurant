@@ -23,9 +23,9 @@ public static class UpdateReservation
             {
                 var options = new List<string> { "Date", "Table\n", "Back" };
                 string menuTitle = "UPDATE RESERVATION\n\n";
-                dynamic selection = SelectionPresent.Show(options, menuTitle);
+                var selection = SelectionPresent.Show(options, menuTitle);
 
-                if (selection.text == null)
+                if (selection.text == null || selection.text == "Back")
                 {
                     return;
                 }
@@ -33,36 +33,24 @@ public static class UpdateReservation
                 switch(selection.text)
                 {
                     case "Date":
-                        Console.Clear();
-                        if (UpdateReservationDate(reservation))
-                            ControlHelpPresent.DisplayFeedback("\nDate updated successfully.", "bottom", "success");
-                            // Thread.Sleep(1500);
+                        // Console.Clear();
+                        UpdateReservationDate(reservation);
+                        // if (UpdateReservationDate(reservation))
+                        //     ControlHelpPresent.DisplayFeedback("\nReservation date updated successfully.", "bottom", "success");
+                        //     // Thread.Sleep(1500);
                         break;
 
                     case "Table":
-                        Console.Clear();
-                        if (UpdateTableID(reservation))
-                            ControlHelpPresent.DisplayFeedback("\nTable number updated successfully.", "bottom", "success");
+                        UpdateTableID(reservation);
+                        // Console.Clear();
+                        // if (UpdateTableID(reservation))
+                        //     ControlHelpPresent.DisplayFeedback("\nTable number updated successfully.", "bottom", "success");
                             // Thread.Sleep(1500);
                         break;
-
-                    case "Back":
-                        return;
                 }
                 Access.Reservations.Update(reservation);
 
             } while (true);
-            // // Proceed to update reservation
-            // if (admin)
-            // {
-            //     UpdateReservationAdmin(reservation);
-            // }
-            // else
-            // {
-            //     UpdateReservationUser(reservation);
-            // }
-
-            // Save updated reservation
         });
     } 
 
@@ -75,270 +63,228 @@ public static class UpdateReservation
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
-    // public static void UpdateReservationAdmin(ReservationModel reservation)
+    // private static bool UpdateReservationDate(ReservationModel reservation)
     // {
-    //     TryCatchHelper.EscapeKeyException(() =>
+    //     // ControlHelpPresent.Clear();
+    //     // ControlHelpPresent.AddOptions("Escape", "<escape>");
+    //     // ControlHelpPresent.ShowHelp();
+    //     return TryCatchHelper.EscapeKeyWithResult(() =>
     //     {
-    //         string confirmChoice = "UPDATE RESERVATION\n\n";
-    //         do
-    //         {
-    //             Console.Clear();
-    //             dynamic selection = SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice);
-    //             if (selection.text == null)
+    //         ControlHelpPresent.Clear();
+    //         ControlHelpPresent.AddOptions("Escape", "<escape>");
+    //         ControlHelpPresent.ShowHelp();
+    //         string input = InputHelper.GetValidatedInput<string>(
+    //             "Enter new reservation Date (DD/MM/YYYY): ",
+    //             input =>
     //             {
-    //                 Thread.Sleep(1500);  // wait 1,5 seconds before you return to last menu
-    //                 return;
+    //                 // if (string.IsNullOrEmpty(input))
+    //                 //     return (reservation.Date.ToString("dd/MM/yyyy"), null); // Fixed here
+
+    //                 if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime newDate))
+    //                 {
+    //                     if (newDate.Date < DateTime.Today)
+    //                         return (null, "The date cannot be in the past.");
+    //                     if (newDate.Date > new DateTime(2025, 12, 31))
+    //                         return (null, "Date must be before December 31, 2025.");
+                        
+    //                     ControlHelpPresent.DisplayFeedback("Reservation date updated successfully.", "bottom", "success");
+    //                     return (newDate.ToString("dd/MM/yyyy"), null);
+    //                 }
+
+    //                 ControlHelpPresent.DisplayFeedback("Invalid date format. Please enter a date in the format dd/MM/yyyy.", "bottom", "error");
+    //                 return (null, "Invalid date format. Please enter a date in the format dd/MM/yyyy.");
     //             }
-                
-    //             switch (selection.text)
-    //             {
-    //                 case "Date":
-    //                     Console.Clear();
-    //                     UpdateReservationDate(reservation);
-    //                     Console.WriteLine("\nDate process ended successfully.");
-    //                     Console.WriteLine("Press any key to return.");
-    //                     Console.ReadKey();
-    //                     break;
+    //         );
 
-    //                 case "Table\n":
-    //                     Console.Clear();
-    //                     UpdateTableID(reservation);
-    //                     Console.WriteLine("\nTable number process ended successfully.");
-    //                     Console.WriteLine("Press any key to return.");
-    //                     Console.ReadKey();
-    //                     break;
+    //         if (input == null) return false; // Escape key was pressed
 
-    //                 case "Back":
-    //                     return;
-    //             }
-    //         } while (true);
-
-    //     }
-    //     );
+    //         reservation.Date = DateTime.ParseExact(input, "dd/MM/yyyy", null);
+    //         ControlHelpPresent.DisplayFeedback("Reservation date updated successfully.", "bottom", "success");
+    //         ControlHelpPresent.ResetToDefault();
+    //         return true;
+    //     });
     // }
 
-    // public static void UpdateReservationUser(ReservationModel reservation)
-    // {
-    //     string confirmChoice = "UPDATE RESERVATION\n\n";
-    //     while (true)
-    //     {
-
-    //         switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
-    //         {
-    //             case "Date":
-    //                 Console.Clear();
-    //                 UpdateReservationDate(reservation);
-    //                 Console.WriteLine("\nDate process ended successfully.");
-    //                 Console.WriteLine("Press any key to return.");
-    //                 Console.ReadKey();
-    //                 break;
-               
-    //             case "Table\n":
-    //                 Console.Clear();
-    //                 UpdateTableID(reservation);
-    //                 Console.WriteLine("\nTable number process ended successfully.");
-    //                 Console.WriteLine("Press any key to return.");
-    //                 Console.ReadKey();
-    //                 break;
-               
-    //             // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
-    //             // EDIT: THEN DON"T FUCKING IMPLEMENT THE LOGIC UNTIL IT'S DONE
-    //             case "Number of guests":
-    //                 Console.Clear();
-    //                 Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
-    //                 Console.WriteLine("Press any key to return.");
-    //                 Console.ReadKey();
-    //                 break;
-                
-    //             case "Back":
-    //                 return;
-    //         }
-    //     }
-    // }
-
-    private static bool UpdateReservationDate(ReservationModel reservation)
-{
-    return TryCatchHelper.EscapeKeyWithResult(() =>
+        private static bool UpdateReservationDate(ReservationModel reservation)
     {
-        string input = InputHelper.GetValidatedInput<string>(
-            "Enter new Reservation Date (DD/MM/YYYY): ",
-            input =>
-            {
-                // if (string.IsNullOrEmpty(input))
-                //     return (reservation.Date.ToString("dd/MM/yyyy"), null); // Fixed here
+        return TryCatchHelper.EscapeKeyWithResult(() =>
+        {
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
+            ControlHelpPresent.ShowHelp();
 
-                if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime newDate))
+            string input = InputHelper.GetValidatedInput<string>(
+                "Enter new reservation date (DD/MM/YYYY): ",
+                input =>
                 {
-                    if (newDate.Date < DateTime.Today)
-                        return (null, "The date cannot be in the past.");
-                    if (newDate.Date > new DateTime(2025, 12, 31))
-                        return (null, "Date must be before December 31, 2025.");
-                    
-                    return (newDate.ToString("dd/MM/yyyy"), null);
-                }
+                    var (parsedDate, error) = InputLogic.ParseValidDate(input); // Use InputLogic for date validation
+                    if (parsedDate == null)
+                    {
+                        ControlHelpPresent.DisplayFeedback(error ?? "Invalid input.", "bottom", "error");
+                        return (null, error); // Return error if validation fails
+                    }
 
-                return (null, "Invalid date format. Please use DD/MM/YYYY.");
-            }
-        );
+                    if (parsedDate.Value.Date < DateTime.Today)
+                    {
+                        string errorMessage = "The date cannot be in the past.";
+                        ControlHelpPresent.DisplayFeedback(errorMessage, "bottom", "error");
+                        return (null, errorMessage);
+                    }
 
-        if (input == null) return false; // Escape key was pressed
+                    if (parsedDate.Value.Date > new DateTime(2025, 12, 31))
+                    {
+                        string errorMessage = "Date must be before December 31, 2025.";
+                        ControlHelpPresent.DisplayFeedback(errorMessage, "bottom", "error");
+                        return (null, errorMessage);
+                    }
 
-        reservation.Date = DateTime.ParseExact(input, "dd/MM/yyyy", null);
-        return true;
-    });
-}
+                    return (parsedDate.Value.ToString("dd/MM/yyyy"), null); // Return the valid date
+                },
+                menuTitle: "UPDATE RESERVATION DATE",
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
 
-        // // Update reservation date
-        // DateTime newDate;
-        // while (true)
-        // {
-        //     Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
-        //     string newDateInput = Console.ReadLine();
-        //     if (string.IsNullOrEmpty(newDateInput))
-        //     {
-        //         Console.WriteLine("Reservation Date not updated.");
-        //         break;
-        //     }
-        //     else if (DateTime.TryParseExact(newDateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out newDate))
-        //     {
-        //         if (newDate.Date < DateTime.Today)
-        //         {
-        //             Console.WriteLine("The date cannot be in the past. Please enter a future date.");
-        //         }
-        //         else if (newDate.Date > new DateTime(2025, 12, 31))
-        //         {
-        //             Console.WriteLine("The date cannot be after December 31, 2025. Please enter a valid date.");
-        //         }
-        //         else
-        //         {
-        //             reservation.Date = newDate; // Store as long
-        //             break;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
-        //     }
-        // }
-    // }
-    
+            if (input == null) return false; // Escape key was pressed
+
+            reservation.Date = DateTime.ParseExact(input, "dd/MM/yyyy", null); // Parse input into DateTime
+            ControlHelpPresent.DisplayFeedback("Reservation date updated successfully.", "bottom", "success");
+            ControlHelpPresent.ResetToDefault();
+            return true;
+        });
+    }
+
     private static bool UpdateTableID(ReservationModel reservation)
     {
         return TryCatchHelper.EscapeKeyWithResult(() =>
         {
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
+            ControlHelpPresent.ShowHelp();
+
             Console.WriteLine("\nTables:");
             Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
             Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
             Console.WriteLine("6-person tables: 2, 3");
-        
+
             string tableInput = InputHelper.GetValidatedInput<string>(
-                "Enter new Table number (1-15) or press Escape to cancel: ",
+                "Enter new table number (1-15): ",
                 input =>
                 {
-                    if (int.TryParse(input, out int tableID) && tableID >= 1 && tableID <= 15)
+                    var (parsedTableID, error) = InputLogic.ParseValidInteger(input, 1); // Use InputLogic to validate table ID
+                    if (parsedTableID == null || parsedTableID > 15)
                     {
-                        if (IsTableTaken(reservation.Date, tableID))
-                            return (null, "This table is already reserved for the selected date.");
-                        return (tableID.ToString(), null);
+                        string errorMessage = "Table number must be between 1 and 15.";
+                        ControlHelpPresent.DisplayFeedback(errorMessage, "bottom", "error");
+                        return (null, errorMessage);
                     }
-                    return (null, "Invalid Table ID. Please choose a valid table number between 1 and 15.");
-                });
+
+                    if (IsTableTaken(reservation.Date, parsedTableID.Value))
+                    {
+                        string errorMessage = "This table is already reserved for the selected date.";
+                        ControlHelpPresent.DisplayFeedback(errorMessage, "bottom", "error");
+                        return (null, errorMessage);
+                    }
+
+                    return (parsedTableID.Value.ToString(), null);
+                },
+                menuTitle: "UPDATE TABLE NUMBER",
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
 
             if (tableInput == null) return false; // Escape key pressed
-            reservation.PlaceID = int.Parse(tableInput);
+
+            reservation.PlaceID = int.Parse(tableInput); // Safely parse the validated input
+            ControlHelpPresent.DisplayFeedback("Table number updated successfully.", "bottom", "success");
             return true;
         });
-
-        
-        // // Update Table ID
-        // while (true)
-        // {
-        //     // Display table capacities
-        //     Console.WriteLine("\nTables:");
-        //     Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
-        //     Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
-        //     Console.WriteLine("6-person tables: 2, 3");
-
-        //     Console.WriteLine("\nEnter new Table number (1-15) or press Enter to keep current:");
-        //     string tableIdInput = Console.ReadLine();
-
-        //     if (string.IsNullOrEmpty(tableIdInput))
-        //     {
-        //         Console.WriteLine("Table ID not updated.");
-        //         break;
-        //     }
-        //     else if (int.TryParse(tableIdInput, out int tableID) && tableID >= 1 && tableID <= 15)
-        //     {
-        //         // Check if the table is taken for the given date
-        //         if (IsTableTaken(reservation.Date, tableID))
-        //         {
-        //             Console.WriteLine("This table is already reserved for the selected date. Please choose a different table.");
-        //         }
-        //         else
-        //         {
-        //             // Assign the new table ID
-        //             reservation.PlaceID = tableID;
-        //             break;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
-        //     }
-        // }
     }
 
     private static void UpdateReservationAmount(ReservationModel reservation)
     {
-        // Update Reservation Amount
-        while (true)
+        TryCatchHelper.EscapeKeyException(() =>
         {
-            Console.WriteLine("\nEnter new number of guests (Reservation Amount) or press Enter to keep current:");
-            string newAmountInput = Console.ReadLine();
-
-            if (string.IsNullOrEmpty(newAmountInput))
+            while (true)
             {
-                ControlHelpPresent.DisplayFeedback("Reservation Amount not updated.");
+                ControlHelpPresent.Clear();
+                ControlHelpPresent.AddOptions("Escape", "<escape>");
+                ControlHelpPresent.ShowHelp();
+
+                Console.WriteLine("\nEnter new number of guests (reservation amount):");
+                string newAmountInput = InputHelper.GetValidatedInput<string>(
+                    "Number of guests: ",
+                    input =>
+                    {
+                        if (string.IsNullOrWhiteSpace(input))
+                        {
+                            return (null, "Input cannot be empty. Please provide a valid number.");
+                        }
+
+                        var (parsedAmount, error) = InputLogic.ParseValidInteger(input, 1); // Minimum 1 guest
+                        if (parsedAmount == null)
+                        {
+                            ControlHelpPresent.DisplayFeedback(error!, "bottom", "error");
+                            return (null, error);
+                        }
+
+                        if (!IsReservationAmountValid((long)reservation.PlaceID!, parsedAmount.Value))
+                        {
+                            string validationError = "Invalid number of guests for the selected table.";
+                            ControlHelpPresent.DisplayFeedback(validationError, "bottom", "error");
+                            return (null, validationError);
+                        }
+
+                        return (parsedAmount.Value.ToString(), null);
+                    }
+                );
+
+                if (string.IsNullOrEmpty(newAmountInput))
+                {
+                    ControlHelpPresent.DisplayFeedback("Reservation amount not updated.", "bottom", "tip");
+                    break;
+                }
+
+                reservation.PlaceID = int.Parse(newAmountInput);
+                ControlHelpPresent.DisplayFeedback($"Reservation amount updated to {reservation.PlaceID}.", "bottom", "success");
                 break;
             }
-            else if (int.TryParse(newAmountInput, out int newAmount))
-            {
-                // Validate the reservation amount based on the table ID
-                //if (IsReservationAmountValid(reservation.Place, newAmount))
-                //{
-                //    reservation.ReservationAmount = newAmount;
-                //    break;
-                //}
-                //else
-                //{
-                //    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
-                //}
-            }
-            else
-            {
-                ControlHelpPresent.DisplayFeedback("Invalid input. Please enter a valid number.", "bottom", "error");
-            }
-        }
+        });
     }
+
+    // private static bool IsReservationAmountValid(long tableID, int reservationAmount)
+    // {
+    //     // Check table ID categories and validate reservation amount
+    //     if (IsTwoPersonTable(tableID) && (reservationAmount == 1 || reservationAmount == 2))
+    //     {
+    //         return true;
+    //     }
+    //     else if (IsFourPersonTable(tableID) && (reservationAmount >= 3 && reservationAmount <= 4))
+    //     {
+    //         return true;
+    //     }
+    //     else if (IsSixPersonTable(tableID) && (reservationAmount >= 5 && reservationAmount <= 6))
+    //     {
+    //         return true;
+    //     }
+
+    //     // If none of the conditions are met, return false
+    //     return false;
+    // }
 
     private static bool IsReservationAmountValid(long tableID, int reservationAmount)
     {
-        // Check table ID categories and validate reservation amount
-        if (IsTwoPersonTable(tableID) && (reservationAmount == 1 || reservationAmount == 2))
+        return TryCatchHelper.EscapeKeyWithResult(() =>
         {
-            return true;
-        }
-        else if (IsFourPersonTable(tableID) && (reservationAmount >= 3 && reservationAmount <= 4))
-        {
-            return true;
-        }
-        else if (IsSixPersonTable(tableID) && (reservationAmount >= 5 && reservationAmount <= 6))
-        {
-            return true;
-        }
+            bool isValid = IsTwoPersonTable(tableID) && reservationAmount <= 2 ||
+                        IsFourPersonTable(tableID) && reservationAmount <= 4 ||
+                        IsSixPersonTable(tableID) && reservationAmount <= 6;
 
-        // If none of the conditions are met, return false
-        return false;
+            if (!isValid)
+            {
+                ControlHelpPresent.DisplayFeedback($"Invalid reservation amount ({reservationAmount}) for table {tableID}.", "bottom", "error");
+            }
+
+            return isValid;
+        });
     }
 
     // Helper methods for table categories
@@ -358,17 +304,35 @@ public static class UpdateReservation
     }
 
     // Helper method to check if the table is already reserved for the given date
+    // private static bool IsTableTaken(DateTime? reservationDate, long tableID)
+    // {
+    //     var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
+
+    //     foreach (var res in reservations)
+    //     {
+    //         if (res.PlaceID == tableID && res.Date != reservationDate) // Ignore the current reservation
+    //         {
+    //             ControlHelpPresent.DisplayFeedback("This table is already reserved for the selected date. Please choose a different table.", "bottom", "error");
+    //             return true; // Table is taken
+    //         }
+    //     }
+
+    //     return false; // Table is available
+    // }
+
     private static bool IsTableTaken(DateTime? reservationDate, long tableID)
     {
-        var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
-
-        foreach (var res in reservations)
+        return TryCatchHelper.EscapeKeyWithResult(() =>
         {
-            if (res.PlaceID == tableID && res.Date != reservationDate) // Ignore the current reservation
+            var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
+
+            if (reservations.Any(res => res!.PlaceID == tableID && res.Date == reservationDate))
             {
+                ControlHelpPresent.DisplayFeedback($"Table {tableID} is already reserved for {reservationDate?.ToString("dd/MM/yyyy")}. Please choose a different table.", "bottom", "error");
                 return true; // Table is taken
             }
-        }
-        return false; // Table is available
+
+            return false; // Table is available
+        });
     }
 }
