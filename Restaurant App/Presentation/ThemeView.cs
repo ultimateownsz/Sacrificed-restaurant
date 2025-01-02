@@ -155,17 +155,19 @@ static class ThemeView
 
                 case ConsoleKey.R:
                     // message = string.Empty; // Clear message on reset
+                    ControlHelpPresent.DisplayFeedback("Year has been reset to the current year.", "bottom", "success");
                     currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
                 case ConsoleKey.Escape:
+                    ControlHelpPresent.DisplayFeedback("Returning to the previous menu...", "bottom", "error");
                     return -1; // Indicate user wants to go back
 
                 case ConsoleKey.Enter:
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    ControlHelpPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.");
+                    ControlHelpPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.", "bottom", "error");
                     // message = "Invalid input. Use <arrows>, <r>, <escape>, or <enter>.";
                     break;
             }
