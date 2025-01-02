@@ -19,27 +19,49 @@ namespace Presentation
 
                 // Step 1: Select the number of guests
                 int guests = TryCatchHelper.EscapeKeyWithResult(GetGuestCount, -1, "Guest selection canceled.");
-                if (guests == -1) return;
+                if (guests == -1)
+                {
+                    ControlHelpPresent.DisplayFeedback("Guest selection canceled.", "bottom", "error");
+                    return;
+                }
 
                 // Step 2: Calendar selection
-                DateTime selectedDate = TryCatchHelper.EscapeKeyWithResult(() => SelectDate(guests, isAdmin, acc), DateTime.MinValue, "Returning to the main menu...");
-                if (selectedDate == DateTime.MinValue) return;
+                DateTime selectedDate = TryCatchHelper.EscapeKeyWithResult(() => SelectDate(guests, isAdmin, acc), DateTime.MinValue, "Date selection canceled.");	
+                if (selectedDate == DateTime.MinValue)
+                {
+                    ControlHelpPresent.DisplayFeedback("Date selection canceled.", "bottom", "error");
+                    return;
+                }
 
                 // Step 3: Table selection
                 int selectedTable = TryCatchHelper.EscapeKeyWithResult(() => SelectTable(selectedDate, guests, isAdmin), -1, "Table selection canceled.");
-                if (selectedTable == -1) return;
+                if (selectedTable == -1)
+                {
+                    ControlHelpPresent.DisplayFeedback("Table selection canceled.", "bottom", "error");
+                    return;
+                }
 
                 // Step 4: Save reservation
                 int reservationId = TryCatchHelper.EscapeKeyWithResult(() => SaveReservation(selectedDate, selectedTable, acc), 0, "Reservation not saved.");
-                if (reservationId == 0) return;
+                if (reservationId == 0)
+                {
+                    ControlHelpPresent.DisplayFeedback("Reservation not saved.", "bottom", "error");
+                    return;
+                }
 
                 // Step 5: Take orders
                 var orders = TryCatchHelper.EscapeKeyWithResult(() => TakeOrders(reservationId, guests), new List<ProductModel>(), "Order process canceled.");
-                if (orders.Any())
+                if (!orders.Any())
+                {
+                    ControlHelpPresent.DisplayFeedback("Order process canceled.", "bottom", "error");
+                    return;
+                }
+                
+                else // Print receipt
                 {
                     PrintReceipt(orders, reservationId, acc);
-                    ControlHelpPresent.DisplayFeedback("\nPress 'Enter' to return to the previous menu...", "bottom", "tip");
-                    while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
+                    ControlHelpPresent.DisplayFeedback("\nPress 'Escape' to return to the previous menu...", "bottom", "tip");
+                    while (Console.ReadKey(true).Key != ConsoleKey.Escape) { }
                 }
             });
         }
@@ -116,25 +138,34 @@ namespace Presentation
 
                     string banner = $"Guest {guest}, choose a product for {category}:\n\n";
                     var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
+                    productOptions.Add("\nSkip this category");
                     productOptions.Add("Cancel");
 
-                    dynamic selection = SelectionPresent.Show(productOptions, banner);
+                    dynamic selection = SelectionPresent.Show(productOptions, banner, false);
                     // Check for null or cancellation
                     if (selection?.text == null || selection?.text == "Cancel") 
-                        throw new OperationCanceledException(); 
-
+                    {
+                        ControlHelpPresent.DisplayFeedback("Order process canceled", "bottom", "error");
+                        return allOrders;
+                    }
+                    else if (selection?.text == "Skip this category")
+                    {
+                        ControlHelpPresent.DisplayFeedback($"Category '{category}' skipped.", "bottom", "success");
+                        continue;
+                    }
                     var selectedProduct = products.FirstOrDefault(p => 
                         selection?.text?.StartsWith(p.Name) == true && selection?.text?.Contains($"{p.Price:0.00}") == true);
 
                     if (selectedProduct != null && selectedProduct.ID.HasValue)
                     {
-                        if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                        var saveOrderResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
+                        if (!saveOrderResult.isValid)
                         {
-                            ControlHelpPresent.DisplayFeedback("Failed to save the order. Try again.");
+                            ControlHelpPresent.DisplayFeedback($"Failed to save the order for '{category}'", "bottom", "error");
                             continue;
                         }
                         allOrders.Add(selectedProduct);
-                        ControlHelpPresent.DisplayFeedback($"{selectedProduct.Name} added successfully!", "bottom", "success");
+                        ControlHelpPresent.DisplayFeedback($"{selectedProduct.Name} has been added to your order!", "bottom", "success");
                     }
                 }
             }
@@ -145,10 +176,14 @@ namespace Presentation
         {
             Console.Clear();
             ControlHelpPresent.Clear();
-            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
             ControlHelpPresent.ShowHelp();
 
-            Console.SetCursorPosition(0, 0);
+           // Reserve lines for the footer
+            int reservedFooterLines = ControlHelpPresent.GetFooterHeight(); // Dynamically determine footer height
+            int receiptStartLine = 0; // Start drawing the receipt from the top
+
+            Console.SetCursorPosition(0, receiptStartLine);
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
