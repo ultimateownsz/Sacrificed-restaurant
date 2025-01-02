@@ -59,7 +59,8 @@ static class Menu
             
             if (selection.text == null)
             {
-                Console.WriteLine("Return to main menu");
+                // Console.WriteLine("Return to main menu");
+                ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
                 // Thread.Sleep(1500);  // wait 1,5 seconds before you return to main menu
                 return;
             }
@@ -77,6 +78,7 @@ static class Menu
                     break;
 
                 case "Logout":
+                    ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
                     return;
             }
         } while (true);
