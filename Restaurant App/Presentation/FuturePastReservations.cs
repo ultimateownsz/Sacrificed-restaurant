@@ -185,114 +185,120 @@ namespace Presentation
             {
                 List<ReservationModel> reservations;
 
-                if (isAdmin)
-                {
-                    DateTime selectedDate = CalendarPresent.Show(DateTime.Now, true, 1, acc);
-                    reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
-                        ?.Where(r => r != null) // Filter out null values
-                        .Cast<ReservationModel>() // Cast to ReservationModel
-                        .OrderBy(r => r.Date)
-                        .ToList() ?? new List<ReservationModel>(); // Default to empty list
-
-
-                    if (!reservations.Any())
-                    {
-                        Console.Clear();
-                        ControlHelpPresent.DisplayFeedback("There are no reservations for this date.\nPress any key to return...");
-                        Console.ReadKey();
-                        return;
-                    }
-                }
-                else
-                {
-                    reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID)
-                                                        ?.Where(r => r != null)
-                                                        .Select(r => r!)
-                                                        .OrderBy(r => r.Date)
-                                                        .ToList() ?? new List<ReservationModel>();
-
-                    if (reservations == null || !reservations.Any())
-                    {
-                        ControlHelpPresent.DisplayFeedback("You have no reservations.\nPress any key to return...");
-                        Console.ReadKey();
-                        return;
-                    }
-                }
-
-                int currentPage = 0;
-                int itemsPerPage = 10;
-                int totalPages = (int)Math.Ceiling((double)reservations.Count / itemsPerPage);
-
                 while (true)
                 {
-                    Console.Clear();
 
-                    ControlHelpPresent.Clear();
-                    ControlHelpPresent.ResetToDefault();
-                    ControlHelpPresent.ShowHelp();
-
-                    var currentPageReservations = reservations
-                        .Skip(currentPage * itemsPerPage)
-                        .Take(itemsPerPage)
-                        .ToList();
-
-                    var reservationOptions = currentPageReservations
-                        .Select((r, index) =>
-                            isAdmin
-                                ? $"{index + 1 + currentPage * itemsPerPage}. {GetUserFullName(r.UserID)} - Table {r.PlaceID} (ID: {r.ID})"
-                                : ReservationLogic.FormatAccount(r))
-                        .ToList();
-
-                    if (currentPage > 0) reservationOptions.Insert(0, "<< Previous Page");
-                    if (currentPage < totalPages - 1) reservationOptions.Add("Next Page >>");
-                    reservationOptions.Add("Back");
-
-                    var selectedOption = SelectionPresent.Show(reservationOptions, 
-                        isAdmin ? "RESERVATIONS\n\n" : "YOUR RESERVATIONS\n\n").text;
-
-                    if (string.IsNullOrEmpty(selectedOption) || selectedOption.Equals("Back", StringComparison.OrdinalIgnoreCase))
-                        return;
-                    
-                    if (selectedOption == "Next Page >>")
-                    {
-                        currentPage = Math.Min(currentPage + 1, totalPages - 1);
-                        continue;
-                    }
-
-                    if (selectedOption == "<< Previous Page")
-                    {
-                        currentPage = Math.Max(currentPage - 1, 0);
-                        continue;
-                    }
-
-                    ReservationModel? selectedReservation = null;
+                
                     if (isAdmin)
                     {
-                        string[] splitSelection = selectedOption.Split('.');
-                        if (splitSelection.Length > 0 && int.TryParse(splitSelection[0], out int selectedIndex))
+                        DateTime selectedDate = CalendarPresent.Show(DateTime.Now, true, 1, acc);
+                        reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
+                            ?.Where(r => r != null) // Filter out null values
+                            .Cast<ReservationModel>() // Cast to ReservationModel
+                            .OrderBy(r => r.Date)
+                            .ToList() ?? new List<ReservationModel>(); // Default to empty list
+
+
+                        if (reservations == null || !reservations.Any())
                         {
-                            if (selectedIndex > 0 && selectedIndex <= currentPageReservations.Count)
-                            {
-                                selectedReservation = currentPageReservations[selectedIndex - 1];
-                            }
+                            // Console.Clear();
+                            ControlHelpPresent.DisplayFeedback(
+                                $"No reservations found for {selectedDate:MM-dd-yyyy}. You can still navigate to other dates.",
+                                "bottom", feedbackType: "tip", 2000);
+                            continue; // Allow user to pick another date
                         }
                     }
                     else
                     {
-                        selectedReservation = currentPageReservations
-                            .FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedOption);
+                        reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID)
+                                                            ?.Where(r => r != null)
+                                                            .Select(r => r!)
+                                                            .OrderBy(r => r.Date)
+                                                            .ToList() ?? new List<ReservationModel>();
+
+                        if (reservations == null || !reservations.Any())
+                        {
+                            ControlHelpPresent.DisplayFeedback("You have no reservations. Press any key to return...");
+                            Console.ReadKey();
+                            return;
+                        }
                     }
 
+                    int currentPage = 0;
+                    int itemsPerPage = 10;
+                    int totalPages = (int)Math.Ceiling((double)reservations.Count / itemsPerPage);
 
-                    if (selectedReservation != null)
+                    while (true)
                     {
+                        Console.Clear();
+
+                        ControlHelpPresent.Clear();
+                        ControlHelpPresent.ResetToDefault();
+                        ControlHelpPresent.ShowHelp();
+
+                        var currentPageReservations = reservations
+                            .Skip(currentPage * itemsPerPage)
+                            .Take(itemsPerPage)
+                            .ToList();
+
+                        var reservationOptions = currentPageReservations
+                            .Select((r, index) =>
+                                isAdmin
+                                    ? $"{index + 1 + currentPage * itemsPerPage}. {GetUserFullName(r.UserID)} - Table {r.PlaceID} (ID: {r.ID})"
+                                    : ReservationLogic.FormatAccount(r))
+                            .ToList();
+
+                        if (currentPage > 0) reservationOptions.Insert(0, "<< Previous Page");
+                        if (currentPage < totalPages - 1) reservationOptions.Add("Next Page >>");
+                        reservationOptions.Add("Back");
+
+                        var selectedOption = SelectionPresent.Show(reservationOptions, 
+                            isAdmin ? "RESERVATIONS\n\n" : "YOUR RESERVATIONS\n\n").text;
+
+                        if (string.IsNullOrEmpty(selectedOption) || selectedOption.Equals("Back", StringComparison.OrdinalIgnoreCase))
+                            return;
+                        
+                        if (selectedOption == "Next Page >>")
+                        {
+                            currentPage = Math.Min(currentPage + 1, totalPages - 1);
+                            continue;
+                        }
+
+                        if (selectedOption == "<< Previous Page")
+                        {
+                            currentPage = Math.Max(currentPage - 1, 0);
+                            continue;
+                        }
+
+                        ReservationModel? selectedReservation = null;
                         if (isAdmin)
                         {
-                            ShowReservations.ShowReservationOptions(selectedReservation);
+                            string[] splitSelection = selectedOption.Split('.');
+                            if (splitSelection.Length > 0 && int.TryParse(splitSelection[0], out int selectedIndex))
+                            {
+                                if (selectedIndex > 0 && selectedIndex <= currentPageReservations.Count)
+                                {
+                                    selectedReservation = currentPageReservations[selectedIndex - 1];
+                                }
+                            }
                         }
                         else
                         {
-                            UpdateReservation.Show(selectedReservation, false);
+                            selectedReservation = currentPageReservations
+                                .FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedOption);
+                        }
+
+
+                        if (selectedReservation != null)
+                        {
+                            if (isAdmin)
+                            {
+                                ShowReservations.ShowReservationOptions(selectedReservation);
+                            }
+                            else
+                            {
+                                UpdateReservation.Show(selectedReservation, false);
+                            }
                         }
                     }
                 }
