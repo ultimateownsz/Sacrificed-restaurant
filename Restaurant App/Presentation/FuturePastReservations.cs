@@ -209,7 +209,7 @@ namespace Presentation
                         {
                             // Console.Clear();
                             ControlHelpPresent.DisplayFeedback(
-                                $"No reservations found for {selectedDate:MM-dd-yyyy}. You can still navigate to other dates.",
+                                $"No reservations found for {selectedDate:MM/dd/yyyy}. You can still navigate to other dates.",
                                 "bottom", feedbackType: "tip", 2000);
                             continue; // Allow user to pick another date
                         }
