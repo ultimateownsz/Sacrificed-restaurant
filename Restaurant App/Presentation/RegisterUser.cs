@@ -15,6 +15,8 @@ internal class RegisterUser
         ControlHelpPresent.ShowHelp();
         Console.WriteLine("Please enter the following information:\n");
 
+        bool isRegistrationSuccessful = false;
+
         TryCatchHelper.EscapeKeyException(() =>
         {
             // Use InputHelper.GetValidatedInput for streamlined input handling
@@ -88,7 +90,18 @@ internal class RegisterUser
             ControlHelpPresent.ResetToDefault();
 
             ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+            isRegistrationSuccessful = true;
         });
+
+        if (isRegistrationSuccessful)
+        {
+            ControlHelpPresent.DisplayFeedback("\nYour account has been successfully created!", "bottom", "success");
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("\nAccount creation was canceled. All entered information has been discarded.", "bottom", "tip");
+        }
+
         // make sure controls are displayed again when escaping or returning
         ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
@@ -97,6 +110,11 @@ internal class RegisterUser
     private static void ShowAccountDetails(string firstName, string lastName, string email, string password, string phoneNumber)
     {
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
+        Console.SetCursorPosition(0, 0);
         Console.WriteLine("Review and modify your account details:\n");
         Console.WriteLine($"First Name   : {firstName}");
         Console.WriteLine($"Last Name    : {lastName}");
@@ -114,7 +132,7 @@ internal class RegisterUser
             ShowAccountDetails(firstName, lastName, email, password, phoneNumber);
 
             // Pause for the user to review the account details
-            ControlHelpPresent.DisplayFeedback("\nPress any key to continue to continue...", "bottom", "tip");
+            ControlHelpPresent.DisplayFeedback("\nPress any key to continue...", "bottom", "tip");
             Console.ReadKey(intercept: true); // Wait for user input to proceed
 
             // add navigation options for the confirmation menu
