@@ -198,6 +198,12 @@ namespace Presentation
                             .OrderBy(r => r.Date)
                             .ToList() ?? new List<ReservationModel>(); // Default to empty list
 
+                        if (selectedDate == DateTime.MinValue) // escape key pressed
+                        {
+                            ControlHelpPresent.DisplayFeedback("Date selection cancelled.");
+                            // Console.ReadKey();
+                            return;
+                        }
 
                         if (reservations == null || !reservations.Any())
                         {
