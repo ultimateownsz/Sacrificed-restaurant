@@ -18,17 +18,19 @@ public static class TryCatchHelper
         /// <summary>
         /// Handles exceptions for functions that return a value with Escape key support.
         /// </summary>
-        public static T EscapeKeyWithResult<T>(Func<T> action, T defaultValue = default!, string cancelMessage = "Returning to the previous menu...")
+        public static T EscapeKeyWithResult<T>(Func<T> func, T fallback = default!, string fallbackMessage = "Returning to the previous menu...")
         {
             try
             {
-                return action();
+                return func();
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine($"\n{cancelMessage}");
-                Thread.Sleep(1500);
-                return defaultValue; // Return specified default value
+                if (!string.IsNullOrEmpty(fallbackMessage))
+                {
+                    ControlHelpPresent.DisplayFeedback(fallbackMessage, "bottom", "error");
+                }
+                return fallback; // Ensure this fallback value is returned correctly
             }
         }
     }
