@@ -23,32 +23,57 @@ static class ThemeView
                 // Menu to choose actions for a month with a theme attached
                 string banner = $"{ThemeMenuLogic.GetMonthName(month)}\nChoose:\n\n";
                 List<string> options = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
-                dynamic selection = SelectionPresent.Show(options, banner, false);
+                var selection = SelectionPresent.Show(options, banner, false);
 
                 if (selection.index == -1) return;  // escape pressed
 
                 if (selection.index == 0)
                 {
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.AddOptions("Escape", "<escape>");
+                    ControlHelpPresent.ShowHelp();
                     TryCatchHelper.EscapeKeyException(() =>
                     {
-                        themeName = ThemeInputValidator.GetValidString();
+                        themeName = InputHelper.GetValidatedInput<string>(
+                            "Enter the new theme for this month: ",
+                            themeName => (themeName, string.IsNullOrWhiteSpace(themeName) ? "Theme name cannot be empty." : null),
+                            menuTitle: "EDIT THEME",
+                            showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                        
+                        // ThemeInputValidator.GetValidString();
                         ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                         ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", "success");
+                        ControlHelpPresent.ResetToDefault();
                     }
                     );
                 }
-                else
+                else // Delete the theme for this month
                 {
                     ThemeMenuLogic.DeleteMonthTheme(month, year);
                     Console.Clear();
                     ControlHelpPresent.DisplayFeedback("This theme has been deleted", "bottom", "success");
                 }
             }
-            else
+            else // Menu to add a theme to a month without a theme
             {
-                themeName = ThemeInputValidator.GetValidString();
-                ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-                ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", feedbackType: "success");
+                ControlHelpPresent.Clear();
+                ControlHelpPresent.AddOptions("Escape", "<escape>");
+                ControlHelpPresent.ShowHelp();
+                TryCatchHelper.EscapeKeyException(() =>
+                {
+                    themeName = InputHelper.GetValidatedInput<string>(
+                        "Enter the theme for this month: ",
+                        themeName => (themeName, string.IsNullOrWhiteSpace(themeName) ? "Theme name cannot be empty." : null),
+                        menuTitle: "ADD THEME",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                    );
+                    ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
+                    ControlHelpPresent.DisplayFeedback($"The theme has been added: {themeName}", "bottom", "success");
+                    ControlHelpPresent.ResetToDefault();
+                }
+                );
+                
             }
 
             ControlHelpPresent.DisplayFeedback("Go back to previous menu, or press any key to keep editing...", "bottom", feedbackType: "tip");
