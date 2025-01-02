@@ -15,21 +15,41 @@ internal class RegisterUser
         ControlHelpPresent.ShowHelp();
         Console.WriteLine("Please enter the following information:\n");
 
-        bool isRegistrationSuccessful = false;
+        // bool isRegistrationSuccessful = false;
+        bool isAdminCreated = false;
 
         TryCatchHelper.EscapeKeyException(() =>
         {
+            if (admin)
+            {
+                ControlHelpPresent.Clear();
+                ControlHelpPresent.AddOptions("Exit", "<escape>");
+                ControlHelpPresent.ShowHelp();
+
+                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin", "\nCancel"], "ACCOUNT REGISTRATION\n\n");
+                if (selection == null || selection?.text == null || selection?.text == "Cancel") return;
+
+                if (selection?.text == "Promote an existing user to admin")
+                {
+                    PromoteExistingUserToAdmin();
+                    ControlHelpPresent.ResetToDefault();
+                    return;
+                }
+
+            }
+
+             string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n"; // Dynamic banner
             // Use InputHelper.GetValidatedInput for streamlined input handling
             string firstName = InputHelper.GetValidatedInput<string>(
             "First name: ",
             input => InputHelper.InputNotNull(input, "First name"),
-            menuTitle: "REGISTER",
+            menuTitle: banner,
             showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string lastName = InputHelper.GetValidatedInput<string>(
             "Last name: ",
             input => InputHelper.InputNotNull(input, "Last name"),
-            menuTitle: "REGISTER",
+            menuTitle: banner,
             showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string email = InputHelper.GetValidatedInput<string>(
@@ -47,7 +67,7 @@ internal class RegisterUser
                     }
                     return (input, null);
                 },
-                menuTitle: "REGISTER",
+                menuTitle: banner,
                 showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             string password = InputHelper.GetValidatedInput<string>(
@@ -65,7 +85,7 @@ internal class RegisterUser
                 }
                 return (input, null); // Return valid input
             },
-            menuTitle: "REGISTER",
+            menuTitle: banner,
             showHelpAction: () => ControlHelpPresent.ShowHelp()
         );
             string phoneNumber = InputHelper.GetValidatedInput<string>(
@@ -83,28 +103,69 @@ internal class RegisterUser
                     }
                     return (input, null);
                 },
-                menuTitle: "REGISTER",
+                menuTitle: banner,
                 showHelpAction: () => ControlHelpPresent.ShowHelp()
             );
             // reset help to default before confirming and saving the account
             ControlHelpPresent.ResetToDefault();
 
-            ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
-            isRegistrationSuccessful = true;
+            isAdminCreated = ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+            ControlHelpPresent.DisplayFeedback("Admin account has been created!", "bottom", "success");
+            // isRegistrationSuccessful = true;
         });
 
-        if (isRegistrationSuccessful)
-        {
-            ControlHelpPresent.DisplayFeedback("\nYour account has been successfully created!", "bottom", "success");
-        }
-        else
-        {
-            ControlHelpPresent.DisplayFeedback("\nAccount creation was canceled. All entered information has been discarded.", "bottom", "tip");
-        }
+        // if (isRegistrationSuccessful)
+        // {
+        //     ControlHelpPresent.DisplayFeedback("\nYour account has been successfully created!", "bottom", "success");
+        // }
+        // else
+        // {
+        //     ControlHelpPresent.DisplayFeedback("\nAccount creation was canceled. All entered information has been discarded.", "bottom", "tip");
+        // }
 
         // make sure controls are displayed again when escaping or returning
         ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
+    }
+
+    private static void PromoteExistingUserToAdmin()
+    {
+        // fetch all users who are not admins
+        var nonAdminUsers = Access.Users.Read()
+            .Where(u => u.Admin == 0)
+            .ToList();
+
+        if (!nonAdminUsers.Any())
+        {
+            ControlHelpPresent.DisplayFeedback("No users found to promote to admin.", "bottom", "error");
+            return;
+        }
+
+        var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}").ToList();
+        userOptions.Add("Cancel");
+
+        var userSelection = SelectionPresent.Show(userOptions, "ACCOUNT PROMOTION\n\n").text;
+        
+        if (string.IsNullOrEmpty(userSelection) || userSelection == "Cancel")
+        {
+            ControlHelpPresent.DisplayFeedback("Account promotion canceled", "bottom", "error");
+            return;
+        }
+
+        var selectedUser = nonAdminUsers.FirstOrDefault(u => userSelection?.text?.StartsWith($"{u.FirstName} {u.LastName} - {u.Email}") == true);
+        
+        if (selectedUser != null)
+        {
+            selectedUser.Admin = 1;
+            Access.Users.Update(selectedUser);
+            ControlHelpPresent.DisplayFeedback($"{selectedUser.FirstName} {selectedUser.LastName} has been promoted to admin.", "bottom", "success");
+            return;
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("Promotion to admin was canceled.", "bottom", "error");
+            return;
+        }
     }
 
     private static void ShowAccountDetails(string firstName, string lastName, string email, string password, string phoneNumber)
@@ -114,7 +175,16 @@ internal class RegisterUser
         ControlHelpPresent.AddOptions("Exit", "<escape>");
         ControlHelpPresent.ShowHelp();
 
-        Console.SetCursorPosition(0, 0);
+        Console.SetCursorPosition(0, 0); // Move cursor to top of console
+    // Ensure footer space is accounted for
+    // int footerHeight = ControlHelpPresent.GetFooterHeight();
+    // int availableHeight = Console.WindowHeight - footerHeight;
+
+    // if (availableHeight < 10) // If console space is insufficient
+    // {
+    //     ControlHelpPresent.DisplayFeedback("Console window is too small to display account details.", "bottom", "error");
+    //     return;
+    // }
         Console.WriteLine("Review and modify your account details:\n");
         Console.WriteLine($"First Name   : {firstName}");
         Console.WriteLine($"Last Name    : {lastName}");
@@ -124,7 +194,7 @@ internal class RegisterUser
     }
 
 
-    private static void ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
     {
         while (true)
         {
@@ -150,13 +220,13 @@ internal class RegisterUser
 
             dynamic selection = SelectionPresent.Show(options, "Choose an option:\n\n");
             
-            if (selection.text == null) return;  // escape is pressed
+            if (selection.text == null) return false;  // escape is pressed
 
-            if (selection.text == null || selection.text == "Save and return")
+            if (selection.text == "Save and return")
             {
-                ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
+                // ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
                 SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
-                return;
+                return admin;
             }
             
             switch (selection.text)
@@ -251,7 +321,14 @@ internal class RegisterUser
         };
 
         Access.Users.Write(account);
-        ControlHelpPresent.DisplayFeedback("\nYour account has been successfully updated!", "bottom", "success");
+        if (admin)
+        {
+            ControlHelpPresent.DisplayFeedback("Admin account has been created!", "bottom", "success");
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("Your account has been successfully created!", "bottom", "success");
+        }
     }
 
     // private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(
