@@ -3,9 +3,6 @@ using System.Numerics;
 
 namespace Project.Presentation;
 
-// The methods underneath could've easily been one method.
-// Original developer research modularity and reusability
-
 internal class RegisterUser
 {
     public static void CreateAccount(bool admin = false)
@@ -35,10 +32,9 @@ internal class RegisterUser
                     ControlHelpPresent.ResetToDefault();
                     return;
                 }
-
             }
 
-             string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n"; // Dynamic banner
+            string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n"; // Dynamic banner
             // Use InputHelper.GetValidatedInput for streamlined input handling
             string firstName = InputHelper.GetValidatedInput<string>(
             "First name: ",
@@ -110,18 +106,7 @@ internal class RegisterUser
             ControlHelpPresent.ResetToDefault();
 
             isAdminCreated = ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
-            ControlHelpPresent.DisplayFeedback("Admin account has been created!", "bottom", "success");
-            // isRegistrationSuccessful = true;
         });
-
-        // if (isRegistrationSuccessful)
-        // {
-        //     ControlHelpPresent.DisplayFeedback("\nYour account has been successfully created!", "bottom", "success");
-        // }
-        // else
-        // {
-        //     ControlHelpPresent.DisplayFeedback("\nAccount creation was canceled. All entered information has been discarded.", "bottom", "tip");
-        // }
 
         // make sure controls are displayed again when escaping or returning
         ControlHelpPresent.ResetToDefault();
@@ -168,60 +153,35 @@ internal class RegisterUser
         }
     }
 
-    private static void ShowAccountDetails(string firstName, string lastName, string email, string password, string phoneNumber)
-    {
-        Console.Clear();
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Exit", "<escape>");
-        ControlHelpPresent.ShowHelp();
-
-        Console.SetCursorPosition(0, 0); // Move cursor to top of console
-    // Ensure footer space is accounted for
-    // int footerHeight = ControlHelpPresent.GetFooterHeight();
-    // int availableHeight = Console.WindowHeight - footerHeight;
-
-    // if (availableHeight < 10) // If console space is insufficient
-    // {
-    //     ControlHelpPresent.DisplayFeedback("Console window is too small to display account details.", "bottom", "error");
-    //     return;
-    // }
-        Console.WriteLine("Review and modify your account details:\n");
-        Console.WriteLine($"First Name   : {firstName}");
-        Console.WriteLine($"Last Name    : {lastName}");
-        Console.WriteLine($"Email        : {email}");
-        Console.WriteLine($"Password     : {new string('*', password.Length)}"); // Mask password
-        Console.WriteLine($"Phone Number : {phoneNumber}");
-    }
-
-
     private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
     {
         while (true)
         {
-            // display the account details for review
-            ShowAccountDetails(firstName, lastName, email, password, phoneNumber);
-
-            // Pause for the user to review the account details
-            ControlHelpPresent.DisplayFeedback("\nPress any key to continue...", "bottom", "tip");
-            Console.ReadKey(intercept: true); // Wait for user input to proceed
-
-            // add navigation options for the confirmation menu
-            ControlHelpPresent.ShowHelp();
-
-            List<string> options = new()
+            var details = new List<string>
             {
-                "Save and return",
-                "Edit first name",
-                "Edit last name",
-                "Edit email",
-                "Edit password",
-                "Edit phone number"
+                $"First name   : {firstName}",
+                $"Last name    : {lastName}",
+                $"Email        : {email}",
+                // $"Password     : {new string('*', password.Length)}",
+                $"Password     : {password}",
+                $"Phone number : {phoneNumber}",
+                "\nSave and return",
+                "Cancel"
             };
 
-            dynamic selection = SelectionPresent.Show(options, "Choose an option:\n\n");
-            
-            if (selection.text == null) return false;  // escape is pressed
+            // add navigation options for the confirmation menu
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Exit", "<escape>");
+            ControlHelpPresent.ShowHelp();
 
+            dynamic selection = SelectionPresent.Show(details, "Review and select your account details you want to modify:\n\n");
+
+            if (selection.text == null || selection.text == "Cancel")
+            {
+                ControlHelpPresent.DisplayFeedback("Account creation canceled. All entered information has been discarded.", "bottom", "tip");
+                return false;
+            }
+            
             if (selection.text == "Save and return")
             {
                 // ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
@@ -229,60 +189,88 @@ internal class RegisterUser
                 return admin;
             }
             
-            switch (selection.text)
+            switch (selection?.text)
             {
-                case "Edit first name":
-                    firstName = InputHelper.GetValidatedInput<string>(
-                    "First Name: ",
-                    input => InputHelper.InputNotNull(input, "First name")
-                    );
+                case var s when s?.StartsWith("First name"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        firstName = InputHelper.GetValidatedInput<string>(
+                            "First name: ",
+                            input => InputHelper.InputNotNull(input, "First name"),
+                            menuTitle: "EDIT FIRSTNAME",
+                            showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("First name edit canceled.", "bottom", "error");
                     break;
 
-                case "Edit last name":
-                    lastName = InputHelper.GetValidatedInput<string>(
-                    "Last Name: ",
-                    input => InputHelper.InputNotNull(input, "Last name")
-                    );
-                    break;
-                
-                case "Edit email":
-                    email = InputHelper.GetValidatedInput<string>(
-                    "Email (e.g., example@domain.com): ",
-                    input =>
+                case var s when s?.StartsWith("Last name"):
+                    TryCatchHelper.EscapeKeyException(() =>
                     {
-                        var (isValid, message) = UserLogic.IsEmailValid(input);
-                        if (!isValid)
-                        {
-                            if (message != null)
-                            {
-                                ControlHelpPresent.DisplayFeedback(message);
-                            }
-                            return (null, null);
-                        }
-                        return (input, null);
+                        lastName = InputHelper.GetValidatedInput<string>(
+                            "Last name: ",
+                            input => InputHelper.InputNotNull(input, "Last name"),
+                            menuTitle: "EDIT LASTNAME",
+                            showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
                     });
+                    ControlHelpPresent.DisplayFeedback("Last name edit canceled.", "bottom", "error");
                     break;
                 
-                case "Edit password":
-                    password = InputHelper.GetValidatedInput<string>(
-                    "Password (8-16 characters, must include letters and numbers): ",
-                    input =>
+                case var s when s?.StartsWith("Email"):
+                    TryCatchHelper.EscapeKeyException(() =>
                     {
-                        var (isValid, message) = UserLogic.IsPasswordValid(input);
-                        if (!isValid)
+                        email = InputHelper.GetValidatedInput<string>(
+                        "Email (e.g., example@domain.com): ",
+                        input =>
                         {
-                            if (message != null)
+                            var (isValid, message) = UserLogic.IsEmailValid(input);
+                            if (!isValid)
                             {
-                                ControlHelpPresent.DisplayFeedback(message); // Show feedback to the user
+                                if (message != null)
+                                {
+                                    ControlHelpPresent.DisplayFeedback(message);
+                                }
+                                return (null, null);
                             }
-                            return (null, null); // Return null to prompt the user again
-                        }
-                        return (input, null); // Return valid input
+                            return (input, null);
+                        },
+                        menuTitle: "EDIT EMAIL",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
                     });
+                    ControlHelpPresent.DisplayFeedback("Email edit canceled.", "bottom", "error");
                     break;
                 
-                case "Edit phone number":
-                    phoneNumber = InputHelper.GetValidatedInput<string>(
+                case var s when s?.StartsWith("Password"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        password = InputHelper.GetValidatedInput<string>(
+                        "Password (8-16 characters, must include letters and numbers): ",
+                        input =>
+                        {
+                            var (isValid, message) = UserLogic.IsPasswordValid(input);
+                            if (!isValid)
+                            {
+                                if (message != null)
+                                {
+                                    ControlHelpPresent.DisplayFeedback(message);
+                                }
+                                return (null, null);
+                            }
+                            return (input, null);
+                        },
+                        menuTitle: "EDIT PASSWORD",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Password edit canceled.", "bottom", "error");
+                    break;
+                
+                case var s when s?.StartsWith("Phone number"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        phoneNumber = InputHelper.GetValidatedInput<string>(
                         "Phone number (10 digits): ",
                         input =>
                         {
@@ -297,12 +285,15 @@ internal class RegisterUser
                             }
                             return (input, null);
                         },
-                        menuTitle: "REGISTER",
+                        menuTitle: "EDIT PHONE NUMBER",
                         showHelpAction: () => ControlHelpPresent.ShowHelp()
                     );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Phone number edit canceled.", "bottom", "error");
                     break;
 
                 default:
+                    ControlHelpPresent.DisplayFeedback("Invalid option selected.", "bottom", "error");
                     break;
             }
         }
@@ -330,66 +321,4 @@ internal class RegisterUser
             ControlHelpPresent.DisplayFeedback("Your account has been successfully created!", "bottom", "success");
         }
     }
-
-    // private static (string firstName, string lastName, string email, string password, string phoneNumber) EditInformation(
-    //     string firstName, string lastName, string email, string password, string phoneNumber)
-    // {
-    //     ControlHelpPresent.ShowHelp();
-    //     string banner = "Choose which information you'd like to change:\n\n";
-    //     string fieldToChange = SelectionPresent.Show([ "First name", "Last name", "Email", "Password", "Phone number" ], banner).text;
-
-    //     switch (fieldToChange)
-    //     {
-    //         case "First name":
-    //             firstName = InputHelper.GetValidatedInput<string>(
-    //                 "First name: ",
-    //                 input => InputHelper.InputNotNull(input, "First name"),
-    //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
-    //             );
-    //             break;
-
-    //         case "Last name":
-    //             lastName = InputHelper.GetValidatedInput<string>(
-    //                 "Last name: ",
-    //                 input => InputHelper.InputNotNull(input, "Last name"),
-    //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
-    //             );
-    //             break;
-
-    //         case "Email":
-    //             email = InputHelper.GetValidatedInput<string>(
-    //                 "Email (e.g., example@domain.com): ",
-    //                 input =>
-    //                 {
-    //                     var (isValid, message) = UserLogic.IsEmailValid(input);
-    //                     return isValid ? (input, null) : (null, message);
-    //                 },
-    //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlHelpPresent.ShowHelp());
-    //             break;
-
-    //         case "Password":
-    //             password = InputHelper.GetValidatedInput<string>(
-    //                 "Password (8-16 characters, must include letters and numbers): ",
-    //                 input => UserLogic.IsPasswordValid(input) ? (input, null) : (null, "Password must be 8-16 characters long and include both letters and numbers."),
-    //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
-    //             );
-    //             break;
-
-    //         case "Phone number":
-    //             phoneNumber = InputHelper.GetValidatedInput<string>(
-    //                 "Phone number (10 digits): ",
-    //                 input => UserLogic.IsPhoneNumberValid(input) ? (input, null) : (null, "Phone number must contain exactly 10 digits (e.g., 1234567890)."),
-    //                 menuTitle: "EDIT USER INFORMATION",
-    //                 showHelpAction: () => ControlHelpPresent.ShowHelp()
-    //             );
-    //             break;
-    //     }
-    //     ControlHelpPresent.ResetToDefault();
-
-    //     return (firstName, lastName, email, password, phoneNumber);
-    // }
 }
