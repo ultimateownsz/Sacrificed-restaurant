@@ -25,7 +25,11 @@ internal class RegisterUser
                 ControlHelpPresent.ShowHelp();
 
                 var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin", "\nCancel"], "ACCOUNT REGISTRATION\n\n");
-                if (selection == null || selection?.text == null || selection?.text == "Cancel") return;
+                if (selection == null || selection?.text == null || selection?.text == "Cancel")
+                {
+                    ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
+                    return;
+                }
 
                 if (selection?.text == "Promote an existing user to admin")
                 {
@@ -165,8 +169,8 @@ internal class RegisterUser
                 $"Email        : {email}",
                 // $"Password     : {new string('*', password.Length)}",
                 $"Password     : {password}",
-                $"Phone number : {phoneNumber}",
-                "\nSave and return",
+                $"Phone number : {phoneNumber}\n",
+                "Save and return",
                 "Cancel"
             };
 
