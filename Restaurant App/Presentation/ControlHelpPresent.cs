@@ -73,10 +73,15 @@ public static class ControlHelpPresent
         {
             // Show only if selection menu is used
             string selectedOption = options[selectedIndex.Value];
+            
+            if (string.IsNullOrWhiteSpace(selectedOption)) return;  // Skip empty or newline-only options
+            
+            string cleanOption = selectedOption.Replace("\n", "").Trim();  // Remove newlines and trim spaces
+
             if (navigationControls.TryGetValue("Select", out var selectKey))
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Press {selectKey} to select \"{selectedOption}\".");
+                Console.WriteLine($"Press {selectKey} to select \"{cleanOption}\".");
                 Console.ResetColor();
             }
             if (navigationControls.TryGetValue("Navigate", out var navKey))
