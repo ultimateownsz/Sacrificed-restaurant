@@ -108,11 +108,18 @@ static class UserLogin
 
         // Request email
         string? email = request_email();
-        if (email == null) return null; // Escape key pressed during email input
-
+        if (email == null)
+        {
+            ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
+            return null; // Escape key pressed during email input
+        }
         // Request password
         string? password = request_password(email);
-        if (password == null) return null; // Escape key pressed during password input
+        if (password == null)
+        {
+            ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
+            return null; // Escape key pressed during password input
+        }
 
         // Check credentials
         UserModel? acc = UserLogic.CheckLogin(email.ToLower(), password);
