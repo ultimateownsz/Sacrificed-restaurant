@@ -109,7 +109,7 @@ public static class InputHelper
                         Console.WriteLine();  // only move to the next line if there is input
                         return inputBuilder.ToString();
                     }
-                    Console.Beep();  // beep to indicate no input (optional)
+                    // Console.Beep();  // beep to indicate no input (optional)
                     continue;  // precent unnecessary blank Enter
 
                 case ConsoleKey.Backspace:
