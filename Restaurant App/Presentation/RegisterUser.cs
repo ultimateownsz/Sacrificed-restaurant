@@ -19,8 +19,9 @@ internal class RegisterUser
         {
             if (admin)
             {
-                ControlHelpPresent.Clear();
-                ControlHelpPresent.AddOptions("Exit", "<escape>");
+                // ControlHelpPresent.Clear();
+                // ControlHelpPresent.AddOptions("Exit", "<escape>");
+                ControlHelpPresent.ResetToDefault();
                 ControlHelpPresent.ShowHelp();
 
                 var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin", "\nCancel"], "ACCOUNT REGISTRATION\n\n");
