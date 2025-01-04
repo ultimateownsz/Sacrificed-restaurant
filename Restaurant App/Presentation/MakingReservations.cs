@@ -137,7 +137,7 @@ namespace Presentation
                     if (!products.Any()) continue;
 
                     string banner = $"Guest {guest}, choose a product for {category}:\n\n";
-                    var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
+                    var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
                     productOptions.Add("Skip this category");
                     productOptions.Add("Cancel");
 

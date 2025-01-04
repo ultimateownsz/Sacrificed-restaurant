@@ -24,7 +24,7 @@ internal class RegisterUser
                 ControlHelpPresent.ResetToDefault();
                 ControlHelpPresent.ShowHelp();
 
-                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin", "\nCancel"], "ACCOUNT REGISTRATION\n\n");
+                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin\n", "Cancel"], "ACCOUNT REGISTRATION\n\n");
                 if (selection == null || selection?.text == null || selection?.text == "Cancel")
                 {
                     ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
