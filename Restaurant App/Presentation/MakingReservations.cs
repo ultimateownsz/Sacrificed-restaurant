@@ -138,7 +138,7 @@ namespace Presentation
 
                     string banner = $"Guest {guest}, choose a product for {category}:\n\n";
                     var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
-                    productOptions.Add("\nSkip this category");
+                    productOptions.Add("Skip this category");
                     productOptions.Add("Cancel");
 
                     dynamic selection = SelectionPresent.Show(productOptions, banner, false);
