@@ -4,7 +4,7 @@ namespace Project.Presentation
 {
     public static class CreateAdminOptions
     {
-        public static void ManageAdmins(UserModel acc)
+        public static void Options(UserModel acc)
         {
             List<string> adminOptions = new()
             {
