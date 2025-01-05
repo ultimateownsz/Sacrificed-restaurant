@@ -1,4 +1,5 @@
 using Project;
+using Project.Logic;
 
 namespace Presentation
 {
@@ -22,6 +23,42 @@ namespace Presentation
                 Console.WriteLine("Press any key to return to the menu...");
                 Console.ReadKey();
                 return;
+            }
+
+            // Confirm deletion
+            var options = new List<string> { "Yes", "No" };
+            var selection = SelectionPresent.Show(
+                options,
+                $"Are you sure you want to delete your account? This action is irreversible.\n\n"
+            );
+
+            if (selection.text == "Yes")
+            {
+                // Use ConfirmAndDelete method from DeleteAccountLogic
+                bool deletionSuccessful = DeleteAccountLogic.ConfirmAndDelete(user);
+
+                if (deletionSuccessful)
+                {
+                    // Delete future reservations after the account is marked as inactive
+                    DeleteAccountLogic.DeleteFutureReservations(user.ID);
+
+                    // Provide feedback to the user
+                    Console.WriteLine("Your account has been successfully deleted and anonymized.");
+                    Console.WriteLine("Press any key to return to the menu...");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("Error occurred while deleting your account.");
+                    Console.WriteLine("Press any key to return to the menu...");
+                    Console.ReadKey();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Account deletion canceled.");
+                Console.WriteLine("Press any key to return to the menu...");
+                Console.ReadKey();
             }
         }
     }
