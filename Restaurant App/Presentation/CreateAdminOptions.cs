@@ -41,7 +41,7 @@ namespace Project.Presentation
 
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
             {
-                Console.WriteLine("Both first and last names are required. Promoting canceled.");
+                Console.WriteLine("Both first and last names are required. Promoting user canceled.");
                 Console.WriteLine("Press any key to return to the menu...");
                 Console.ReadKey();
                 return;
