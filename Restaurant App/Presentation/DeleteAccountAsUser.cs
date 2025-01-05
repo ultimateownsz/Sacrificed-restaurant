@@ -31,11 +31,8 @@ namespace Presentation
 
             if (deletionSuccessful)
             {
-                // Delete future reservations after the account is marked as inactive
-                DeleteAccountLogic.DeleteFutureReservations(user.ID);
-
                 // Provide feedback to the user
-                Console.WriteLine("Your account has been successfully deleted and anonymized.");
+                Console.WriteLine("Your account has been successfully deleted.");
                 Console.WriteLine("Press any key to exit the program...");
                 Console.ReadKey();
 
