@@ -176,11 +176,14 @@ public class ReservationLogic
 
     public static string FormatAccount(ReservationModel reservation)
     {
+        if (reservation == null) return "Reservation data is missing.";
+
         if (reservation.Date == null || reservation.PlaceID == null || reservation.ID == null)
         {
-            return "Invalid Reservation Data";
+            return "Incomplete reservation details.";
         }
-        return $"Reservation on {reservation.Date:yyyy-MM-dd} at Table {reservation.PlaceID} (ID: {reservation.ID})";
+        
+        return $"Date: {reservation.Date:dd/MM/yyyy} at table: {reservation.PlaceID}, reservation number: {reservation.ID}\n";
     }
 
     public static List<string> GenerateMenuOptions(List<ReservationModel> accounts, int currentPage, int totalPages)

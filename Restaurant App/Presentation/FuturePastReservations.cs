@@ -250,12 +250,12 @@ namespace Presentation
                         var reservationOptions = currentPageReservations
                             .Select((r, index) =>
                                 isAdmin
-                                    ? $"{index + 1 + currentPage * itemsPerPage}. {GetUserFullName(r.UserID)} - Table {r.PlaceID} (ID: {r.ID})"
+                                    ? $"{index + 1 + currentPage * itemsPerPage}. {GetUserFullName(r.UserID)} at table: {r.PlaceID}, reservation number: {r.ID}\n"
                                     : ReservationLogic.FormatAccount(r))
                             .ToList();
 
-                        if (currentPage > 0) reservationOptions.Insert(0, "<< Previous Page");
-                        if (currentPage < totalPages - 1) reservationOptions.Add("Next Page >>");
+                        if (currentPage > 0) reservationOptions.Insert(0, "Previous page");
+                        if (currentPage < totalPages - 1) reservationOptions.Add("Next page");
                         reservationOptions.Add("Back");
 
                         var selectedOption = SelectionPresent.Show(reservationOptions, 
@@ -264,13 +264,13 @@ namespace Presentation
                         if (string.IsNullOrEmpty(selectedOption) || selectedOption.Equals("Back", StringComparison.OrdinalIgnoreCase))
                             return;
                         
-                        if (selectedOption == "Next Page >>")
+                        if (selectedOption == "Next page")
                         {
                             currentPage = Math.Min(currentPage + 1, totalPages - 1);
                             continue;
                         }
 
-                        if (selectedOption == "<< Previous Page")
+                        if (selectedOption == "Previous page")
                         {
                             currentPage = Math.Max(currentPage - 1, 0);
                             continue;
