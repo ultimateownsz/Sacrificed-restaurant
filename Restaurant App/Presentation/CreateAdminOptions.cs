@@ -68,9 +68,29 @@ namespace Project.Presentation
 
             // Confirmation for promoting
             Console.Clear();
-            Console.WriteLine("Are you sure?");
             var confirmationOptions = new List<string> { "Yes", "No" };
-            string confirmation = SelectionPresent.Show(confirmationOptions, "Confirmation\n\n").text;
+            string confirmation = SelectionPresent.Show(confirmationOptions, "Are you sure?\n\n").text;
+
+            if (confirmation == "Yes")
+            {
+                // Update the user's Admin status
+                user.Admin = 1;
+                if (userAccess.Update(user))
+                {
+                    Console.WriteLine("\nUser successfully promoted to admin.");
+                }
+                else
+                {
+                    Console.WriteLine("\nFailed to promote the user. Try again.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nAction canceled. User was not promoted.");
+            }
+
+            Console.WriteLine("Press any key to return to the menu...");
+            Console.ReadKey();
         }
     }
 }
