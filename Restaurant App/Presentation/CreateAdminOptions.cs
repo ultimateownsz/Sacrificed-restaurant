@@ -37,9 +37,9 @@ namespace Project.Presentation
             string firstName = Console.ReadLine()?.Trim();
 
             Console.WriteLine("Last Name: ");
-            string lasttName = Console.ReadLine()?.Trim();
+            string lastName = Console.ReadLine()?.Trim();
 
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lasttName))
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
             {
                 Console.WriteLine("Both first and last names are required. Promoting canceled.");
                 Console.WriteLine("Press any key to return to the menu...");
