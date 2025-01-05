@@ -60,7 +60,7 @@ namespace Presentation
                 else // Print receipt
                 {
                     PrintReceipt(orders, reservationId, acc);
-                    ControlHelpPresent.DisplayFeedback("\nPress 'Escape' to return to the previous menu...", "bottom", "tip");
+                    ControlHelpPresent.DisplayFeedback("Press 'Escape' to return to the previous menu...", "bottom", "tip");
                     while (Console.ReadKey(true).Key != ConsoleKey.Escape) { }
                 }
             });
