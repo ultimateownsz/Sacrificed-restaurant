@@ -33,10 +33,12 @@ namespace Project.Presentation
         private static void PromoteUserToAdmin()
         {
             Console.Clear();
-            Console.WriteLine("First Name: ");
-            string firstName = Console.ReadLine()?.Trim();
+            Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
+            Console.WriteLine("");
 
-            Console.WriteLine("Last Name: ");
+            Console.Write("First Name: ");
+            string firstName = Console.ReadLine()?.Trim();
+            Console.Write("Last Name: ");
             string lastName = Console.ReadLine()?.Trim();
 
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
