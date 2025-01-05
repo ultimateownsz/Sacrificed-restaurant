@@ -65,6 +65,12 @@ namespace Project.Presentation
                 Console.ReadKey();
                 return;
             }
+
+            // Confirmation for promoting
+            Console.Clear();
+            Console.WriteLine("Are you sure?");
+            var confirmationOptions = new List<string> { "Yes", "No" };
+            string confirmation = SelectionPresent.Show(confirmationOptions, "Confirmation\n\n").text;
         }
     }
 }
