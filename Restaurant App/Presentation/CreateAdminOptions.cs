@@ -56,7 +56,8 @@ namespace Project.Presentation
             // Fetch user bases on the input
             var user = userAccess.GetAllBy("FirstName", firstName)
                 .FirstOrDefault(u =>
-                    string.Equals(u.LastName, lastName, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(u.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
+                    u.Admin == 0); // Only fetch users
             
             if (user == null)
             {
