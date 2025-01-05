@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace Project.Presentation
 {
     public static class CreateAdminOptions
@@ -30,7 +32,20 @@ namespace Project.Presentation
 
         private static void PromoteUserToAdmin()
         {
+            Console.Clear();
+            Console.WriteLine("First Name: ");
+            string firstName = Console.ReadLine()?.Trim();
 
+            Console.WriteLine("Last Name: ");
+            string lasttName = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lasttName))
+            {
+                Console.WriteLine("Both first and last names are required. Promoting canceled.");
+                Console.WriteLine("Press any key to return to the menu...");
+                Console.ReadKey();
+                return;
+            }
         }
     }
 }
