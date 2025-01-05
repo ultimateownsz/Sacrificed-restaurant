@@ -141,7 +141,7 @@ namespace Project
             int calendarHeight = Console.CursorTop;
             if (calendarHeight + footerHeight > Console.WindowHeight)
             {
-                ControlHelpPresent.DisplayFeedback("\nNot enough space to display the calendar and controls.");
+                ControlHelpPresent.DisplayFeedback("Not enough space to display the calendar and controls.");
                 return;
             }
             Console.SetCursorPosition(0, availableHeight);

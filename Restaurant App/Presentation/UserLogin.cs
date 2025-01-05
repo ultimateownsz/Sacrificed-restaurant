@@ -146,7 +146,7 @@ static class UserLogin
             }
 
             Console.ResetColor();
-            ControlHelpPresent.DisplayFeedback("\nInvalid credentials, returning...");
+            ControlHelpPresent.DisplayFeedback("Invalid credentials, returning...");
             return null;
         }
 
