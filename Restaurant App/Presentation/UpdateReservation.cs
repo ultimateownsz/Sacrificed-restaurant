@@ -27,7 +27,7 @@ public static class UpdateReservation
 
                 if (selection.text == null || selection.text == "Back")
                 {
-                    ControlHelpPresent.DisplayFeedback("Update reservation canceled...", "bottom", "success");
+                    ControlHelpPresent.DisplayFeedback("Update reservation canceled...", "bottom", "error");
                     return;
                 }
 

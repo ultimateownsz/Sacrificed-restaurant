@@ -23,8 +23,8 @@ namespace Project.Logic
         public static List<string> GenerateMenuOptions(List<UserModel> accounts, int currentPage)
         {
             var options = GetPage(accounts, currentPage).Select(FormatAccount).ToList();
-            if (currentPage > 0) options.Add("<< Previous Page");
-            if ((currentPage + 1) * AccountsPerPage < accounts.Count) options.Add("Next Page >>");
+            if (currentPage > 0) options.Add("Previous page");
+            if ((currentPage + 1) * AccountsPerPage < accounts.Count) options.Add("Next page");
             options.Add("Back");
             return options;
         }

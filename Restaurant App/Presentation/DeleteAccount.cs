@@ -19,7 +19,7 @@ namespace Project.Presentation
                 if (activeAccounts == null || !activeAccounts.Any())
                 {
                     ControlHelpPresent.DisplayFeedback("No accounts available to delete.");
-                    ControlHelpPresent.DisplayFeedback("\nPress any key to return to the previous menu...", "bottom", "tip");
+                    ControlHelpPresent.DisplayFeedback("Press any key to return to the previous menu...", "bottom", "tip");
                     Console.ReadKey();
                     return;
                 }
@@ -52,11 +52,11 @@ namespace Project.Presentation
                             running = false;
                             break;
                         
-                        case "Next page >>":
+                        case "Next page":
                             currentPage++;
                             break;
 
-                        case "<< Previous page":
+                        case "Previous page":
                             currentPage--;
                             break;
                         
@@ -65,7 +65,7 @@ namespace Project.Presentation
                             bool success = DeleteAccountLogic.DeleteAccount(currentUser, selection.text, activeAccounts, currentPage);
                             if (success)
                             {
-                                ControlHelpPresent.DisplayFeedback("\nAccount successfully deleted. Press any key to refresh...", "bottom", "success");
+                                ControlHelpPresent.DisplayFeedback("Account successfully deleted. Press any key to refresh...", "bottom", "success");
                                 Console.ReadKey();
                                 activeAccounts = DeleteAccountLogic.GetActiveAccounts()
                                     .Where(acc => acc.ID != currentUser.ID)
@@ -75,7 +75,7 @@ namespace Project.Presentation
                             }
                             else
                             {
-                                ControlHelpPresent.DisplayFeedback("\nFailed to delete the account. Press any key to continue...");
+                                ControlHelpPresent.DisplayFeedback("Failed to delete the account. Press any key to continue...");
                                 Console.ReadKey();
                             }
                             break;
@@ -85,7 +85,8 @@ namespace Project.Presentation
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine(" Exiting ACCOUNT MENU...");
+                // Console.WriteLine(" Exiting ACCOUNT MENU...");
+                ControlHelpPresent.DisplayFeedback("Exciting ACCOUNT MENU");
                 // Thread.Sleep(1500);
             }
         }
