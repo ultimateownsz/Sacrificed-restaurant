@@ -20,12 +20,17 @@ namespace Project.Presentation
                     break;
 
                 case "Make an existing user an admin":
-                    // Add new function
+                    PromoteUserToAdmin();
                     break;
 
                 case "Back":
                     return;
             }
+        }
+
+        private static void PromoteUserToAdmin()
+        {
+
         }
     }
 }
