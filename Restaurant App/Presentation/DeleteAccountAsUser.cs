@@ -11,7 +11,7 @@ namespace Presentation
 
             // Set the warning color to red
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("WARNING: Deleting your account will:");
+            Console.WriteLine("WARNING: Deleting your account entails the following:");
             Console.ResetColor(); // Reset color to default
 
             Console.WriteLine("");
