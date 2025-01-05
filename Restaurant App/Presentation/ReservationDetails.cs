@@ -7,6 +7,10 @@ public static class ReservationDetails
         ControlHelpPresent.Clear();
         ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
+        _ = ControlHelpPresent.GetFooterHeight(); // Dynamically determine footer height
+        int reservationStartLine = 0; // Start drawing the receipt from the top
+
+        Console.SetCursorPosition(0, reservationStartLine);
 
         // Fetch the account details for the user
         var account = Access.Reservations.GetBy<int?>("UserID", reservation.UserID);
@@ -20,16 +24,15 @@ public static class ReservationDetails
         }
 
         // Display the reservation details
-        Console.SetCursorPosition(0, 0); // Ensure content is displayed at the top
         Console.WriteLine("=========== Reservation Details =============================");
-        Console.WriteLine($"Reservation Date     : {reservation.Date:yyyy-MM-dd}");
-        Console.WriteLine($"Assigned Table Number:  {reservation.PlaceID}");
+        Console.WriteLine($"Reservation date     : {reservation.Date:dd/MM/yyyy}");
+        Console.WriteLine($"Assigned table number:  {reservation.PlaceID}");
         Console.WriteLine($"User                 : {GetUserFullName(reservation.UserID)}");
         Console.WriteLine("\nMore details may appear in the future...");
         Console.WriteLine("==============================================================");
 
         // Show navigation options in the footer
-        ControlHelpPresent.DisplayFeedback("\nPress any key to return to the reservations list...", "bottom", "tip");
+        ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list...", "bottom", "tip");
         Console.ReadKey();
     }
 
