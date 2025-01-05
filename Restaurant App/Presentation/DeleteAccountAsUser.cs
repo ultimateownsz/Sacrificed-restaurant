@@ -26,41 +26,25 @@ namespace Presentation
                 return;
             }
 
-            // Confirm deletion
-            var options = new List<string> { "Yes", "No" };
-            var selection = SelectionPresent.Show(
-                options,
-                $"Are you sure you want to delete your account?\n\n"
-            );
+            // ConfirmAndDelete method from DeleteAccountLogic
+            bool deletionSuccessful = DeleteAccountLogic.ConfirmAndDelete(user);
 
-            if (selection.text == "Yes")
+            if (deletionSuccessful)
             {
-                // Use ConfirmAndDelete method from DeleteAccountLogic
-                bool deletionSuccessful = DeleteAccountLogic.ConfirmAndDelete(user);
+                // Delete future reservations after the account is marked as inactive
+                DeleteAccountLogic.DeleteFutureReservations(user.ID);
 
-                if (deletionSuccessful)
-                {
-                    // Delete future reservations after the account is marked as inactive
-                    DeleteAccountLogic.DeleteFutureReservations(user.ID);
+                // Provide feedback to the user
+                Console.WriteLine("Your account has been successfully deleted and anonymized.");
+                Console.WriteLine("Press any key to exit the program...");
+                Console.ReadKey();
 
-                    // Provide feedback to the user
-                    Console.WriteLine("Your account has been successfully deleted.");
-                    Console.WriteLine("Press any key to exit the program...");
-                    Console.ReadKey();
-
-                    // Exit program after deletion
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Error occurred while deleting your account.");
-                    Console.WriteLine("Press any key to return to the menu...");
-                    Console.ReadKey();
-                }
+                // Exit the program after account deletion
+                Environment.Exit(0);
             }
             else
             {
-                Console.WriteLine("Account deletion canceled.");
+                Console.WriteLine("Error occurred while deleting your account.");
                 Console.WriteLine("Press any key to return to the menu...");
                 Console.ReadKey();
             }
