@@ -18,7 +18,7 @@ namespace Project.Presentation
             switch (choice)
             {
                 case "Create a new admin account":
-                    RegisterUser.CreateAccount(true);  // Call the existing CreateAccount method with admin=true
+                    RegisterUser.CreateAccount(true);
                     break;
 
                 case "Make an existing user an admin":
