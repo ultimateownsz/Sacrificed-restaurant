@@ -29,7 +29,7 @@ namespace Presentation
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure you want to delete your account? This action is irreversible.\n\n"
+                $"Are you sure you want to delete your account?\n\n"
             );
 
             if (selection.text == "Yes")
@@ -43,9 +43,12 @@ namespace Presentation
                     DeleteAccountLogic.DeleteFutureReservations(user.ID);
 
                     // Provide feedback to the user
-                    Console.WriteLine("Your account has been successfully deleted and anonymized.");
-                    Console.WriteLine("Press any key to return to the menu...");
+                    Console.WriteLine("Your account has been successfully deleted.");
+                    Console.WriteLine("Press any key to exit the program...");
                     Console.ReadKey();
+
+                    // Exit program after deletion
+                    Environment.Exit(0);
                 }
                 else
                 {
