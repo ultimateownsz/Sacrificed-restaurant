@@ -16,7 +16,7 @@ namespace Project.Logic
         // Method to format account display text
         public static string FormatAccount(UserModel account)
         {
-            return $"{account.FirstName} {account.LastName} ({(account.Admin == 1 ? "Admin" : "User")})";
+            return $"{account.FirstName} {account.LastName} ({(account.Admin == 1 ? "Admin" : "User")})\n";
         }
 
         // Method to generate menu options based on the current page and total pages

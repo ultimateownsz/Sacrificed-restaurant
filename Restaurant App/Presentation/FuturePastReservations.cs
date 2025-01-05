@@ -254,8 +254,8 @@ namespace Presentation
                                     : ReservationLogic.FormatAccount(r))
                             .ToList();
 
-                        if (currentPage > 0) reservationOptions.Insert(0, "Previous page");
-                        if (currentPage < totalPages - 1) reservationOptions.Add("Next page");
+                        if (currentPage > 0) reservationOptions.Insert(0, "Previous page\n");
+                        if (currentPage < totalPages - 1) reservationOptions.Add("Next page\n");
                         reservationOptions.Add("Back");
 
                         var selectedOption = SelectionPresent.Show(reservationOptions, 

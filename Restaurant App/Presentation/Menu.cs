@@ -55,7 +55,7 @@ static class Menu
             ControlHelpPresent.Clear();
             ControlHelpPresent.ResetToDefault();
             ControlHelpPresent.ShowHelp();
-            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations", "Logout"], "USER MENU\n\n");
+            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations\n", "Logout"], "USER MENU\n\n");
             
             if (selection.text == null)
             {

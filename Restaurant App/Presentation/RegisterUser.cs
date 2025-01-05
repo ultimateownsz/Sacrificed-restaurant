@@ -131,7 +131,7 @@ internal class RegisterUser
             return;
         }
 
-        var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}").ToList();
+        var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}\n").ToList();
         userOptions.Add("Cancel");
 
         var userSelection = SelectionPresent.Show(userOptions, "ACCOUNT PROMOTION\n\n").text;
