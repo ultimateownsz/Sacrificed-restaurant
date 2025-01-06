@@ -13,7 +13,7 @@ namespace Project.Presentation
                 "Back"
             };
 
-            string choice = SelectionPresent.Show(adminOptions, "Create (admin account)\n\n").text;
+            string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)\n\n").ElementAt(0).text;
 
             switch (choice)
             {
@@ -70,7 +70,7 @@ namespace Project.Presentation
             // Confirmation for promoting
             Console.Clear();
             var confirmationOptions = new List<string> { "Yes", "No" };
-            string confirmation = SelectionPresent.Show(confirmationOptions, "Are you sure?\n\n").text;
+            string confirmation = SelectionPresent.Show(confirmationOptions, banner: "Are you sure?\n\n").ElementAt(0).text;
 
             if (confirmation == "Yes")
             {
