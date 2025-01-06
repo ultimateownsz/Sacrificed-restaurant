@@ -294,7 +294,7 @@ namespace Presentation
         }
 
         // Helper method to check if the table is already reserved for the given date
-        private static bool IsTableTaken(DateTime? reservationDate, long tableID)
+        private static bool IsTableTaken(DateTime? reservationDate, int tableID)
         {
             var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
 
