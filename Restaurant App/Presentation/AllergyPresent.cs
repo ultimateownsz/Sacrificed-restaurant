@@ -7,7 +7,7 @@ internal class AllergyPresent
     {
         // get all selected allergies
         List<SelectionLogic.Selection> allergies = SelectionPresent.Show(
-            output.Allergies, output.Highlights, banner: "DIET/ALLERGIES", SelectionLogic.Mode.Multi);
+            output.Allergies, output.Highlights, banner: "DIET/ALLERGIES MENU", SelectionLogic.Mode.Multi);
 
         List<string?> stringified = new();
         foreach (var selection in allergies)
