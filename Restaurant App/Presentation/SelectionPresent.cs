@@ -5,7 +5,6 @@ using System.Reflection;
 internal class SelectionPresent : SelectionLogic
 {
 <<<<<<< HEAD
-<<<<<<< HEAD
     public struct Palette()
     {
         public ConsoleColor Primary    = ConsoleColor.Yellow;
@@ -20,10 +19,6 @@ internal class SelectionPresent : SelectionLogic
     {
 
         // banner & colour initialization
-=======
-    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
-    {
->>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
 =======
     private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
     {
@@ -44,15 +39,12 @@ internal class SelectionPresent : SelectionLogic
             Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, Console.CursorTop);
 <<<<<<< HEAD
-<<<<<<< HEAD
             
             // conditional statements for method-complexity
             if (mode == SelectionLogic.Mode.Scroll && !selectable.selected) continue;
             if ((index == selection.Count() - 1) && mode == SelectionLogic.Mode.Multi) 
                 Console.WriteLine();
 =======
-=======
->>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
 
             // print the current option
             Console.ForegroundColor = selected ? ConsoleColor.Yellow : ConsoleColor.White;
@@ -60,9 +52,6 @@ internal class SelectionPresent : SelectionLogic
 
             if (oneline && !selected) continue;
             Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
-<<<<<<< HEAD
->>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
-=======
 >>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
         }
         Console.ResetColor();
@@ -149,7 +138,6 @@ internal class SelectionPresent : SelectionLogic
                 }
 
 <<<<<<< HEAD
-<<<<<<< HEAD
                     // interrupt and prevent nest
                     selection.Where(x => x.Value.selected == true);
                     // if (.ElementAt(0).Key != "continue")
@@ -212,10 +200,6 @@ internal class SelectionPresent : SelectionLogic
                         default:
                             continue;
                     }
-=======
-                // Trim the selection text to handle the arrow keys and logic
-                string trimmedSelection = selected.Item1?.Trim() ?? "";
->>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
 =======
                 // Trim the selection text to handle the arrow keys and logic
                 string trimmedSelection = selected.Item1?.Trim() ?? "";
