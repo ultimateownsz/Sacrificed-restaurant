@@ -39,7 +39,7 @@ static class Menu
         {
             Console.Clear();
             var options = new List<string> { 
-                "reserve", "view reservations", "specify diet/allergies\n", "logout" };
+                "reserve", "view reservations", "specify diet/allergies", "delete account\n", "logout" };
             var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
             switch (selection)
@@ -54,8 +54,12 @@ static class Menu
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
 
-                case "specify diet/allergies\n":
+                case "specify diet/allergies":
                     AllergyLogic.Start(AllergyLogic.Type.User, acc.ID);
+                    break;
+                
+                case "delete account\n":
+                    DeleteAccountAsUser.DeleteAccount(acc);
                     break;
 
                 case "logout":

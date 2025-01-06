@@ -84,6 +84,7 @@ namespace Project.Logic
                 Console.WriteLine("User ID is null. Cannot delete future reservations.");
             }
         }
+        
         public static List<UserModel> GetActiveAccounts()
         {
             var allAccounts = Access.Users.Read(); // Fetch all accounts
