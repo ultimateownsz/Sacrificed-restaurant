@@ -153,6 +153,13 @@ namespace Presentation
                 string banner = "How many guests are reserved for your table?";
                 int guests = options.Count() - SelectionPresent.Show(options, banner, false).index;
 
+                int[] inactiveTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
+                .ToArray();
+
+                
+
                 TableSelection tableSelection = new();
                 int[] availableTables = guests switch
                 {
