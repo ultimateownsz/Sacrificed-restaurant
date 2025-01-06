@@ -4,9 +4,9 @@ internal class SelectionPresent
 
     public struct Palette()
     {
-        public ConsoleColor Primary    = ConsoleColor.Blue;
-        public ConsoleColor Secondary  = ConsoleColor.Cyan;
-        public ConsoleColor Tertiary   = ConsoleColor.DarkCyan;
+        public ConsoleColor Primary    = ConsoleColor.Yellow;
+        public ConsoleColor Secondary  = ConsoleColor.DarkYellow;
+        public ConsoleColor Tertiary   = ConsoleColor.DarkYellow;
         public ConsoleColor Base       = ConsoleColor.White;
     }
     private static Palette palette = new Palette();
