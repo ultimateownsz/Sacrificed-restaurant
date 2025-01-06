@@ -1,7 +1,7 @@
 ﻿using Project.Presentation;
 
 namespace Project.Logic;
-internal class AllergyLogic
+internal class LinkAllergyLogic
 {
     public enum Type
     {
@@ -53,12 +53,24 @@ internal class AllergyLogic
 
     public static void Start(Type type, int? id)
     {
+        // <
+        // THIS CODE SEGMENT HAS BEEN IMPLEMENTED TO PREVENT "HANI-FATIGUE"
+        // REMOVE THIS LOGIC AFTER HANI HAS SPED THE FUCK UP
+        if (type == Type.Product)
+        {
+            string product = SelectionPresent.Show(Access.Products.Read().Select(
+                x => x.Name).ToList(), banner: "PRODUCT MENU").ElementAt(0).text;
+            id = Access.Products.GetBy<string>("Name", product).ID;
+        };
+        // >
+
+
         // value initialization
         var input = new Input();
         var output = _constr_output(id);
 
         // I/O swap
-        AllergyPresent.Show(ref input, ref output);
+        LinkAllergyPresent.Show(ref input, ref output);
         List<AllergyModel> models = ToModels(input.Allergies);
 
         // deletion of old data

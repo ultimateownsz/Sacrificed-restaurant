@@ -1,6 +1,7 @@
 using Project;
 using Project.Presentation;
 using Presentation;
+using Project.Logic;
 
 static class AdminMenu
 {
@@ -12,7 +13,10 @@ static class AdminMenu
             "create (admin account)",
             "delete (accounts)",
             "update (themes)",
-            "(de)activate tables\n",
+            "(de)activate tables",
+            "edit (allergy/diet)",
+            "add (allergy/diet to product)",
+            "pair (drink to product)\n",
             "back"
         };
 
@@ -32,8 +36,17 @@ static class AdminMenu
                 case "update (themes)":
                     ThemeView.ThemedEditing();
                     break;
-                case "(de)activate tables\n":
+                case "(de)activate tables":
                     AdminTableControlPresent.Show();
+                    break;
+                case "edit (allergy/diet)":
+                    EditAllergyLogic.Start();
+                    break;
+                case "add (allergy/diet to product)":
+                    LinkAllergyLogic.Start(LinkAllergyLogic.Type.Product, 0);
+                    break;
+                case "pair (drink to product)\n":
+                    PairLogic.Start(0);
                     break;
                 case "back":
                     return;

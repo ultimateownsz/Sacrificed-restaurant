@@ -55,7 +55,7 @@ static class Menu
                     break;
 
                 case "specify diet/allergies":
-                    AllergyLogic.Start(AllergyLogic.Type.User, acc.ID);
+                    LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, acc.ID);
                     break;
                 
                 case "delete account\n":

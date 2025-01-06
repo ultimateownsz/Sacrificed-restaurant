@@ -1,9 +1,9 @@
 ﻿using Project.Logic;
 
 namespace Project.Presentation;
-internal class AllergyPresent
+internal class LinkAllergyPresent
 {
-    public static void Show(ref AllergyLogic.Input input, ref AllergyLogic.Output output)
+    public static void Show(ref LinkAllergyLogic.Input input, ref LinkAllergyLogic.Output output)
     {
         // get all selected allergies
         List<SelectionLogic.Selection> allergies = SelectionPresent.Show(

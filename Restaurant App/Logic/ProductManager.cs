@@ -1,5 +1,4 @@
 // this class handles all the logic for adding, updating, and deleting products
-
 using Project;
 
 static class ProductManager
