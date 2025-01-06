@@ -24,7 +24,7 @@ public static class ThemeInputValidator
         {
             Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("Enter theme name: ", Console.ForegroundColor);
             Console.ForegroundColor = ConsoleColor.White;
             var themeName = Console.ReadLine();
