@@ -28,7 +28,9 @@ namespace Project.Presentation
                 bool running = true;
                 do
                 {
-                    Console.Clear();
+                    // Generate and display the menu options
+                    var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
+                    var selection = SelectionPresent.Show(options, banner: "ACCOUNTS").ElementAt(0);
 
                     ControlHelpPresent.Clear();
                     ControlHelpPresent.ResetToDefault();
