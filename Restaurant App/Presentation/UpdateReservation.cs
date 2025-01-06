@@ -160,7 +160,7 @@ namespace Presentation
             while (true)
             {
                 List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
-                string banner = "How many guests are reserved for your table?\n";
+                string banner = "How many guests are reserved for your table?";
                 int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
                 int[] inactiveTables = Access.Places.Read()
