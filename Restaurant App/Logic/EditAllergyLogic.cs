@@ -43,7 +43,7 @@ internal class EditAllergyLogic
         var output = _constr_output();
 
         // decide mode
-        Mode mode = SelectionPresent.Show(["Create", "Delete"], banner: "EDIT MENU")
+        Mode mode = SelectionPresent.Show(["create", "delete"], banner: "EDIT MENU")
             .ElementAt(0).text == "Create" ? Mode.Create : Mode.Delete;
 
         EditAllergyPresent.Show(mode, ref input, ref output);

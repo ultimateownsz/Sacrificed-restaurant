@@ -16,7 +16,7 @@ static class AdminMenu
             "show (reservation) orders",
             "(de)activate tables",
             "edit (allergy/diet)",
-            "add (allergy/diet to product)",
+            "link (allergy/diet to product)",
             "pair (drink to product)\n",
             "back"
         };
@@ -46,7 +46,7 @@ static class AdminMenu
                 case "edit (allergy/diet)":
                     EditAllergyLogic.Start();
                     break;
-                case "add (allergy/diet to product)":
+                case "link (allergy/diet to product)":
                     LinkAllergyLogic.Start(LinkAllergyLogic.Type.Product, 0);
                     break;
                 case "pair (drink to product)\n":
