@@ -47,11 +47,6 @@ internal class EditAllergyLogic
             .ElementAt(0).text == "Create" ? Mode.Create : Mode.Delete;
 
         EditAllergyPresent.Show(mode, ref input, ref output);
-        if (input.Allergies == null)
-        {
-            Console.WriteLine("CAuGHT");
-        }
-
         switch (mode)
         {
             case Mode.Create:

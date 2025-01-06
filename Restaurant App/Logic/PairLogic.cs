@@ -49,16 +49,6 @@ internal class PairLogic
 
     public static void Start(int? foodID)
     {
-
-        // <
-        // THIS CODE SEGMENT HAS BEEN IMPLEMENTED TO PREVENT "HANI-FATIGUE"
-        // REMOVE THIS LOGIC AFTER HANI HAS SPED THE FUCK UP
-        List<string> labels = ["Beverage",];
-        string _product = SelectionPresent.Show(Access.Products.Read().Where(
-            x => !labels.Contains(x.Course)).Select(x => x.Name).ToList(), banner: "PRODUCT MENU").ElementAt(0).text;
-        foodID = Access.Products.GetBy<string>("Name", _product).ID;
-        // >
-
         // value initialization
         var input = new Input();
         var output = _constr_output(foodID);

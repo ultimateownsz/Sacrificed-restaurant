@@ -53,18 +53,6 @@ internal class LinkAllergyLogic
 
     public static void Start(Type type, int? id)
     {
-        // <
-        // THIS CODE SEGMENT HAS BEEN IMPLEMENTED TO PREVENT "HANI-FATIGUE"
-        // REMOVE THIS LOGIC AFTER HANI HAS SPED THE FUCK UP
-        if (type == Type.Product)
-        {
-            string product = SelectionPresent.Show(Access.Products.Read().Select(
-                x => x.Name).ToList(), banner: "PRODUCT MENU").ElementAt(0).text;
-            id = Access.Products.GetBy<string>("Name", product).ID;
-        };
-        // >
-
-
         // value initialization
         var input = new Input();
         var output = _constr_output(id);
