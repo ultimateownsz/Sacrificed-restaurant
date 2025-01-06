@@ -8,12 +8,7 @@ namespace Presentation
         public static void DeleteAccount(UserModel user)
         {
             Console.Clear();
-
-            // Set the warning color to red
-            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("WARNING: Deleting your account entails the following:");
-            Console.ResetColor(); // Reset color to default
-
             Console.WriteLine("");
             Console.WriteLine("- Delete all future reservations.");
             Console.WriteLine("- Make your past reservations anonymous.");
