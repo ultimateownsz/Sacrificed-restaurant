@@ -30,6 +30,12 @@ static class ThemeView
                 if (selection == 0)
                 {
                     themeName = ThemeInputValidator.GetValidString();
+                    if(themeName == null)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Failed to update theme");
+                        return;
+                    }
                     ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
                 }
@@ -43,6 +49,12 @@ static class ThemeView
             else
             {
                 themeName = ThemeInputValidator.GetValidString();
+                if(themeName == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Failed to update theme");
+                    return;
+                }
                 ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                 Console.WriteLine($"The theme has been updated to {themeName}");
             }
@@ -170,7 +182,7 @@ static class ThemeView
                 return 0; // Ensure a return value for the back option
             }
 
-            month = selection.ElementAt(0).index;
+            month = selection.ElementAt(0).index + 1;
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");

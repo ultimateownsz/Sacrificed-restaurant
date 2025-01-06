@@ -36,16 +36,26 @@ static class ThemeMenuManager
             if(themeItem == null)
             {
                 ThemeModel newTheme = new(themeName, null);
-                Access.Themes.Write(newTheme);  
-                scheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
-                Console.WriteLine("no theme item");
+                Access.Themes.Write(newTheme);
+                UpdateThemeSchedule(month, year, themeName);
             }
             else
             {
                 scheduleItem.ThemeID = themeItem.ID;
+                Access.Schedules.Update(scheduleItem);
             }
-            Access.Schedules.Update(scheduleItem);
         }
+    }
+
+    
+    public static List<string?> GetAllThemes()
+    {
+        var themes = Access.Themes.GetAll().Select(t => t.Name).ToList();
+        if (themes.Count > 0)
+        {
+            themes[themes.Count - 1] += "\n\n";
+        }
+        return themes;
     }
 
     // this method gets all the Theme model attatched to a schedule
@@ -125,5 +135,12 @@ static class ThemeMenuManager
         var item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
         if (item == null) return false;
         return Access.Schedules.Delete(item.ID);
+    }
+
+    
+    public static int? GetThemeIDByName(string name)
+    {
+        var theme = Access.Themes.GetBy<string>("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
+        return theme?.ID;
     }
 }
