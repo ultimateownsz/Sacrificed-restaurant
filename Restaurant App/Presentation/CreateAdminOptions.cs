@@ -13,7 +13,7 @@ namespace Project.Presentation
                 "Back"
             };
 
-            string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)\n\n").ElementAt(0).text;
+            string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)").ElementAt(0).text;
 
             switch (choice)
             {
@@ -70,7 +70,7 @@ namespace Project.Presentation
             // Confirmation for promoting
             Console.Clear();
             var confirmationOptions = new List<string> { "Yes", "No" };
-            string confirmation = SelectionPresent.Show(confirmationOptions, banner: "Are you sure?\n\n").ElementAt(0).text;
+            string confirmation = SelectionPresent.Show(confirmationOptions, banner: "Are you sure?").ElementAt(0).text;
 
             if (confirmation == "Yes")
             {
@@ -78,16 +78,16 @@ namespace Project.Presentation
                 user.Admin = 1;
                 if (userAccess.Update(user))
                 {
-                    Console.WriteLine("\nUser successfully promoted to admin.");
+                    Console.WriteLine("User successfully promoted to admin.");
                 }
                 else
                 {
-                    Console.WriteLine("\nFailed to promote the user. Try again.");
+                    Console.WriteLine("Failed to promote the user. Try again.");
                 }
             }
             else
             {
-                Console.WriteLine("\nAction canceled. User was not promoted.");
+                Console.WriteLine("Action canceled. User was not promoted.");
             }
 
             Console.WriteLine("Press any key to return to the menu...");
