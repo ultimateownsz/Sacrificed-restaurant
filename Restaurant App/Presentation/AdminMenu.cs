@@ -14,7 +14,6 @@ static class AdminMenu
             "delete (accounts)",
             "update (themes)",
             "show (reservation) orders",
-            "(de)activate tables\n",
             "(de)activate tables",
             "edit (allergy/diet)",
             "add (allergy/diet to product)",
