@@ -12,7 +12,7 @@ static class AdminMenu
             "create (admin account)",
             "delete (accounts)",
             "update (themes)",
-            "show orders",
+            "show (reservation) orders",
             "(de)activate tables\n",
             "back"
         };
