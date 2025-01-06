@@ -41,7 +41,7 @@ static class AdminMenu
                 case "(de)activate tables":
                     AdminTableControlPresent.Show();
                     break;
-                case "edit (allergy/diet)":
+                case "edit (allergy/diet)\n":
                     EditAllergyLogic.Start();
                     break;
                 case "back":
