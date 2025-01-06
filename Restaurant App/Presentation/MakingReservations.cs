@@ -18,8 +18,8 @@ namespace Presentation
 
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
-            int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
+            string banner = "How many guests will be coming?";
+            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
             DateTime selectedDate;
 
@@ -166,7 +166,7 @@ namespace Presentation
     //         {
     //             if (j == reservationIndex)
     //             {
-    //                 Console.ForegroundColor = ConsoleColor.Yellow;
+    //                 Console.ForegroundColor = ConsoleColor.Blue;
     //                 Console.WriteLine($"> Reservation: {userReservations[j].Date}"); // Highlight selected item
     //                 Console.ResetColor();
     //             }
@@ -250,7 +250,7 @@ namespace Presentation
                     while (true)
                     {
                         Console.Clear();
-                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:\n\n";
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
@@ -258,7 +258,7 @@ namespace Presentation
                         productOptions.Add("Skip this course"); // Option to skip the course
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, banner).text;
+                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
 
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")

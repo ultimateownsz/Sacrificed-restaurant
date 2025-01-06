@@ -21,8 +21,8 @@ public static class ShowReservations
                     "Delete Reservation\n", 
                     "Back" 
                 },
-                $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:\n"
-            ).text;
+                banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
+            ).ElementAt(0).text;
 
             // Handle the chosen action
             switch (selectedOption)
