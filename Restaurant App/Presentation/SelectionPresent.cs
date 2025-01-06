@@ -1,6 +1,8 @@
 ﻿namespace Project;
 internal class SelectionPresent
 {
+    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
+
     public struct Palette()
     {
         public ConsoleColor Primary    = ConsoleColor.Yellow;
@@ -11,7 +13,7 @@ internal class SelectionPresent
     private static Palette palette = new Palette();
 
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
-        string banner, SelectionLogic.Mode mode, int menuStartLine)
+        string banner, SelectionLogic.Mode mode)
     {
 
         // banner & colour initialization
@@ -30,11 +32,23 @@ internal class SelectionPresent
             // Clear the current line completely to prevent residual text
             Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, Console.CursorTop);
+
+            // print the current option
+            Console.ForegroundColor = selected ? ConsoleColor.Yellow : ConsoleColor.White;
+            string prefix = selected ? "-> " : "";
+
+            // marker
+            string prefix = (selectable.selected) ? ">" : "";
+            string suffix = (selectable.selected) ? "" : "";
             
             // conditional statements for method-complexity
             if (mode == SelectionLogic.Mode.Scroll && !selectable.selected) continue;
             if ((index == selection.Count() - 1) && mode == SelectionLogic.Mode.Multi) 
                 Console.WriteLine();
+
+            // output
+            Console.WriteLine($"{prefix} {text} {suffix}");
+            Console.ForegroundColor = palette.Base;
         }
         Console.ResetColor();
         // Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
@@ -95,13 +109,13 @@ internal class SelectionPresent
             Console.SetCursorPosition(0, menuStartLine);
 
             // update screen
-            _display(selection, banner, mode, menuStartLine);
+            _update(banner, selection, oneline, menuStartLine);
 
             // determine the currently selected index
             int? selectedIndex = null;
             foreach (var item in selection)
             {
-                if (item.Value.selected)  // the selected option
+                if (item.Value)  // the selected option
                 {
                     selectedIndex = options.IndexOf(item.Key);
                     break;
@@ -117,9 +131,9 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Marked:
 
                     // interrupt and prevent nest
-                    selection.Where(x => x.Value.selected == true);
-                    // if (.ElementAt(0).Key != "continue")
-                    //     break;
+                    selected = selection.Where(x => x.Value.selected == true);
+                    if (selected.ElementAt(0).Key != "continue")
+                        break;
 
                     // prepare reading-phase
                     var list = new List<SelectionLogic.Selection>();
@@ -144,13 +158,13 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Selected:
 
                     Console.Clear();
-                    selection.Where(x => x.Value.selected == true);
+                    selected = selection.Where(x => x.Value.selected == true);
                     return new()
                     {
                         new SelectionLogic.Selection()
                         {
-                            text = selection.Select(x => x.Key).ElementAt(0),
-                            index = selection.Select(x => x.Value.index).ElementAt(0)
+                            text = selected.Select(x => x.Key).ElementAt(0),
+                            index = selected.Select(x => x.Value.index).ElementAt(0)
                         }
                     };
 
