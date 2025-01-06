@@ -103,7 +103,7 @@ namespace Project
                 }
                 else if (day == selectedDay)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
 
                     // Flag to show the "fully reserved" message if the selected day is fully booked
                     if (isFullyBooked)

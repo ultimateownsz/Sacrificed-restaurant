@@ -163,8 +163,8 @@ namespace Presentation
                 }
 
 
-                // Flash the "X" and the table number in Blue
-                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Blue);
+                // Flash the "X" and the table number in Yellow
+                _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Yellow);
             }
         }
 
@@ -175,9 +175,9 @@ namespace Presentation
 
             while (!token.IsCancellationRequested)
             {
-                // Flash the "X" in Blue
+                // Flash the "X" in Yellow
                 Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("X ");
                 await Task.Delay(500);
 
@@ -391,14 +391,14 @@ namespace Presentation
                 }
             }
 
-            // Highlight the current table with "X" and set to Blue
+            // Highlight the current table with "X" and set to Yellow
             string currNumber = GetNumberAt(currX, currY);
             if (!string.IsNullOrEmpty(currNumber))
             {
                 int currTable = int.Parse(currNumber);
 
                 Console.SetCursorPosition(currX, currY);
-                Console.ForegroundColor = ConsoleColor.Blue; // Highlight as Blue
+                Console.ForegroundColor = ConsoleColor.Yellow; // Highlight as Yellow
                 Console.Write("X ");
             }
 
@@ -425,7 +425,7 @@ namespace Presentation
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Your console is too small to display the table blueprint.");
+                Console.WriteLine($"Your console is too small to display the table Yellowprint.");
                 Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
                 Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
                 Console.ResetColor();
