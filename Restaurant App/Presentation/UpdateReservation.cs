@@ -287,10 +287,5 @@ namespace Presentation
             }
             return false; // Table is available
         }
-
-        // private static void ReleaseOldTable(int oldTableID)
-        // {
-        //     Access.Places.
-        // }
     }
 };
