@@ -52,11 +52,11 @@ public static class ThemeInputValidator
 
     public static string? GetValidThemeMenu()
     {
-        List<string> Themes = ThemeMenuManager.GetAllThemes();
-        Themes.Add("No theme");
 
         while (true)
         {
+            List<string> Themes = ThemeMenuManager.GetAllThemes();
+            Themes.Add("No theme");
             var themeName = SelectionPresent.Show(Themes, banner: "Choose theme:").ElementAt(0).text;
             if(themeName == "No theme") return "0";
             else if (themeName != "")
