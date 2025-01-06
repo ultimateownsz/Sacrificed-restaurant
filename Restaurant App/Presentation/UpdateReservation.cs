@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Project;
@@ -146,6 +147,7 @@ namespace Presentation
         
         private static void UpdateTableID(ReservationModel reservation)
         {
+            bool isAdmin = false;
             // Update Table ID
             while (true)
             {
@@ -154,11 +156,16 @@ namespace Presentation
                 int guests = options.Count() - SelectionPresent.Show(options, banner, false).index;
 
                 int[] inactiveTables = Access.Places.Read()
-                .Where(p => p.Active == 0)
-                .Select(p => p.ID.Value)
-                .ToArray();
+                    .Where(p => p.Active == 0)
+                    .Select(p => p.ID.Value)
+                    .ToArray();
 
-                
+                DateTime? selectedDate = reservation.Date;
+                int[] reservedTables = Access.Reservations
+                    .GetAllBy<DateTime?>("Date", selectedDate)
+                    .Where(r => r?.PlaceID != null)
+                    .Select(r => r!.PlaceID!.Value)
+                    .ToArray();
 
                 TableSelection tableSelection = new();
                 int[] availableTables = guests switch
@@ -169,42 +176,45 @@ namespace Presentation
                     _ => Array.Empty<int>()
                 };
 
-
-
-
-
-
-                // Display table capacities
-                Console.WriteLine("\nTables:");
-                Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
-                Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
-                Console.WriteLine("6-person tables: 2, 3");
-
-                Console.WriteLine("\nEnter new Table number (1-15) or press Enter to keep current:");
-                string tableIdInput = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(tableIdInput))
+                while (true)
                 {
-                    Console.WriteLine("Table ID not updated.");
-                    break;
-                }
-                else if (int.TryParse(tableIdInput, out int tableID) && tableID >= 1 && tableID <= 15)
-                {
-                    // Check if the table is taken for the given date
-                    if (IsTableTaken(reservation.Date, tableID))
+                    int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+
+
+
+
+                    // Display table capacities
+                    Console.WriteLine("\nTables:");
+                    Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
+                    Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
+                    Console.WriteLine("6-person tables: 2, 3");
+
+                    Console.WriteLine("\nEnter new Table number (1-15) or press Enter to keep current:");
+                    string tableIdInput = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(tableIdInput))
                     {
-                        Console.WriteLine("This table is already reserved for the selected date. Please choose a different table.");
+                        Console.WriteLine("Table ID not updated.");
+                        break;
+                    }
+                    else if (int.TryParse(tableIdInput, out int tableID) && tableID >= 1 && tableID <= 15)
+                    {
+                        // Check if the table is taken for the given date
+                        if (IsTableTaken(reservation.Date, tableID))
+                        {
+                            Console.WriteLine("This table is already reserved for the selected date. Please choose a different table.");
+                        }
+                        else
+                        {
+                            // Assign the new table ID
+                            reservation.PlaceID = tableID;
+                            break;
+                        }
                     }
                     else
                     {
-                        // Assign the new table ID
-                        reservation.PlaceID = tableID;
-                        break;
+                        Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
                 }
             }
         }
