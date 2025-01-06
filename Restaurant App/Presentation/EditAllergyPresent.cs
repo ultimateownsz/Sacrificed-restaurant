@@ -7,9 +7,17 @@ internal class EditAllergyPresent
 
     public static List<string?> input_request()
     {
-        Console.Clear();
-        Console.Write("allergy name: ");
-        return new() { Console.ReadLine() };
+        string? input;
+        while (true)
+        {
+            Console.Clear();
+            Console.Write("allergy name: ");
+            
+            input = Console.ReadLine();
+            if (input != "") break;
+        }
+
+        return new() { input };
     }
 
     public static List<string?> selection_request()
