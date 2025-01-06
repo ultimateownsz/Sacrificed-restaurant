@@ -253,7 +253,7 @@ namespace Presentation
                         var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
-                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
+                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
                         // EMERGENCY MODIFICATION: 1
                         productOptions.Add("Skip this course"); // Option to skip the course
 
