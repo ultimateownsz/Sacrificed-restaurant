@@ -202,7 +202,7 @@ public static class UpdateReservation
 
         // Confirm deletion
         var options = new List<string> { "Yes", "No" };
-        var choice = SelectionPresent.Show(options, banner: "Are you sure you want to cancel this reservation?\n\n").ElementAt(0);
+        var choice = SelectionPresent.Show(options, banner: "Are you sure you?\n\n").ElementAt(0);
 
         if (choice.text == "Yes")
         {
