@@ -42,20 +42,20 @@ namespace Presentation
             Console.WriteLine($"User ID: {reservation.UserID}");
         }
 
-        public static void UpdateReservationAdmin(ReservationModel reservation)
+    public static void UpdateReservationAdmin(ReservationModel reservation)
+    {
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}";
+        while (true)
         {
-            string confirmChoice = "UPDATE RESERVATION\n\n";
-            while (true)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
-                switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
-                {
-                    case "Date":
-                        Console.Clear();
-                        UpdateReservationDate(reservation);
-                        Console.WriteLine("\nDate process ended successfully.");
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation);
+                    Console.WriteLine("\nDate process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
 
                     case "Table\n":
                         Console.Clear();
@@ -71,43 +71,51 @@ namespace Presentation
             }
         }
 
-        public static void UpdateReservationUser(ReservationModel reservation)
+    public static void UpdateReservationUser(ReservationModel reservation)
+    {
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
+        while (true)
         {
-            string confirmChoice = "UPDATE RESERVATION\n\n";
-            while (true)
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
-                switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
-                {
-                    case "Date":
-                        Console.Clear();
-                        UpdateReservationDate(reservation);
-                        Console.WriteLine("\nDate process ended successfully.");
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation);
+                    Console.WriteLine("\nDate process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
+               
+                case "Table":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    Console.WriteLine("\nTable number process ended successfully.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
                 
-                    case "Table\n":
-                        Console.Clear();
-                        UpdateTableID(reservation);
-                        Console.WriteLine("\nTable number process ended successfully.");
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
+                case "Cancel reservation\n":
+                    Console.Clear();
+                    if (DeleteReservation(reservation))
+                    {
+                        return; // Exit after deletion
+                    }
+                    break;
+               
+                // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
+                // EDIT: THEN DON"T FUCKING IMPLEMENT THE LOGIC UNTIL IT'S DONE
+                case "Number of guests":
+                    Console.Clear();
+                    Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
+                    Console.WriteLine("Press any key to return.");
+                    Console.ReadKey();
+                    break;
                 
-                    // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
-                    // EDIT: THEN DON"T FUCKING IMPLEMENT THE LOGIC UNTIL IT'S DONE
-                    case "Number of guests":
-                        Console.Clear();
-                        Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
-                    
-                    case "Back":
-                        return;
-                }
+                case "Back":
+                    return;
             }
         }
+    }
 
         private static void UpdateReservationDate(ReservationModel reservation)
         {
@@ -203,6 +211,38 @@ namespace Presentation
                 }
             }
         }
+
+    private static bool DeleteReservation(ReservationModel reservation)
+    {
+        // Check if the reservation date is in the past
+        if (reservation.Date < DateTime.Today)
+        {
+            Console.WriteLine("You cannot cancel a reservation that is in the past.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return false; // Cant cancel a past reservation
+        }
+
+        // Confirm deletion
+        var options = new List<string> { "Yes", "No" };
+        var choice = SelectionPresent.Show(options, banner: "Are you sure you?").ElementAt(0);
+
+        if (choice.text == "Yes")
+        {
+            Access.Reservations.Delete(reservation.ID);
+            Console.WriteLine($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return true; // Deletion was successful
+        }
+        else
+        {
+            Console.WriteLine("Reservation not cancelled.");
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+            return false; // Deletion was cancelled
+        }
+    }
 
         private static void UdpateReservationAmount(ReservationModel reservation)
         {
