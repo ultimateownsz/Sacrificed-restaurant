@@ -182,7 +182,7 @@ static class ThemeView
                 return 0; // Ensure a return value for the back option
             }
 
-            month = selection.ElementAt(0).index;
+            month = selection.ElementAt(0).index + 1;
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");

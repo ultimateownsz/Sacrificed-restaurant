@@ -11,8 +11,7 @@ public class CourseLogic
 
         while (true)
         {
-            string banner = "Choose course:\n\n";
-            var courseName = SelectionPresent.Show(courses, banner, false).text;
+            var courseName = SelectionPresent.Show(courses, banner: "ADMIN MENU").ElementAt(0).text;
 
             if (courseName != "")
             {
