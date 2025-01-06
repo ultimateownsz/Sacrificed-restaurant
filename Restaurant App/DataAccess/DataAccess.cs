@@ -18,9 +18,11 @@ public class DataAccess<T1> where T1 : IModel
         Type T2 when T2 == typeof(UserModel) => "User",
         Type T2 when T2 == typeof(ThemeModel) => "Theme",
         Type T2 when T2 == typeof(PlaceModel) => "Place",
+        Type T2 when T2 == typeof(AllergyModel) => "Allergy",
         Type T2 when T2 == typeof(RequestModel) => "Request",
         Type T2 when T2 == typeof(ProductModel) => "Product",
         Type T2 when T2 == typeof(ScheduleModel) => "Schedule",
+        Type T2 when T2 == typeof(AllerlinkModel) => "Allerlink",
         Type T2 when T2 == typeof(ReservationModel) => "Reservation",
         _ => ""
     };
@@ -47,10 +49,10 @@ public class DataAccess<T1> where T1 : IModel
     }
 
     // low-level operations
-    public IEnumerable<T1> Read()
+    public List<T1?> Read()
     {
         string query = $"SELECT * FROM {_table}";
-        return _db.Query<T1>(query) ?? [];
+        return (_db.Query<T1>(query) ?? []).ToList<T1?>();
     }
 
     public bool Write(T1 item)
@@ -95,10 +97,10 @@ public class DataAccess<T1> where T1 : IModel
         return _db.QueryFirstOrDefault<T1>(query, new { value = value ?? default});
     }
 
-    public IEnumerable<T1?> GetAllBy<T2>(string? column, T2? value)
+    public List<T1?> GetAllBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
-        return _db.Query<T1>(query, new { value = value ?? default });
+        return _db.Query<T1>(query, new { value = value ?? default }).ToList<T1?>();
     }
 
     public T1? Trace<T2>(T2 value)

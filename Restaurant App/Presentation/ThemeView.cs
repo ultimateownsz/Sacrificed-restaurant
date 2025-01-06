@@ -23,9 +23,9 @@ static class ThemeView
             if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
-                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:\n\n";
+                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
-                int selection = SelectionPresent.Show(options2, banner2, false).index;
+                int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
                 if (selection == 0)
                 {
@@ -75,8 +75,8 @@ static class ThemeView
             Console.Clear();
             Console.WriteLine("Select a year to edit its themes:\n");
 
-            // Highlight the currently selected year in yellow
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            // Highlight the currently selected year in Blue
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(availableYears[currentIndex]);
             Console.ResetColor();
 
@@ -141,7 +141,7 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}, or go (b)ack\n\n";
+        string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
@@ -158,18 +158,19 @@ static class ThemeView
 
             //Console.WriteLine("\n(b)ack")
             //var key = Console.ReadKey(intercept: true);
-            
+
             //if (key.Key == ConsoleKey.B)
             //{
             //    return 0; // Indicate going back
             //}
 
-            month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
-            if (month == 0)
+            var selection = SelectionPresent.Show(optionsMonths, banner: bannerMonths);
+            if (selection.Count == 0)
             {
                 return 0; // Ensure a return value for the back option
             }
 
+            month = selection.ElementAt(0).index;
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
