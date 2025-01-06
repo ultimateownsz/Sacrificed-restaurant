@@ -163,7 +163,7 @@ namespace Presentation
                 }
 
 
-                // Flash the "X" and the table number in yellow
+                // Flash the "X" and the table number in Yellow
                 _ = FlashHighlightAsync(currentTable, cursorX, cursorY, ConsoleColor.Yellow);
             }
             Console.ResetColor();
@@ -176,7 +176,7 @@ namespace Presentation
 
             while (!token.IsCancellationRequested)
             {
-                // Flash the "X" in yellow
+                // Flash the "X" in Yellow
                 Console.SetCursorPosition(x, y);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("X ");
@@ -393,14 +393,14 @@ namespace Presentation
                 }
             }
 
-            // Highlight the current table with "X" and set to yellow
+            // Highlight the current table with "X" and set to Yellow
             string currNumber = GetNumberAt(currX, currY);
             if (!string.IsNullOrEmpty(currNumber))
             {
                 int currTable = int.Parse(currNumber);
 
                 Console.SetCursorPosition(currX, currY);
-                Console.ForegroundColor = ConsoleColor.Yellow; // Highlight as yellow
+                Console.ForegroundColor = ConsoleColor.Yellow; // Highlight as Yellow
                 Console.Write("X ");
             }
 
@@ -427,7 +427,7 @@ namespace Presentation
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Your console is too small to display the table blueprint.");
+                Console.WriteLine($"Your console is too small to display the table Yellowprint.");
                 Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
                 Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
                 Console.ResetColor();
