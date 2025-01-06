@@ -31,7 +31,7 @@ namespace Project.Presentation
                 {
                     // Generate and display the menu options
                     var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                    var selection = SelectionPresent.Show(options, "ACCOUNTS\n\n");
+                    var selection = SelectionPresent.Show(options, banner: "ACCOUNTS").ElementAt(0);
 
                     string selectedText = selection.text;
 

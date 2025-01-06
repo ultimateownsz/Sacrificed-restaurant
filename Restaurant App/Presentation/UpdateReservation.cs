@@ -40,10 +40,10 @@ public static class UpdateReservation
 
     public static void UpdateReservationAdmin(ReservationModel reservation)
     {
-        string confirmChoice = "UPDATE RESERVATION\n\n";
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
@@ -69,10 +69,10 @@ public static class UpdateReservation
 
     public static void UpdateReservationUser(ReservationModel reservation)
     {
-        string confirmChoice = "UPDATE RESERVATION\n\n";
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation\n", "Back"], confirmChoice).text)
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation\n", "Back"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
@@ -202,7 +202,7 @@ public static class UpdateReservation
 
         // Confirm deletion
         var options = new List<string> { "Yes", "No" };
-        var choice = SelectionPresent.Show(options, "Are you sure you want to cancel this reservation?\n\n");
+        var choice = SelectionPresent.Show(options, banner: "Are you sure you want to cancel this reservation?\n\n").ElementAt(0);
 
         if (choice.text == "Yes")
         {
