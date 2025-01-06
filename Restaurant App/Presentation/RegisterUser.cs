@@ -27,7 +27,7 @@ internal class RegisterUser
         {
             Console.Write("email: ");
             email = Console.ReadLine();
-            if (UserLogic.IsEmailValid(email))
+            if (LoginLogic.IsEmailValid(email))
                 break;
             Console.WriteLine("Invalid email address, try again!");
         }
@@ -37,7 +37,7 @@ internal class RegisterUser
         {
             Console.Write("password (8-16 characters): ");
             password = Console.ReadLine();
-            if (UserLogic.IsPasswordValid(password))
+            if (LoginLogic.IsPasswordValid(password))
                 break;
             Console.WriteLine("Invalid password, try again!");
         }
@@ -47,7 +47,7 @@ internal class RegisterUser
         {
             Console.Write("phone number (8 numbers): ");
             phoneNumber = Console.ReadLine();
-            if (UserLogic.IsPhoneNumberValid(phoneNumber))
+            if (LoginLogic.IsPhoneNumberValid(phoneNumber))
                 break;
             Console.WriteLine("Invalid phone number, try again!");
         }
@@ -91,8 +91,8 @@ internal class RegisterUser
             {
                 while (true)
                 {
-                    string banner = "Choose which information you'd like to change:\n\n";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner).text)
+                    string banner = "Choose which information you'd like to change:";
+                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner: banner).ElementAt(0).text)
                     {
                         case "first name":
                             Console.Clear();
@@ -112,7 +112,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("email address: ");
                                 string newEmail = Console.ReadLine();
-                                if (UserLogic.IsEmailValid(newEmail))
+                                if (LoginLogic.IsEmailValid(newEmail))
                                 {
                                     email = newEmail;
                                     break;
@@ -127,7 +127,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("password (8-16 characters): ");
                                 string newPassword = Console.ReadLine();
-                                if (UserLogic.IsPasswordValid(newPassword))
+                                if (LoginLogic.IsPasswordValid(newPassword))
                                 {
                                     password = newPassword;
                                     break;
@@ -142,7 +142,7 @@ internal class RegisterUser
                                 Console.Clear();
                                 Console.Write("phone number (8 numbers): ");
                                 string newPhoneNumber = Console.ReadLine();
-                                if (UserLogic.IsPhoneNumberValid(newPhoneNumber))
+                                if (LoginLogic.IsPhoneNumberValid(newPhoneNumber))
                                 {
                                     phoneNumber = newPhoneNumber;
                                     break;
