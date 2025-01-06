@@ -12,6 +12,7 @@ static class AdminMenu
             "create (admin account)",
             "delete (accounts)",
             "update (themes)",
+            "show (reservation) orders",
             "update (products)",
             "(de)activate tables\n",
             "back"
@@ -19,19 +20,22 @@ static class AdminMenu
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, "ADMIN MENU\n\n").text)
+            switch (SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text)
             {
                 case "edit reservations":
                     ShowReservations.Show(acc);
                     break;
                 case "create (admin account)":
-                    RegisterUser.CreateAccount(true);
+                    CreateAdminOptions.Options(acc);
                     break;
                 case "delete (accounts)":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
                 case "update (themes)":
                     ThemeView.ThemedEditing();
+                    break;
+                case "show (reservation) orders":
+                    ReservationDetails.ShowOrders(acc);
                     break;
                 case "update (products)":
                     ProductView.ProductMainMenu();

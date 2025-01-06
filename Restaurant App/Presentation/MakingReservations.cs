@@ -18,8 +18,8 @@ namespace Presentation
 
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
-            int guests = options.Count() - SelectionPresent.Show(options, banner, true).index;
+            string banner = "How many guests will be coming?";
+            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
             DateTime selectedDate;
 
@@ -182,7 +182,7 @@ namespace Presentation
     //         {
     //             if (j == reservationIndex)
     //             {
-    //                 Console.ForegroundColor = ConsoleColor.Yellow;
+    //                 Console.ForegroundColor = ConsoleColor.Blue;
     //                 Console.WriteLine($"> Reservation: {userReservations[j].Date}"); // Highlight selected item
     //                 Console.ResetColor();
     //             }
@@ -266,26 +266,23 @@ namespace Presentation
                     while (true)
                     {
                         Console.Clear();
-                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:\n\n";
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
-                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}").ToList();
+                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
                         // EMERGENCY MODIFICATION: 1
-                        //productOptions.Add("Cancel"); // Option to cancel and restart
+                        productOptions.Add("Skip this course"); // Option to skip the course
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, banner).text;
+                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
 
                         // EMERGENCY MODIFICATION: 1
-                        //if (selectedOption == "Cancel")
-                        //{
-                        //    Console.WriteLine("Selection canceled. Restarting the order process from Guest 1...");
-                        //    Console.ReadKey();
-                        //    i = -1;
-                        //    guestOrder.Clear();
-                        //    allOrders.Clear();
-                        //    break;
-                        //}
+                        if (selectedOption == "Skip this course")
+                        {
+                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
+                           Console.ReadKey();
+                           break;
+                        }
 
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
@@ -313,16 +310,11 @@ namespace Presentation
                             Console.ReadKey();
                         }
                     }
-
-                    if (i == -1) break;
                 }
-
-                if (i != -1)
-                {
-                    allOrders.AddRange(guestOrder);
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                }
+                allOrders.AddRange(guestOrder);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                // }
             }
 
             return allOrders; // Return the collected orders
@@ -371,6 +363,7 @@ namespace Presentation
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"");
             Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
+            Console.WriteLine($"Reservation number:          {reservationId}");
             Console.WriteLine("===============================");
         }
 

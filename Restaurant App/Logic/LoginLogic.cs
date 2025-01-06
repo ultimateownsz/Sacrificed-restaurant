@@ -1,10 +1,10 @@
 ﻿using Project.Presentation;
 using Project;
 
-public class UserLogic
+public class LoginLogic
 {
     public static UserModel? CurrentAccount { get; private set; }
-    public UserLogic()
+    public LoginLogic()
     {
         
     }

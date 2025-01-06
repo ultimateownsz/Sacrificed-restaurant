@@ -36,15 +36,14 @@ static class ThemeMenuManager
             if(themeItem == null)
             {
                 ThemeModel newTheme = new(themeName, null);
-                Access.Themes.Write(newTheme);  
-                scheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
-                Console.WriteLine("no theme item");
+                Access.Themes.Write(newTheme);
+                UpdateThemeSchedule(month, year, themeName);
             }
             else
             {
                 scheduleItem.ThemeID = themeItem.ID;
+                Access.Schedules.Update(scheduleItem);
             }
-            Access.Schedules.Update(scheduleItem);
         }
     }
 

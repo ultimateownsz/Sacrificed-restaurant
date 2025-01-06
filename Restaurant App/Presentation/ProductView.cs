@@ -6,7 +6,6 @@ static class ProductView
     //This is the main menu for product managment, its nothing special
     public static void ProductMainMenu()
     {
-        string banner = $"PRODUCT MENU\n\n";
             List<string> options = new()
         {
             "Add product",
@@ -19,7 +18,7 @@ static class ProductView
         while (true)
         {
             string? name;
-            switch (SelectionPresent.Show(options, banner).text)
+            switch (SelectionPresent.Show(options, banner: $"PRODUCT MENU").ElementAt(0).text)
             {
                 case "Add product":
                     AddProduct();
@@ -68,7 +67,7 @@ static class ProductView
         {
             if(filterType == "")
             {
-                banner = "Choose a product to edit/delete:\n\n";
+                banner = "Choose a product to edit/delete:";
                 products = ProductManager.GetAllProductInfo().ToList();
                 if(products.Count == 0)
                 {
@@ -82,7 +81,7 @@ static class ProductView
             }
             else if (filterType == "course")
             {
-                banner = $"Choose a product to edit/delete:\n\n{name}:\n\n";
+                banner = $"Choose a product to edit/delete:\n\n{name}:";
                 products = ProductManager.GetAllWithinCourse(name).ToList();
                 if(products.Count == 0)
                 {
@@ -98,11 +97,11 @@ static class ProductView
             {
                 if(name == "0")
                 {
-                    banner = $"Choose a product to edit/delete:\n\nNo theme:\n\n";
+                    banner = $"Choose a product to edit/delete:\n\nNo theme:";
                 }
                 else
                 {
-                    banner = $"Choose a product to edit/delete:\n\n{name}:\n\n";
+                    banner = $"Choose a product to edit/delete:\n\n{name}:";
                 }
                 products = ProductManager.GetAllWithinTheme(name).ToList();
                 if(products.Count == 0)
@@ -116,7 +115,7 @@ static class ProductView
                 } 
             }
 
-            string productSelection = SelectionPresent.Show(products, banner).text;
+            string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
             if(productSelection == "")
             {
@@ -136,7 +135,6 @@ static class ProductView
     
     public static void DeleteOrEditChoice(ProductModel chosenProduct)
     {
-        string banner = "Choose a what to do with the product:\n\n";
             List<string> options = new()
         {
             "Edit name",
@@ -149,7 +147,7 @@ static class ProductView
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, banner).text)
+            switch (SelectionPresent.Show(options, banner: "Choose a what to do with the product:").ElementAt(0).text)
             {
                 case "Edit name":
                     ProductManager.ProductEditValidator(chosenProduct, "name");
@@ -176,9 +174,9 @@ static class ProductView
     public static bool DeleteProduct(ProductModel chosenProduct)
     {
         Console.Clear();
-        string banner = $"Do you want to delete {chosenProduct.Name}\n\n";
+        string banner = $"Do you want to delete {chosenProduct.Name}";
         List<string> options = new List<string>{"Yes", "No"};
-        string selection = SelectionPresent.Show(options, banner, false).text;
+        string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
         if(selection == "No" || selection == "")
         {
             Console.WriteLine("fix");

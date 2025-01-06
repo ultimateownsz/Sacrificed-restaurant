@@ -23,10 +23,7 @@ namespace Project.Logic
         public static bool ConfirmAndDelete(UserModel account)
         {
             var options = new List<string> { "Yes", "No" };
-            var selection = SelectionPresent.Show(
-                options,
-                $"Are you sure?\n\n"
-            );
+            var selection = SelectionPresent.Show(options, banner: $"Are you sure?").ElementAt(0);
 
             if (selection.text == "Yes")
             {
@@ -87,6 +84,7 @@ namespace Project.Logic
                 Console.WriteLine("User ID is null. Cannot delete future reservations.");
             }
         }
+        
         public static List<UserModel> GetActiveAccounts()
         {
             var allAccounts = Access.Users.Read(); // Fetch all accounts
