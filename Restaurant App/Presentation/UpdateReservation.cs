@@ -180,6 +180,11 @@ namespace Presentation
                 {
                     int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
 
+                    if (selectedTable == -1)
+                    {
+                        Console.WriteLine("Returning to previous menu...");
+                        break;
+                    }
 
 
 
