@@ -2,7 +2,7 @@ using Project;
 
 static class UserLogin
 {
-    private static LoginLogic userLogic = new();
+    private static UserLogic userLogic = new();
 
     private static List<string> userInput = new(); // List to store the email and password
     
@@ -121,7 +121,7 @@ static class UserLogin
         }
 
         // Check credentials
-        UserModel? acc = LoginLogic.CheckLogin(email.ToLower(), password);
+        UserModel? acc = UserLogic.CheckLogin(email.ToLower(), password);
         string? loginMessage = acc!.Admin.HasValue && acc.Admin.Value > 0 ? $"Logged in as admin ({acc.FirstName})." : $"Logged in as {acc.FirstName}.";
         if (acc != null)
         {
