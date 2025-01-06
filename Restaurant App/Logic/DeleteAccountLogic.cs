@@ -23,10 +23,7 @@ namespace Project.Logic
         public static bool ConfirmAndDelete(UserModel account)
         {
             var options = new List<string> { "Yes", "No" };
-            var selection = SelectionPresent.Show(
-                options,
-                $"Are you sure?\n\n"
-            );
+            var selection = SelectionPresent.Show(options, banner: $"Are you sure?").ElementAt(0);
 
             if (selection.text == "Yes")
             {
