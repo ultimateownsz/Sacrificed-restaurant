@@ -149,6 +149,9 @@ namespace Presentation
             // Update Table ID
             while (true)
             {
+                List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
+                string banner = "How many guests are reserved for your table?";
+                int guests = options.Count() - SelectionPresent.Show(options, banner, false).index;
 
                 TableSelection tableSelection = new();
                 int[] availableTables = guests switch
