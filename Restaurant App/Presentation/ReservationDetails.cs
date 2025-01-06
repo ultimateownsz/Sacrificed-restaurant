@@ -121,7 +121,7 @@ public static class ReservationDetails
             }
         }
 
-        double grandTotalPrice = 0;
+        decimal grandTotalPrice = 0;
 
         Console.Clear();
         Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
@@ -145,7 +145,7 @@ public static class ReservationDetails
             string main = "";
             string dessert = "";
             string beverage = "";
-            double totalPrice = 0;
+            decimal totalPrice = 0;
 
             if (i < appetizers.Count)
             {
