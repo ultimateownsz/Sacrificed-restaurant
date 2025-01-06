@@ -307,5 +307,10 @@ namespace Presentation
             }
             return false; // Table is available
         }
+
+        private static bool ReleaseOldTable(int oldTableID)
+        {
+            return false;
+        }
     }
 };
