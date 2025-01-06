@@ -7,8 +7,6 @@ public abstract class Access
     public static ThemeAccess Themes = new();
     public static ProductAccess Products = new();
     public static RequestAccess Requests = new();
-    public static AllergyAccess Allergies = new();
     public static ScheduleAccess Schedules = new();
-    public static AllerlinkAccess Allerlinks = new();
     public static ReservationAccess Reservations = new();
 }

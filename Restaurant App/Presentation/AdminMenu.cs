@@ -22,13 +22,10 @@ static class AdminMenu
                 "Update (themes)",
                 "(De)activate tables\n",
                 "Logout",
-            ], "ADMIN MENU\n\n").ElementAt(0).text;
+            ], "ADMIN MENU\n\n");
 
             // Check if Escape was pressed
             if (selection.text == null)
-        while (true)
-        {
-            switch (selection)
             {
                 ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
                 // Console.WriteLine(" Exiting Admin Menu...");  // optional message to show the user what is happening

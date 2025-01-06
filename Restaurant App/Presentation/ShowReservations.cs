@@ -21,7 +21,7 @@ public static class ShowReservations
                     "Delete reservation\n", 
                     "Back" 
                 },
-                $"Selected reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\n"
+                $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\n"
             ).text;
 
             // Handle the chosen action

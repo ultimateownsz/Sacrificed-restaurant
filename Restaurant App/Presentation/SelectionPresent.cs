@@ -1,6 +1,10 @@
 ﻿namespace Project;
-internal class SelectionPresent
+using System.Dynamic;
+using System.Reflection;
+
+internal class SelectionPresent : SelectionLogic
 {
+<<<<<<< HEAD
     public struct Palette()
     {
         public ConsoleColor Primary    = ConsoleColor.Yellow;
@@ -15,6 +19,10 @@ internal class SelectionPresent
     {
 
         // banner & colour initialization
+=======
+    private static void _update(string banner, Dictionary<string, bool> selection, bool oneline, int menuStartLine)
+    {
+>>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
         Console.Clear();
         // clear the menu selection area
         ClearMenuArea(menuStartLine, selection.Count);
@@ -25,65 +33,72 @@ internal class SelectionPresent
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write(banner);  // Display the banner
 
-        foreach (((string text, SelectionLogic.Selectable selectable), int index) in selection.Select((value, index) => (value, index)))
+        foreach ((string text, bool selected) in selection)
         {
             // Clear the current line completely to prevent residual text
             Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, Console.CursorTop);
+<<<<<<< HEAD
             
             // conditional statements for method-complexity
             if (mode == SelectionLogic.Mode.Scroll && !selectable.selected) continue;
             if ((index == selection.Count() - 1) && mode == SelectionLogic.Mode.Multi) 
                 Console.WriteLine();
+=======
+
+            // print the current option
+            Console.ForegroundColor = selected ? ConsoleColor.Yellow : ConsoleColor.White;
+            string prefix = selected ? "-> " : "";
+
+            if (oneline && !selected) continue;
+            Console.WriteLine($"{prefix}{text}", Console.ForegroundColor);
+>>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
         }
         Console.ResetColor();
         // Console.WriteLine("\nControls:\nNavigate : <arrows>\nSelect   : <enter>\nExit     : <escape>");
     }
 
-    private static SelectionLogic.Interaction _update(
-        Dictionary<string, SelectionLogic.Selectable> selection, SelectionLogic.Mode mode)
+    private static Tuple<string?, int?>? _read(Dictionary<string, bool> selection)
     {
-        ConsoleKey capture;
-        switch (capture = Console.ReadKey().Key)
+        var current = ReverseLookup<string, bool>(selection, true);
+
+        switch (Console.ReadKey().Key)
         {
-            // movement
             case ConsoleKey.DownArrow:
+
+                selection[current.Item1 ?? ""] = false;
+                selection[selection.ElementAt(Next(selection.Count, current.Item2)).Key] = true;
+                break;
+
             case ConsoleKey.UpArrow:
 
-                // 2D-movement
-                SelectionLogic.Iterate(selection,
-                    reverse: (capture != ConsoleKey.DownArrow));
+                selection[current.Item1 ?? ""] = false;
+                selection[selection.ElementAt(Next(selection.Count, current.Item2, true)).Key] = true;
+                break;
 
-                return SelectionLogic.Interaction.Moved;
-
-            // actions
-            case ConsoleKey.Escape:
-                return SelectionLogic.Interaction.Terminated;
-
-            case ConsoleKey.Spacebar:
             case ConsoleKey.Enter:
 
-                // terminate
-                if (mode != SelectionLogic.Mode.Multi)
-                    return SelectionLogic.Interaction.Selected;
+                Console.ForegroundColor = ConsoleColor.White;
+                return new(current.Item1, current.Item2);
+            
+            // hmm.. somebody toucha ma code, and destabilized it
+            // I won't touch it for now, but I will find you, and I will kill you.
+            case ConsoleKey.Escape:
+            // case ConsoleKey.B:
 
-                // continuous
-                SelectionLogic.Mark(selection);
-                return SelectionLogic.Interaction.Marked;
-
-
-            // safeguard
-            default:
-                return SelectionLogic.Interaction.None;
+                Console.ForegroundColor = ConsoleColor.White;
+                return new(null, -1); // Return null text and -1 index for Escape
         }
+
+        return null;
     }
 
-    public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
-        string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
+    public static dynamic Show(List<string> options, string banner = "", bool oneline = false)
     {
-        // initialization
-        Dictionary<string, SelectionLogic.Selectable> selection =
-            SelectionLogic.ToSelectables(options, preselected, mode);
+        Tuple<string?, int?>? selected;
+        if (oneline) options.Reverse();
+        
+        Dictionary<string, bool> selection = ToSelectable(options, oneline);
 
         int lastWindowHeight = Console.WindowHeight;  // track the initial terminal height
         int reservedLines = ControlHelpPresent.GetFooterHeight();
@@ -111,11 +126,18 @@ internal class SelectionPresent
             // Show help section with dynamic feedback for the selected option
             ControlHelpPresent.ShowHelp(options, selectedIndex);
 
-            // capture & handle interaction
-            switch (_update(selection, mode))
+            if ((selected = _read(selection)) != null)
             {
-                case SelectionLogic.Interaction.Marked:
+                if (selected.Item2 == -1)  // escape pressed
+                {
+                    // Return a dynamic object indicating Escape was pressed
+                    dynamic escapeHandle = new ExpandoObject();
+                    escapeHandle.text = null;
+                    escapeHandle.index = -1;
+                    return escapeHandle;
+                }
 
+<<<<<<< HEAD
                     // interrupt and prevent nest
                     selection.Where(x => x.Value.selected == true);
                     // if (.ElementAt(0).Key != "continue")
@@ -178,7 +200,16 @@ internal class SelectionPresent
                         default:
                             continue;
                     }
+=======
+                // Trim the selection text to handle the arrow keys and logic
+                string trimmedSelection = selected.Item1?.Trim() ?? "";
+>>>>>>> parent of 35a7e76 (Merge branch 'main' into making-menu's-consistent)
 
+                // initialize and return dynamic object for selection
+                dynamic dynamicHandle = new ExpandoObject();
+                dynamicHandle.text = trimmedSelection;  // return trimmed value for logic
+                dynamicHandle.index = selected.Item2;
+                return dynamicHandle;
             }
         }
     }

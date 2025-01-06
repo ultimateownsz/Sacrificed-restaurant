@@ -2,10 +2,10 @@
 using Project;
 using System.Text.RegularExpressions;
 
-public class LoginLogic
+public class UserLogic
 {
     public static UserModel? CurrentAccount { get; private set; }
-    public LoginLogic()
+    public UserLogic()
     {
         
     }
