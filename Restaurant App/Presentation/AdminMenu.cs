@@ -14,6 +14,7 @@ static class AdminMenu
             "delete (accounts)",
             "update (themes)",
             "show (reservation) orders",
+            "update (products)",
             "(de)activate tables",
             "edit (allergy/diet)\n",
             "back"
@@ -37,6 +38,9 @@ static class AdminMenu
                     break;
                 case "show (reservation) orders":
                     ReservationDetails.ShowOrders(acc);
+                    break;
+                case "update (products)":
+                    ProductView.ProductMainMenu();
                     break;
                 case "(de)activate tables":
                     AdminTableControlPresent.Show();
