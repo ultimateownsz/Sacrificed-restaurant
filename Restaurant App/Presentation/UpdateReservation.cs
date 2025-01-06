@@ -200,39 +200,6 @@ namespace Presentation
                         reservation.PlaceID = selectedTable;
                         return;
                     }
-
-                    // Display table capacities
-                    // Console.WriteLine("\nTables:");
-                    // Console.WriteLine("2-person tables: 1, 4, 5, 8, 9, 11, 12, 15");
-                    // Console.WriteLine("4-person tables: 6, 7, 10, 13, 14");
-                    // Console.WriteLine("6-person tables: 2, 3");
-
-                    // Console.WriteLine("\nEnter new Table number (1-15) or press Enter to keep current:");
-                    // string tableIdInput = Console.ReadLine();
-
-                    // if (string.IsNullOrEmpty(tableIdInput))
-                    // {
-                    //     Console.WriteLine("Table ID not updated.");
-                    //     break;
-                    // }
-                    // else if (int.TryParse(tableIdInput, out int tableID) && tableID >= 1 && tableID <= 15)
-                    // {
-                    //     // Check if the table is taken for the given date
-                    //     if (IsTableTaken(reservation.Date, tableID))
-                    //     {
-                    //         Console.WriteLine("This table is already reserved for the selected date. Please choose a different table.");
-                    //     }
-                    //     else
-                    //     {
-                    //         // Assign the new table ID
-                    //         reservation.PlaceID = tableID;
-                    //         break;
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     Console.WriteLine("Invalid Table ID. Please choose a valid table ID between 1 and 15.");
-                    // }
                 }
             }
         }
