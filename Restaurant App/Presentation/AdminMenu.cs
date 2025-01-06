@@ -33,7 +33,7 @@ static class AdminMenu
                 case "update (themes)":
                     ThemeView.ThemedEditing();
                     break;
-                case "show orders":
+                case "show (reservation) orders":
                     ReservationDetails.ShowOrders(acc);
                     break;
                 case "(de)activate tables\n":
