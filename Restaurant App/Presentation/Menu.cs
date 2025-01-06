@@ -17,7 +17,6 @@ static class Menu
             ], "MAIN MENU\n\n");
 
             if (selection.text == null)
-            switch (selection)
             {
                 Console.Clear();
                 Environment.Exit(0);
@@ -56,7 +55,7 @@ static class Menu
             ControlHelpPresent.Clear();
             ControlHelpPresent.ResetToDefault();
             ControlHelpPresent.ShowHelp();
-            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations",  "Specify diet/allergies", "Logout"], "USER MENU\n\n").ElementAt(0).text;
+            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations\n", "Logout"], "USER MENU\n\n");
             
             if (selection.text == null)
             {
@@ -80,10 +79,7 @@ static class Menu
 
                 case "Logout":
                     ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
-                    break;
-                case "Specify diet/allergies\n":
-                    AllergyLogic.Start(AllergyLogic.Type.User, acc.ID);
-                    break;
+                    return;
             }
         } while (true);
     }
