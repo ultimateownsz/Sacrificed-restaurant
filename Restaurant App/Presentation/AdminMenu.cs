@@ -24,7 +24,7 @@ static class AdminMenu
                     ShowReservations.Show(acc);
                     break;
                 case "create (admin account)":
-                    RegisterUser.CreateAccount(true);
+                    CreateAdminOptions.Options(acc);
                     break;
                 case "delete (accounts)":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
