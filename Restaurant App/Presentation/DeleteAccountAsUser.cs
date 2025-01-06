@@ -33,11 +33,11 @@ namespace Presentation
             {
                 // Provide feedback to the user
                 Console.WriteLine("Your account has been successfully deleted.");
-                Console.WriteLine("Press any key to exit the program...");
+                Console.WriteLine("Press any key to return to the login page...");
                 Console.ReadKey();
 
-                // Exit the program after account deletion
-                Environment.Exit(0);
+                // Go back to the login page after deletion
+                Menu.Start();
             }
             else
             {
