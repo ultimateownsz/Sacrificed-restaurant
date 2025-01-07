@@ -111,6 +111,38 @@ namespace Project.Presentation
 
                         continue;
                     }
+
+                    // hanndle user selection for promotion
+                    var accountsToDisplay = DeleteAccountLogic.GetPage(sortedAccounts, currentPage, 10);
+                    var selectedAccount = accountsToDisplay.FirstOrDefault(acc => DeleteAccountLogic.FormatAccount(acc) == selectedText);
+
+                    if (selectedAccount != null)
+                    {
+                        Console.Clear();
+                        var confirmationOptions = new List<string> { "Yes", "No" };
+                        string confirmation = SelectionPresent.Show(confirmationOptions, banner: $"Are you sure?").ElementAt(0).text;
+
+                        if (confirmation == "Yes")
+                        {
+                            selectedAccount.Admin = 1;
+                            if (Access.Users.Update(selectedAccount))
+                            {
+                                Console.WriteLine("User successfully promoted to admin.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Failed to promote the user. Try again.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Action canceled. User was not promoted.");
+                        }
+
+                        Console.WriteLine("Press any key to return to the menu...");
+                        Console.ReadKey();
+                        return;
+                    }
                 }
             }
             // Console.Clear();
