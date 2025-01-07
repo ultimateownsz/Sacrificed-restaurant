@@ -98,6 +98,10 @@ namespace Restaurant_App_Unittesting
         }
 
         // Simulated methods for validation and account creation logic
+        private bool SimulateIsNameValid(string name)
+        {
+            return name.Length >= 2;
+        }
 
         private bool SimulateIsEmailValid(string email)
         {
