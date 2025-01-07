@@ -73,7 +73,7 @@ namespace Restaurant_App_Unittesting
     }
 
     // User model class
-    public class UserModel
+    public class UserModel_ConvertUser
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
