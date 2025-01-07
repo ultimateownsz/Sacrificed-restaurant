@@ -156,6 +156,7 @@ internal class SelectionPresent
 
                     Console.Clear();
                     selected = selection.Where(x => x.Value.selected == true);
+
                     return new()
                     {
                         new SelectionLogic.Selection()
@@ -168,6 +169,9 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
+                    Console.SetCursorPosition(0, menuStartLine);
+                    Console.ForegroundColor = palette.Base;
+                    Console.WriteLine(banner.Trim() + "\n");
                     return new List<SelectionLogic.Selection>
                     {
                         new SelectionLogic.Selection
