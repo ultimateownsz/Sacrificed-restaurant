@@ -42,6 +42,11 @@ namespace Project.Presentation
                     Console.ReadKey();
                     return;
                 }
+
+                // Only show users, no admins
+                var nonAdminAccounts = activeAccounts.Where(acc => acc.Admin == 0).ToList();
+                var sortedAccounts = nonAdminAccounts.OrderBy(acc => acc.FirstName).ToList();
+                
             }
             // Console.Clear();
             // Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
