@@ -240,14 +240,29 @@ namespace Presentation
             //    return new List<ProductModel>(); // Return an empty list if no theme is available
             //}
 
+            // This part of the code is an absolute mess, and that's my fault.
+            // I assumed that allergies were linked to user-accounts even though
+            // the P.O. explicitly asked the allergies to be requested on a per-guest basis.
+            // To circumvent this, a temporary user is created to hold the guest allergy info
+            // as if it was a normal user-account.
+
+            // To view this from the positive side, this does allow the possibility of future
+            // features like account-bounded allergy/diet saving and/or the ability to produce advertisement
+            // more specifically targeted to users with certain allergies/diets (vegan meals)
+            // without having to reimplement much of the logic.
+
+            // On the rather negative side does this use a bit more processing to execute,
+            // to mitigate this, I've placed the creation of the account here where it's
+            // executed the least amount of times for it to work properly
+            // <<
+            Access.Users.Delete(-1);
+            Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
+            // >>
+
             for (int i = 0; i < guests; i++)
             {
                 List<ProductModel> guestOrder = new();
-
-                // an temporary account is made (expandability)
-                Access.Users.Delete(-1);
-                Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
-                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, -1);
+                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, -1, i+1);
                 
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
@@ -331,13 +346,16 @@ namespace Presentation
                 // }
             }
 
-
-            Access.Users.Delete(-1); // really not my proudest work. I am sorry.
+            // I remove the user after the allergy/diet selection has executed fully
+            // so that no traces of it are left. This truly isn't one of my proudest work.
+            // <<
+            Access.Users.Delete(-1);
+            // >>
             return allOrders; // Return the collected orders
         }
 
 
-
+        
         public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();

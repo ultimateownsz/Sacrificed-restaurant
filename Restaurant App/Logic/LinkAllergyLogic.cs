@@ -17,14 +17,19 @@ internal class LinkAllergyLogic
 
     public struct Output()
     {
+        public int? Guest;
+        public Type Type;
+        
         public List<string?> Allergies = new();
         public List<string?> Highlights = new();
     }
-    private static Output _constr_output(int? id)
+    private static Output _constr_output(Type type, int? id, int? guest)
     {
         // model -> string
         var output = new Output();
-        
+        output.Guest = guest;
+        output.Type = type;
+
         // add all allergies
         Access.Allergies.Read().ForEach(
             x => output.Allergies?.Add(x?.Name));
@@ -72,7 +77,7 @@ internal class LinkAllergyLogic
 
     }
     
-    public static void Start(Type type, int? id)
+    public static void Start(Type type, int? id, int? guest = null)
     {
         
         // standalone implement
@@ -89,7 +94,7 @@ internal class LinkAllergyLogic
 
         // value initialization
         var input = new Input();
-        var output = _constr_output(id);
+        var output = _constr_output(type, id, guest);
 
         // I/O swap
         LinkAllergyPresent.Show(ref input, ref output);
