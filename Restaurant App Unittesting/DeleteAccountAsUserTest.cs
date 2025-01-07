@@ -80,7 +80,20 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class PasswordConfirmation
     {
+        [TestMethod]
+        [DataRow("password123", true)] // Correct password
+        [DataRow("wrongpassword", false)] // Incorrect password
+        public void TestPasswordConfirmation(string enteredPassword, bool expectedResult)
+        {
+            // Mocking user data
+            var user = new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" };
 
+            // Act: Simulate password confirmation process
+            bool result = DeleteAccountAsUser.DeleteAccount(user, enteredPassword);
+
+            // Assert: Verify password confirmation result
+            Assert.AreEqual(expectedResult, result);
+        }
     }
 
     // Mocking data access layer for testing users

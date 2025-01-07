@@ -43,7 +43,7 @@ namespace Restaurant_App_Unittesting
     }
 
     // Mocking data access layer for testing
-    public class MockDataAccess
+    public class MockDataAccess_ConvertUser
     {
         private readonly List<UserModel> _users;
 
