@@ -238,10 +238,17 @@ namespace Presentation
                 return new List<ProductModel>(); // Return an empty list if no theme is available
             }
 
+            // Fetch the reservation details using reservationId
+            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
+            if (reservation == null)
+            {
+                Console.WriteLine("Reservation not found. Unable to save orders.");
+                return new List<ProductModel>();
+            }
+
             for (int i = 0; i < guests; i++)
             {
                 List<ProductModel> guestOrder = new();
-                // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
                     List<ProductModel> products = ProductManager.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
@@ -250,55 +257,27 @@ namespace Presentation
                     {
                         Console.Clear();
                         var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
-
-                        // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
-                        // EMERGENCY MODIFICATION: 1
                         productOptions.Add("Skip this course"); // Option to skip the course
 
-                        // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
-
-                        // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           break;
+                            break;
                         }
 
-                        // Find the selected product based on the menu text
-                        var selectedProduct = products.FirstOrDefault(p => 
+                        var selectedProduct = products.FirstOrDefault(p =>
                             selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
                             guestOrder.Add(selectedProduct);
 
-                            // EMERGENCY MODIFICATION: 1
-                        // Fetch the reservation details using reservationId
-                        var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
-
-                        if (reservation == null)
-                        {
-                            Console.WriteLine("Reservation not found. Unable to save orders.");
-                            return;
-                        }
-
-                        foreach (var product in guestOrder)
-                        {
-                            if (product.ID.HasValue)
+                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                             {
-                                // Pass PlaceID and Date from the fetched reservation
-                                if (!orderLogic.SaveOrder(reservationId, product.ID.Value, reservation.PlaceID, reservation.Date))
-                                {
-                                    Console.WriteLine($"Failed to save the order for {product.Name}. Please try again.");
-                                }
+                                Console.WriteLine($"Failed to save the order for {selectedProduct.Name}. Please try again.");
                             }
-                        }
-
-
-                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            //Console.ReadKey();
-                            break; // Exit the selection loop for this category
+                            break;
                         }
                         else
                         {
@@ -310,7 +289,6 @@ namespace Presentation
                 allOrders.AddRange(guestOrder);
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
-                // }
             }
 
             return allOrders; // Return the collected orders
