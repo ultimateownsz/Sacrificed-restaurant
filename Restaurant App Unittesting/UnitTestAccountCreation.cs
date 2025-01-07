@@ -12,6 +12,12 @@ namespace Restaurant_App_Unittesting
         [DataRow("Liam", true)]
         [DataRow("", false)]
         [DataRow("A"), false]
+        public void TestIsFirstNameValid(string firstName, bool expectedResult)
+        {
+            bool result = SimulateIsNameValid(firstName);
+
+            Assert.AreEqual(expectedResult, result);
+        }
 
         // Email validation tests
         [TestMethod]
