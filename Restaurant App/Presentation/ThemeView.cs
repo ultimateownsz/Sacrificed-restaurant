@@ -9,8 +9,10 @@ static class ThemeView
         {
             string themeName;
             int year = YearChoice();
-            if (year == -1) return;
-
+            if (year == -1)
+            {
+                return;
+            }
             int month = MonthChoice(year);
             if (month == 0) // The reason why this checks for 0 and not -1 because +1 is done in MonthChoice(year)
             {
@@ -18,65 +20,46 @@ static class ThemeView
             }
 
             // Check if the chosen month has a theme, if not proceed with else
-            if (ThemeMenuLogic.GetThemeByYearAndMonth(month, year) is not null)
+            if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
-                string banner = $"{ThemeMenuLogic.GetMonthName(month)}\nChoose:\n\n";
-                List<string> options = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
-                var selection = SelectionPresent.Show(options, banner, false);
+                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
+                List<string> options2 = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
+                int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
-                if (selection.index == -1) return;  // escape pressed
-
-                if (selection.index == 0)
+                if (selection == 0)
                 {
-                    ControlHelpPresent.Clear();
-                    ControlHelpPresent.AddOptions("Escape", "<escape>");
-                    ControlHelpPresent.ShowHelp();
-                    TryCatchHelper.EscapeKeyException(() =>
+                    themeName = ThemeInputValidator.GetValidString();
+                    if(themeName == null)
                     {
-                        themeName = InputHelper.GetValidatedInput<string>(
-                            "Enter the new theme for this month: ",
-                            themeName => (themeName, string.IsNullOrWhiteSpace(themeName) ? "Theme name cannot be empty." : null),
-                            menuTitle: "EDIT THEME",
-                            showHelpAction: () => ControlHelpPresent.ShowHelp()
-                        );
-                        
-                        // ThemeInputValidator.GetValidString();
-                        ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-                        ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", "success");
-                        ControlHelpPresent.ResetToDefault();
+                        Console.Clear();
+                        Console.WriteLine("Failed to update theme");
+                        return;
                     }
-                    );
+                    ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                    Console.WriteLine($"The theme has been updated to {themeName}");
                 }
-                else // Delete the theme for this month
+                else
                 {
-                    ThemeMenuLogic.DeleteMonthTheme(month, year);
+                    ThemeMenuManager.DeleteMonthTheme(month, year);
                     Console.Clear();
-                    ControlHelpPresent.DisplayFeedback("This theme has been deleted", "bottom", "success");
+                    Console.WriteLine("This theme has been deleted");
                 }
             }
-            else // Menu to add a theme to a month without a theme
+            else
             {
-                ControlHelpPresent.Clear();
-                ControlHelpPresent.AddOptions("Escape", "<escape>");
-                ControlHelpPresent.ShowHelp();
-                TryCatchHelper.EscapeKeyException(() =>
+                themeName = ThemeInputValidator.GetValidString();
+                if(themeName == null)
                 {
-                    themeName = InputHelper.GetValidatedInput<string>(
-                        "Enter the theme for this month: ",
-                        themeName => (themeName, string.IsNullOrWhiteSpace(themeName) ? "Theme name cannot be empty." : null),
-                        menuTitle: "ADD THEME",
-                        showHelpAction: () => ControlHelpPresent.ShowHelp()
-                    );
-                    ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
-                    ControlHelpPresent.DisplayFeedback($"The theme has been added: {themeName}", "bottom", "success");
-                    ControlHelpPresent.ResetToDefault();
+                    Console.Clear();
+                    Console.WriteLine("Failed to update theme");
+                    return;
                 }
-                );
-                
+                ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                Console.WriteLine($"The theme has been updated to {themeName}");
             }
 
-            ControlHelpPresent.DisplayFeedback("Go back to previous menu, or press any key to keep editing...", "bottom", feedbackType: "tip");
+            Console.WriteLine("Press Escape to go back to admin menu, or press any key to keep editing...");
 
         } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape);
 
@@ -86,7 +69,7 @@ static class ThemeView
     public static int YearChoice()
     {
         // Fetch available years from the database and add future years
-        List<int> availableYears = ThemeMenuLogic.GetAvailableYears();
+        List<int> availableYears = ThemeMenuManager.GetAvailableYears();
         int minYear = DateTime.Now.Year;
         int currentYearIndex = availableYears.IndexOf(minYear);
 
@@ -97,30 +80,33 @@ static class ThemeView
         }
 
         int currentIndex = currentYearIndex;
-        // string message = string.Empty; // Message for errors or additional info
+        string message = string.Empty; // Message for errors or additional info
 
         while (true)
         {
             Console.Clear();
             Console.WriteLine("Select a year to edit its themes:\n");
 
-            // Highlight the currently selected year in yellow
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            // Highlight the currently selected year in Blue
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(availableYears[currentIndex]);
             Console.ResetColor();
 
-            // Display the footer
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.ResetToDefault();
-            ControlHelpPresent.AddOptions("Reset a year", "<r>");
-            ControlHelpPresent.ShowHelp();
+            // Navigation options
+            Console.WriteLine("\n(r)eset, (b)ack");
+
+            // Display any error or info messages
+            if (!string.IsNullOrEmpty(message))
+            {
+                Console.WriteLine($"\n{message}");
+            }
 
             var key = Console.ReadKey(intercept: true);
 
             switch (key.Key)
             {
                 case ConsoleKey.UpArrow:
-                    // message = string.Empty; // Clear message on valid navigation
+                    message = string.Empty; // Clear message on valid navigation
                     if (currentIndex < availableYears.Count - 1)
                     {
                         currentIndex++;
@@ -137,38 +123,28 @@ static class ThemeView
                 case ConsoleKey.DownArrow:
                     if (currentIndex > 0)
                     {
-                        // message = string.Empty; // Clear message on valid navigation
+                        message = string.Empty; // Clear message on valid navigation
                         currentIndex--;
                     }
                     else
                     {
-                        ControlHelpPresent.DisplayFeedback("Cannot navigate to years in the past.");
-                        // message = "Cannot navigate to years in the past.";
+                        message = "Cannot navigate to years in the past.";
                     }
                     break;
 
-                case ConsoleKey.LeftArrow:
-                case ConsoleKey.RightArrow:
-                    ControlHelpPresent.DisplayFeedback("You can only navigate using the 'Up' and 'Down' <arrows>.");
-                    // message = "You can only navigate using the Up and Down arrows.";
-                    break;
-
                 case ConsoleKey.R:
-                    // message = string.Empty; // Clear message on reset
-                    ControlHelpPresent.DisplayFeedback("Year has been reset to the current year.", "bottom", "success");
+                    message = string.Empty; // Clear message on reset
                     currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
-                case ConsoleKey.Escape:
-                    ControlHelpPresent.DisplayFeedback("Returning to the previous menu...", "bottom", "error");
+                case ConsoleKey.B:
                     return -1; // Indicate user wants to go back
 
                 case ConsoleKey.Enter:
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    ControlHelpPresent.DisplayFeedback("Invalid input. Use <arrows>, <r>, <escape>, or <enter>.", "bottom", "error");
-                    // message = "Invalid input. Use <arrows>, <r>, <escape>, or <enter>.";
+                    message = "Invalid input. Use arrow keys, 'R', 'B', or Enter.";
                     break;
             }
         }
@@ -177,9 +153,9 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}\n\n";
+        string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
-            .Select(m => ThemeMenuLogic.GetMonthThemeName(m, year))
+            .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
 
         while (true)
@@ -194,21 +170,22 @@ static class ThemeView
 
             //Console.WriteLine("\n(b)ack")
             //var key = Console.ReadKey(intercept: true);
-            
+
             //if (key.Key == ConsoleKey.B)
             //{
             //    return 0; // Indicate going back
             //}
 
-            month = 1 + SelectionPresent.Show(optionsMonths, bannerMonths, false).index;
-            if (month == 0)
+            var selection = SelectionPresent.Show(optionsMonths, banner: bannerMonths);
+            if (selection.Count == 0)
             {
                 return 0; // Ensure a return value for the back option
             }
 
+            month = selection.ElementAt(0).index + 1;
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
-                ControlHelpPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.");
+                Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
                 Console.ReadKey();
             }
             else

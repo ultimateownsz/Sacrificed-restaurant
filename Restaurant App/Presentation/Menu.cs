@@ -6,81 +6,71 @@ namespace Project;
 static class Menu
 {
     static public void Start()
-    {        
-        do
+    {
+        // TableSelection.MaximizeConsoleWindow();
+        while (true)
         {
             Console.Clear();
-            dynamic selection = SelectionPresent.Show([
-                "Login",
-                "Register\n",
-                "Exit"
-            ], "MAIN MENU\n\n");
-
-            if (selection.text == null)
+            switch (SelectionPresent.Show(["login", "register\n", "exit"], banner: "MAIN MENU").ElementAt(0).text)
             {
-                Console.Clear();
-                Environment.Exit(0);
-                return;
-            }
-
-            switch(selection.text)
-            {
-                case "Login":
+                case "login":
                     if (MenuLogic.Login() == "continue")
                         continue;
                     break;
-                
-                case "Register":
+
+                case "register\n":
                     RegisterUser.CreateAccount();
                     continue;
-                
-                case "Exit":
-                    Console.Clear();
+
+                case "exit":
                     Environment.Exit(0);
                     return;
-                
+
                 default:
                     continue;
             }
-        
-        } while (true);
+            break; // Valid input provided, break the loop
+        }
     }
 
     public static void ShowUserMenu(UserModel acc)
     {
-        do
+        while (true)
         {
             Console.Clear();
+            var options = new List<string> { 
+                "reserve", "view reservations", "specify diet/allergies", "delete account\n", "logout" };
+            var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.ResetToDefault();
-            ControlHelpPresent.ShowHelp();
-            dynamic selection = SelectionPresent.Show(["Make a reservation", "View reservations\n", "Logout"], "USER MENU\n\n");
-            
-            if (selection.text == null)
+            switch (selection)
             {
-                // Console.WriteLine("Return to main menu");
-                ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
-                // Thread.Sleep(1500);  // wait 1,5 seconds before you return to main menu
-                return;
-            }
-            
-            switch (selection.text)
-            {
-                case "Make a reservation":
+                case "reserve":
                     // Directly call MakingReservation without calendar in Menu
                     MakingReservations.MakingReservation(acc);
                     break;
 
-                case "View reservations":
+                case "view reservations":
                     // MakingReservations.UserOverViewReservation(acc);
-                    FuturePastReservations.Show(acc, false); // using the new method - commented the old method just in case
+                    FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
 
-                case "Logout":
-                    ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
+                case "specify diet/allergies":
+                    AllergyLogic.Start(AllergyLogic.Type.User, acc.ID);
+                    break;
+                
+                case "delete account\n":
+                    DeleteAccountAsUser.DeleteAccount(acc);
+                    break;
+
+                case "logout":
                     return;
+
+                default:
+                    Console.WriteLine("Invalid selection. Please try again.");
+                    Console.ReadKey();
+                    break;
             }
-        } while (true);
+        }
     }
+
 }

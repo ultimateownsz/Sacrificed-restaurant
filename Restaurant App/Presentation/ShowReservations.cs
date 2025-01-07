@@ -5,10 +5,10 @@ public static class ShowReservations
 {
     public static void Show(UserModel acc)
     {
-        FuturePastReservations.Show(acc, true); // using the new method
+        FuturePastResrvations.Show(acc, true); // using the new method
     }
 
-    public static void ShowReservationOptions(ReservationModel reservation)
+    public static void ShowReservationOptions(ReservationModel reservation, UserModel acc)
     {
         while (true)
         {
@@ -16,26 +16,26 @@ public static class ShowReservations
             var selectedOption = SelectionPresent.Show(
                 new List<string> 
                 { 
-                    "View reservation (details)", 
-                    "Update reservation", 
-                    "Delete reservation\n", 
+                    "View Details", 
+                    "Update Reservation", 
+                    "Delete Reservation\n", 
                     "Back" 
                 },
-                $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\n"
-            ).text;
+                banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
+            ).ElementAt(0).text;
 
             // Handle the chosen action
             switch (selectedOption)
             {
-                case "View reservation (details)":
+                case "View Details":
                     ReservationDetails.ShowDetails(reservation);
                     break;
 
-                case "Update reservation":
-                    UpdateReservation.Show(reservation, true); // Boolean to check for admin
+                case "Update Reservation":
+                    UpdateReservation.Show(reservation, acc); // Boolean to check for admin
                     break;
 
-                case "Delete reservation":
+                case "Delete Reservation\n":
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
                 

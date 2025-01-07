@@ -1,4 +1,5 @@
 // the presentation layer uses this class to validate the input of the user
+using Project;
 
 public static class ThemeInputValidator
 {
@@ -30,16 +31,43 @@ public static class ThemeInputValidator
 
             if (!string.IsNullOrWhiteSpace(themeName) && !themeName.Any(char.IsDigit))
             {
+                themeName = char.ToUpper(themeName[0]) + themeName.Substring(1);
                 return themeName;
             }
-            
+
             Console.Clear();            
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
             
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nInvalid theme name...");
-            Console.ReadKey();
+            Console.WriteLine("Press any key to retry or ESCAPE to go back");
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
+            {
+                return null;
+            }
+        }
+    }
+
+    public static string? GetValidThemeMenu()
+    {
+        List<string> Themes = ThemeMenuManager.GetAllThemes();
+        Themes.Add("No theme");
+
+        while (true)
+        {
+            var themeName = SelectionPresent.Show(Themes, banner: "Choose theme:").ElementAt(0).text;
+            if(themeName == "No theme") return "0";
+            else if (themeName != "")
+            {
+                return themeName;
+            }
+            else
+            {
+                Console.WriteLine("?");
+                return null;
+            }
         }
     }
 

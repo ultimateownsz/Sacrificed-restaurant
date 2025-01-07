@@ -6,56 +6,46 @@ static class AdminMenu
 {
     public static void AdminStart(UserModel acc)
     {
-        do
+        List<string> options = new()
         {
-            Console.Clear();
+            "edit reservations",
+            "create (admin account)",
+            "delete (accounts)",
+            "update (themes)",
+            "show (reservation) orders",
+            "update (products)",
+            "(de)activate tables\n",
+            "back"
+        };
 
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.ResetToDefault();
-            ControlHelpPresent.ShowHelp();
-
-            // Display menu and get selection
-            dynamic selection = SelectionPresent.Show([
-                "View reservations (date)",
-                "Create (admin account)",
-                "Delete (accounts)",
-                "Update (themes)",
-                "(De)activate tables\n",
-                "Logout",
-            ], "ADMIN MENU\n\n");
-
-            // Check if Escape was pressed
-            if (selection.text == null)
+        while (true)
+        {
+            switch (SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text)
             {
-                ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
-                // Console.WriteLine(" Exiting Admin Menu...");  // optional message to show the user what is happening
-                // Thread.Sleep(1500);  // use this to wait 1,5 seconds before returning to menu
-                return;
-            }
-
-            // Process the selected option
-            switch (selection.text)
-            {
-                case "View reservations (date)":
-                    FuturePastReservations.Show(acc, true);
+                case "edit reservations":
+                    ShowReservations.Show(acc);
                     break;
-                case "Create (admin account)":
-                    RegisterUser.CreateAccount(true);
+                case "create (admin account)":
+                    CreateAdminOptions.Options(acc);
                     break;
-                case "Delete (accounts)":
+                case "delete (accounts)":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
-                case "Update (themes)":
+                case "update (themes)":
                     ThemeView.ThemedEditing();
                     break;
-                case "(De)activate tables":
+                case "show (reservation) orders":
+                    ReservationDetails.ShowOrders(acc);
+                    break;
+                case "update (products)":
+                    ProductView.ProductMainMenu();
+                    break;
+                case "(de)activate tables\n":
                     AdminTableControlPresent.Show();
                     break;
-                case "Logout":
-                    ControlHelpPresent.DisplayFeedback("Logging out...", "bottom", "success");
+                case "back":
                     return;
             }
-        } while (true);
+        }
     }
 }
-

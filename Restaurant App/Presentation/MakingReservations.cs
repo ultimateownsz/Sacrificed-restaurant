@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using Project;
 
@@ -7,211 +8,357 @@ namespace Presentation
 {
     public static class MakingReservations
     {
-        private static ReservationLogic reservationLogic = new();
-        private static ReservationMenuLogic reservationMenuLogic = new();
-        private static OrderLogic orderLogic = new();
+        static private ReservationLogic reservationLogic = new();
+        static private ReservationMenuLogic reservationMenuLogic = new();
+        static private OrderLogic orderLogic = new();
 
         public static void MakingReservation(UserModel acc)
         {
-            TryCatchHelper.EscapeKeyException(() =>
-            {
-                bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
-                // Step 1: Select the number of guests
-                int guests = TryCatchHelper.EscapeKeyWithResult(GetGuestCount, -1, "Guest selection canceled.");
-                if (guests == -1)
-                {
-                    ControlHelpPresent.DisplayFeedback("Guest selection canceled.", "bottom", "error");
-                    return;
-                }
-
-                // Step 2: Calendar selection
-                DateTime selectedDate = TryCatchHelper.EscapeKeyWithResult(() => SelectDate(guests, isAdmin, acc), DateTime.MinValue, "Date selection canceled.");	
-                if (selectedDate == DateTime.MinValue)
-                {
-                    ControlHelpPresent.DisplayFeedback("Date selection canceled.", "bottom", "error");
-                    return;
-                }
-
-                // Step 3: Table selection
-                int selectedTable = TryCatchHelper.EscapeKeyWithResult(() => SelectTable(selectedDate, guests, isAdmin), -1, "Table selection canceled.");
-                if (selectedTable == -1)
-                {
-                    ControlHelpPresent.DisplayFeedback("Table selection canceled.", "bottom", "error");
-                    return;
-                }
-
-                // Step 4: Save reservation
-                int reservationId = TryCatchHelper.EscapeKeyWithResult(() => SaveReservation(selectedDate, selectedTable, acc), 0, "Reservation not saved.");
-                if (reservationId == 0)
-                {
-                    ControlHelpPresent.DisplayFeedback("Reservation not saved.", "bottom", "error");
-                    return;
-                }
-
-                // Step 5: Take orders
-                var orders = TryCatchHelper.EscapeKeyWithResult(() => TakeOrders(reservationId, guests), new List<ProductModel>(), "Order process canceled.");
-                if (!orders.Any())
-                {
-                    ControlHelpPresent.DisplayFeedback("Order process canceled.", "bottom", "error");
-                    return;
-                }
-                
-                else // Print receipt
-                {
-                    PrintReceipt(orders, reservationId, acc);
-                    ControlHelpPresent.DisplayFeedback("Press 'Escape' to return to the previous menu...", "bottom", "tip");
-                    while (Console.ReadKey(true).Key != ConsoleKey.Escape) { }
-                }
-            });
-        }
-
-        private static int GetGuestCount()
-        {
+            // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
-            string banner = "How many guests will be coming?\n\n";
+            string banner = "How many guests will be coming?";
+            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
-            dynamic result = SelectionPresent.Show(options, banner, true);
-            if (result?.index == -1) 
-                throw new OperationCanceledException(); // Escape key pressed or invalid input
-            return result?.index != null ? options.Count - result.index : -1;
-        }
+            DateTime selectedDate;
 
-        private static DateTime SelectDate(int guests, bool isAdmin, UserModel acc)
-        {
-            return CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
-        }
-
-        private static int SelectTable(DateTime selectedDate, int guests, bool isAdmin)
-        {
-            TableSelection tableSelection = new();
-
-            int[] availableTables = guests switch
-            {
-                1 or 2 => [1, 4, 5, 8, 9, 11, 12, 15],
-                3 or 4 => [6, 7, 10, 13, 14],
-                5 or 6 => [2, 3],
-                _ => Array.Empty<int>()
-            };
-
-            var reservedTables = Access.Reservations
-                .GetAllBy<DateTime>("Date", selectedDate)
-                .Where(r => r?.PlaceID != null)
-                .Select(r => r!.PlaceID!.Value)
+            // Fetch inactive tables
+            var inactiveTables = Access.Places.Read()
+                .Where(p => p.Active == 0)
+                .Select(p => p.ID.Value)
                 .ToArray();
 
-            return tableSelection.SelectTable(availableTables, [], reservedTables, guests, isAdmin);
-        }
-
-        private static int SaveReservation(DateTime selectedDate, int selectedTable, UserModel acc)
-        {
-            if (!acc.ID.HasValue)
+            while (true) // Loop to manage Calendar -> Table Selection navigation
             {
-                ControlHelpPresent.DisplayFeedback("User ID is null. Unable to create reservation.");
-                return 0;
-            }
+                // Step 2: Display the calendar and mark unreservable dates
+                selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
-            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
-            if (reservationId == 0)
-            {
-                ControlHelpPresent.DisplayFeedback("Failed to save reservation. Try again.");
-                return 0;
-            }
-            return reservationId;
-        }
-
-        public static List<ProductModel> TakeOrders(int reservationId, int guests)
-        {
-            List<ProductModel> allOrders = new();
-            List<string> categories = new() { "Appetizer", "Main", "Dessert", "Beverage" };
-
-            Console.WriteLine("This month's theme is:");
-            string theme = reservationMenuLogic.GetCurrentMenu() ?? "No theme available.";
-            Console.WriteLine(theme);
-
-            for (int guest = 1; guest <= guests; guest++)
-            {
-                foreach (string category in categories)
+                if (selectedDate == DateTime.MinValue)
                 {
-                    var products = ProductLogic.GetAllWithinCategory(category).ToList();
-                    if (!products.Any()) continue;
+                    Console.Clear(); // Ensure no residual data is left
+                    Console.WriteLine("Returning to the previous menu...");
+                    return; // Exit completely if user presses back from the calendar
+                }
 
-                    string banner = $"Guest {guest}, choose a product for {category}:\n\n";
-                    var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
-                    productOptions.Add("Skip this category");
-                    productOptions.Add("Cancel");
 
-                    dynamic selection = SelectionPresent.Show(productOptions, banner, false);
-                    // Check for null or cancellation
-                    if (selection?.text == null || selection?.text == "Cancel") 
+                // Step 3: Filter available tables based on the number of guests
+                TableSelection tableSelection = new();
+                int[] availableTables = guests switch
+                {
+                    1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                    3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                    5 or 6 => new int[] { 2, 3 },
+                    _ => Array.Empty<int>()
+                };
+
+                var reservedTables = Access.Reservations
+                    .GetAllBy<DateTime>("Date", selectedDate)
+                    .Where(r => r?.PlaceID != null)
+                    .Select(r => r!.PlaceID!.Value)
+                    .ToArray();
+
+                while (true) // Inner loop for Table Selection
+                {
+                    // Step 4: Select a table
+                    int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+
+                    if (selectedTable == -1)
                     {
-                        ControlHelpPresent.DisplayFeedback("Order process canceled", "bottom", "error");
-                        return allOrders;
+                        Console.WriteLine("Returning to date selection...");
+                        break; // Break the inner loop and return to the calendar
                     }
-                    else if (selection?.text == "Skip this category")
-                    {
-                        ControlHelpPresent.DisplayFeedback($"Category '{category}' skipped.", "bottom", "success");
-                        continue;
-                    }
-                    var selectedProduct = products.FirstOrDefault(p => 
-                        selection?.text?.StartsWith(p.Name) == true && selection?.text?.Contains($"{p.Price:0.00}") == true);
 
-                    if (selectedProduct != null && selectedProduct.ID.HasValue)
+                    // Step 5: Save the reservation
+                    int reservationId;
+                    if (acc.ID.HasValue)
                     {
-                        var saveOrderResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
-                        if (!saveOrderResult.isValid)
+                        reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                        return;
+                    }
+
+                    if (reservationId == 0)
+                    {
+                        Console.WriteLine("Failed to create a reservation. Please try again.");
+                        continue; // Retry table selection
+                    }
+
+                    var orders = TakeOrders(selectedDate, acc, reservationId, guests);
+                    if (orders.Count > 0)
+                    {
+                        PrintReceipt(orders, reservationId, acc);
+
+                        // Prompt the user to press Enter to return to the menu
+                        Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                         {
-                            ControlHelpPresent.DisplayFeedback($"Failed to save the order for '{category}'", "bottom", "error");
-                            continue;
+                            // Do nothing, just wait for Enter
                         }
-                        allOrders.Add(selectedProduct);
-                        ControlHelpPresent.DisplayFeedback($"{selectedProduct.Name} has been added to your order!", "bottom", "success");
+                        return; // Exit after completing reservation
                     }
                 }
             }
-            return allOrders;
         }
 
-        private static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
+
+
+
+
+
+        // public static int SelectTableUsingTableSelection(DateTime selectedDate, int guests)
+        // {
+        //     int[] availableTables = guests switch
+        //     {
+        //         1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+        //         3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+        //         5 or 6 => new int[] { 2, 3 },
+        //         _ => Array.Empty<int>()
+        //     };
+
+        //     if (availableTables.Length == 0)
+        //     {
+        //         Console.WriteLine("No available tables for this number of guests.");
+        //         Console.ReadKey();
+        //         return -1;
+        //     }
+
+        // var reservedTables = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate)
+        //                                         .Select(r => r.PlaceID)
+        //                                         .Where(rt => rt.HasValue)
+        //                                         .Select(rt => rt.Value)
+        //                                         .ToArray();
+
+
+        //     TableSelection tableSelection = new();
+		// int selectedTable = tableSelection.SelectTable(availableTables, reservedTables, isAdmin);
+
+        // }
+
+    // public static void UserOverViewReservation(UserModel acc)
+    // {
+    //     int reservationIndex = 0;
+    //     bool inResMenu = true;
+
+    //     var userReservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID)
+    //                                             .Where(r => r != null)
+    //                                             .Cast<ReservationModel>()
+    //                                             .ToList();
+
+    //     if (userReservations == null || userReservations.Count == 0)
+    //     {
+    //         Console.WriteLine("You have no reservations.");
+    //         Console.WriteLine("Press any key to return to the main menu...");
+    //         Console.ReadKey();
+    //         return;
+    //     }
+
+    //     while (inResMenu)
+    //     {
+    //         Console.Clear();
+    //         Console.WriteLine($"Here are your Reservations, {acc.FirstName}:");
+
+    //         // Display reservations with navigation
+    //         for (int j = 0; j < userReservations.Count; j++)
+    //         {
+    //             if (j == reservationIndex)
+    //             {
+    //                 Console.ForegroundColor = ConsoleColor.Blue;
+    //                 Console.WriteLine($"> Reservation: {userReservations[j].Date}"); // Highlight selected item
+    //                 Console.ResetColor();
+    //             }
+    //             else
+    //             {
+    //                 Console.WriteLine($"  Reservation: {userReservations[j].Date}");
+    //             }
+    //         }
+
+    //         var key = Console.ReadKey(intercept: true);
+    //         switch (key.Key)
+    //         {
+    //             case ConsoleKey.UpArrow:
+    //                 if (reservationIndex > 0) reservationIndex--; // Move up
+    //                 break;
+
+    //             case ConsoleKey.DownArrow:
+    //                 if (reservationIndex < userReservations.Count - 1) reservationIndex++; // Move down
+    //                 break;
+
+    //             case ConsoleKey.Enter:
+    //                 // Process the selected reservation
+    //                 Console.Clear();
+    //                 Console.WriteLine($"You selected Reservation on: {userReservations[reservationIndex].Date}");
+    //                 Console.WriteLine("Press any key to return to the reservation overview menu or press Escape to return to the main menu...");
+    //                 var key2 = Console.ReadKey();
+
+    //                 if (key2.Key == ConsoleKey.Escape)
+    //                 {
+    //                     inResMenu = false;
+    //                     break; // Exit loop
+    //                 }
+    //                 else
+    //                 {
+    //                     break;
+    //                 }
+
+    //             case ConsoleKey.Escape: // Exit without selection
+    //                 inResMenu = false;
+    //                 break;
+    //         }
+    //     }
+
+    //     return;
+    // }
+
+        public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
+        {
+            if (reservationId == 0)
+            {
+                Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
+                return new List<ProductModel>(); // Return an empty list for invalid reservations
+            }
+
+            List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
+            List<ProductModel> allOrders = new List<ProductModel>();
+
+            Console.WriteLine("This month's theme is:");
+            var theme = reservationMenuLogic.GetCurrentMenu();
+
+            if (theme is not null)
+            {
+                Console.WriteLine($"{theme}");
+            }
+            else
+            {
+                Console.WriteLine("This month is not accessible.");
+                Console.WriteLine("Press any key to return to the reservation menu.");
+                Console.ReadKey();
+                return new List<ProductModel>(); // Return an empty list if no theme is available
+            }
+
+            for (int i = 0; i < guests; i++)
+            {
+                List<ProductModel> guestOrder = new();
+                // Replace manual navigation logic with SelectionPresent.Show
+                for (int z = 0; z < categories.Count; z++)
+                {
+                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
+
+                    while (true)
+                    {
+                        Console.Clear();
+                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
+
+                        // Create menu options for SelectionPresent.Show
+                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
+                        // EMERGENCY MODIFICATION: 1
+                        productOptions.Add("Skip this course"); // Option to skip the course
+
+                        // Display the menu and get the selected option
+                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
+
+                        // EMERGENCY MODIFICATION: 1
+                        if (selectedOption == "Skip this course")
+                        {
+                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
+                           Console.ReadKey();
+                           break;
+                        }
+
+                        // Find the selected product based on the menu text
+                        var selectedProduct = products.FirstOrDefault(p => 
+                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{p.Price:0.00}"));
+
+                        if (selectedProduct != null && selectedProduct.ID.HasValue)
+                        {
+                            guestOrder.Add(selectedProduct);
+
+                            // EMERGENCY MODIFICATION: 1
+                            //if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                            //{
+                            //    Console.WriteLine("Failed to save the order. Please try again.");
+                            //    Console.ReadKey();
+                            //    continue;
+                            //}
+
+                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                            //Console.ReadKey();
+                            break; // Exit the selection loop for this category
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid selection. Please try again.");
+                            Console.ReadKey();
+                        }
+                    }
+                }
+                allOrders.AddRange(guestOrder);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                // }
+            }
+
+            return allOrders; // Return the collected orders
+        }
+
+
+
+        public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.AddOptions("Escape", "<escape>");
-            ControlHelpPresent.ShowHelp();
-
-           // Reserve lines for the footer
-            int reservedFooterLines = ControlHelpPresent.GetFooterHeight(); // Dynamically determine footer height
-            int receiptStartLine = 0; // Start drawing the receipt from the top
-
-            Console.SetCursorPosition(0, receiptStartLine);
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
-            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID)
-                .OrderByDescending(r => r?.Date)
-                .FirstOrDefault();
+            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID);
 
-            if (reservations != null)
+            if (reservations != null && reservations.Any(r => r != null))
             {
-                Console.WriteLine($"Name:         {GetUserFullName(reservations.UserID)}");
-                Console.WriteLine($"Date:         {reservations.Date:dd/MM/yyyy}");
-                Console.WriteLine($"Table:        {reservations.PlaceID}\n-------------------------------");
+                var reservation = reservations.Where(r => r != null).OrderByDescending(r => r.Date).FirstOrDefault();
+
+                if (reservation != null)
+                {
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
+                Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
+                Console.WriteLine($"Table ID:               {reservation.PlaceID}");
+                Console.WriteLine("-------------------------------");
+                // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
+                }
             }
 
             foreach (var product in orders)
             {
-                Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
-                totalAmount += (decimal)(product.Price ?? 0);
+                if (product.Price < 10)
+                {
+                    Console.WriteLine($"{product.Name,-20}    € {product.Price:F2}");
+                }
+                else
+                {
+                    Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
+                }
+
+                // Convert nullable float to decimal, treat null as 0
+                totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
-                Console.WriteLine("===============================");
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"");
+            Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
+            Console.WriteLine($"Reservation number:          {reservationId}");
+            Console.WriteLine("===============================");
         }
 
         private static string GetUserFullName(int? userID)
         {
-            var account = Access.Users.GetBy<int?>("ID", userID);
-            return account != null ? $"{account.FirstName} {account.LastName}" : "Unknown User";
+            var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
+            if (account != null)
+            {
+                return $"{account.FirstName} {account.LastName}";
+            }
+            return "Unknown User"; // Fallback in case no account is found
         }
     }
 }
