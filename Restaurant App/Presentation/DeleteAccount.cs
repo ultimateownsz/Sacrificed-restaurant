@@ -37,16 +37,16 @@ namespace Project.Presentation
                     var options = DeleteAccountLogic.GenerateMenuOptions(activeAccounts, currentPage);
 
                     // display menu and handle user input
-                    dynamic selection = SelectionPresent.Show(options, banner:"ACCOUNTS MENU\n\n");
+                    var selection = SelectionPresent.Show(options, banner:"ACCOUNTS MENU\n\n").ElementAt(0).text;
 
-                    if (selection.text == null || selection.text == "Back")
+                    if (selection == null || selection == "Back")
                     {
                         Console.WriteLine(" Exiting ACCOUNT MENU...");
                         // Thread.Sleep(1500);
                         return;
                     }
 
-                    switch (selection.text)
+                    switch (selection)
                     {
                         case "Back":
                             running = false;
@@ -62,7 +62,7 @@ namespace Project.Presentation
                         
                         default:
                             // attempt to delete the selected account
-                            bool success = DeleteAccountLogic.DeleteAccount(currentUser, selection.text, activeAccounts, currentPage);
+                            bool success = DeleteAccountLogic.DeleteAccount(currentUser, selection, activeAccounts, currentPage);
                             if (success)
                             {
                                 ControlHelpPresent.DisplayFeedback("Account successfully deleted. Press any key to refresh...", "bottom", "success");

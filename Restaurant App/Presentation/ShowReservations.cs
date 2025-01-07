@@ -24,6 +24,8 @@ public static class ShowReservations
                 banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
             ).ElementAt(0).text;
 
+            if (selectedOption == null) return;
+
             // Handle the chosen action
             switch (selectedOption)
             {

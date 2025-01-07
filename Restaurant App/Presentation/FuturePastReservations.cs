@@ -53,7 +53,7 @@ namespace Presentation
                 
                 string selectedReservation = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // displaying the info as opions to choose
 
-                if (selectedReservation == "Back")
+                if (selectedReservation == null ||selectedReservation == "Back")
                 {
                     return;
                 }
@@ -104,7 +104,7 @@ namespace Presentation
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
                 var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // making use of SelectionPresent.Show
 
-                if (selectedReservations == "Back")
+                if (selectedReservations == null || selectedReservations == "Back")
                 {
                     return;
                 }
