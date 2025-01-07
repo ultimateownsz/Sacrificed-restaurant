@@ -9,8 +9,10 @@ namespace Presentation
 
     public static class UpdateReservation
     {
-        public static void Show(ReservationModel reservation, bool admin) // Adding modularity for admin and user
+        public static void Show(ReservationModel reservation, UserModel acc) // Adding modularity for admin and user
         {
+            bool admin = 
+
             Console.Clear();
             Console.WriteLine("Update Reservation Details");
             Console.WriteLine("--------------------------");
@@ -21,11 +23,11 @@ namespace Presentation
             // Proceed to update reservation
             if (admin)
             {
-                UpdateReservationAdmin(reservation);
+                UpdateReservationAdmin(reservation, acc);
             }
             else
             {
-                UpdateReservationUser(reservation);
+                UpdateReservationUser(reservation, acc);
             }
 
             // Save updated reservation
