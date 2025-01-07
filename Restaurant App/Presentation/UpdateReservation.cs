@@ -71,7 +71,7 @@ namespace Presentation
             }
         }
 
-    public static void UpdateReservationUser(ReservationModel reservation)
+    public static void UpdateReservationUser(ReservationModel reservation, UserModel acc)
     {
         string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
         while (true)
@@ -80,7 +80,7 @@ namespace Presentation
             {
                 case "Date":
                     Console.Clear();
-                    UpdateReservationDate(reservation);
+                    UpdateReservationDate(reservation, acc);
                     Console.WriteLine("\nDate process ended successfully.");
                     Console.WriteLine("Press any key to return.");
                     Console.ReadKey();
