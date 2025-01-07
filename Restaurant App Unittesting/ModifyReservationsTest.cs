@@ -69,6 +69,20 @@ namespace Restaurant_App_Unittesting
             Assert.IsTrue(updateCalled, "Reservation update should be called.");
             Assert.AreEqual(10, reservation.PlaceID, "Expected updated PlaceID.");
         }
+
+        public class UserModel
+        {
+            public int ID { get; set; }
+            public bool? Admin { get; set; }
+        }
+
+        public class ReservationModel
+        {
+            public int ID { get; set; }
+            public DateTime Date { get; set; }
+            public int PlaceID { get; set; }
+            public int UserID { get; set; }
+        }
     }
     // public class FuturePastReservationsTests
     // {
