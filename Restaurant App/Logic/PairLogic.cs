@@ -47,8 +47,17 @@ internal class PairLogic
         return models;
     }
 
-    public static void Start(int? foodID)
+    public static void Start()
     {
+        // standalone implement
+        List<string> labels = ["Beverage",];
+        List<string> products = Access.Products.Read().Where(
+            x => !labels.Contains(x.Course)).Select(x => x.Name).ToList();
+        
+        // find ID
+        string choice = SelectionPresent.Show(products, banner: "PRODUCT MENU").ElementAt(0).text;
+        int? foodID = Access.Products.GetBy<string>("Name", choice).ID;
+
         // value initialization
         var input = new Input();
         var output = _constr_output(foodID);

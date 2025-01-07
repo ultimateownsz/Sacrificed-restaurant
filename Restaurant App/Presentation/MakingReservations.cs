@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using Project;
+using Project.Logic;
 
 namespace Presentation
 {
@@ -245,7 +246,10 @@ namespace Presentation
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).ToList();
+
+                    // filter for allergies
+                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).Where(
+                        account => !LinkAllergyLogic.IsAllergic(acc, account)).ToList();
 
                     while (true)
                     {
