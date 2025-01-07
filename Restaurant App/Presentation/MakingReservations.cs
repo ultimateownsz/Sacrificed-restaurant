@@ -300,7 +300,7 @@ namespace Presentation
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
-            // Fetch the reservation directly using the reservationId
+            // Fetch the latest reservation directly from the database using reservationId
             var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
 
             if (reservation == null)
@@ -323,9 +323,10 @@ namespace Presentation
 
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
-            Console.WriteLine($"Reservation number:     {reservationId}");
+            Console.WriteLine($"Reservation number:     {reservation.ID}");
             Console.WriteLine("===============================");
         }
+
 
 
         private static string GetUserFullName(int? userID)
