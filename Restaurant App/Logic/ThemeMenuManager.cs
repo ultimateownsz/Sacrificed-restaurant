@@ -51,10 +51,6 @@ static class ThemeMenuManager
     public static List<string?> GetAllThemes()
     {
         var themes = Access.Themes.GetAll().Select(t => t.Name).ToList();
-        if (themes.Count > 0)
-        {
-            themes[themes.Count - 1] += "\n\n";
-        }
         return themes;
     }
 

@@ -42,7 +42,6 @@ namespace Presentation
                     return; // Exit completely if user presses back from the calendar
                 }
 
-
                 // Step 3: Filter available tables based on the number of guests
                 TableSelection tableSelection = new();
                 int[] availableTables = guests switch
@@ -226,11 +225,11 @@ namespace Presentation
             List<ProductModel> allOrders = new List<ProductModel>();
 
             Console.WriteLine("This month's theme is:");
-            var theme = reservationMenuLogic.GetCurrentMenu();
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
 
             if (theme is not null)
             {
-                Console.WriteLine($"{theme}");
+                Console.WriteLine($"{theme.Name}");
             }
             else
             {
