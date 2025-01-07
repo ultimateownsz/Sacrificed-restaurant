@@ -1,4 +1,3 @@
-
 namespace Project;
 public static class ReservationDetails
 {
@@ -39,13 +38,9 @@ public static class ReservationDetails
 
         while (true)
         {
-            // Fetch all reservations for the selected date
-            var reservations = Access.Reservations
-                .GetAllBy<DateTime>("Date", selectedDate)
-                .Where(r => r.Date == selectedDate)
-                .ToList();
+            IEnumerable<ReservationModel?> orders = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
 
-            if (reservations.Count == 0)
+            if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
             {
                 Console.Clear();
                 Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
@@ -65,7 +60,7 @@ public static class ReservationDetails
             }
             else
             {
-                DisplayOrdersGrid(reservations, selectedDate);
+                DisplayOrdersGrid(orders, selectedDate);
 
                 Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -85,55 +80,109 @@ public static class ReservationDetails
         }
     }
 
-    private static void DisplayOrdersGrid(List<ReservationModel?> reservations, DateTime selectedDate)
+    private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
     {
-        // Dictionary to count products
-        Dictionary<string, int> productCount = new Dictionary<string, int>();
-        Dictionary<string, decimal> productPrices = new Dictionary<string, decimal>();
-
-        foreach (var reservation in reservations)
+        Dictionary<int, string> productsCategories = new Dictionary<int, string>
         {
-            // Fetch all requests linked to the reservation
-            var requests = Access.Requests.GetAllBy<int?>("ReservationID", reservation.ID).ToList();
+            { 1, "Main" },
+            { 3, "Beverage" },
+            { 5, "Appetizer" },
+            { 8, "Dessert" }
+        };
 
-            foreach (var request in requests)
+        Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
+        {
+            { "Appetizer", new Dictionary<string, int>() },
+            { "Main", new Dictionary<string, int>() },
+            { "Dessert", new Dictionary<string, int>() },
+            { "Beverage", new Dictionary<string, int>() }
+        };
+
+        foreach (var reserv in orders)
+        {
+            var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID).ToList();
+
+            foreach (var req in request)
             {
-                // Fetch the product associated with the request
-                var product = Access.Products.GetBy<int?>("ID", request.ProductID);
-                if (product != null)
+                var product = Access.Products.GetBy<int?>("ID", req.ProductID);
+                if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                 {
-                    // Count the product occurrences
-                    if (productCount.ContainsKey(product.Name))
+
+                    if (categoriesCount[category].ContainsKey(product.Name))
                     {
-                        productCount[product.Name]++;
+                        categoriesCount[category][product.Name]++;
                     }
                     else
                     {
-                        productCount[product.Name] = 1;
-                        productPrices[product.Name] = product.Price ?? 0; // Store product price
+                        categoriesCount[category][product.Name] = 1;
                     }
                 }
             }
         }
 
-        // Display the orders in a grid format
         decimal grandTotalPrice = 0;
 
         Console.Clear();
         Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
 
-        Console.WriteLine("{0,-30}{1,-20}{2,-20}", "Product", "Quantity", "Total Price");
+        string[] headers = { "Appetizers", "Main", "Dessert", "Beverage", "Total Price" };
+        Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}{4,-30}", headers[0], headers[1], headers[2], headers[3], headers[4]);
 
-        foreach (var product in productCount)
+        int maxRows = Math.Max(
+            Math.Max(categoriesCount["Appetizer"].Count, categoriesCount["Main"].Count),
+            Math.Max(categoriesCount["Dessert"].Count, categoriesCount["Beverage"].Count)
+        );
+
+        var appetizers = categoriesCount["Appetizer"].ToList();
+        var mains = categoriesCount["Main"].ToList();
+        var desserts = categoriesCount["Dessert"].ToList();
+        var beverages = categoriesCount["Beverage"].ToList();
+        
+        for (int i = 0; i < maxRows; i++)
         {
-            decimal totalPrice = product.Value * productPrices[product.Key];
+            string appetizer = "";
+            string main = "";
+            string dessert = "";
+            string beverage = "";
+            decimal totalPrice = 0;
+
+            if (i < appetizers.Count)
+            {
+                ProductModel? product = Access.Products.GetBy<string>("Name", appetizers[i].Key);
+                appetizer = $"{appetizers[i].Value}x {appetizers[i].Key}";
+                totalPrice += appetizers[i].Value * (product?.Price ?? 0);
+            }
+
+            if (i < mains.Count)
+            {
+                ProductModel? product = Access.Products.GetBy<string>("Name", mains[i].Key);
+                main = $"{mains[i].Value}x {mains[i].Key}";
+                totalPrice += mains[i].Value * (product?.Price ?? 0);
+            }
+
+            if (i < desserts.Count)
+            {
+                ProductModel? product = Access.Products.GetBy<string>("Name", desserts[i].Key);
+                dessert = $"{desserts[i].Value}x {desserts[i].Key}";
+                totalPrice += desserts[i].Value * (product?.Price ?? 0);
+            }
+
+            if (i < beverages.Count)
+            {
+                ProductModel? product = Access.Products.GetBy<string>("Name", beverages[i].Key);
+                beverage = $"{beverages[i].Value}x {beverages[i].Key}";
+                totalPrice += beverages[i].Value * (product?.Price ?? 0);
+            }
+
             grandTotalPrice += totalPrice;
 
-            Console.WriteLine("{0,-30}{1,-20}{2,-20:C}", product.Key, product.Value, totalPrice);
+            string gridRow = $"{appetizer,-30}{main,-30}{dessert,-30}{beverage,-30}{totalPrice,-30:C}\n";
+            Console.WriteLine(gridRow);
         }
 
-        Console.WriteLine("\nGrand Total: {0:C}", grandTotalPrice);
+        string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
+        string padRow = grandTotalRow.PadLeft(143);
+        Console.WriteLine(padRow);
     }
-
 
 }
