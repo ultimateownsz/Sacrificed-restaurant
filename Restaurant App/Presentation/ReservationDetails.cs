@@ -82,13 +82,13 @@ public static class ReservationDetails
 
     private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
     {
-        Dictionary<int, string> productsCategories = new Dictionary<int, string>
-        {
-            { 1, "Main" },
-            { 3, "Beverage" },
-            { 5, "Appetizer" },
-            { 8, "Dessert" }
-        };
+        // Dictionary<int, string> productsCategories = new Dictionary<int, string>
+        // {
+        //     { 1, "Main" },
+        //     { 3, "Beverage" },
+        //     { 5, "Appetizer" },
+        //     { 8, "Dessert" }
+        // };
 
         Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
         {
