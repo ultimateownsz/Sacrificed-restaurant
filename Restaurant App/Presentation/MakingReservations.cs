@@ -274,12 +274,27 @@ namespace Presentation
                             guestOrder.Add(selectedProduct);
 
                             // EMERGENCY MODIFICATION: 1
-                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                        // Fetch the reservation details using reservationId
+                        var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
+
+                        if (reservation == null)
+                        {
+                            Console.WriteLine("Reservation not found. Unable to save orders.");
+                            return;
+                        }
+
+                        foreach (var product in guestOrder)
+                        {
+                            if (product.ID.HasValue)
                             {
-                               Console.WriteLine("Failed to save the order. Please try again.");
-                               Console.ReadKey();
-                               continue;
+                                // Pass PlaceID and Date from the fetched reservation
+                                if (!orderLogic.SaveOrder(reservationId, product.ID.Value, reservation.PlaceID, reservation.Date))
+                                {
+                                    Console.WriteLine($"Failed to save the order for {product.Name}. Please try again.");
+                                }
                             }
+                        }
+
 
                             //Console.WriteLine($"{selectedProduct.Name} added successfully!");
                             //Console.ReadKey();
@@ -301,52 +316,39 @@ namespace Presentation
             return allOrders; // Return the collected orders
         }
 
-
-
         public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
-            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID);
+            // Fetch the reservation directly using the reservationId
+            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
 
-            if (reservations != null && reservations.Any(r => r != null))
+            if (reservation == null)
             {
-                var reservation = reservations.Where(r => r != null).OrderByDescending(r => r.Date).FirstOrDefault();
-
-                if (reservation != null)
-                {
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
-                Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
-                Console.WriteLine($"Table ID:               {reservation.PlaceID}");
-                Console.WriteLine("-------------------------------");
-                // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
-                }
+                Console.WriteLine("Reservation not found. Unable to display receipt.");
+                return;
             }
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
+            Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
+            Console.WriteLine($"Table ID:               {reservation.PlaceID}");
+            Console.WriteLine("-------------------------------");
 
             foreach (var product in orders)
             {
-                if (product.Price < 10)
-                {
-                    Console.WriteLine($"{product.Name,-20}    € {product.Price:F2}");
-                }
-                else
-                {
-                    Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
-                }
-
-                // Convert nullable float to decimal, treat null as 0
+                Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
                 totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
 
             Console.WriteLine("-------------------------------");
-            Console.WriteLine($"");
             Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
-            Console.WriteLine($"Reservation number:          {reservationId}");
+            Console.WriteLine($"Reservation number:     {reservationId}");
             Console.WriteLine("===============================");
         }
+
 
         private static string GetUserFullName(int? userID)
         {
