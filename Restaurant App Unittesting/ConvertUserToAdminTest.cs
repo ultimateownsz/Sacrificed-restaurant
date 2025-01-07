@@ -9,7 +9,7 @@ namespace Restaurant_App_Unittesting
     public class ConvertUserToAdminTest
     {
         [TestMethod]
-        [DataRow("John", "Doe", false, 0)] // User exists but is already an admin
+        [DataRow("John", "Doe", false, 1)] // User exists but is already an admin
         [DataRow("Jane", "Doe", true, 1)] // User exists and is promoted
         [DataRow("Piet", "Pieter", false, 0)] // User does not exist
         public void TestUpdateDatabaseForPromotion(string firstName, string lastName, bool expectedSuccess, int expectedAdminStatus)
@@ -31,7 +31,7 @@ namespace Restaurant_App_Unittesting
             if (user != null && user.Admin == 0)
             {
                 user.Admin = 1; // Promote to admin
-                result = userAccess.Update(user)
+                result = userAccess.Update(user);
             }
 
             int actualAdminStatus = mockUsers.FirstOrDefault(u => u.FirstName == firstName && u.LastName == lastName)?.Admin ?? 0;
@@ -45,12 +45,38 @@ namespace Restaurant_App_Unittesting
     // Mocking data access layer for testing
     public class MockDataAccess
     {
+        private readonly List<UserModel> _users;
 
+        public MockDataAccess(List<UserModel> users)
+        {
+            _users = users;
+        }
+
+        public IEnumerable<UserModel> GetAllBy(string columnName, string value)
+        {
+            return columnName switch
+            {
+                "FirstName" => _users.Where(u => u.FirstName == value),
+                "LastName" => _users.Where(u => u.LastName == value),
+                _ => Enumerable.Empty<UserModel>()
+            };
+        }
+
+        public bool Update(UserModel user)
+        {
+            var existingUser = _users.FirstOrDefault(u => u.FirstName == user.FirstName && u.LastName == user.LastName);
+            if (existingUser == null) return false;
+
+            existingUser.Admin = user.Admin;
+            return true;
+        }
     }
 
     // User model class
     public class UserModel
     {
-
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Admin { get; set; } // 0 = Not Admin, 1 = Admin
     }
 }
