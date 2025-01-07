@@ -53,7 +53,7 @@ namespace Project.Presentation
             {
                 // Menu options
                 var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                options.Add("Search User by Email (Press 's')");
+                options.Add("Search User by Email");
 
                 var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
                 string selectedText = selection.text;
@@ -74,7 +74,7 @@ namespace Project.Presentation
                     continue;
                 }
 
-                if (selectedText == "Search User by Email (Press 's')")
+                if (selectedText == "Search User by Email")
                 {
                     Console.Clear();
                     Console.Write("Enter the user's email: ");
