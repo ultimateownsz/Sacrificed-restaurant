@@ -20,10 +20,10 @@ static class ThemeView
             }
 
             // Check if the chosen month has a theme, if not proceed with else
-            if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
+            if (ThemeMenuLogic.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
-                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
+                string banner2 = $"{ThemeMenuLogic.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month", "Delete the theme for this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
@@ -36,7 +36,7 @@ static class ThemeView
                     }
                     else
                     {
-                        ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                        ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                     }
                 }
                 else if(selection == 1)
@@ -48,19 +48,19 @@ static class ThemeView
                         Console.WriteLine("Failed to update theme");
                         return;
                     }
-                    ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                    ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
                 }
                 else if(selection == 2)
                 {
-                    ThemeMenuManager.DeleteMonthTheme(month, year);
+                    ThemeMenuLogic.DeleteMonthTheme(month, year);
                     Console.Clear();
                     Console.WriteLine("This theme has been deleted");
                 }
             }
             else
             {
-                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
+                string banner2 = $"{ThemeMenuLogic.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month"};
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
                 if(selection == 0)
@@ -72,7 +72,7 @@ static class ThemeView
                     }
                     else
                     {
-                        ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                        ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                     }
                 }
                 else
@@ -85,7 +85,7 @@ static class ThemeView
                     Console.WriteLine("Failed to update theme");
                     return;
                 }
-                ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                 Console.WriteLine($"The theme has been updated to {themeName}");
             }
 
@@ -99,7 +99,7 @@ static class ThemeView
     public static int YearChoice()
     {
         // Fetch available years from the database and add future years
-        List<int> availableYears = ThemeMenuManager.GetAvailableYears();
+        List<int> availableYears = ThemeMenuLogic.GetAvailableYears();
         int minYear = DateTime.Now.Year;
         int currentYearIndex = availableYears.IndexOf(minYear);
 
@@ -185,7 +185,7 @@ static class ThemeView
         int month;
         string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
-            .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
+            .Select(m => ThemeMenuLogic.GetMonthThemeName(m, year))
             .ToList();
 
         while (true)
@@ -213,7 +213,7 @@ static class ThemeView
             }
 
             month = selection.ElementAt(0).index + 1;
-            if (DateTime.Now.Month == month && DateTime.Now.Year == year && ThemeMenuManager.GetThemeByYearAndMonth(month, year) is null) // only returns the current month if it has no theme
+            if (DateTime.Now.Month == month && DateTime.Now.Year == year && ThemeMenuLogic.GetThemeByYearAndMonth(month, year) is null) // only returns the current month if it has no theme
             {
                 return month;
             }

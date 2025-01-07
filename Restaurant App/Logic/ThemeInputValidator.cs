@@ -55,7 +55,7 @@ public static class ThemeInputValidator
 
         while (true)
         {
-            List<string> Themes = ThemeMenuManager.GetAllThemes();
+            List<string> Themes = ThemeMenuLogic.GetAllThemes();
             Themes.Add("No theme");
             var themeName = SelectionPresent.Show(Themes, banner: "Choose theme:").ElementAt(0).text;
             if(themeName == "No theme") return "0";

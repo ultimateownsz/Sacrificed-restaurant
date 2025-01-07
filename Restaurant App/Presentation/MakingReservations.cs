@@ -244,7 +244,7 @@ namespace Presentation
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    List<ProductModel> products = ProductManager.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
+                    List<ProductModel> products = ProductLogic.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
 
                     while (true)
                     {
