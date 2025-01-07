@@ -16,11 +16,20 @@ internal class RegisterUser
         Console.WriteLine("Please enter the following information:\n");
 
         // Input collection with validation loops
-        Console.Write("first name: ");
-        firstName = Console.ReadLine();
+        while (true)
+        {
+            Console.Write("first name: ");
+            firstName = Console.ReadLine();
+        }
 
-        Console.Write("last name: ");
-        lastName = Console.ReadLine();
+        while (true)
+        {
+            Console.Write("last name: ");
+            lastName = Console.ReadLine();
+            if (LoginLogic.IsNameValid(lastName))
+                break;
+            Console.WriteLine("Invalid last name, try again!");
+        }
 
         // Loop until valid email is provided
         while (true)
