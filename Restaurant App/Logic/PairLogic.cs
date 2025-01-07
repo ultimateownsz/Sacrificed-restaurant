@@ -6,7 +6,7 @@ internal class PairLogic
     // I/O methods
     public struct Input()
     {
-        public List<string>? Products;
+        public string? Product;
     }
 
     public struct Output()
@@ -33,18 +33,17 @@ internal class PairLogic
     }
 
     // specialized methods
-    private static List<ProductModel> ToModels(List<string?>? pairs)
+    private static ProductModel? ToModel(string? pair)
     {
-        if (pairs == null) return new();
+        if (pair == null) return new();
 
-        var models = new List<ProductModel>();
         foreach (var product in Access.Products.Read())
         {
-            if (product != null && pairs.Contains(product.Name))
-                models.Add(product);
+            if (product != null && pair == product.Name)
+                return product;
         }
 
-        return models;
+        return null;
     }
 
     public static void Start()
@@ -64,22 +63,20 @@ internal class PairLogic
 
         // I/O swap
         PairPresent.Show(ref input, ref output);
-        List<ProductModel> models = ToModels(input.Products);
+        ProductModel model = ToModel(input.Product);
 
         // deletion of old data
         foreach (var pair in Access.Pairs.GetAllBy<int>("FoodID", foodID ?? -1))
             Access.Pairs.Delete(pair?.ID);
 
-        foreach (var product in models)
-        {
-            // linking
-            Access.Pairs.Write(
-                new PairModel(
-                    foodID,
-                    product.ID
-                )
-            );
-        }
+        // linking
+        Access.Pairs.Write(
+            new PairModel(
+                foodID,
+                model.ID
+            )
+        );
+        
     }
 
 }
