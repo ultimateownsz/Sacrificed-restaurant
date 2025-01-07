@@ -6,7 +6,7 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class AccountTests
     {
-        // First name validation test
+        // First name validation tests
         [TestMethod]
         [DataRow("Jo", true)]
         [DataRow("Liam", true)]
@@ -18,6 +18,13 @@ namespace Restaurant_App_Unittesting
 
             Assert.AreEqual(expectedResult, result);
         }
+
+        // Last name validation tests
+        [TestMethod]
+        [DataRow("Li", true)]
+        [DataRow("Wayne", true)]
+        [DataRow("", false)]
+        [DataRow("B"), false]
 
         // Email validation tests
         [TestMethod]
