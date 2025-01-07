@@ -123,17 +123,18 @@ namespace Presentation
         {
             // Update reservation date
             // DateTime newDate;
-            bool isAdmin = false;
+            bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
             int guests = 1;
 
             while (true)
             {
                 DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
-                if (selectedDate.Date < DateTime.Today)
-                {
-                    Console.WriteLine("The date cannot be in the past. Please enter a future date.");
-                }
+                // if (selectedDate.Date < DateTime.Today)
+                // {
+                //     Console.WriteLine("The date cannot be in the past. Please enter a future date.");
+                //     return;
+                // }
 
                 reservation.Date = selectedDate;
                 break;
