@@ -39,7 +39,7 @@ static class Menu
         {
             Console.Clear();
             var options = new List<string> { 
-                "reserve", "view reservations", "specify diet/allergies", "delete account\n", "logout" };
+                "reserve", "view reservations", "delete account\n", "logout" };
             var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
             switch (selection)
@@ -52,10 +52,6 @@ static class Menu
                 case "view reservations":
                     // MakingReservations.UserOverViewReservation(acc);
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
-                    break;
-
-                case "specify diet/allergies":
-                    LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, acc.ID);
                     break;
                 
                 case "delete account\n":
