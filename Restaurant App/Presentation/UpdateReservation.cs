@@ -11,7 +11,7 @@ namespace Presentation
     {
         public static void Show(ReservationModel reservation, UserModel acc) // Adding modularity for admin and user
         {
-            bool admin = 
+            bool admin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
             Console.Clear();
             Console.WriteLine("Update Reservation Details");
