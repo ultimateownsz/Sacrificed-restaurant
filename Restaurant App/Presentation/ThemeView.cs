@@ -213,6 +213,10 @@ static class ThemeView
             }
 
             month = selection.ElementAt(0).index + 1;
+            if (DateTime.Now.Month == month && DateTime.Now.Year == year && ThemeMenuManager.GetThemeByYearAndMonth(month, year) is null) // only returns the current month if it has no theme
+            {
+                return month;
+            }
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
                 Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
