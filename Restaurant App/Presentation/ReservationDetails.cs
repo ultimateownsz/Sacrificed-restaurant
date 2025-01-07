@@ -105,16 +105,20 @@ public static class ReservationDetails
             foreach (var req in request)
             {
                 var product = Access.Products.GetBy<int?>("ID", req.ProductID);
-                if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
+                if (product != null && !string.IsNullOrEmpty(product.Course))
                 {
-
-                    if (categoriesCount[category].ContainsKey(product.Name))
+                    if (!categoriesCount.ContainsKey(product.Course))
                     {
-                        categoriesCount[category][product.Name]++;
+                        categoriesCount[product.Course] = new Dictionary<string, int>();
+                    }
+
+                    if (categoriesCount[product.Course].ContainsKey(product.Name))
+                    {
+                        categoriesCount[product.Course][product.Name]++;
                     }
                     else
                     {
-                        categoriesCount[category][product.Name] = 1;
+                        categoriesCount[product.Course][product.Name] = 1;
                     }
                 }
             }
