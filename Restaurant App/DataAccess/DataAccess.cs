@@ -15,6 +15,7 @@ public class DataAccess<T1> where T1 : IModel
     // sadly, hard-coded tables identifiers (simplicity)
     protected string _table = typeof(T1) switch
     {
+        Type T2 when T2 == typeof(PairModel) => "Pair",
         Type T2 when T2 == typeof(UserModel) => "User",
         Type T2 when T2 == typeof(ThemeModel) => "Theme",
         Type T2 when T2 == typeof(PlaceModel) => "Place",
