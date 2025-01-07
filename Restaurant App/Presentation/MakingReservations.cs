@@ -300,14 +300,17 @@ namespace Presentation
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
-            // Fetch the latest reservation directly from the database using reservationId
+            // Fetch the reservation using the passed reservationId
             var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
 
             if (reservation == null)
             {
-                Console.WriteLine("Reservation not found. Unable to display receipt.");
+                Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
                 return;
             }
+
+            // Debug log to confirm correct reservation
+            Console.WriteLine($"DEBUG: Printing receipt for ReservationID: {reservation.ID}, Date: {reservation.Date}, PlaceID: {reservation.PlaceID}");
 
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
