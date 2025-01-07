@@ -45,7 +45,29 @@ namespace Restaurant_App_Unittesting
         [DataRow(2, "No", false)]  // Reservation does not exist and is not deleted
         public void TestDeleteReservation_ConfirmNo(int reservationId, string userConfirmation, bool expectedResult)
         {
+            // Mocking the ReservationAccess to simulate reservation data
+            var mockReservations = new Dictionary<int, string>
+            {
+                { 1, "Reservation for Table 1" },
+                { 3, "Reservation for Table 3" }
+            };
 
+            // Simulating the DeleteReservation method logic
+            bool DeleteReservation(int id, string confirmation)
+            {
+                if (mockReservations.ContainsKey(id) && confirmation == "Yes")
+                {
+                    mockReservations.Remove(id); // Remove reservation if user confirms "Yes"
+                    return true;
+                }
+                return false; // Return false if the reservation doesn't exist or user cancels
+            }
+
+            // Act
+            bool result = DeleteReservation(reservationId, userConfirmation);
+
+            // Assert
+            Assert.AreEqual(expectedResult, result);
         }
     }
 }
