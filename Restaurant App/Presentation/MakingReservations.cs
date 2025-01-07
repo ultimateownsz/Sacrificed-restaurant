@@ -305,12 +305,12 @@ namespace Presentation
                             guestOrder.Add(selectedProduct);
 
                             // EMERGENCY MODIFICATION: 1
-                            //if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
-                            //{
-                            //    Console.WriteLine("Failed to save the order. Please try again.");
-                            //    Console.ReadKey();
-                            //    continue;
-                            //}
+                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                            {
+                               Console.WriteLine("Failed to save the order. Please try again.");
+                               Console.ReadKey();
+                               continue;
+                            }
 
                             //Console.WriteLine($"{selectedProduct.Name} added successfully!");
                             //Console.ReadKey();
