@@ -63,7 +63,7 @@ namespace Presentation
                     int reservationIndex = reservationOptions.IndexOf(selectedReservation);
                     if (reservationIndex >= 0 && reservationIndex < reservationDetails.Count)
                     {
-                        ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
+                        ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation, acc);
                     }
                 }
             }
@@ -124,7 +124,7 @@ namespace Presentation
                 if (currentPageReserv.Any(r => ReservationLogic.FormatAccount(r) == selectedReservations)) // ensuring that the options won't be read as reservation options
                 {
                     var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
-                    UpdateReservation.Show(selectedResModel, false);
+                    UpdateReservation.Show(selectedResModel, acc);
                     break;
                 }
             }
