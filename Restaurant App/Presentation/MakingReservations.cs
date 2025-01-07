@@ -227,17 +227,17 @@ namespace Presentation
             Console.WriteLine("This month's theme is:");
             ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
 
-            if (theme is not null)
-            {
-                Console.WriteLine($"{theme.Name}");
-            }
-            else
-            {
-                Console.WriteLine("This month is not accessible.");
-                Console.WriteLine("Press any key to return to the reservation menu.");
-                Console.ReadKey();
-                return new List<ProductModel>(); // Return an empty list if no theme is available
-            }
+            //if (theme is not null)
+            //{
+            //    Console.WriteLine($"{theme.Name}");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("This month is not accessible.");
+            //    Console.WriteLine("Press any key to return to the reservation menu.");
+            //    Console.ReadKey();
+            //    return new List<ProductModel>(); // Return an empty list if no theme is available
+            //}
 
             for (int i = 0; i < guests; i++)
             {
@@ -274,6 +274,22 @@ namespace Presentation
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
                             selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{p.Price:0.00}"));
+
+                        // recommend product (drink pair)
+                        PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
+                        if (linkage != null)
+                        {
+                            ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
+                        
+                            switch (SelectionPresent.Show(["Yes", "No"], 
+                                banner: "DRINK PAIRING\n\nWould you like to pair "+
+                                        $"{recommended.Name} with {selectedProduct.Name}").ElementAt(0).index)
+                            {
+                                case 0:
+                                    guestOrder.Add(recommended);
+                                    break;
+                            }
+                        }
 
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
