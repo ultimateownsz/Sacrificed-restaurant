@@ -40,7 +40,7 @@ public class ThemeViewTests
 
         string result = SimulateDeleteTheme(themeToDelete, schedule);
 
-        Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
+        Assert.AreEqual("Theme 'Japanese' has been deleted for December 2025.", result);
     }
 
     [TestMethod]
