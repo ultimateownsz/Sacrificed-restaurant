@@ -57,4 +57,24 @@ namespace Restaurant_App_Unittesting
             return true;
         }
     }
+
+    // Mocking data access layer for testing reservations
+    public class MockReservationAccess
+    {
+        private readonly List<Reservation> _reservations;
+
+        public MockReservationAccess(List<Reservation> reservations)
+        {
+            _reservations = reservations;
+        }
+
+        public IEnumerable<Reservation> GetAllBy(string columnName, string value)
+        {
+            return columnName switch
+            {
+                "UserID" => _reservations.Where(r => r.UserID.ToString() == value),
+                _ => Enumerable.Empty<Reservation>()
+            };
+        }
+    }
 }
