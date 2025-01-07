@@ -168,27 +168,35 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("WWARNING\n");
-
-                    Console.ForegroundColor = palette.Base;
-                    Console.WriteLine(
-                        "You are about to attempt a menu termination,\n"+
-                        "however this functionality has been rather \n"+
-                        "buggy due to our retarded ahh approach in\n"+
-                        "making the most non-modular code imaginable.\n\n"
-                        );
-
-                    Console.Write("Would you like to proceed? [might cause a crash] (y/N)");
-                    switch (Console.ReadKey().KeyChar)
+                    return new List<SelectionLogic.Selection>
                     {
-                        case 'y':
-                            return new();
+                        new SelectionLogic.Selection
+                        {
+                            text = null,
+                            index = -1 // Special value indicating escape
+                        }
+                    };
 
-                        default:
-                            continue;
-                    }
+                    // Console.ForegroundColor = ConsoleColor.Red;
+                    // Console.WriteLine("WWARNING\n");
+
+                    // Console.ForegroundColor = palette.Base;
+                    // Console.WriteLine(
+                    //     "You are about to attempt a menu termination,\n"+
+                    //     "however this functionality has been rather \n"+
+                    //     "buggy due to our retarded ahh approach in\n"+
+                    //     "making the most non-modular code imaginable.\n\n"
+                    //     );
+
+                    // Console.Write("Would you like to proceed? [might cause a crash] (y/N)");
+                    // switch (Console.ReadKey().KeyChar)
+                    // {
+                    //     case 'y':
+                    //         return new();
+
+                    //     default:
+                    //         continue;
+                    // }
 
             }
         }

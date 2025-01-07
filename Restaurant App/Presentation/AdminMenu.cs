@@ -20,7 +20,11 @@ static class AdminMenu
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text)
+            var selection = SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text;
+
+            if (string.IsNullOrEmpty(selection)) return;
+
+            switch (selection)
             {
                 case "edit reservations":
                     ShowReservations.Show(acc);

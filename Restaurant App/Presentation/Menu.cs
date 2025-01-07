@@ -42,6 +42,8 @@ static class Menu
                 "reserve", "view reservations", "specify diet/allergies", "delete account\n", "logout" };
             var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
+            if (string.IsNullOrEmpty(selection)) return;
+
             switch (selection)
             {
                 case "reserve":

@@ -82,7 +82,7 @@ static class UserLogin
             );
         });
 
-        ControlHelpPresent.ResetToDefault();
+        // ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
 
         if (password == null)
@@ -110,14 +110,14 @@ static class UserLogin
         string? email = request_email();
         if (email == null)
         {
-            ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
+            // ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
             return null; // Escape key pressed during email input
         }
         // Request password
         string? password = request_password(email);
         if (password == null)
         {
-            ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
+            // ControlHelpPresent.DisplayFeedback("Exiting...", "bottom", "error");
             return null; // Escape key pressed during password input
         }
 

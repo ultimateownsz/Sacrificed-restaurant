@@ -21,6 +21,8 @@ namespace Presentation
             string banner = "How many guests will be coming?";
             int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
+            if (guests == 0) return;
+
             DateTime selectedDate;
 
             // Fetch inactive tables
