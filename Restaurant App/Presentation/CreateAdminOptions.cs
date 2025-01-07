@@ -77,6 +77,15 @@ namespace Project.Presentation
                         currentPage = Math.Max(currentPage - 1, 0);
                         continue;
                     }
+
+                    if (selectedText == "Search User (Press 's')")
+                    {
+                        Console.Clear();
+                        Console.Write("Enter the user's first name: ");
+                        string firstName = Console.ReadLine()?.Trim();
+                        Console.Write("Enter the user's last name: ");
+                        string lastName = Console.ReadLine()?.Trim();
+                    }
                 }
             }
             // Console.Clear();
