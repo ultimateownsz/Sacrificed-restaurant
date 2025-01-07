@@ -146,33 +146,33 @@ namespace Presentation
                 reservation.Date = selectedDate;
                 break;
 
-                Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
-                string newDateInput = Console.ReadLine();
-                if (string.IsNullOrEmpty(newDateInput))
-                {
-                    Console.WriteLine("Reservation Date not updated.");
-                    break;
-                }
-                else if (DateTime.TryParseExact(newDateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out newDate))
-                {
-                    if (newDate.Date < DateTime.Today)
-                    {
-                        Console.WriteLine("The date cannot be in the past. Please enter a future date.");
-                    }
-                    else if (newDate.Date > new DateTime(2025, 12, 31))
-                    {
-                        Console.WriteLine("The date cannot be after December 31, 2025. Please enter a valid date.");
-                    }
-                    else
-                    {
-                        reservation.Date = newDate; // Store as long
-                        break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
-                }
+                // Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
+                // string newDateInput = Console.ReadLine();
+                // if (string.IsNullOrEmpty(newDateInput))
+                // {
+                //     Console.WriteLine("Reservation Date not updated.");
+                //     break;
+                // }
+                // else if (DateTime.TryParseExact(newDateInput, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out newDate))
+                // {
+                //     if (newDate.Date < DateTime.Today)
+                //     {
+                //         Console.WriteLine("The date cannot be in the past. Please enter a future date.");
+                //     }
+                //     else if (newDate.Date > new DateTime(2025, 12, 31))
+                //     {
+                //         Console.WriteLine("The date cannot be after December 31, 2025. Please enter a valid date.");
+                //     }
+                //     else
+                //     {
+                //         reservation.Date = newDate; // Store as long
+                //         break;
+                //     }
+                // }
+                // else
+                // {
+                //     Console.WriteLine("Invalid date format. Please enter a date in the format dd/MM/yyyy.");
+                // }
             }
         }
         
