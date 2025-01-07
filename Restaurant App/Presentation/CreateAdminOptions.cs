@@ -66,7 +66,7 @@ namespace Project.Presentation
                     if (selectedText == "Back")
                     return;
 
-                    if (selectedText = "Next Page >>")
+                    if (selectedText == "Next Page >>")
                     {
                         currentPage = Math.Min(currentPage + 1, totalPages - 1);
                         continue;
