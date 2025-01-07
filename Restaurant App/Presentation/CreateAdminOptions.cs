@@ -91,7 +91,7 @@ namespace Project.Presentation
 
                             if (!searchResults.Any())
                             {
-                                Console.WriteLine("No users found with that name.");
+                                Console.WriteLine("No users found with that email.");
                                 Console.ReadKey();
                                 continue;
                             }
