@@ -127,6 +127,13 @@ namespace Presentation
             while (true)
             {
                 DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+
+                var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
+
+                
+
+
+
                 Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
                 string newDateInput = Console.ReadLine();
                 if (string.IsNullOrEmpty(newDateInput))
