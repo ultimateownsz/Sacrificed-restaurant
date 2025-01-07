@@ -12,7 +12,7 @@ public class LoginLogic
     public static UserModel? GetById(int id)
     {
         return Access.Users.GetBy<int>("ID", id);
-    }
+    } 
 
     public static UserModel? CheckLogin(string? email, string? password)
     {

@@ -10,63 +10,61 @@ public class ReservationLogic
 
     //This function is called throught the presentation layer (MakingReservation.cs)
     //this function will call all the other neccecary functions to make a new ReservationAccess instance
-            //with all the info from the user
+    //with all the info from the user
     public int SaveReservation(DateTime date, int userId, int placeId)
     {
-
-        // Validate UserID (check if the user exists)
+        // Validate UserID
         var user = Access.Users.GetBy<int>("ID", userId);
         if (user == null)
         {
             Console.WriteLine($"ERROR: User ID {userId} does not exist.");
-            return 0; // Return 0 if the user does not exist
+            return 0;
         }
 
-        // Validate PlaceID (check if the place exists)
-        var place = Access.Places.GetBy<int>("ID", placeId); // Assuming Access.Places is valid
+        // Validate PlaceID
+        var place = Access.Places.GetBy<int>("ID", placeId);
         if (place == null)
         {
             Console.WriteLine($"ERROR: Place ID {placeId} does not exist.");
-            return 0; // Return 0 if the place does not exist
+            return 0;
         }
 
-        // Check if there is already an existing reservation on the same date and place
-        var existingReservation = Access.Reservations.GetAllBy<DateTime>("Date", date)
-            .FirstOrDefault(r => r?.PlaceID == placeId && r?.Date == date);
-
+        // Check for existing reservation conflict
+        var existingReservation = Access.Reservations
+            .GetAllBy<DateTime>("Date", date)
+            .FirstOrDefault(r => r?.PlaceID == placeId);
         if (existingReservation != null)
         {
-            Console.WriteLine($"ERROR: There is already a reservation for PlaceID {placeId} on Date {date.ToShortDateString()}.");
-            return 0; // Return 0 if there's a conflict
+            Console.WriteLine($"ERROR: Conflict. Reservation already exists for PlaceID {placeId} on {date.ToShortDateString()}.");
+            return 0;
         }
 
-        // Create the reservation
+        // Create and save the reservation
         var reservation = new ReservationModel
         {
             Date = date,
             PlaceID = placeId,
             UserID = userId
         };
-
-        // Debug log the SQL query to make sure the data is correct
-
-        // Insert reservation into database
-        if (Access.Reservations.Write(reservation))
+        if (!Access.Reservations.Write(reservation))
         {
-            // Now get the last inserted reservation ID (assuming your database auto-increments the ID)
-            var lastReservation = Access.Reservations.GetAllBy<int>("UserID", userId)
-                                                    .OrderByDescending(r => r?.Date)
-                                                    .FirstOrDefault(); // Assuming the latest reservation is by date or similar
-
-            if (lastReservation != null)
-            {
-                Console.WriteLine($"DEBUG: Reservation saved with ID={lastReservation.ID}");
-                return lastReservation.ID ?? 0; // Return the generated ID
-            }
+            Console.WriteLine("ERROR: Failed to save the reservation.");
+            return 0;
         }
 
-        Console.WriteLine("ERROR: Reservation save failed");
-        return 0; // Return 0 if the reservation failed
+        // Retrieve and log the newly created reservation ID
+        var newReservation = Access.Reservations
+            .Read()
+            .OrderByDescending(r => r.ID)
+            .FirstOrDefault();
+        if (newReservation != null)
+        {
+            Console.WriteLine($"DEBUG: Reservation saved successfully with ID: {newReservation.ID}");
+            return newReservation.ID.Value;
+        }
+
+        Console.WriteLine("ERROR: Failed to fetch the newly created reservation.");
+        return 0;
     }
 
 

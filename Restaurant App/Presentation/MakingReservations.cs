@@ -237,6 +237,14 @@ namespace Presentation
                 return new List<ProductModel>(); // Return an empty list if no theme is available
             }
 
+            // Fetch the reservation details using reservationId
+            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
+            if (reservation == null)
+            {
+                Console.WriteLine("Reservation not found. Unable to save orders.");
+                return new List<ProductModel>();
+            }
+
             // << imperfect
             Access.Users.Delete(-1);
             Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
@@ -259,23 +267,16 @@ namespace Presentation
                     {
                         Console.Clear();
                         var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
-
-                        // Create menu options for SelectionPresent.Show
                         var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
-                        // EMERGENCY MODIFICATION: 1
                         productOptions.Add("Skip this course"); // Option to skip the course
 
-                        // Display the menu and get the selected option
                         var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
-
-                        // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           break;
+                            break;
                         }
 
-                        // Find the selected product based on the menu text
-                        var selectedProduct = products.FirstOrDefault(p => 
+                        var selectedProduct = products.FirstOrDefault(p =>
                             selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
                         // recommend product (drink pair)
@@ -302,13 +303,13 @@ namespace Presentation
                             var saveResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
                             if (!saveResult.isValid)
                             {
-                                Console.WriteLine("Failed to save the order. Please try again.");
-                                Console.ReadKey();
-                                continue;
+                               Console.WriteLine("Failed to save the order. Please try again.");
+                               Console.ReadKey();
+                               continue;
                             }
 
-                            Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            Console.ReadKey();
+                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                            //Console.ReadKey();
                             break; // Exit the selection loop for this category
                         }
                         else
@@ -328,7 +329,6 @@ namespace Presentation
 
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
-                // }
             }
 
             // I remove the user after the allergy/diet selection has executed fully
@@ -340,51 +340,44 @@ namespace Presentation
         }
 
 
-        
+
         public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
             Console.WriteLine("=========== Receipt ===========");
             decimal totalAmount = 0;
 
-            var reservations = Access.Reservations.GetAllBy<int?>("UserID", acc.ID);
+            // Fetch the reservation using the passed reservationId
+            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
 
-            if (reservations != null && reservations.Any(r => r != null))
+            if (reservation == null)
             {
-                var reservation = reservations.Where(r => r != null).OrderByDescending(r => r.Date).FirstOrDefault();
-
-                if (reservation != null)
-                {
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
-                Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
-                Console.WriteLine($"Table ID:               {reservation.PlaceID}");
-                Console.WriteLine("-------------------------------");
-                // Console.WriteLine($"Number of guests: {}"); // can be implemented when amount of guests is stored
-                }
+                Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+                return;
             }
+
+            // Debug log to confirm correct reservation
+            //Console.WriteLine($"DEBUG: Printing receipt for ReservationID: {reservation.ID}, Date: {reservation.Date}, PlaceID: {reservation.PlaceID}");
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
+            Console.WriteLine($"Reservation Date:       {reservation.Date:dd/MM/yyyy}");
+            Console.WriteLine($"Table ID:               {reservation.PlaceID}");
+            Console.WriteLine("-------------------------------");
 
             foreach (var product in orders)
             {
-                if (product.Price < 10)
-                {
-                    Console.WriteLine($"{product.Name,-20}    € {product.Price:F2}");
-                }
-                else
-                {
-                    Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
-                }
-
-                // Convert nullable float to decimal, treat null as 0
+                Console.WriteLine($"{product.Name,-20}    €{product.Price:F2}");
                 totalAmount += product.Price.HasValue ? (decimal)product.Price.Value : 0;
             }
 
             Console.WriteLine("-------------------------------");
-            Console.WriteLine($"");
             Console.WriteLine($"Total Amount:           €{totalAmount:F2}");
-            Console.WriteLine($"Reservation number:          {reservationId}");
+            Console.WriteLine($"Reservation number:     {reservation.ID}");
             Console.WriteLine("===============================");
         }
+
+
 
         private static string GetUserFullName(int? userID)
         {
