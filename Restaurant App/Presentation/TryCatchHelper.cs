@@ -11,7 +11,8 @@ public static class TryCatchHelper
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine($"\n{cancelMessage}");
+                ControlHelpPresent.DisplayFeedback(cancelMessage, "bottom", "error");
+                // Console.WriteLine($"\n{cancelMessage}");
             }
         }
 
