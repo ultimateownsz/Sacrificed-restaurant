@@ -49,7 +49,31 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class AnonymizeInfo
     {
-        
+        [TestMethod]
+        [DataRow(1, "John", "Doe", "password123", "Inactive")] // User info should be anonymized
+        public void TestPersonalInformationIsMadeAnonymous(int userId, string firstName, string lastName, string password, string expectedAnonymizedInfo)
+        {
+            // Mocking database of users
+            var mockUsers = new List<UserModel>
+            {
+                new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" }
+            };
+
+            var userAccess = new MockDataAccess(mockUsers);
+
+            // Act: Simulate user deletion
+            var user = userAccess.GetAllBy("ID", userId.ToString()).FirstOrDefault();
+            bool result = false;
+
+            if (user != null && user.Password == password)
+            {
+                result = DeleteAccountLogic.ConfirmAndDelete(user);
+            }
+
+            // Assert: Ensure personal information is anonymized
+            Assert.AreEqual(expectedAnonymizedInfo, user.FirstName);
+            Assert.AreEqual(expectedAnonymizedInfo, user.LastName);
+        }
     }
 
     // Unit Test for Criteria 5: Ask User for Password Confirmation When Deleting Account
