@@ -86,4 +86,11 @@ namespace Restaurant_App_Unittesting
         public string LastName { get; set; }
         public string Password { get; set; }
     }
+
+    // Reservation model class
+    public class Reservation
+    {
+        public int UserID { get; set; }
+        public DateTime Date { get; set; }
+    }
 }
