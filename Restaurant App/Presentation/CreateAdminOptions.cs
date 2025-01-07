@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using Project.Logic;
 
 namespace Project.Presentation
@@ -46,7 +47,37 @@ namespace Project.Presentation
                 // Only show users, no admins
                 var nonAdminAccounts = activeAccounts.Where(acc => acc.Admin == 0).ToList();
                 var sortedAccounts = nonAdminAccounts.OrderBy(acc => acc.FirstName).ToList();
-                
+
+                int currentPage = 0;
+                int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
+
+                while (true)
+                {
+                    // Menu options
+                    var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
+                    options.Add("Search User (Press 's')");
+                    options.Add("Back");
+
+                    var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
+
+                    string selectedText = selection.text;
+
+                    // Handle navigation and actions
+                    if (selectedText == "Back")
+                    return;
+
+                    if (selectedText = "Next Page >>")
+                    {
+                        currentPage = Math.Min(currentPage + 1, totalPages - 1);
+                        continue;
+                    }
+
+                    if (selectedText == "<< Previous Page")
+                    {
+                        currentPage = Math.Max(currentPage - 1, 0);
+                        continue;
+                    }
+                }
             }
             // Console.Clear();
             // Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
