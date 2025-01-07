@@ -118,6 +118,13 @@ namespace Restaurant_App_Unittesting
 
             // Assert: Verify password confirmation result
             Assert.AreEqual(expectedResult, result);
+
+            if (expectedResult) 
+            {
+                // Additional assert to check if user information was anonymized
+                Assert.AreEqual("Inactive", user.FirstName);
+                Assert.AreEqual("Inactive", user.LastName);
+            }
         }
 
         // Simulated DeleteAccount logic
