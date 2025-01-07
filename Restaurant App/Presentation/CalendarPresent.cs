@@ -240,7 +240,7 @@ namespace Project
             ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(date);
 
             if(theme is null) return true;
-            if(!ProductManager.AnyProductsInTheme(theme.ID)) return true;
+            if(!ProductLogic.AnyProductsInTheme(theme.ID)) return true;
 
             return false;
         }
