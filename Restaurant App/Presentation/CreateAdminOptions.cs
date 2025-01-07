@@ -85,6 +85,31 @@ namespace Project.Presentation
                         string firstName = Console.ReadLine()?.Trim();
                         Console.Write("Enter the user's last name: ");
                         string lastName = Console.ReadLine()?.Trim();
+
+                        if (!string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+                        {
+                            var searchResults = nonAdminAccounts.Where(acc =>
+                                string.Equals(acc.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
+                                string.Equals(acc.LastName, lastName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                            if (!searchResults.Any())
+                            {
+                                Console.WriteLine("No users found with that name.");
+                                Console.ReadKey();
+                                continue;
+                            }
+
+                            sortedAccounts = searchResults.OrderBy(acc => acc.FirstName).ToList();
+                            currentPage = 0;
+                            totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Both first and last names are required.");
+                            Console.ReadKey();
+                        }
+
+                        continue;
                     }
                 }
             }
