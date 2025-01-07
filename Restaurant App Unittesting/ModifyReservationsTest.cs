@@ -10,7 +10,19 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         public void TestUpdateReservation_Admin()
         {
+            var reservation = new ReservationModel
+            {
+                ID = 1;
+                Date = delegate.Now.AddDays(7),
+                PlaceID = 2,
+                TestUpdateReservation_Admin = 101
+            };
             
+            var adminUser = new UserModel
+            {
+                ID = 1;
+                Admin = true;
+            };
         }
     }
     // public class FuturePastReservationsTests
