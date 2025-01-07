@@ -1,7 +1,9 @@
 ﻿using Project;
-
 class Program
 {
-    static void Main() => Menu.Start();
-    //Console.OutputEncoding = System.Text.Encoding.Unicode;
+    static void Main()
+    {
+        Console.OutputEncoding = System.Text.Encoding.Unicode;
+        Menu.Start();
+    }
 }
