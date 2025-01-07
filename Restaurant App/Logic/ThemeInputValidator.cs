@@ -52,7 +52,7 @@ public static class ThemeInputValidator
 
     public static string? GetValidThemeMenu()
     {
-        List<string> Themes = ThemeMenuManager.GetAllThemes();
+        List<string> Themes = ThemeMenuLogic.GetAllThemes();
         Themes.Add("No theme");
 
         while (true)

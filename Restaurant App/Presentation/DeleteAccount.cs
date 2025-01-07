@@ -37,7 +37,7 @@ namespace Project.Presentation
                     var options = DeleteAccountLogic.GenerateMenuOptions(activeAccounts, currentPage);
 
                     // display menu and handle user input
-                    dynamic selection = SelectionPresent.Show(options, "ACCOUNTS MENU\n\n");
+                    dynamic selection = SelectionPresent.Show(options, banner:"ACCOUNTS MENU\n\n");
 
                     if (selection.text == null || selection.text == "Back")
                     {

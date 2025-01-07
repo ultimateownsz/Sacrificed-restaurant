@@ -68,7 +68,7 @@ static class ProductView
             if(filterType == "")
             {
                 banner = "Choose a product to edit/delete:";
-                products = ProductManager.GetAllProductInfo().ToList();
+                products = ProductLogic.GetAllProductInfo().ToList();
                 if(products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -82,7 +82,7 @@ static class ProductView
             else if (filterType == "course")
             {
                 banner = $"Choose a product to edit/delete:\n\n{name}:";
-                products = ProductManager.GetAllWithinCourse(name).ToList();
+                products = ProductLogic.GetAllWithinCourse(name).ToList();
                 if(products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -103,7 +103,7 @@ static class ProductView
                 {
                     banner = $"Choose a product to edit/delete:\n\n{name}:";
                 }
-                products = ProductManager.GetAllWithinTheme(name).ToList();
+                products = ProductLogic.GetAllWithinTheme(name).ToList();
                 if(products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -123,7 +123,7 @@ static class ProductView
                 return;
             }
 
-            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection, filterType, name);
+            chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType, name);
             if(chosenProduct == null)
             {
                 Console.WriteLine("rizz");
@@ -150,16 +150,16 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner: "Choose a what to do with the product:").ElementAt(0).text)
             {
                 case "Edit name":
-                    ProductManager.ProductEditValidator(chosenProduct, "name");
+                    ProductLogic.ProductEditValidator(chosenProduct, "name");
                     break;
                 case "Edit price":
-                    ProductManager.ProductEditValidator(chosenProduct, "price");
+                    ProductLogic.ProductEditValidator(chosenProduct, "price");
                     break;
                 case "Edit course":
-                    ProductManager.ProductEditValidator(chosenProduct, "course");
+                    ProductLogic.ProductEditValidator(chosenProduct, "course");
                     break;
                 case "Edit theme":
-                    ProductManager.ProductEditValidator(chosenProduct, "theme");
+                    ProductLogic.ProductEditValidator(chosenProduct, "theme");
                     break;
                 case "Delete product\n":
                     if(DeleteProduct(chosenProduct))
@@ -183,7 +183,7 @@ static class ProductView
             return false;
         }
         Console.Clear();
-        if(ProductManager.DeleteProductAndRelatedRequests(chosenProduct.ID))
+        if(ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{chosenProduct.Name} has been deleted.");
@@ -205,7 +205,7 @@ static class ProductView
 
     public static void AddProduct()
     {
-        ProductModel? newProduct = ProductManager.ProductValidator();
+        ProductModel? newProduct = ProductLogic.ProductValidator();
         Console.Clear();
         if(newProduct == null)
         {
@@ -216,7 +216,7 @@ static class ProductView
             Console.ForegroundColor = ConsoleColor.White;
             return;
         }
-        else if(ProductManager.AddProduct(newProduct))
+        else if(ProductLogic.AddProduct(newProduct))
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{newProduct.Name} has been Added.");

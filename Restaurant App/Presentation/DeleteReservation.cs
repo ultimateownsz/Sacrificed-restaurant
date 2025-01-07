@@ -21,8 +21,8 @@ public static class DeleteReservation
             // Use SelectionPresent to show Yes/No options
             var selectedOption = SelectionPresent.Show(
                 new List<string> { "Yes", "No" },
-                "DELETION\n\nAre you sure?\n"
-            ).text;
+                banner:"DELETION\n\nAre you sure?\n"
+            ).ElementAt(0).text;
 
             if (selectedOption == "Yes")
             {

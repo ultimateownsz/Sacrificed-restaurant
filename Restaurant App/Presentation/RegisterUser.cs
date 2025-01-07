@@ -24,14 +24,14 @@ internal class RegisterUser
                 ControlHelpPresent.ResetToDefault();
                 ControlHelpPresent.ShowHelp();
 
-                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin\n", "Cancel"], "ACCOUNT REGISTRATION\n\n");
-                if (selection == null || selection?.text == null || selection?.text == "Cancel")
+                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin\n", "Cancel"], banner:"ACCOUNT REGISTRATION\n\n").ElementAt(0).text;
+                if (selection == null || selection == null || selection == "Cancel")
                 {
                     ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
                     return;
                 }
 
-                if (selection?.text == "Promote an existing user to admin")
+                if (selection == "Promote an existing user to admin")
                 {
                     PromoteExistingUserToAdmin();
                     ControlHelpPresent.ResetToDefault();
@@ -134,7 +134,7 @@ internal class RegisterUser
         var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}\n").ToList();
         userOptions.Add("Cancel");
 
-        var userSelection = SelectionPresent.Show(userOptions, "ACCOUNT PROMOTION\n\n").text;
+        var userSelection = SelectionPresent.Show(userOptions, banner:"ACCOUNT PROMOTION\n\n").ElementAt(0).text;
         
         if (string.IsNullOrEmpty(userSelection) || userSelection == "Cancel")
         {
@@ -142,7 +142,7 @@ internal class RegisterUser
             return;
         }
 
-        var selectedUser = nonAdminUsers.FirstOrDefault(u => userSelection?.text?.StartsWith($"{u.FirstName} {u.LastName} - {u.Email}") == true);
+        var selectedUser = nonAdminUsers.FirstOrDefault(u => userSelection.StartsWith($"{u.FirstName} {u.LastName} - {u.Email}") == true);
         
         if (selectedUser != null)
         {
@@ -179,7 +179,7 @@ internal class RegisterUser
             ControlHelpPresent.AddOptions("Exit", "<escape>");
             ControlHelpPresent.ShowHelp();
 
-            dynamic selection = SelectionPresent.Show(details, "Review and select your account details you want to modify:\n\n");
+            dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:\n\n").ElementAt(0).text!;
 
             if (selection.text == null || selection.text == "Cancel")
             {

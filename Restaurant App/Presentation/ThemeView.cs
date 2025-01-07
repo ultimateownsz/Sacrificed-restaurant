@@ -20,10 +20,10 @@ static class ThemeView
             }
 
             // Check if the chosen month has a theme, if not proceed with else
-            if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
+            if (ThemeMenuLogic.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
-                string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
+                string banner2 = $"{ThemeMenuLogic.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Edit the theme for this month", "Delete the theme for this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
 
@@ -36,12 +36,12 @@ static class ThemeView
                         Console.WriteLine("Failed to update theme");
                         return;
                     }
-                    ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                    ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
                 }
                 else
                 {
-                    ThemeMenuManager.DeleteMonthTheme(month, year);
+                    ThemeMenuLogic.DeleteMonthTheme(month, year);
                     Console.Clear();
                     Console.WriteLine("This theme has been deleted");
                 }
@@ -55,7 +55,7 @@ static class ThemeView
                     Console.WriteLine("Failed to update theme");
                     return;
                 }
-                ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                ThemeMenuLogic.UpdateThemeSchedule(month, year, themeName);
                 Console.WriteLine($"The theme has been updated to {themeName}");
             }
 
@@ -69,7 +69,7 @@ static class ThemeView
     public static int YearChoice()
     {
         // Fetch available years from the database and add future years
-        List<int> availableYears = ThemeMenuManager.GetAvailableYears();
+        List<int> availableYears = ThemeMenuLogic.GetAvailableYears();
         int minYear = DateTime.Now.Year;
         int currentYearIndex = availableYears.IndexOf(minYear);
 
@@ -155,7 +155,7 @@ static class ThemeView
         int month;
         string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
-            .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
+            .Select(m => ThemeMenuLogic.GetMonthThemeName(m, year))
             .ToList();
 
         while (true)

@@ -35,10 +35,10 @@ namespace Project.Logic
             var options = new List<string> { "Yes", "No" };
             var selection = SelectionPresent.Show(
                 options,
-                $"Are you sure you want to delete {account.FirstName} {account.LastName}?\n\n"
-            );
+                banner:$"Are you sure you want to delete {account.FirstName} {account.LastName}?\n\n"
+            ).ElementAt(0).text;
 
-            if (selection.text == "Yes")
+            if (selection == "Yes")
             {
                 // Mark the account as inactive
                 account.FirstName = "Inactive";
