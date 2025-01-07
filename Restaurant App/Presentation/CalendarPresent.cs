@@ -60,6 +60,18 @@ namespace Project
                             Console.WriteLine("This day is fully reserved.");
                             Console.ResetColor();
                         }
+                        if (NoThemeForMonth(selectedDate))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This month has no theme.");
+                            Console.ResetColor();
+                        }
+                        if (NoProductsInTheme(selectedDate))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This month has no products.");
+                            Console.ResetColor();
+                        }
                         else
                         {
                             return selectedDate;
@@ -79,6 +91,7 @@ namespace Project
             Console.Clear();
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            Console.ResetColor();
 
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
@@ -86,6 +99,8 @@ namespace Project
 
             DateTime today = DateTime.Today;
             bool showFullyReservedMessage = false;
+            bool noThemeReservedMessage = false;
+            bool noProductsReservedMessage = false;
 
             for (int i = 0; i < startDay; i++)
                 Console.Write("   ");
@@ -96,8 +111,19 @@ namespace Project
 
                 bool isPast = !isAdmin && dateToCheck < today;
                 bool isFullyBooked = IsDayFullyBooked(dateToCheck, guests);
+                bool NoTheme= NoThemeForMonth(dateToCheck);
+                bool NoProducts= NoProductsInTheme(dateToCheck);
 
-                if (isPast)
+                if (NoTheme)
+                {
+                    noThemeReservedMessage = true;
+                }
+                else if (NoProducts)
+                {
+                    noProductsReservedMessage = true;
+                }
+
+                if (isPast || noThemeReservedMessage || noProductsReservedMessage)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
@@ -126,6 +152,19 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
+            Console.ResetColor();
+            if (noThemeReservedMessage)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nThis month has no theme.");
+            }
+            else if (noProductsReservedMessage)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nThis month has no products.");
+            }
+
+            Console.ResetColor();
             Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
 
             // Display the "fully reserved" message at the bottom
@@ -188,6 +227,22 @@ namespace Project
         private static bool IsDayFullyBooked(DateTime date, int guests)
         {
             return !HasAvailableTablesForGuests(date, guests);
+        }
+
+        private static bool NoThemeForMonth(DateTime date)
+        {
+            if(ReservationMenuLogic.GetCurrentTheme(date) == null) return true;
+            return false;
+        }
+
+        private static bool NoProductsInTheme(DateTime date)
+        {
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(date);
+
+            if(theme is null) return true;
+            if(!ProductManager.AnyProductsInTheme(theme.ID)) return true;
+
+            return false;
         }
 
         private static bool HasAvailableTablesForGuests(DateTime date, int guests)
