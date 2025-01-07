@@ -6,7 +6,7 @@ internal class LinkAllergyPresent
     public static void Show(ref LinkAllergyLogic.Input input, ref LinkAllergyLogic.Output output)
     {
         // get all selected allergies
-        string banner = (output.Type == LinkAllergyLogic.Type.User) ? $"(GUEST {output.Guest})" : "";
+        string banner = (output.ID == -1) ? $"(GUEST {output.Guest})" : "";
         List<SelectionLogic.Selection> allergies = SelectionPresent.Show(
             output.Allergies, output.Highlights, banner: $"DIET/ALLERGIES MENU {banner}", SelectionLogic.Mode.Multi);
 

@@ -89,18 +89,15 @@ namespace Presentation
                     }
 
                     var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                    if (orders.Count > 0)
+                    PrintReceipt(orders, reservationId, acc);
+                    
+                    Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                    while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                     {
-                        PrintReceipt(orders, reservationId, acc);
-
-                        // Prompt the user to press Enter to return to the menu
-                        Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
-                        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
-                        {
-                            // Do nothing, just wait for Enter
-                        }
-                        return; // Exit after completing reservation
+                        // Do nothing, just wait for Enter
                     }
+
+                    return;
                 }
             }
         }
@@ -228,41 +225,30 @@ namespace Presentation
             Console.WriteLine("This month's theme is:");
             ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
 
-            //if (theme is not null)
-            //{
-            //    Console.WriteLine($"{theme.Name}");
-            //}
-            //else
-            //{
-            //    Console.WriteLine("This month is not accessible.");
-            //    Console.WriteLine("Press any key to return to the reservation menu.");
-            //    Console.ReadKey();
-            //    return new List<ProductModel>(); // Return an empty list if no theme is available
-            //}
+            if (theme is not null)
+            {
+                Console.WriteLine($"{theme.Name}");
+            }
+            else
+            {
+                Console.WriteLine("This month is not accessible.");
+                Console.WriteLine("Press any key to return to the reservation menu.");
+                Console.ReadKey();
+                return new List<ProductModel>(); // Return an empty list if no theme is available
+            }
 
-            // This part of the code is an absolute mess, and that's my fault.
-            // I assumed that allergies were linked to user-accounts even though
-            // the P.O. explicitly asked the allergies to be requested on a per-guest basis.
-            // To circumvent this, a temporary user is created to hold the guest allergy info
-            // as if it was a normal user-account.
-
-            // To view this from the positive side, this does allow the possibility of future
-            // features like account-bounded allergy/diet saving and/or the ability to produce advertisement
-            // more specifically targeted to users with certain allergies/diets (vegan meals)
-            // without having to reimplement much of the logic.
-
-            // On the rather negative side does this use a bit more processing to execute,
-            // to mitigate this, I've placed the creation of the account here where it's
-            // executed the least amount of times for it to work properly
-            // <<
+            // << imperfect
             Access.Users.Delete(-1);
             Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
             // >>
 
             for (int i = 0; i < guests; i++)
             {
+                // initiate temp user
+                int? id = (i == 0) ? acc.ID : i;
                 List<ProductModel> guestOrder = new();
-                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, -1, i+1);
+
+                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, id, (i == 0) ? null : i+1);
                 
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
@@ -270,7 +256,7 @@ namespace Presentation
 
                     // filter for allergies
                     List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).Where(
-                        product => !LinkAllergyLogic.IsAllergic(-1, product.ID)).ToList();
+                        product => !LinkAllergyLogic.IsAllergic(id, product.ID)).ToList();
 
                     while (true)
                     {
@@ -316,17 +302,15 @@ namespace Presentation
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
                             guestOrder.Add(selectedProduct);
+                            if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
+                            {
+                                Console.WriteLine("Failed to save the order. Please try again.");
+                                Console.ReadKey();
+                                continue;
+                            }
 
-                            // EMERGENCY MODIFICATION: 1
-                            //if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
-                            //{
-                            //    Console.WriteLine("Failed to save the order. Please try again.");
-                            //    Console.ReadKey();
-                            //    continue;
-                            //}
-
-                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            //Console.ReadKey();
+                            Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                            Console.ReadKey();
                             break; // Exit the selection loop for this category
                         }
                         else
@@ -336,6 +320,7 @@ namespace Presentation
                         }
                     }
                 }
+                
                 allOrders.AddRange(guestOrder);
                 foreach (var lnk in Access.Allerlinks.Read().Where(
                     x => x.EntityID == -1 && x.Personal == 1))

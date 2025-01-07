@@ -49,9 +49,8 @@ internal class PairLogic
     public static void Start()
     {
         // standalone implement
-        List<string> labels = ["Beverage",];
         List<string> products = Access.Products.Read().Where(
-            x => !labels.Contains(x.Course)).Select(x => x.Name).ToList();
+            x => x.Course == "Main").Select(x => x.Name).ToList();
         
         // find ID
         string choice = SelectionPresent.Show(products, banner: "PRODUCT MENU").ElementAt(0).text;

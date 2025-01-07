@@ -17,6 +17,7 @@ internal class LinkAllergyLogic
 
     public struct Output()
     {
+        public int? ID;
         public int? Guest;
         public Type Type;
         
@@ -29,6 +30,7 @@ internal class LinkAllergyLogic
         var output = new Output();
         output.Guest = guest;
         output.Type = type;
+        output.ID = id;
 
         // add all allergies
         Access.Allergies.Read().ForEach(
@@ -109,7 +111,7 @@ internal class LinkAllergyLogic
             // linking
             Access.Allerlinks.Write(
                 new AllerlinkModel(
-                    (type == Type.Product) ? id : -1, 
+                    id, 
                     allergy.ID,
                     (type == Type.User) ? 1 : 0
                 )
