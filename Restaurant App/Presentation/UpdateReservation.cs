@@ -130,7 +130,13 @@ namespace Presentation
 
                 var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
 
-                
+                if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
+                {
+                    Console.Clear();
+                    Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                    Console.ReadKey();
+                    return;
+                }
 
 
 
