@@ -71,6 +71,17 @@ public class ProductEditingTests
         Assert.AreEqual("Product updated to 'Appetizer' from 'Dessert'.", result);
     }
 
+    [TestMethod]
+    public void TestDeleteProduct()
+    {
+
+        string result = SimulateDeleteProduct(existingProduct);
+
+        Assert.AreEqual("Product 'Baklava' has been deleted.", result);
+    }
+    
+    // Simulated Methods for Testing
+
     //This Method simulates adding Products
     private string SimulateAddProduct(Product Product, Theme theme)
     {
@@ -115,6 +126,12 @@ public class ProductEditingTests
         string OldProductCourse = existingProduct.Course;
          existingProduct.Course = newProductCourse;
         return $"Product updated to '{existingProduct.Course}' from '{OldProductCourse}'.";
+    }
+
+    //This Method simulates Deleting Products
+    private string SimulateDeleteProduct(Product ProductToDelete)
+    {
+        return $"Product '{ProductToDelete.Name}' has been deleted.";
     }
 
     //Validates the name of the Product
