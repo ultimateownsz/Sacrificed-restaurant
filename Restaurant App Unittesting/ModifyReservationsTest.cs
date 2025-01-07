@@ -12,23 +12,23 @@ namespace Restaurant_App_Unittesting
         {
             ReservationModel reservation = new ReservationModel
             {
-                ID = 1;
-                Date = delegate.Now.AddDays(7),
+                ID = 1,
+                Date = DateTime.Now.AddDays(7),
                 PlaceID = 2,
-                TestUpdateReservation_Admin = 101
+                UserID = 101
             };
             
             UserModel adminUser = new UserModel
             {
-                ID = 1;
-                Admin = true;
+                ID = 1,
+                Admin = true
             };
 
             bool updateCalled = false;
 
             Access.Reservations = new ExampleReservationAccess
             {
-                UdpateAction = ref => updateCalled = true;
+                UpdateAction = r => updateCalled = true
             };
 
             UpdateReservation.Show(reservation, adminUser);
@@ -48,16 +48,16 @@ namespace Restaurant_App_Unittesting
                 UserID = 202
             };
 
-            UserModel adminUser = new UserModel
+            UserModel nonAdminUser = new UserModel
             {
-                ID = 2;
-                Admin = false;
+                ID = 2,
+                Admin = false
             };
 
             bool updateCalled = false;
 
             // Simulate Access.Reservations.Update
-            Access.Reservations = new FakeReservationAccess
+            Access.Reservations = new ExampleReservationAccess
             {
                 UpdateAction = r => updateCalled = true
             };
@@ -102,6 +102,68 @@ namespace Restaurant_App_Unittesting
             public void Update(ReservationModel reservation)
             {
                 UpdateAction?.Invoke(reservation);
+            }
+        }
+
+        public static class CalendarPresent
+        {
+            private static DateTime _simulatedDate;
+
+            public static void SetSimulatedDate(DateTime date)
+            {
+                _simulatedDate = date;
+            }
+
+            public static DateTime Show(DateTime currentDate, bool isAdmin, int guests, UserModel acc)
+            {
+                return _simulatedDate;
+            }
+        }
+
+        public static class TableSelection
+        {
+            private static int _simulatedTableID;
+
+            public static void SetSimulatedTableID(int tableID)
+            {
+                _simulatedTableID = tableID;
+            }
+
+            public static int SelectTable(int[] availableTables, int[] inactiveTables, int[] reservedTables, int guests, bool isAdmin)
+            {
+                return _simulatedTableID;
+            }
+        }
+
+        public static class UpdateReservation
+        {
+            public static void Show(ReservationModel reservation, UserModel acc)
+            {
+                bool admin = acc.Admin.HasValue && acc.Admin.Value;
+
+                if (admin)
+                {
+                    UpdateReservationDate(reservation);
+                }
+                else
+                {
+                    UpdateTableID(reservation);
+                }
+
+                // Simulate saving the reservation
+                Access.Reservations.Update(reservation);
+            }
+
+            private static void UpdateReservationDate(ReservationModel reservation)
+            {
+                // Simulate updating the date
+                reservation.Date = CalendarPresent.Show(DateTime.Now, true, 1, new UserModel { Admin = true });
+            }
+
+            private static void UpdateTableID(ReservationModel reservation)
+            {
+                // Simulate updating the table ID
+                reservation.PlaceID = TableSelection.SelectTable(new int[] { 1, 2, 3 }, new int[] { }, new int[] { }, 4, false);
             }
         }
     }
