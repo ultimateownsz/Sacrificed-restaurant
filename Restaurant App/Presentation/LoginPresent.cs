@@ -34,7 +34,7 @@ public static class LoginPresent
         string? email = _request_email();
         string? password = _request_password(email);
 
-        UserModel? acc = LoginLogic.CheckLogin(email?.ToLower(), password);
+        UserModel? acc = LoginLogic.CheckLogin(email, password);
         if (acc != null)
         {
             return acc;

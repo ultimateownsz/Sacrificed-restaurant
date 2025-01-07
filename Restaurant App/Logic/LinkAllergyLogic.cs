@@ -71,7 +71,7 @@ internal class LinkAllergyLogic
         return pIDs.Contains(product.ID);
 
     }
-
+    
     public static void Start(Type type, int? id)
     {
         
@@ -104,7 +104,7 @@ internal class LinkAllergyLogic
             // linking
             Access.Allerlinks.Write(
                 new AllerlinkModel(
-                    id, 
+                    (type == Type.Product) ? id : -1, 
                     allergy.ID,
                     (type == Type.User) ? 1 : 0
                 )

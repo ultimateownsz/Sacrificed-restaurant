@@ -20,7 +20,8 @@ namespace Presentation
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
-            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+            int guests = options.Count() - SelectionPresent.Show(
+                options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
             DateTime selectedDate;
 
@@ -242,13 +243,19 @@ namespace Presentation
             for (int i = 0; i < guests; i++)
             {
                 List<ProductModel> guestOrder = new();
+
+                // an temporary account is made (expandability)
+                Access.Users.Delete(-1);
+                Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
+                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, -1);
+                
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
 
                     // filter for allergies
                     List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).Where(
-                        account => !LinkAllergyLogic.IsAllergic(acc, account)).ToList();
+                        product => !LinkAllergyLogic.IsAllergic(-1, product.ID)).ToList();
 
                     while (true)
                     {
@@ -313,11 +320,20 @@ namespace Presentation
                     }
                 }
                 allOrders.AddRange(guestOrder);
+                foreach (var lnk in Access.Allerlinks.Read().Where(
+                    x => x.EntityID == -1 && x.Personal == 1))
+                {
+                    Access.Allerlinks.Delete(lnk.ID);
+                }
+
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
                 // }
             }
 
+
+            
+            Access.Users.Delete(-1);
             return allOrders; // Return the collected orders
         }
 
