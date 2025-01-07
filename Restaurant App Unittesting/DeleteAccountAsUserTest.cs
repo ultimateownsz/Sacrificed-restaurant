@@ -11,23 +11,23 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         [DataRow(1, "John", "Doe", "password123", 1)] // User exists and past reservations are intact
         [DataRow(2, "Piet", "Pieter", "password123", 0)] // User does not exist
-        public void TestPastReservationsAreSaved(int userID, string firstName, string lastName, string password, int expectedPastReservationCount)
+        public void TestPastReservationsAreSaved(int userId, string firstName, string lastName, string password, int expectedPastReservationCount)
         {
             // Mocking database of users and reservations
-            var mockUsers = new List<UserModel>
+            var mockUsers = new List<UserModel_DeleteAccountUser>
             {
-                new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" },
-                new UserModel { ID = 2, FirstName = "Piet", LastName = "Pieter", Password = "password123" }
+                new UserModel_DeleteAccountUser { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" },
+                new UserModel_DeleteAccountUser { ID = 2, FirstName = "Piet", LastName = "Pieter", Password = "password123" }
             };
 
-            var mockReservations = new List<Reservation>
+            var mockReservations = new List<Reservation_DeleteAccountUser>
             {
-                new Reservation { UserID = 1, Date = DateTime.Now.AddDays(-1) },
-                new Reservation { UserID = 1, Date = DateTime.Now.AddDays(-2) }
+                new Reservation_DeleteAccountUser { UserID = 1, Date = DateTime.Now.AddDays(-1) },
+                new Reservation_DeleteAccountUser { UserID = 1, Date = DateTime.Now.AddDays(-2) }
             };
 
-            var userAccess = new MockDataAccess(mockUsers);
-            var reservationAccess = new MockReservationAccess(mockReservations);
+            var userAccess = new MockDataAccess_DeleteAccountUser(mockUsers);
+            var reservationAccess = new MockReservationAccess_DeleteAccountUser(mockReservations);
 
             // Act: Simulate user deletion
             var user = userAccess.GetAllBy("ID", userId.ToString()).FirstOrDefault();
@@ -54,12 +54,12 @@ namespace Restaurant_App_Unittesting
         public void TestPersonalInformationIsMadeAnonymous(int userId, string firstName, string lastName, string password, string expectedAnonymizedInfo)
         {
             // Mocking database of users
-            var mockUsers = new List<UserModel>
+            var mockUsers = new List<UserModel_DeleteAccountUser>
             {
-                new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" }
+                new UserModel_DeleteAccountUser { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" }
             };
 
-            var userAccess = new MockDataAccess(mockUsers);
+            var userAccess = new MockDataAccess_DeleteAccountUser(mockUsers);
 
             // Act: Simulate user deletion
             var user = userAccess.GetAllBy("ID", userId.ToString()).FirstOrDefault();
@@ -86,7 +86,7 @@ namespace Restaurant_App_Unittesting
         public void TestPasswordConfirmation(string enteredPassword, bool expectedResult)
         {
             // Mocking user data
-            var user = new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" };
+            var user = new UserModel_DeleteAccountUser { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" };
 
             // Act: Simulate password confirmation process
             bool result = DeleteAccountAsUser.DeleteAccount(user, enteredPassword);
@@ -99,23 +99,23 @@ namespace Restaurant_App_Unittesting
     // Mocking data access layer for testing users
     public class MockDataAccess_DeleteAccountUser
     {
-        private readonly List<UserModel> _users;
+        private readonly List<UserModel_DeleteAccountUser> _users;
 
-        public MockDataAccess(List<UserModel> users)
+        public MockDataAccess_DeleteAccountUser(List<UserModel_DeleteAccountUser> users)
         {
             _users = users;
         }
 
-        public IEnumerable<UserModel> GetAllBy(string columnName, string value)
+        public IEnumerable<UserModel_DeleteAccountUser> GetAllBy(string columnName, string value)
         {
             return columnName switch
             {
                 "ID" => _users.Where(u => u.ID.ToString() == value),
-                _ => Enumerable.Empty<UserModel>()
+                _ => Enumerable.Empty<UserModel_DeleteAccountUser>()
             };
         }
 
-        public bool Update(UserModel user)
+        public bool Update(UserModel_DeleteAccountUser user)
         {
             var existingUser = _users.FirstOrDefault(u => u.ID == user.ID);
             if (existingUser == null) return false;
@@ -130,24 +130,24 @@ namespace Restaurant_App_Unittesting
     // Mocking data access layer for testing reservations
     public class MockReservationAccess_DeleteAccountUser
     {
-        private readonly List<Reservation> _reservations;
+        private readonly List<Reservation_DeleteAccountUser> _reservations;
 
-        public MockReservationAccess(List<Reservation> reservations)
+        public MockReservationAccess_DeleteAccountUser(List<Reservation_DeleteAccountUser> reservations)
         {
             _reservations = reservations;
         }
 
-        public IEnumerable<Reservation> GetAllBy(string columnName, string value)
+        public IEnumerable<Reservation_DeleteAccountUser> GetAllBy(string columnName, string value)
         {
             return columnName switch
             {
                 "UserID" => _reservations.Where(r => r.UserID.ToString() == value),
-                _ => Enumerable.Empty<Reservation>()
+                _ => Enumerable.Empty<Reservation_DeleteAccountUser>()
             };
         }
     }
 
-     // User model class
+    // User model class
     public class UserModel_DeleteAccountUser
     {
         public int ID { get; set; }
