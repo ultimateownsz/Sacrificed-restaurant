@@ -16,7 +16,7 @@ public class LoginLogic
 
     public static UserModel? CheckLogin(string? email, string? password)
     {
-        UserModel acc = Access.Users.GetBy<string>("Email", email);
+        UserModel acc = Access.Users.GetBy<string>("Email", email.ToLower());
 
         if (acc != null && acc.Password == password)
         {

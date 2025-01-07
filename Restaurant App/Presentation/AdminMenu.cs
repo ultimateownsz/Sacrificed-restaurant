@@ -1,6 +1,7 @@
 using Project;
 using Project.Presentation;
 using Presentation;
+using Project.Logic;
 
 static class AdminMenu
 {
@@ -14,7 +15,8 @@ static class AdminMenu
             "update (themes)",
             "show (reservation) orders",
             "update (products)",
-            "(de)activate tables\n",
+            "(de)activate tables",
+            "edit (allergy/diet)\n",
             "back"
         };
 
@@ -40,8 +42,11 @@ static class AdminMenu
                 case "update (products)":
                     ProductView.ProductMainMenu();
                     break;
-                case "(de)activate tables\n":
+                case "(de)activate tables":
                     AdminTableControlPresent.Show();
+                    break;
+                case "edit (allergy/diet)\n":
+                    EditAllergyLogic.Start();
                     break;
                 case "back":
                     return;
