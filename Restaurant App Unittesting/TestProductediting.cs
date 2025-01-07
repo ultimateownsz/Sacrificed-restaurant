@@ -10,83 +10,89 @@ public class ProductEditingTests
     public void TestAddProduct()
     {
         // Arrange the Models(the models are the end of this file)
-        var themeName = "Turkish";
-        var schedule = new Schedule { Year = 2025, Month = 6 };
+        var product = new ProductModel
+        {
+            ID = 1,
+            Name = "Baklava",
+            ProductName = "Turkish",
+            Course = "Dessert",
+            Price = 3.99m
+        };
+        var Product = new Product { ID = 11, ProductName = "Turkish" };
 
         // Act
-        string result = SimulateAddTheme(schedule, themeName);
+        string result = SimulateAddProduct(Product, ProductModel);
 
         // Assert
-        Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
+        Assert.AreEqual("Product 'Turkish' has been added for June 2025.", result);
     }
+
 
     [TestMethod]
-    public void TestEditProduct()
+    public void TestValidateProductName()
     {
-        var existingTheme = new Theme { ID = 101, ThemeName = "Turkish" };
-        var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
-        var newThemeName = "Japanese";
+        string validProductName = "Valid Product";
+        string invalidProductName = "Invalid123!";
 
-        string result = SimulateEditTheme(existingTheme, schedule, newThemeName);
+        bool isValid1 = ValidateProductName(validProductName);
+        bool isValid2 = ValidateProductName(invalidProductName);
 
-        Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
+        Assert.IsTrue(isValid1, "Expected the Product name to be valid.");
+        Assert.IsFalse(isValid2, "Expected the Product name to be invalid.");
     }
-
-    [TestMethod]
-    public void TestDeleteProduct()
+    public void TestValidatePrice()
     {
-        var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
-        var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
+        string validPrice = "9.99";
+        string invalidPrice = "Invalid123!";
 
-        string result = SimulateDeleteTheme(themeToDelete, schedule);
+        bool isValid1 = ValidateProductPrice(validPrice);
+        bool isValid2 = ValidateProductPrice(invalidPrice);
 
-        Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
+        Assert.IsTrue(isValid1, "Expected the price to be valid.");
+        Assert.IsFalse(isValid2, "Expected the price to be invalid.");
     }
-
-    [TestMethod]
-    public void TestValidateThemeName()
-    {
-        string validThemeName = "Valid Theme";
-        string invalidThemeName = "Invalid123!";
-
-        bool isValid1 = ValidateThemeName(validThemeName);
-        bool isValid2 = ValidateThemeName(invalidThemeName);
-
-        Assert.IsTrue(isValid1, "Expected the theme name to be valid.");
-        Assert.IsFalse(isValid2, "Expected the theme name to be invalid.");
-    }
-
+    
     // Simulated Methods for Testing
-    //This Method simulates adding themes
-    private string SimulateAddProduct(Schedule schedule, string themeName)
+    //This Method simulates adding Products
+    private string SimulateAddProduct(Product Product)
     {
-        //calls ValidateThemeName to check if it has symbols in it
-        if (!ValidateThemeName(themeName))
-            return "Invalid theme name. Only letters and spaces are allowed.";
+        //calls ValidateProductName to check if it has symbols in it
+        if (!ValidateProductName(ProductName))
+            return "Invalid Product name. Only letters and spaces are allowed.";
+        if (!ValidateProductPrice(ProductName))
+            return "Invalid Product name. Only letters and spaces are allowed.";
 
-        return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
+        return $"Product '{ProductName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
-    //This Method simulates editing themes
-    private string SimulateEditProduct(Theme existingTheme, Schedule schedule, string newThemeName)
+    //This Method simulates editing Products
+    private string SimulateEditProduct(Product existingProduct)
     {
-        if (!ValidateThemeName(newThemeName))
-            return "Invalid theme name. Only letters and spaces are allowed.";
+        if (!ValidateProductName(newProductName))
+            return "Invalid Product name. Only letters and spaces are allowed.";
 
-        existingTheme.ThemeName = newThemeName;
-        return $"Theme updated to '{newThemeName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
+        existingProduct.ProductName = newProductName;
+        return $"Product updated to '{newProductName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
-    //This Method simulates Deleting themes
-    private string SimulateDeleteTheme(Theme themeToDelete, Schedule schedule)
+    //This Method simulates Deleting Products
+    private string SimulateDeleteProduct(Product ProductToDelete)
     {
-        return $"Theme '{themeToDelete.ThemeName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
+        return $"Product '{ProductToDelete.ProductName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
     }
 
-    //Validates the name of the theme
-    private bool ValidateThemeName(string themeName)
+    //Validates the name of the Product
+    private bool ValidateProductName(string ProductName)
     {
-        return Regex.IsMatch(themeName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
+        return Regex.IsMatch(ProductName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
+    }
+
+    //Validates the price of a product
+    private bool ValidateProductPrice(decimal price)
+    {
+        string priceString = price.ToString("F2");
+        var split = priceString.Split('.');
+        return split.Length == 2 && split[1].Length == 2;
     }
 
     // gets the month name
@@ -96,17 +102,20 @@ public class ProductEditingTests
     }
 
     // Supporting Classes
-    public class Theme
+    public class Product
     {
         public int ID { get; set; }
-        public string ThemeName { get; set; }
+        public string ProductName { get; set; }
     }
 
-    public class Schedule
+
+    public class Product
     {
-        public int ID { get; set; }
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public int ThemeID { get; set; }
+        public int? ID { get; set; }
+        public string? Name { get; set; }
+        public decimal? Price { get; set; }
+        public string? Course { get; set; }
+        public int? ProductID { get; set; }
     }
+
 }
