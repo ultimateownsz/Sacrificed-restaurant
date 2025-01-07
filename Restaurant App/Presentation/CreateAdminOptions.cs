@@ -102,7 +102,7 @@ namespace Project.Presentation
                         }
                         else
                         {
-                            Console.WriteLine("Both first and last names are required.");
+                            Console.WriteLine("Email is required.");
                             Console.ReadKey();
                         }
 
