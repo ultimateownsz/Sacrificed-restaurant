@@ -48,7 +48,7 @@ public class ProductEditingTests
         Assert.AreEqual("Product updated to 'Simit' from 'Baklava'.", result);
     }
     [TestMethod]
-    public void TestNamePriceProduct()
+    public void TestPriceEditProduct()
     {
 
         var theme = new Theme { ID = 11, ThemeName = "Turkish" };
@@ -59,8 +59,17 @@ public class ProductEditingTests
         Assert.AreEqual("Product updated to '6.99' from '3.99'.", result);
     }
 
-    
-    // Simulated Methods for Testing
+    [TestMethod]
+    public void TestCourseEditProduct()
+    {
+
+        var theme = new Theme { ID = 11, ThemeName = "Turkish" };
+        var newProductCourse = "Appetizer";
+
+        string result = SimulateEditProductCourse(existingProduct, newProductCourse);
+
+        Assert.AreEqual("Product updated to 'Appetizer' from 'Dessert'.", result);
+    }
 
     //This Method simulates adding Products
     private string SimulateAddProduct(Product Product, Theme theme)
@@ -97,12 +106,32 @@ public class ProductEditingTests
         return $"Product updated to '{existingProduct.Price}' from '{OldProductPrice}'.";
     }
 
+    private string SimulateEditProductCourse(Product existingProduct, string newProductCourse)
+    {
+        if (!ValidateProductCourse(newProductCourse))
+            return "Invalid Product course. Only letters and spaces are allowed.\nAnd only one of these Courses Main, Appetizer, Dessert or Beverage.";
+
+
+        string OldProductCourse = existingProduct.Course;
+         existingProduct.Course = newProductCourse;
+        return $"Product updated to '{existingProduct.Course}' from '{OldProductCourse}'.";
+    }
+
     //Validates the name of the Product
     private bool ValidateProductName(string ProductName)
     {
         return Regex.IsMatch(ProductName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
     }
 
+    private bool ValidateProductCourse(string ProductCourseName)
+    {
+        List<string> courses = new List<string> { "Main", "Appetizer", "Dessert", "Beverage" };
+        if(Regex.IsMatch(ProductCourseName, "^[A-Za-z ]+$") && courses.Contains(ProductCourseName))
+        {
+            return true;
+        }
+        return false;
+    }
     //Validates the price of a product
     private bool ValidateProductPrice(decimal? price)
     {
