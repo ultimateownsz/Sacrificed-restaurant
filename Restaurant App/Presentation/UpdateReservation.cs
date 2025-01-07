@@ -122,7 +122,7 @@ namespace Presentation
         private static void UpdateReservationDate(ReservationModel reservation, UserModel acc)
         {
             // Update reservation date
-            DateTime newDate;
+            // DateTime newDate;
             bool isAdmin = false;
             int guests = 1;
 
