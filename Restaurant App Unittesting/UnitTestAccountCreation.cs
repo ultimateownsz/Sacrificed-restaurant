@@ -11,7 +11,7 @@ namespace Restaurant_App_Unittesting
         [DataRow("Jo", true)]                   // Valid first name
         [DataRow("Liam", true)]                 // Valid first name
         [DataRow("", false)]                    // Invalid first name, name has no characters
-        [DataRow("A"), false]                   // Invalid first name, it has only one character
+        [DataRow("A", false)]                   // Invalid first name, it has only one character
         public void TestIsFirstNameValid(string firstName, bool expectedResult)
         {
             bool result = SimulateIsNameValid(firstName);
@@ -24,7 +24,7 @@ namespace Restaurant_App_Unittesting
         [DataRow("Li", true)]                   // Valid last name
         [DataRow("Wayne", true)]                // Valid last name
         [DataRow("", false)]                    // Invalid last name, name has no characters
-        [DataRow("B"), false]                   // Invalid last name, name has only one character
+        [DataRow("B", false)]                   // Invalid last name, name has only one character
         public void TestIsLastNameValid(string lastName, bool expectedResult)
         {
             bool result = SimulateIsNameValid(lastName);
