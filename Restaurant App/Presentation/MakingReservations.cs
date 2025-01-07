@@ -332,8 +332,7 @@ namespace Presentation
             }
 
 
-            
-            Access.Users.Delete(-1);
+            Access.Users.Delete(-1); // really not my proudest work. I am sorry.
             return allOrders; // Return the collected orders
         }
 
