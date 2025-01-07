@@ -39,9 +39,13 @@ public static class ReservationDetails
 
         while (true)
         {
-            IEnumerable<ReservationModel?> orders = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
+            // Fetch all reservations for the selected date
+            var reservations = Access.Reservations
+                .GetAllBy<DateTime>("Date", selectedDate)
+                .Where(r => r.Date == selectedDate)
+                .ToList();
 
-            if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
+            if (reservations.Count == 0)
             {
                 Console.Clear();
                 Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
@@ -61,7 +65,7 @@ public static class ReservationDetails
             }
             else
             {
-                DisplayOrdersGrid(orders, selectedDate);
+                DisplayOrdersGrid(reservations, selectedDate);
 
                 Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -80,6 +84,7 @@ public static class ReservationDetails
             }
         }
     }
+
 
     private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
     {
