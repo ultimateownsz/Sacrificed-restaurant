@@ -117,7 +117,7 @@ namespace Presentation
         }
     }
 
-        private static void UpdateReservationDate(ReservationModel reservation)
+        private static void UpdateReservationDate(ReservationModel reservation, UserModel acc)
         {
             // Update reservation date
             DateTime newDate;
