@@ -32,9 +32,10 @@ namespace Restaurant_App_Unittesting
             };
 
             UpdateReservation.Show(reservation, adminUser);
+            TableSelection.SetSimulatedTableID(4);
 
             Assert.IsTrue(updateCalled, "Reservation update should be called.");
-            Assert.AreEqual(1, reservation.PlaceID, "Expected updated PlaceID.");
+            Assert.AreEqual(4, reservation.PlaceID, "Expected updated PlaceID.");
         }
 
         [TestMethod]
@@ -64,10 +65,11 @@ namespace Restaurant_App_Unittesting
 
             // Act
             UpdateReservation.Show(reservation, nonAdminUser);
+            TableSelection.SetSimulatedTableID(4);
 
             // Assert
             Assert.IsTrue(updateCalled, "Reservation update should be called.");
-            Assert.AreEqual(10, reservation.PlaceID, "Expected updated PlaceID.");
+            Assert.AreEqual(4, reservation.PlaceID, "Expected updated PlaceID.");
         }
 
         public class UserModel
