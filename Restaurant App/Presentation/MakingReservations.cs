@@ -256,7 +256,7 @@ namespace Presentation
                         var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
-                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
+                        var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
                         // EMERGENCY MODIFICATION: 1
                         productOptions.Add("Skip this course"); // Option to skip the course
 
@@ -266,14 +266,12 @@ namespace Presentation
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
-                           Console.ReadKey();
                            break;
                         }
 
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
-                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{p.Price:0.00}"));
+                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
                         // recommend product (drink pair)
                         PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
