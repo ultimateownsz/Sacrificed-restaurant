@@ -130,11 +130,10 @@ namespace Presentation
             {
                 DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
-                // if (selectedDate.Date < DateTime.Today)
-                // {
-                //     Console.WriteLine("The date cannot be in the past. Please enter a future date.");
-                //     return;
-                // }
+                if (selectedDate.Date == DateTime.MinValue)
+                {
+                    return;
+                }
 
                 reservation.Date = selectedDate;
                 break;
