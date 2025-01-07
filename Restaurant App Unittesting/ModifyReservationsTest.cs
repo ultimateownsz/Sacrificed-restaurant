@@ -7,7 +7,11 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class UpdateReservationTest
     {
-        
+        [TestMethod]
+        public void TestUpdateReservation_Admin()
+        {
+            
+        }
     }
     // public class FuturePastReservationsTests
     // {
