@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using Project.Logic;
 
 namespace Project.Presentation
 {
@@ -32,6 +33,16 @@ namespace Project.Presentation
 
         private static void PromoteUserToAdmin()
         {
+            while (true)
+            {
+                var activeAccounts = DeleteAccountLogic.GetActiveAccounts();
+                if (activeAccounts == null || !activeAccounts.Any())
+                {
+                    Console.WriteLine("No user accounts found.");
+                    Console.ReadKey();
+                    return;
+                }
+            }
             // Console.Clear();
             // Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
             // Console.WriteLine("");
