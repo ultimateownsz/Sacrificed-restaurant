@@ -2,6 +2,7 @@
 public abstract class Access
 {
     // this is for centralized and simplified usage 
+    public static PairAccess Pairs = new();
     public static UserAccess Users = new();
     public static PlaceAccess Places = new();
     public static ThemeAccess Themes = new();

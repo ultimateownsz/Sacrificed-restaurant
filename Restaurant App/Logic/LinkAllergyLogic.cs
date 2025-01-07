@@ -1,7 +1,7 @@
 using Project.Presentation;
 
 namespace Project.Logic;
-internal class AllergyLogic
+internal class LinkAllergyLogic
 {
     public enum Type
     {
@@ -17,14 +17,21 @@ internal class AllergyLogic
 
     public struct Output()
     {
+        public int? ID;
+        public int? Guest;
+        public Type Type;
+        
         public List<string?> Allergies = new();
         public List<string?> Highlights = new();
     }
-    private static Output _constr_output(int? id)
+    private static Output _constr_output(Type type, int? id, int? guest)
     {
         // model -> string
         var output = new Output();
-        
+        output.Guest = guest;
+        output.Type = type;
+        output.ID = id;
+
         // add all allergies
         foreach (var x in Access.Allergies.Read())
         {
@@ -53,14 +60,48 @@ internal class AllergyLogic
         return models;
     }
 
-    public static void Start(Type type, int? id)
+    // helper method for code-simplification
+    public static bool IsAllergic(int? userID, int? productID)
+        => IsAllergic(
+            Access.Users.GetBy<int?>("ID", userID), 
+            Access.Products.GetBy<int?>("ID", productID)
+            );
+    public static bool IsAllergic(UserModel user, ProductModel product)
     {
+
+        // obtain ids of allergies
+        IEnumerable<int?> aIDs = Access.Allerlinks.Read().Where(
+            x => x?.Personal == 1 && x.EntityID == user.ID).Select(x => x.AllergyID);
+
+        // obtain ids of products that have these allergies
+        IEnumerable<int?> pIDs = Access.Allerlinks.Read().Where(
+            x => x?.Personal == 0 && aIDs.Contains(x.AllergyID)).Select(x => x.EntityID);
+
+        return pIDs.Contains(product.ID);
+
+    }
+    
+    public static void Start(Type type, int? id, int? guest = null)
+    {
+        
+        // standalone implement
+        if (type == Type.Product)
+        {
+            // gather self-products
+            List<string> products = Access.Products.Read().Select(x => x.Name).ToList();
+            string product = SelectionPresent.Show(
+                products, banner: "PRODUCT MENU").ElementAt(0).text;
+            
+            // id override
+            id = Access.Products.GetBy<string>("Name", product).ID;
+        };
+
         // value initialization
         var input = new Input();
-        var output = _constr_output(id);
+        var output = _constr_output(type, id, guest);
 
         // I/O swap
-        AllergyPresent.Show(ref input, ref output);
+        LinkAllergyPresent.Show(ref input, ref output);
         List<AllergyModel> models = ToModels(input.Allergies);
 
         // deletion of old data

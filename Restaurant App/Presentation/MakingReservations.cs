@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using Project;
+using Project.Logic;
 
 namespace Presentation
 {
@@ -19,9 +20,8 @@ namespace Presentation
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
-            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
-
-            if (guests == 0) return;
+            int guests = options.Count() - SelectionPresent.Show(
+                options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
             DateTime selectedDate;
 
@@ -89,18 +89,15 @@ namespace Presentation
                     }
 
                     var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                    if (orders.Count > 0)
+                    PrintReceipt(orders, reservationId, acc);
+                    
+                    Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                    while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                     {
-                        PrintReceipt(orders, reservationId, acc);
-
-                        // Prompt the user to press Enter to return to the menu
-                        Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
-                        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
-                        {
-                            // Do nothing, just wait for Enter
-                        }
-                        return; // Exit after completing reservation
+                        // Do nothing, just wait for Enter
                     }
+
+                    return;
                 }
             }
         }
@@ -240,9 +237,19 @@ namespace Presentation
                 return new List<ProductModel>(); // Return an empty list if no theme is available
             }
 
+            // << imperfect
+            Access.Users.Delete(-1);
+            Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
+            // >>
+
             for (int i = 0; i < guests; i++)
             {
+                // initiate temp user
+                int? id = (i == 0) ? acc.ID : i;
                 List<ProductModel> guestOrder = new();
+
+                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, id, (i == 0) ? null : i+1);
+                
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
@@ -271,20 +278,37 @@ namespace Presentation
                         var selectedProduct = products.FirstOrDefault(p => 
                             selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
+                        // recommend product (drink pair)
+                        PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
+                        if (linkage != null)
+                        {
+                            ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
+                            string _banner = "DRINK PAIRING\n\nWould you like to pair " +
+                                           $"{recommended.Name} with {selectedProduct.Name}";
+
+
+                            switch (SelectionPresent.Show(["Yes", "No"], 
+                                banner: _banner).ElementAt(0).index)
+                            {
+                                case 0:
+                                    guestOrder.Add(recommended);
+                                    break;
+                            }
+                        }
+
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
                             guestOrder.Add(selectedProduct);
+                            var saveResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
+                            if (!saveResult.isValid)
+                            {
+                                Console.WriteLine("Failed to save the order. Please try again.");
+                                Console.ReadKey();
+                                continue;
+                            }
 
-                            // EMERGENCY MODIFICATION: 1
-                            //if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
-                            //{
-                            //    Console.WriteLine("Failed to save the order. Please try again.");
-                            //    Console.ReadKey();
-                            //    continue;
-                            //}
-
-                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            //Console.ReadKey();
+                            Console.WriteLine($"{selectedProduct.Name} added successfully!");
+                            Console.ReadKey();
                             break; // Exit the selection loop for this category
                         }
                         else
@@ -294,17 +318,29 @@ namespace Presentation
                         }
                     }
                 }
+                
                 allOrders.AddRange(guestOrder);
+                foreach (var lnk in Access.Allerlinks.Read().Where(
+                    x => x.EntityID == -1 && x.Personal == 1))
+                {
+                    Access.Allerlinks.Delete(lnk.ID);
+                }
+
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
                 // }
             }
 
+            // I remove the user after the allergy/diet selection has executed fully
+            // so that no traces of it are left. This truly isn't one of my proudest work.
+            // <<
+            Access.Users.Delete(-1);
+            // >>
             return allOrders; // Return the collected orders
         }
 
 
-
+        
         public static void PrintReceipt(List<ProductModel> orders, int reservationId, UserModel acc)
         {
             Console.Clear();
