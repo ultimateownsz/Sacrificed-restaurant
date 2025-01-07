@@ -77,4 +77,13 @@ namespace Restaurant_App_Unittesting
             };
         }
     }
+
+     // User model class
+    public class UserModel
+    {
+        public int ID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Password { get; set; }
+    }
 }
