@@ -300,10 +300,12 @@ namespace Presentation
                         if (linkage != null)
                         {
                             ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
-                        
+                            string _banner = "DRINK PAIRING\n\nWould you like to pair " +
+                                           $"{recommended.Name} with {selectedProduct.Name}";
+
+
                             switch (SelectionPresent.Show(["Yes", "No"], 
-                                banner: "DRINK PAIRING\n\nWould you like to pair "+
-                                        $"{recommended.Name} with {selectedProduct.Name}").ElementAt(0).index)
+                                banner: _banner).ElementAt(0).index)
                             {
                                 case 0:
                                     guestOrder.Add(recommended);
