@@ -40,23 +40,6 @@ namespace Presentation
                     Console.WriteLine("Returning to the previous menu...");
                     return; // Exit completely if user presses back from the calendar
                 }
-                //Checks if selected month has a theme, then checks if that theme has 
-                if(reservationMenuLogic.GetCurrentTheme(selectedDate) == null)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Sorry, this month has no theme");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    return;
-                }
-                else if(!ProductManager.AnyProductsInTheme(reservationMenuLogic.GetCurrentTheme(selectedDate).ID))
-                {
-                    Console.Clear();
-                    Console.WriteLine("Sorry, this month has no Products");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    return;
-                }
 
                 // Step 3: Filter available tables based on the number of guests
                 TableSelection tableSelection = new();
@@ -241,7 +224,7 @@ namespace Presentation
             List<ProductModel> allOrders = new List<ProductModel>();
 
             Console.WriteLine("This month's theme is:");
-            ThemeModel? theme = reservationMenuLogic.GetCurrentTheme(selectedDate);
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
 
             if (theme is not null)
             {

@@ -11,7 +11,7 @@ public class ReservationMenuLogic
         // Could do something here
     }
 
-    public ThemeModel? GetCurrentTheme(DateTime selectedDate)
+    public static ThemeModel? GetCurrentTheme(DateTime selectedDate)
     {
         int month = selectedDate.Month;
         int year = selectedDate.Year;
