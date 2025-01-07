@@ -63,7 +63,7 @@ namespace Presentation
                     int reservationIndex = reservationOptions.IndexOf(selectedReservation);
                     if (reservationIndex >= 0 && reservationIndex < reservationDetails.Count)
                     {
-                        ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation);
+                        ShowReservations.ShowReservationOptions(reservationDetails[reservationIndex].Reservation, acc);
                     }
                 }
             }

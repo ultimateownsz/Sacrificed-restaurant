@@ -8,7 +8,7 @@ public static class ShowReservations
         FuturePastResrvations.Show(acc, true); // using the new method
     }
 
-    public static void ShowReservationOptions(ReservationModel reservation)
+    public static void ShowReservationOptions(ReservationModel reservation, UserModel acc)
     {
         while (true)
         {
@@ -32,7 +32,7 @@ public static class ShowReservations
                     break;
 
                 case "Update Reservation":
-                    UpdateReservation.Show(reservation, true); // Boolean to check for admin
+                    UpdateReservation.Show(reservation, acc); // Boolean to check for admin
                     break;
 
                 case "Delete Reservation\n":
