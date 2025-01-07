@@ -5,6 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Restaurant_App_Unittesting
 {
     [TestClass]
+    public class UpdateReservationTest
+    {
+        
+    }
     // public class FuturePastReservationsTests
     // {
     //     [TestMethod]
