@@ -20,6 +20,9 @@ internal class RegisterUser
         {
             Console.Write("first name: ");
             firstName = Console.ReadLine();
+            if (LoginLogic.IsNameValid(firstName))
+                break;
+            Console.WriteLine("Invalid first name, try again!");
         }
 
         while (true)
