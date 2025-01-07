@@ -14,7 +14,7 @@ public class ThemeViewTests
         var schedule = new Schedule { Year = 2025, Month = 6 };
 
         // Act
-        string result = SimulateAddTheme(user, schedule, themeName);
+        string result = SimulateAddTheme(schedule, themeName);
 
         // Assert
         Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
@@ -27,7 +27,7 @@ public class ThemeViewTests
         var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
         var newThemeName = "Japanese";
 
-        string result = SimulateEditTheme(user, existingTheme, schedule, newThemeName);
+        string result = SimulateEditTheme(existingTheme, schedule, newThemeName);
 
         Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
     }
@@ -38,7 +38,7 @@ public class ThemeViewTests
         var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
         var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
 
-        string result = SimulateDeleteTheme(user, themeToDelete, schedule);
+        string result = SimulateDeleteTheme(themeToDelete, schedule);
 
         Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
     }
