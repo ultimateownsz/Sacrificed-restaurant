@@ -10,7 +10,7 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         public void TestUpdateReservation_Admin()
         {
-            var reservation = new ReservationModel
+            ReservationModel reservation = new ReservationModel
             {
                 ID = 1;
                 Date = delegate.Now.AddDays(7),
@@ -18,7 +18,7 @@ namespace Restaurant_App_Unittesting
                 TestUpdateReservation_Admin = 101
             };
             
-            var adminUser = new UserModel
+            UserModel adminUser = new UserModel
             {
                 ID = 1;
                 Admin = true;
@@ -40,7 +40,7 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         public void TestUpdateReservation_User()
         {
-            var reservation = new ReservationModel
+            ReservationModel reservation = new ReservationModel
             {
                 ID = 2,
                 Date = DateTime.Now.AddDays(10),
@@ -48,7 +48,7 @@ namespace Restaurant_App_Unittesting
                 UserID = 202
             };
 
-            var adminUser = new UserModel
+            UserModel adminUser = new UserModel
             {
                 ID = 2;
                 Admin = false;
@@ -82,6 +82,27 @@ namespace Restaurant_App_Unittesting
             public DateTime Date { get; set; }
             public int PlaceID { get; set; }
             public int UserID { get; set; }
+        }
+
+        public interface IReservationAccess
+        {
+            void Update(ReservationModel reservation);
+        }
+
+        // Static Access Simulated with a Property
+        public static class Access
+        {
+            public static IReservationAccess Reservations { get; set; } = new ExampleReservationAccess();
+        }
+
+        public class ExampleReservationAccess : IReservationAccess
+        {
+            public Action<ReservationModel>? UpdateAction { get; set; }
+
+            public void Update(ReservationModel reservation)
+            {
+                UpdateAction?.Invoke(reservation);
+            }
         }
     }
     // public class FuturePastReservationsTests
