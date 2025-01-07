@@ -34,113 +34,110 @@ namespace Project.Presentation
 
         private static void PromoteUserToAdmin()
         {
-            while (true)
+            var activeAccounts = DeleteAccountLogic.GetActiveAccounts();
+            if (activeAccounts == null || !activeAccounts.Any())
             {
-                var activeAccounts = DeleteAccountLogic.GetActiveAccounts();
-                if (activeAccounts == null || !activeAccounts.Any())
+                Console.WriteLine("No user accounts found.");
+                Console.ReadKey();
+                return;
+            }
+
+            // Only show users, no admins
+            var nonAdminAccounts = activeAccounts.Where(acc => acc.Admin == 0).ToList();
+            var sortedAccounts = nonAdminAccounts.OrderBy(acc => acc.FirstName).ToList();
+
+            int currentPage = 0;
+            int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
+
+            do
+            {
+                // Menu options
+                var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
+                options.Add("Search User by Email (Press 's')");
+
+                var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
+                string selectedText = selection.text;
+
+                // Handle navigation and actions
+                if (selectedText == "Back")
+                    return;
+
+                if (selectedText == "Next Page >>")
                 {
-                    Console.WriteLine("No user accounts found.");
+                    currentPage = Math.Min(currentPage + 1, totalPages - 1);
+                    continue;
+                }
+
+                if (selectedText == "<< Previous Page")
+                {
+                    currentPage = Math.Max(currentPage - 1, 0);
+                    continue;
+                }
+
+                if (selectedText == "Search User by Email (Press 's')")
+                {
+                    Console.Clear();
+                    Console.Write("Enter the user's email: ");
+                    string email = Console.ReadLine()?.Trim();
+
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var searchResults = nonAdminAccounts.Where(acc =>
+                            string.Equals(acc.Email, email, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                        if (!searchResults.Any())
+                        {
+                            Console.WriteLine("No users found with that email.");
+                            Console.ReadKey();
+                            continue;
+                        }
+
+                        sortedAccounts = searchResults.OrderBy(acc => acc.FirstName).ToList();
+                        currentPage = 0;
+                        totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Email is required.");
+                        Console.ReadKey();
+                    }
+
+                    continue;
+                }
+
+                // Handle user selection for promotion
+                var accountsToDisplay = DeleteAccountLogic.GetPage(sortedAccounts, currentPage, 10);
+                var selectedAccount = accountsToDisplay.FirstOrDefault(acc => DeleteAccountLogic.FormatAccount(acc) == selectedText);
+
+                if (selectedAccount != null)
+                {
+                    Console.Clear();
+                    var confirmationOptions = new List<string> { "Yes", "No" };
+                    string confirmation = SelectionPresent.Show(confirmationOptions, banner: $"Are you sure?").ElementAt(0).text;
+
+                    if (confirmation == "Yes")
+                    {
+                        selectedAccount.Admin = 1;
+                        if (Access.Users.Update(selectedAccount))
+                        {
+                            Console.WriteLine("User successfully promoted to admin.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed to promote the user. Try again.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Action canceled. User was not promoted.");
+                    }
+
+                    Console.WriteLine("Press any key to return to the menu...");
                     Console.ReadKey();
                     return;
                 }
 
-                // Only show users, no admins
-                var nonAdminAccounts = activeAccounts.Where(acc => acc.Admin == 0).ToList();
-                var sortedAccounts = nonAdminAccounts.OrderBy(acc => acc.FirstName).ToList();
-
-                int currentPage = 0;
-                int totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10); // Accounts per page
-
-                while (true)
-                {
-                    // Menu options
-                    var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                    options.Add("Search User by Email (Press 's')");
-
-                    var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
-
-                    string selectedText = selection.text;
-
-                    // Handle navigation and actions
-                    if (selectedText == "Back")
-                    return;
-
-                    if (selectedText == "Next Page >>")
-                    {
-                        currentPage = Math.Min(currentPage + 1, totalPages - 1);
-                        continue;
-                    }
-
-                    if (selectedText == "<< Previous Page")
-                    {
-                        currentPage = Math.Max(currentPage - 1, 0);
-                        continue;
-                    }
-
-                    if (selectedText == "Search User by Email (Press 's')")
-                    {
-                        Console.Clear();
-                        Console.Write("Enter the user's email: ");
-                        string email = Console.ReadLine()?.Trim();
-
-                        if (!string.IsNullOrEmpty(email))
-                        {
-                            var searchResults = nonAdminAccounts.Where(acc =>
-                                string.Equals(acc.Email, email, StringComparison.OrdinalIgnoreCase)).ToList();
-
-                            if (!searchResults.Any())
-                            {
-                                Console.WriteLine("No users found with that email.");
-                                Console.ReadKey();
-                                continue;
-                            }
-
-                            sortedAccounts = searchResults.OrderBy(acc => acc.FirstName).ToList();
-                            currentPage = 0;
-                            totalPages = (int)Math.Ceiling((double)sortedAccounts.Count / 10);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Email is required.");
-                            Console.ReadKey();
-                        }
-
-                        continue;
-                    }
-
-                    // hanndle user selection for promotion
-                    var accountsToDisplay = DeleteAccountLogic.GetPage(sortedAccounts, currentPage, 10);
-                    var selectedAccount = accountsToDisplay.FirstOrDefault(acc => DeleteAccountLogic.FormatAccount(acc) == selectedText);
-
-                    if (selectedAccount != null)
-                    {
-                        Console.Clear();
-                        var confirmationOptions = new List<string> { "Yes", "No" };
-                        string confirmation = SelectionPresent.Show(confirmationOptions, banner: $"Are you sure?").ElementAt(0).text;
-
-                        if (confirmation == "Yes")
-                        {
-                            selectedAccount.Admin = 1;
-                            if (Access.Users.Update(selectedAccount))
-                            {
-                                Console.WriteLine("User successfully promoted to admin.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Failed to promote the user. Try again.");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Action canceled. User was not promoted.");
-                        }
-
-                        Console.WriteLine("Press any key to return to the menu...");
-                        Console.ReadKey();
-                        return;
-                    }
-                }
-            }
+            } while (true);
             // Console.Clear();
             // Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
             // Console.WriteLine("");
