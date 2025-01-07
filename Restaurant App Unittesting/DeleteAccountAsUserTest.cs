@@ -8,7 +8,9 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class PastReservations
     {
-
+        [TestMethod]
+        [DataRow(1, "John", "Doe", "password123", 1)] // User exists and past reservations are intact
+        [DataRow(2, "Piet", "Pieter", "password123", 0)] // User does not exist
     }
 
     // Unit Test for Criteria 4: Personal Information is Made Anonymous
@@ -23,5 +25,36 @@ namespace Restaurant_App_Unittesting
     public class PasswordConfirmation
     {
 
+    }
+
+    // Mocking data access layer for testing users
+    public class MockDataAccess
+    {
+        private readonly List<UserModel> _users;
+
+        public MockDataAccess(List<UserModel> users)
+        {
+            _users = users;
+        }
+
+        public IEnumerable<UserModel> GetAllBy(string columnName, string value)
+        {
+            return columnName switch
+            {
+                "ID" => _users.Where(u => u.ID.ToString() == value),
+                _ => Enumerable.Empty<UserModel>()
+            };
+        }
+
+        public bool Update(UserModel user)
+        {
+            var existingUser = _users.FirstOrDefault(u => u.ID == user.ID);
+            if (existingUser == null) return false;
+
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+            existingUser.Password = user.Password;
+            return true;
+        }
     }
 }
