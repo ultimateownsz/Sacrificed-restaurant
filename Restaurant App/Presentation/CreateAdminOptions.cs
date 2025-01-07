@@ -56,7 +56,6 @@ namespace Project.Presentation
                     // Menu options
                     var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
                     options.Add("Search User by Email (Press 's')");
-                    options.Add("Back");
 
                     var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
 
