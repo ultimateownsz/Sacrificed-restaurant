@@ -59,6 +59,11 @@ public class LoginLogic
         return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
     }
 
+    public static bool IsNameValid(string name)
+    {
+        return name.Length >= 2;
+    }
+
     public static UserModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
         return new UserModel
