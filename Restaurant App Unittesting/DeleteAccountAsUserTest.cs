@@ -11,13 +11,45 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         [DataRow(1, "John", "Doe", "password123", 1)] // User exists and past reservations are intact
         [DataRow(2, "Piet", "Pieter", "password123", 0)] // User does not exist
+        public void TestPastReservationsAreSaved(int userID, string firstName, string lastName, string password, int expectedPastReservationCount)
+        {
+            // Mocking database of users and reservations
+            var mockUsers = new List<UserModel>
+            {
+                new UserModel { ID = 1, FirstName = "John", LastName = "Doe", Password = "password123" },
+                new UserModel { ID = 2, FirstName = "Piet", LastName = "Pieter", Password = "password123" }
+            };
+
+            var mockReservations = new List<Reservation>
+            {
+                new Reservation { UserID = 1, Date = DateTime.Now.AddDays(-1) },
+                new Reservation { UserID = 1, Date = DateTime.Now.AddDays(-2) }
+            };
+
+            var userAccess = new MockDataAccess(mockUsers);
+            var reservationAccess = new MockReservationAccess(mockReservations);
+
+            // Act: Simulate user deletion
+            var user = userAccess.GetAllBy("ID", userId.ToString()).FirstOrDefault();
+            bool result = false;
+            int initialReservationCount = reservationAccess.GetAllBy("UserID", userId.ToString()).Count();
+
+            if (user != null && user.Password == password)
+            {
+                result = DeleteAccountLogic.ConfirmAndDelete(user);
+            }
+
+            // Assert: Ensure past reservations are saved
+            int actualReservationCount = reservationAccess.GetAllBy("UserID", userId.ToString()).Count();
+            Assert.AreEqual(expectedPastReservationCount, actualReservationCount);
+        }
     }
 
     // Unit Test for Criteria 4: Personal Information is Made Anonymous
     [TestClass]
     public class AnonymizeInfo
     {
-
+        
     }
 
     // Unit Test for Criteria 5: Ask User for Password Confirmation When Deleting Account
