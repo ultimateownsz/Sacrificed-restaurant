@@ -47,6 +47,18 @@ public class ProductEditingTests
 
         Assert.AreEqual("Product updated to 'Simit' from 'Baklava'.", result);
     }
+    [TestMethod]
+    public void TestNamePriceProduct()
+    {
+
+        var theme = new Theme { ID = 11, ThemeName = "Turkish" };
+        var newProductPrice = 6.99m;
+
+        string result = SimulateEditProduct(existingProduct, newProductPrice);
+
+        Assert.AreEqual("Product updated to '6.99' from '3.99'.", result);
+    }
+
     
     // Simulated Methods for Testing
 
@@ -72,6 +84,17 @@ public class ProductEditingTests
         string OldProductName = existingProduct.Name;
          existingProduct.Name = newProductName;
         return $"Product updated to '{existingProduct.Name}' from '{OldProductName}'.";
+    }
+
+    private string SimulateEditProduct(Product existingProduct, decimal newProductPrice)
+    {
+        if (!ValidateProductPrice(existingProduct.Price))
+            return "Invalid Product name. Only letters and spaces are allowed.";
+
+
+        decimal? OldProductPrice = existingProduct.Price;
+        existingProduct.Price = newProductPrice;
+        return $"Product updated to '{existingProduct.Price}' from '{OldProductPrice}'.";
     }
 
     //Validates the name of the Product
