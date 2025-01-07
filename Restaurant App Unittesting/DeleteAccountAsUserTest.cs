@@ -6,7 +6,7 @@ namespace Restaurant_App_Unittesting
 {
     // Unit Test for Criteria 1: Past Reservations are Saved
     [TestClass]
-    public class PastReservations
+    public class PastReservations_DeleteAccountUser
     {
         [TestMethod]
         [DataRow(1, "John", "Doe", "password123", 1)] // User exists and past reservations are intact
@@ -47,7 +47,7 @@ namespace Restaurant_App_Unittesting
 
     // Unit Test for Criteria 4: Personal Information is Made Anonymous
     [TestClass]
-    public class AnonymizeInfo
+    public class AnonymizeInfo_DeleteAccountUser
     {
         [TestMethod]
         [DataRow(1, "John", "Doe", "password123", "Inactive")] // User info should be anonymized
@@ -78,7 +78,7 @@ namespace Restaurant_App_Unittesting
 
     // Unit Test for Criteria 5: Ask User for Password Confirmation When Deleting Account
     [TestClass]
-    public class PasswordConfirmation
+    public class PasswordConfirmation_DeleteAccountUser
     {
         [TestMethod]
         [DataRow("password123", true)] // Correct password
@@ -97,7 +97,7 @@ namespace Restaurant_App_Unittesting
     }
 
     // Mocking data access layer for testing users
-    public class MockDataAccess
+    public class MockDataAccess_DeleteAccountUser
     {
         private readonly List<UserModel> _users;
 
@@ -128,7 +128,7 @@ namespace Restaurant_App_Unittesting
     }
 
     // Mocking data access layer for testing reservations
-    public class MockReservationAccess
+    public class MockReservationAccess_DeleteAccountUser
     {
         private readonly List<Reservation> _reservations;
 
@@ -148,7 +148,7 @@ namespace Restaurant_App_Unittesting
     }
 
      // User model class
-    public class UserModel
+    public class UserModel_DeleteAccountUser
     {
         public int ID { get; set; }
         public string FirstName { get; set; }
@@ -157,7 +157,7 @@ namespace Restaurant_App_Unittesting
     }
 
     // Reservation model class
-    public class Reservation
+    public class Reservation_DeleteAccountUser
     {
         public int UserID { get; set; }
         public DateTime Date { get; set; }
