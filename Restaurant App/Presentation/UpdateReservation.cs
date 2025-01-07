@@ -121,8 +121,12 @@ namespace Presentation
         {
             // Update reservation date
             DateTime newDate;
+            bool isAdmin = false;
+            int guests = 1;
+
             while (true)
             {
+                DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
                 Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
                 string newDateInput = Console.ReadLine();
                 if (string.IsNullOrEmpty(newDateInput))
