@@ -40,7 +40,19 @@ namespace Restaurant_App_Unittesting
         [TestMethod]
         public void TestUpdateReservation_User()
         {
-            
+            var reservation = new ReservationModel
+            {
+                ID = 2,
+                Date = DateTime.Now.AddDays(10),
+                PlaceID = 5,
+                UserID = 202
+            };
+
+            var adminUser = new UserModel
+            {
+                ID = 2;
+                Admin = false;
+            };
         }
     }
     // public class FuturePastReservationsTests
