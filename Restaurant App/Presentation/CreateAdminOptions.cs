@@ -55,7 +55,7 @@ namespace Project.Presentation
                 {
                     // Menu options
                     var options = DeleteAccountLogic.GenerateMenuOptions(sortedAccounts, currentPage, totalPages);
-                    options.Add("Search User (Press 's')");
+                    options.Add("Search User by Email (Press 's')");
                     options.Add("Back");
 
                     var selection = SelectionPresent.Show(options, banner: "PROMOTE USER TO ADMIN").ElementAt(0);
@@ -78,19 +78,16 @@ namespace Project.Presentation
                         continue;
                     }
 
-                    if (selectedText == "Search User (Press 's')")
+                    if (selectedText == "Search User by Email (Press 's')")
                     {
                         Console.Clear();
-                        Console.Write("Enter the user's first name: ");
-                        string firstName = Console.ReadLine()?.Trim();
-                        Console.Write("Enter the user's last name: ");
-                        string lastName = Console.ReadLine()?.Trim();
+                        Console.Write("Enter the user's email: ");
+                        string email = Console.ReadLine()?.Trim();
 
-                        if (!string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+                        if (!string.IsNullOrEmpty(email))
                         {
                             var searchResults = nonAdminAccounts.Where(acc =>
-                                string.Equals(acc.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
-                                string.Equals(acc.LastName, lastName, StringComparison.OrdinalIgnoreCase)).ToList();
+                                string.Equals(acc.Email, email, StringComparison.OrdinalIgnoreCase)).ToList();
 
                             if (!searchResults.Any())
                             {
