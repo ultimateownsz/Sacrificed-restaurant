@@ -237,34 +237,16 @@ namespace Presentation
                 return new List<ProductModel>(); // Return an empty list if no theme is available
             }
 
-            // Fetch the reservation details using reservationId
-            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
-            if (reservation == null)
-            {
-                Console.WriteLine("Reservation not found. Unable to save orders.");
-                return new List<ProductModel>();
-            }
-
-            // << imperfect
-            Access.Users.Delete(-1);
-            Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
-            // >>
-
             for (int i = 0; i < guests; i++)
             {
-                // initiate temp user
-                int? id = (i == 0) ? acc.ID : i;
                 List<ProductModel> guestOrder = new();
 
-                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, id, (i == 0) ? null : i+1);
-                
-                // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
-
-                    // filter for allergies
-                    List<ProductModel> products = ProductManager.GetAllWithinCategory(categories[z]).Where(
-                        product => !LinkAllergyLogic.IsAllergic(id, product.ID)).ToList();
+                    // Filter products by the current theme and category
+                    List<ProductModel> products = ProductManager
+                        .GetAllWithinThemeCourse(categories[z], theme.ID)
+                        .ToList();
 
                     while (true)
                     {
@@ -282,38 +264,18 @@ namespace Presentation
                         var selectedProduct = products.FirstOrDefault(p =>
                             selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
-                        // recommend product (drink pair)
-                        PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
-                        if (linkage != null)
-                        {
-                            ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
-                            string _banner = "DRINK PAIRING\n\nWould you like to pair " +
-                                           $"{recommended.Name} with {selectedProduct.Name}";
-
-
-                            switch (SelectionPresent.Show(["Yes", "No"], 
-                                banner: _banner).ElementAt(0).index)
-                            {
-                                case 0:
-                                    guestOrder.Add(recommended);
-                                    break;
-                            }
-                        }
-
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
                             guestOrder.Add(selectedProduct);
 
-                            // EMERGENCY MODIFICATION: 1
+                            // Save the selected product to the Request table
                             if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                             {
-                               Console.WriteLine("Failed to save the order. Please try again.");
-                               Console.ReadKey();
-                               continue;
+                                Console.WriteLine("Failed to save the order. Please try again.");
+                                Console.ReadKey();
+                                continue;
                             }
 
-                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            //Console.ReadKey();
                             break; // Exit the selection loop for this category
                         }
                         else
@@ -323,25 +285,13 @@ namespace Presentation
                         }
                     }
                 }
-                
-                allOrders.AddRange(guestOrder);
-                foreach (var lnk in Access.Allerlinks.Read().Where(
-                    x => x.EntityID == -1 && x.Personal == 1))
-                {
-                    Access.Allerlinks.Delete(lnk.ID);
-                }
 
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
+                allOrders.AddRange(guestOrder);
             }
 
-            // I remove the user after the allergy/diet selection has executed fully
-            // so that no traces of it are left. This truly isn't one of my proudest work.
-            // <<
-            Access.Users.Delete(-1);
-            // >>
             return allOrders; // Return the collected orders
         }
+
 
 
 
