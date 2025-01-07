@@ -262,8 +262,6 @@ namespace Presentation
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
-                           Console.ReadKey();
                            break;
                         }
 
