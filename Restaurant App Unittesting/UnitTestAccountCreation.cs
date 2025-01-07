@@ -6,6 +6,13 @@ namespace Restaurant_App_Unittesting
     [TestClass]
     public class AccountTests
     {
+        // First name validation test
+        [TestMethod]
+        [DataRow("Jo", true)]
+        [DataRow("Liam", true)]
+        [DataRow("", false)]
+        [DataRow("A"), false]
+
         // Email validation tests
         [TestMethod]
         [DataRow("test@example.com", true)]      // Valid email
