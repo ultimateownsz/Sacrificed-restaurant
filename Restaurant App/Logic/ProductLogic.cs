@@ -108,7 +108,14 @@ static class ProductLogic
 
     public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
-            return Access.Products.GetAllBy<string>("Course", category);
+        return Access.Products.GetAllBy<string>("Course", category);
+    }
+
+    public static IEnumerable<ProductModel> GetAllWithinThemeCourse(string category, int? themeID)
+    {
+        return Access.Products.Read()
+            .Where(p => p.Course == category && p.ThemeID == themeID)
+            .ToList();
     }
 
     //This Method is gets the info of all the products and formalets them in a nice way
@@ -342,5 +349,11 @@ static class ProductLogic
         }
         Access.Products.Delete(productId);
         return true;
+    }
+
+    
+    public static bool AnyProductsInTheme(int? themeID)
+    {
+        return Access.Products.Read().Any(p => p.ThemeID == themeID);
     }
 }

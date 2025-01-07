@@ -14,6 +14,7 @@ namespace Project
             // Console.Clear(); // Clear any lingering output before rendering the calendar
             // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
 
+
             while (true)
             {
                 DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
@@ -36,9 +37,8 @@ namespace Project
                     case ConsoleKey.P:
                         if (currentDate.AddMonths(-1) < DateTime.Today)
                         {
-                            // Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            // Console.WriteLine("You cannot reserve in the past.");
-                            ControlHelpPresent.DisplayFeedback("You cannot reserve in the past. Only future dates are available.");
+                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            Console.WriteLine("You cannot reserve in the past.");
                         }
                         else
                         {
@@ -57,7 +57,19 @@ namespace Project
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
                             Console.ForegroundColor = ConsoleColor.Red;
-                            ControlHelpPresent.DisplayFeedback("This day is fully reserved.");
+                            Console.WriteLine("This day is fully reserved.");
+                            Console.ResetColor();
+                        }
+                        if (NoThemeForMonth(selectedDate))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This month has no theme.");
+                            Console.ResetColor();
+                        }
+                        if (NoProductsInTheme(selectedDate))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("This month has no products.");
                             Console.ResetColor();
                         }
                         else
@@ -65,10 +77,10 @@ namespace Project
                             return selectedDate;
                         }
                         break;
-                    case ConsoleKey.Escape:
+                    case ConsoleKey.B:
                         return DateTime.MinValue; // Go back
                     default:
-                        ControlHelpPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                        Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
             }
@@ -77,19 +89,9 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
-            int footerHeight = ControlHelpPresent.GetFooterHeight();  // returns the height of the help footer
-            int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
-            
-            // ensure there's enough space to display the calendar
-            if (availableHeight < 0)
-            {
-                ControlHelpPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
-                return;
-            }
-
-            // Calculate and print the calendar header
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            Console.ResetColor();
 
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
@@ -97,6 +99,8 @@ namespace Project
 
             DateTime today = DateTime.Today;
             bool showFullyReservedMessage = false;
+            bool noThemeReservedMessage = false;
+            bool noProductsReservedMessage = false;
 
             for (int i = 0; i < startDay; i++)
                 Console.Write("   ");
@@ -107,8 +111,19 @@ namespace Project
 
                 bool isPast = !isAdmin && dateToCheck < today;
                 bool isFullyBooked = IsDayFullyBooked(dateToCheck, guests);
+                bool NoTheme= NoThemeForMonth(dateToCheck);
+                bool NoProducts= NoProductsInTheme(dateToCheck);
 
-                if (isPast)
+                if (NoTheme)
+                {
+                    noThemeReservedMessage = true;
+                }
+                else if (NoProducts)
+                {
+                    noProductsReservedMessage = true;
+                }
+
+                if (isPast || noThemeReservedMessage || noProductsReservedMessage)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
@@ -137,28 +152,26 @@ namespace Project
                 if ((day + startDay) % 7 == 0) Console.WriteLine();
             }
 
-            // reserve space for the footer
-            int calendarHeight = Console.CursorTop;
-            if (calendarHeight + footerHeight > Console.WindowHeight)
+            Console.ResetColor();
+            if (noThemeReservedMessage)
             {
-                ControlHelpPresent.DisplayFeedback("Not enough space to display the calendar and controls.");
-                return;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nThis month has no theme.");
             }
-            Console.SetCursorPosition(0, availableHeight);
+            else if (noProductsReservedMessage)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nThis month has no products.");
+            }
 
-            // Display the "fully reserved" message before the footer
+            Console.ResetColor();
+            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
+
+            // Display the "fully reserved" message at the bottom
             if (showFullyReservedMessage)
             {
-                ControlHelpPresent.DisplayFeedback("\nThis day is fully reserved.");
+                Console.WriteLine("\nThis day is fully reserved.");
             }
-
-            // Display the footer
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.AddOptions("Previous month", "<p>");
-            ControlHelpPresent.AddOptions("Next month", "<n>");
-            ControlHelpPresent.AddOptions("Select date", "<enter>");
-            ControlHelpPresent.AddOptions("Back", "<escape>");
-            ControlHelpPresent.ShowHelp();
         }
 
         private static int FindFirstAvailableDay(DateTime currentDate, bool isAdmin, int guests)
@@ -214,6 +227,22 @@ namespace Project
         private static bool IsDayFullyBooked(DateTime date, int guests)
         {
             return !HasAvailableTablesForGuests(date, guests);
+        }
+
+        private static bool NoThemeForMonth(DateTime date)
+        {
+            if(ReservationMenuLogic.GetCurrentTheme(date) == null) return true;
+            return false;
+        }
+
+        private static bool NoProductsInTheme(DateTime date)
+        {
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(date);
+
+            if(theme is null) return true;
+            if(!ProductManager.AnyProductsInTheme(theme.ID)) return true;
+
+            return false;
         }
 
         private static bool HasAvailableTablesForGuests(DateTime date, int guests)

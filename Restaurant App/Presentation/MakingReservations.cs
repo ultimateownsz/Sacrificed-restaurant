@@ -41,7 +41,6 @@ namespace Presentation
                     return; // Exit completely if user presses back from the calendar
                 }
 
-
                 // Step 3: Filter available tables based on the number of guests
                 TableSelection tableSelection = new();
                 int[] availableTables = guests switch
@@ -225,11 +224,11 @@ namespace Presentation
             List<ProductModel> allOrders = new List<ProductModel>();
 
             Console.WriteLine("This month's theme is:");
-            var theme = reservationMenuLogic.GetCurrentMenu();
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
 
             if (theme is not null)
             {
-                Console.WriteLine($"{theme}");
+                Console.WriteLine($"{theme.Name}");
             }
             else
             {
@@ -245,7 +244,7 @@ namespace Presentation
                 // Replace manual navigation logic with SelectionPresent.Show
                 for (int z = 0; z < categories.Count; z++)
                 {
-                    List<ProductModel> products = ProductLogic.GetAllWithinCategory(categories[z]).ToList();
+                    List<ProductModel> products = ProductManager.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
 
                     while (true)
                     {
@@ -253,7 +252,7 @@ namespace Presentation
                         var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
 
                         // Create menu options for SelectionPresent.Show
-                        var productOptions = products.Select(p => $"{p.Name} - €{p.Price:F2}\n").ToList();
+                        var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
                         // EMERGENCY MODIFICATION: 1
                         productOptions.Add("Skip this course"); // Option to skip the course
 
@@ -263,14 +262,12 @@ namespace Presentation
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
                         {
-                           Console.WriteLine("\nSelection of this course has been skipped. Press any key to proceed...");
-                           Console.ReadKey();
                            break;
                         }
 
                         // Find the selected product based on the menu text
                         var selectedProduct = products.FirstOrDefault(p => 
-                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{p.Price:0.00}"));
+                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
