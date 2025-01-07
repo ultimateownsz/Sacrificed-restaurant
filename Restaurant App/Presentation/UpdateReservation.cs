@@ -138,7 +138,13 @@ namespace Presentation
                     return;
                 }
 
+                if (selectedDate.Date < DateTime.Today)
+                {
+                    Console.WriteLine("The date cannot be in the past. Please enter a future date.");
+                }
 
+                // reservation.Date = selectedDate;
+                // break;
 
                 Console.WriteLine("\nEnter new Reservation Date (DD/MM/YYYY) or press Enter to keep current:");
                 string newDateInput = Console.ReadLine();
