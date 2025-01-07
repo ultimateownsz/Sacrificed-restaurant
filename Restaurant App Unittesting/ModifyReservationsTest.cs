@@ -53,6 +53,21 @@ namespace Restaurant_App_Unittesting
                 ID = 2;
                 Admin = false;
             };
+
+            bool updateCalled = false;
+
+            // Simulate Access.Reservations.Update
+            Access.Reservations = new FakeReservationAccess
+            {
+                UpdateAction = r => updateCalled = true
+            };
+
+            // Act
+            UpdateReservation.Show(reservation, nonAdminUser);
+
+            // Assert
+            Assert.IsTrue(updateCalled, "Reservation update should be called.");
+            Assert.AreEqual(10, reservation.PlaceID, "Expected updated PlaceID.");
         }
     }
     // public class FuturePastReservationsTests
