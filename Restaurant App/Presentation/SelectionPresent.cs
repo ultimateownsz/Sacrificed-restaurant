@@ -49,10 +49,10 @@ internal class SelectionPresent
         }
     }
 
-    private static void _controls()
+    public static void _controls()
     {
         string output = "";
-        output += "CONTROLS OVERVIEW:\n\n";
+        output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
 
         output += "- General:\n";
         output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
