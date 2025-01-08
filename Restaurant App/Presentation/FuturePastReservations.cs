@@ -125,7 +125,7 @@ namespace Presentation
                 {
                     var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
                     UpdateReservation.Show(selectedResModel, acc);
-                    break;
+                    continue;
                 }
             }
         }

@@ -47,16 +47,19 @@ internal class EditAllergyLogic
 
             // decide mode
             string choice = SelectionPresent.Show(
-                ["create", "delete\n", "back"], banner: "EDIT MENU").ElementAt(0).text;
+                ["create", "delete"], banner: "EDIT MENU").ElementAt(0).text;
 
             Mode mode = (choice == "create")
-                ? Mode.Create : (choice == "delete\n")
+                ? Mode.Create : (choice == "delete")
                 ? Mode.Delete : Mode.Terminate;
 
             EditAllergyPresent.Show(mode, ref input, ref output);
             switch (mode)
             {
                 case Mode.Create:
+
+                    if (input.Allergies == null) 
+                        continue;
 
                     // simplification
                     string? extract = input.Allergies.ElementAt(0);
@@ -74,10 +77,13 @@ internal class EditAllergyLogic
 
                 case Mode.Delete:
 
-                    // input can't be invalid
+                    if (input.Allergies == null)
+                        continue;
+
                     foreach (string allergy in input.Allergies)
                         Access.Allergies.Delete(
                             Access.Allergies.GetBy<string>("Name", allergy).ID);
+                    
                     break;
 
                 case Mode.Terminate:

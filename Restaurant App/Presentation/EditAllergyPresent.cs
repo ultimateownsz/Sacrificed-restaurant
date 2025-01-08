@@ -5,26 +5,32 @@ namespace Project.Presentation;
 internal class EditAllergyPresent
 {
 
-    public static List<string?> input_request()
+    public static List<string?>? input_request()
     {
         string? input;
         while (true)
         {
-            Console.Clear();
-            Console.Write("allergy name: ");
+            input = Terminable.ReadLine("allergy name: ");
+            if (input == null) return null;
             
-            input = Console.ReadLine();
-            if (input != "") break;
+            break;
         }
 
         return new() { input };
     }
 
-    public static List<string?> selection_request()
-        => SelectionPresent.Show(
-            options: Access.Allergies.Read().Select(x => x.Name).ToList(),
-            banner: "ALLERGY/DIET MENU",
-            mode: SelectionLogic.Mode.Multi).Select(x => x.text).ToList();
+    public static List<string?>? selection_request()
+    {
+        string banner = "ALLERGY/DIET MENU";
+        List<string> options = Access.Allergies.Read().Select(x => x.Name).ToList();
+        List<SelectionLogic.Selection> allergies = SelectionPresent.Show(
+            options, banner: banner, mode: SelectionLogic.Mode.Multi);
+
+        if (allergies.Count == 1 && allergies.First().index == -1)
+            return null;
+        
+        return allergies.Select(x => x.text).ToList();
+    }
     
 
 
@@ -36,12 +42,12 @@ internal class EditAllergyPresent
         {
             case EditAllergyLogic.Mode.Create:
                 input.Allergies = input_request();
-                return;
+                break;
             
             case EditAllergyLogic.Mode.Delete:
                 input.Allergies = selection_request();
-                return;
-        }    
+                break;
+        }
 
     }
 

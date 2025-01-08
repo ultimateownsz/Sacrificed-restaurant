@@ -89,8 +89,9 @@ namespace Presentation
                     }
 
                     var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                    if (orders == new List<ProductModel>()) continue;
-                    if (orders.Count > 0)
+                    if (orders == null) continue;
+                    
+                    if (orders != null)
                     {
                         PrintReceipt(orders, reservationId, acc);
 
@@ -105,7 +106,7 @@ namespace Presentation
                 }
             }
         }
-    public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
+    public static List<ProductModel>? TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
     {
         if (reservationId == 0)
         {
@@ -174,7 +175,7 @@ namespace Presentation
 
                         // return
                         if (selectedOption == "")
-                            return new();
+                            return null;
 
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
@@ -221,7 +222,6 @@ namespace Presentation
 
         // Remove the temporary user after all guests are processed
         Access.Users.Delete(-1);
-
         return allOrders; // Return the collected orders
     }
 

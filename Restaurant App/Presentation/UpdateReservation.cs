@@ -77,17 +77,11 @@ namespace Presentation
                 case "Date":
                     Console.Clear();
                     UpdateReservationDate(reservation, acc);
-                    Console.WriteLine("\nDate process ended successfully.");
-                    Console.WriteLine("Press any key to return.");
-                    Console.ReadKey();
                     break;
                
                 case "Table":
                     Console.Clear();
                     UpdateTableID(reservation);
-                    Console.WriteLine("\nTable number process ended successfully.");
-                    Console.WriteLine("Press any key to return.");
-                    Console.ReadKey();
                     break;
                 
                 case "Cancel reservation":
@@ -96,15 +90,6 @@ namespace Presentation
                     {
                         return; // Exit after deletion
                     }
-                    break;
-               
-                // THIS WILL BE IMPLEMENTED AFTER MAKING A WAY TO STORE THE AMOUNT OF GUESTS
-                // EDIT: THEN DON"T FUCKING IMPLEMENT THE LOGIC UNTIL IT'S DONE
-                case "Number of guests":
-                    Console.Clear();
-                    Console.WriteLine("\nThis is a concept that might or might not be approved by the PO.");
-                    Console.WriteLine("Press any key to return.");
-                    Console.ReadKey();
                     break;
                 
                 case "":
@@ -201,9 +186,8 @@ namespace Presentation
         // Check if the reservation date is in the past
         if (reservation.Date < DateTime.Today)
         {
-            Console.WriteLine("You cannot cancel a reservation that is in the past.");
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+            Terminable.Write("You cannot cancel a reservation that is in the past.");
+            Thread.Sleep(1000);
             return false; // Cant cancel a past reservation
         }
 
@@ -214,16 +198,14 @@ namespace Presentation
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            Console.WriteLine($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+            Terminable.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
+            Thread.Sleep(1000);
             return true; // Deletion was successful
         }
         else
         {
-            Console.WriteLine("Reservation not cancelled.");
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+            Terminable.Write("Reservation not cancelled.");
+            Thread.Sleep(1000);
             return false; // Deletion was cancelled
         }
     }
@@ -312,4 +294,4 @@ namespace Presentation
             return false; // Table is available
         }
     }
-};
+}
