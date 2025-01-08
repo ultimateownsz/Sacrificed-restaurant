@@ -34,10 +34,7 @@ namespace Project.Presentation
                     var selection = SelectionPresent.Show(options, banner: "ACCOUNTS").ElementAt(0);
 
                     string selectedText = selection.text;
-
-                    // Handle user navigation and actions
-                    if (selectedText == "Back")
-                        return;
+                    if (selectedText == "") return;
 
                     if (selectedText == "Next Page >>")
                     {

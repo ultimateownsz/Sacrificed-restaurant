@@ -1,10 +1,34 @@
 using Presentation;
 using Project.Logic;
 using Project.Presentation;
+using System.Globalization;
 
 namespace Project;
 static class Menu
 {
+
+    public static void Init()
+    {
+        // console initialization
+
+        // support uni-code character such as "$" in strings
+        Console.OutputEncoding = System.Text.Encoding.Unicode;
+
+        // format date information in english (US)
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture =
+            new System.Globalization.CultureInfo("en-US");
+
+        // globally modify decimal values with doubless
+        System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)
+            System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+        customCulture.NumberFormat.NumberDecimalSeparator = ",";
+
+        // Customize the NumberFormatInfo to always display two decimal places
+        customCulture.NumberFormat.NumberDecimalDigits = 2;
+
+        CultureInfo.DefaultThreadCurrentCulture = customCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = customCulture;
+    }
     static public void Start()
     {
         // TableSelection.MaximizeConsoleWindow();
@@ -50,7 +74,6 @@ static class Menu
                     break;
 
                 case "View reservation":
-                    // MakingReservations.UserOverViewReservation(acc);
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
                 
@@ -65,10 +88,6 @@ static class Menu
                 case "Logout":
                     return;
 
-                default:
-                    Console.WriteLine("Invalid selection. Please try again.");
-                    Console.ReadKey();
-                    break;
             }
         }
     }

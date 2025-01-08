@@ -24,10 +24,6 @@ public static class DeleteReservation
             {
                 // Attempt to delete the specific reservation
                 Access.Reservations.Delete(reservation.ID);
-                Console.Clear();
-                Console.WriteLine("Reservation deleted successfully.");
-                Console.WriteLine("Press any key to return to the reservation list.");
-                Console.ReadKey();
                 //return; // Exit after successful deletion
             }
             //else if (selectedOption == "No")

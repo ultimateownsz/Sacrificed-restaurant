@@ -6,7 +6,7 @@ public class AllergyAccess : DataAccess<AllergyModel>
     public new bool Delete(int? id)
     {
         IEnumerable<AllerlinkModel> links =
-            Access.Allerlinks.Read().Where(lnk => lnk.ID == id);
+            Access.Allerlinks.Read().Where(lnk => lnk.AllergyID == id);
 
         foreach (var link in links)
         {

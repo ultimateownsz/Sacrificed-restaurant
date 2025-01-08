@@ -32,9 +32,12 @@ public static class ReservationDetails
 
     public static void ShowOrders(UserModel acc)
     {
+        lCalendar:
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+        if (selectedDate == DateTime.MinValue)
+            return;
 
         while (true)
         {
@@ -44,12 +47,12 @@ public static class ReservationDetails
             {
                 Console.Clear();
                 Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
-                Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+                Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
                 ConsoleKeyInfo emptyOrders = Console.ReadKey();
                 switch (emptyOrders.Key)
                 {
-                    case ConsoleKey.B:
-                        return;
+                    case ConsoleKey.Escape:
+                        goto lCalendar;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
                         continue;
@@ -61,14 +64,14 @@ public static class ReservationDetails
             else
             {
                 DisplayOrdersGrid(orders, selectedDate);
-
-                Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+                
+                Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.B:
-                        return;
+                    case ConsoleKey.Escape:
+                        goto lCalendar;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
                         break;

@@ -1,5 +1,6 @@
 using Project;
 using Project.Logic;
+using Project.Presentation;
 
 static class ProductView
 {
@@ -7,25 +8,26 @@ static class ProductView
     //This is the main menu for product managment, its nothing special
     public static void ProductMainMenu()
     {
-            List<string> options = new()
+         List<string> options = new()
         {
             "Add product",
             "Show all products",
             "Add allergy to product",
             "Pair drink with food",
             "Choose products course",
-            "Choose products theme\n",
-            "back"
+            "Choose products theme",
         };
 
         while (true)
         {
             string? name;
+            // ISSUE: HERE!!
             switch (SelectionPresent.Show(options, banner: $"PRODUCT MENU").ElementAt(0).text)
             {
                 case "Add product":
                     AddProduct();
                     break;
+
                 case "Show all products":
                     DisplayProducts();
                     break;
@@ -37,9 +39,9 @@ static class ProductView
                     break;
                 case "Choose products course":
                     while(true)
-                    {                   
+                    {
                         name = CourseLogic.GetValidCourse();
-                        if (name == null)
+                        if (name == "REQUEST_PROCESS_EXIT")
                         {
                             Console.WriteLine("");
                             break;
@@ -47,11 +49,12 @@ static class ProductView
                         DisplayProducts("course", name);
                     }
                     break;
-                case "Choose products theme\n":
+                
+                case "Choose products theme":
                     while(true)
                     {
                         name = ThemeInputValidator.GetValidThemeMenu();
-                        if (name == null)
+                        if (name == "REQUEST_PROCESS_EXIT")
                         {
                             Console.WriteLine("");
                             break;
@@ -59,7 +62,8 @@ static class ProductView
                         DisplayProducts("theme", name);
                     }
                     break;
-                case "back" or "":
+                
+                case "":
                     return;
             }
         }
@@ -150,8 +154,7 @@ static class ProductView
             "Edit price",
             "Edit course",
             "Edit theme",
-            "Delete product\n",
-            "back"
+            "Delete product",
         };
 
         while (true)
@@ -170,11 +173,11 @@ static class ProductView
                 case "Edit theme":
                     ProductManager.ProductEditValidator(chosenProduct, "theme");
                     break;
-                case "Delete product\n":
+                case "Delete product":
                     if(DeleteProduct(chosenProduct))
                         return;
                     break;
-                case "back" or "":
+                case "":
                     return;
             }
         }
@@ -215,6 +218,12 @@ static class ProductView
     public static void AddProduct()
     {
         ProductModel? newProduct = ProductManager.ProductValidator();
+        
+        if (newProduct != null && newProduct.ID == -1)
+            return;
+        
+
+        
         Console.Clear();
         if(newProduct == null)
         {

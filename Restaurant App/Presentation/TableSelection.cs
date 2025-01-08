@@ -598,11 +598,10 @@ namespace Presentation
                     Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                     Console.ResetColor();
                     Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
-                    Console.WriteLine("(B)ack".PadRight(Console.WindowWidth - 1));
 
                     var key = Console.ReadKey(true);
 
-                    if (key.Key == ConsoleKey.B || key.Key == ConsoleKey.Escape)
+                    if (key.Key == ConsoleKey.Escape)
                     {
                         StopFlashing(); // Cancel all flashing tasks
                         ResetConsoleToDefault(); // Clear and reset the screen

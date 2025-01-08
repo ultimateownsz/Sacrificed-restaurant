@@ -1,4 +1,7 @@
-﻿namespace Project;
+﻿using Project.Presentation;
+using System.Net.Http.Headers;
+
+namespace Project;
 internal class SelectionPresent
 {
 
@@ -15,12 +18,11 @@ internal class SelectionPresent
         string banner, SelectionLogic.Mode mode)
     {
 
-        // banner & colour initialization
-        Console.Clear();
+        Terminable.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
-        Console.WriteLine(banner + "\n");
 
-        foreach (((string text, SelectionLogic.Selectable selectable), int index) in selection.Select((value, index) => (value, index)))
+        foreach (((string text, SelectionLogic.Selectable selectable), int index) 
+            in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
             Console.ForegroundColor =
@@ -45,6 +47,41 @@ internal class SelectionPresent
             Console.WriteLine($"{prefix} {text} {suffix}");
             Console.ForegroundColor = palette.Base;
         }
+    }
+
+    private static void _controls()
+    {
+        string output = "";
+        output += "CONTROLS OVERVIEW:\n\n";
+
+        output += "- General:\n";
+        output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
+        output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
+        output += "  - Go Back: ESC\n";
+        output += "  - Input Text: Type and press ENTER\n\n";
+
+        output += "- Menu Modes:\n";
+        output += "  1. Single Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select an item with ENTER\n";
+        output += "  2. Multi Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
+        output += "     - Submit selection by clicking \"Continue\"\n";
+        output += "  3. Scroll Mode:\n";
+        output += "     - Scroll one line at a time with ↑ and ↓\n";
+        output += "     - Submit selection with ENTER\n";
+        output += "  4. Calendar Mode:\n";
+        output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
+        output += "     - Select a date with ENTER\n";
+        output += "  5. Table Selection Mode:\n";
+        output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
+        output += "     - Select a cell with ENTER\n";
+
+        // display
+        Console.Clear();
+        Console.WriteLine(output);
+        Console.ReadKey();
     }
 
     private static SelectionLogic.Interaction _update(
@@ -78,6 +115,9 @@ internal class SelectionPresent
                 SelectionLogic.Mark(selection);
                 return SelectionLogic.Interaction.Marked;
 
+            case ConsoleKey.C:
+                _controls();
+                return SelectionLogic.Interaction.None;
 
             // safeguard
             default:
@@ -88,6 +128,7 @@ internal class SelectionPresent
     public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
         string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
+
         // initialization
         Dictionary<string, SelectionLogic.Selectable> selection =
             SelectionLogic.ToSelectables(options, preselected, mode);
@@ -147,27 +188,14 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("WWARNING\n");
-
-                    Console.ForegroundColor = palette.Base;
-                    Console.WriteLine(
-                        "You are about to attempt a menu termination,\n"+
-                        "however this functionality has been rather \n"+
-                        "buggy due to our retarded ahh approach in\n"+
-                        "making the most non-modular code imaginable.\n\n"
-                        );
-
-                    Console.Write("Would you like to proceed? [might cause a crash] (y/N)");
-                    switch (Console.ReadKey().KeyChar)
+                    return new()
                     {
-                        case 'y':
-                            return new();
-
-                        default:
-                            continue;
-                    }
+                        new()
+                        {
+                            text = "",
+                            index = -1
+                        }
+                    };
 
             }
         }

@@ -18,8 +18,7 @@ public static class ShowReservations
                 { 
                     "View    Details", 
                     "Update  Reservation", 
-                    "Delete  Reservation\n", 
-                    "Back" 
+                    "Delete  Reservation"
                 },
                 banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
             ).ElementAt(0).text;
@@ -35,11 +34,11 @@ public static class ShowReservations
                     UpdateReservation.Show(reservation, acc); // Boolean to check for admin
                     break;
 
-                case "Delete  Reservation\n":
+                case "Delete  Reservation":
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
                 
-                case "Back":
+                case "":
                     return; // Exit the options and return to the reservation list
             }
 
