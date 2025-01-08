@@ -194,7 +194,8 @@ static class ThemeView
     public static int MonthChoice(int year)
     {
         int month;
-        string bannerMonths = $"Select month in {year}, or go back with <ESC>\n";
+        string banner
+            = $"Select month in {year}, or go back with <ESC>\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
@@ -217,7 +218,7 @@ static class ThemeView
             //    return 0; // Indicate going back
             //}
 
-            var selection = SelectionPresent.Show(optionsMonths, banner: bannerMonths);
+            var selection = SelectionPresent.Show(optionsMonths, banner: banner);
             month = selection.ElementAt(0).index + 1;
 
             if (month - 1 == -1) return 0;

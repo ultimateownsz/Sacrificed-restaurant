@@ -1,4 +1,5 @@
 ﻿using Project.Presentation;
+using System.Net.Http.Headers;
 
 namespace Project;
 internal class SelectionPresent
@@ -48,6 +49,41 @@ internal class SelectionPresent
         }
     }
 
+    private static void _controls()
+    {
+        string output = "";
+        output += "CONTROLS OVERVIEW:\n\n";
+
+        output += "- General:\n";
+        output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
+        output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
+        output += "  - Go Back: ESC\n";
+        output += "  - Input Text: Type and press ENTER\n\n";
+
+        output += "- Menu Modes:\n";
+        output += "  1. Single Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select an item with ENTER\n";
+        output += "  2. Multi Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
+        output += "     - Submit selection by clicking \"Continue\"\n";
+        output += "  3. Scroll Mode:\n";
+        output += "     - Scroll one line at a time with ↑ and ↓\n";
+        output += "     - Submit selection with ENTER\n";
+        output += "  4. Calendar Mode:\n";
+        output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
+        output += "     - Select a date with ENTER\n";
+        output += "  5. Table Selection Mode:\n";
+        output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
+        output += "     - Select a cell with ENTER\n";
+
+        // display
+        Console.Clear();
+        Console.WriteLine(output);
+        Console.ReadKey();
+    }
+
     private static SelectionLogic.Interaction _update(
         Dictionary<string, SelectionLogic.Selectable> selection, SelectionLogic.Mode mode)
     {
@@ -79,6 +115,9 @@ internal class SelectionPresent
                 SelectionLogic.Mark(selection);
                 return SelectionLogic.Interaction.Marked;
 
+            case ConsoleKey.C:
+                _controls();
+                return SelectionLogic.Interaction.None;
 
             // safeguard
             default:

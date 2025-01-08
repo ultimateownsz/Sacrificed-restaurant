@@ -14,7 +14,7 @@ internal class SelectionLogic
         Moved,
         Marked,
         Selected,
-        Terminated
+        Terminated,
     }
 
     public struct Selection()
