@@ -1,4 +1,3 @@
-
 namespace Project;
 public static class ReservationDetails
 {

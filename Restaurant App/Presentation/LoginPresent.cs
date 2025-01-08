@@ -6,10 +6,10 @@ public static class LoginPresent
     private static string? _request_email()
     {
         Console.Clear(); 
-        Console.WriteLine("LOGIN\n");
+        Console.WriteLine("LOGIN MENU\n");
 
         Console.ForegroundColor = palette.Primary;
-        Console.Write("mail: ", Console.ForegroundColor);
+        Console.Write("E-mail : ", Console.ForegroundColor);
         
         Console.ForegroundColor = palette.Base;
         return Console.ReadLine();
@@ -18,11 +18,11 @@ public static class LoginPresent
     private static string? _request_password(string? email)
     {
         Console.Clear();
-        Console.WriteLine("LOGIN\n");
-        Console.WriteLine($"mail: {email}");
+        Console.WriteLine("LOGIN MENU\n");
+        Console.WriteLine($"E-mail : {email}");
         
         Console.ForegroundColor = palette.Primary;
-        Console.Write($"pass: ", Console.ForegroundColor);
+        Console.Write($"Password : ", Console.ForegroundColor);
 
         Console.ForegroundColor = palette.Base;
         return Console.ReadLine();
@@ -42,11 +42,11 @@ public static class LoginPresent
         else
         {
             Console.Clear();
-            Console.WriteLine("LOGIN\n");
+            Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"mail: {email}", Console.ForegroundColor);
-            Console.WriteLine($"pass: {password}", Console.ForegroundColor);
+            Console.WriteLine($"E-mail : {email}", Console.ForegroundColor);
+            Console.WriteLine($"Password :     {password}", Console.ForegroundColor);
             
             Console.ForegroundColor = palette.Base;
             Console.WriteLine("\nInvalid credentials, returning...");
