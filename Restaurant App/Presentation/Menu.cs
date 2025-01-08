@@ -11,18 +11,18 @@ static class Menu
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["login", "register\n", "exit"], banner: "MAIN MENU").ElementAt(0).text)
+            switch (SelectionPresent.Show(["Login", "Register\n", "Exit"], banner: "MAIN MENU").ElementAt(0).text)
             {
-                case "login":
+                case "Login":
                     if (MenuLogic.Login() == "continue")
                         continue;
                     break;
 
-                case "register\n":
+                case "Register\n":
                     RegisterUser.CreateAccount();
                     continue;
 
-                case "exit":
+                case "Exit":
                     Environment.Exit(0);
                     return;
 
@@ -39,32 +39,32 @@ static class Menu
         {
             Console.Clear();
             var options = new List<string> {
-                "reserve", "view reservations", "specify diet/allergies", "delete account\n", "logout" };
+                "Make reservation", "View reservation", "Specify allergies", "Delete account\n", "Logout" };
             var selection = SelectionPresent.Show(options, banner: "USER MENU").ElementAt(0).text;
 
             if (string.IsNullOrEmpty(selection)) return;
 
             switch (selection)
             {
-                case "reserve":
+                case "Make reservation":
                     // Directly call MakingReservation without calendar in Menu
                     MakingReservations.MakingReservation(acc);
                     break;
 
-                case "view reservations":
+                case "View reservation":
                     // MakingReservations.UserOverViewReservation(acc);
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
                 
-                case "delete account\n":
+                case "Delete account\n":
                     DeleteAccountAsUser.DeleteAccount(acc);
                     break;
 
-                case "specify diet/allergies":
+                case "Specify allergies":
                     LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, acc.ID);
                     break;
 
-                case "logout":
+                case "Logout":
                     return;
 
                 default:

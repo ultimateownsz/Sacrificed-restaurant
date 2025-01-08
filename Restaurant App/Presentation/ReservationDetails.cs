@@ -82,6 +82,13 @@ public static class ReservationDetails
 
     private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
     {
+        Dictionary<int, string> productsCategories = new Dictionary<int, string>
+        {
+            { 1, "Main" },
+            { 3, "Beverage" },
+            { 5, "Appetizer" },
+            { 8, "Dessert" }
+        };
 
         Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
         {
@@ -98,20 +105,16 @@ public static class ReservationDetails
             foreach (var req in request)
             {
                 var product = Access.Products.GetBy<int?>("ID", req.ProductID);
-                if (product != null && !string.IsNullOrEmpty(product.Course))
+                if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
                 {
-                    if (!categoriesCount.ContainsKey(product.Course))
-                    {
-                        categoriesCount[product.Course] = new Dictionary<string, int>();
-                    }
 
-                    if (categoriesCount[product.Course].ContainsKey(product.Name))
+                    if (categoriesCount[category].ContainsKey(product.Name))
                     {
-                        categoriesCount[product.Course][product.Name]++;
+                        categoriesCount[category][product.Name]++;
                     }
                     else
                     {
-                        categoriesCount[product.Course][product.Name] = 1;
+                        categoriesCount[category][product.Name] = 1;
                     }
                 }
             }

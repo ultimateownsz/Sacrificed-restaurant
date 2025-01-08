@@ -16,7 +16,7 @@ namespace Presentation
         public static void MakingReservation(UserModel acc)
         {
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
-
+            Console.WriteLine("RESERVATION MENU");
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
@@ -210,74 +210,77 @@ namespace Presentation
 
     //     return;
     // }
-
-        public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
+    public static List<ProductModel> TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)
+    {
+        if (reservationId == 0)
         {
-            if (reservationId == 0)
+            ControlHelpPresent.DisplayFeedback("Invalid reservation ID. Exiting TakeOrders.");
+            return new List<ProductModel>(); // Return an empty list for invalid reservations
+        }
+
+        List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
+        List<ProductModel> allOrders = new List<ProductModel>();
+
+        Console.WriteLine("This month's theme is:");
+        ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
+
+        if (theme is not null)
+        {
+            Console.WriteLine($"{theme.Name}");
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("This month is not accessible.");
+            ControlHelpPresent.DisplayFeedback("Press any key to return to the reservation menu.", "bottom", "tip");
+            Console.ReadKey();
+            return new List<ProductModel>(); // Return an empty list if no theme is available
+        }
+
+        // Fetch the reservation details using reservationId
+        var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
+        if (reservation == null)
+        {
+            Console.WriteLine("Reservation not found. Unable to save orders.");
+            return new List<ProductModel>();
+        }
+
+        // Create a temporary user for allergy handling
+        Access.Users.Delete(-1);
+        Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
+
+        for (int i = 0; i < guests; i++)
+        {
+            int? id = (i == 0) ? acc.ID : -1; // Use account ID for the first guest, temporary ID (-1) for others
+            List<ProductModel> guestOrder = new();
+
+            // Start allergy handling for the guest
+            LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, id, (i == 0) ? null : i + 1);
+
+            for (int z = 0; z < categories.Count; z++)
             {
-                Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
-                return new List<ProductModel>(); // Return an empty list for invalid reservations
-            }
+                // Filter products by theme, category, and allergy restrictions
+                List<ProductModel> products = ProductLogic
+                    .GetAllWithinThemeCourse(categories[z], theme.ID)
+                    .Where(product => !LinkAllergyLogic.IsAllergic(id, product.ID))
+                    .ToList();
 
-            List<string> categories = new List<string> { "Appetizer", "Main", "Dessert", "Beverage" };
-            List<ProductModel> allOrders = new List<ProductModel>();
-
-            Console.WriteLine("This month's theme is:");
-            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
-
-            if (theme is not null)
-            {
-                Console.WriteLine($"{theme.Name}");
-            }
-            else
-            {
-                Console.WriteLine("This month is not accessible.");
-                Console.WriteLine("Press any key to return to the reservation menu.");
-                Console.ReadKey();
-                return new List<ProductModel>(); // Return an empty list if no theme is available
-            }
-
-            // Fetch the reservation details using reservationId
-            var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
-            if (reservation == null)
-            {
-                Console.WriteLine("Reservation not found. Unable to save orders.");
-                return new List<ProductModel>();
-            }
-
-            // << imperfect
-            Access.Users.Delete(-1);
-            Access.Users.Write(new UserModel("", "", "", "", "", 0, -1));
-            // >>
-
-            for (int i = 0; i < guests; i++)
-            {
-                // initiate temp user
-                int? id = (i == 0) ? acc.ID : i;
-                List<ProductModel> guestOrder = new();
-
-                LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, id, (i == 0) ? null : i+1);
-                
-                // Replace manual navigation logic with SelectionPresent.Show
-                for (int z = 0; z < categories.Count; z++)
+                while (true)
                 {
-                    List<ProductModel> products = ProductLogic.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
+                    Console.Clear();
+                    Console.WriteLine("RESERVATION MENU");
 
-                    while (true)
+                    var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
+                    var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
+                    productOptions.Add("Skip this course"); // Option to skip the course
+
+                    var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
+                    if (selectedOption == "Skip this course")
                     {
-                        Console.Clear();
-                        var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
-                        var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
-                        productOptions.Add("Skip this course"); // Option to skip the course
+                        break;
+                    }
 
-                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
-                        if (selectedOption == "Skip this course")
-                        {
-                            break;
-                        }
-
-                        var selectedProduct = products.FirstOrDefault(p =>
-                            selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
+                    var selectedProduct = products.FirstOrDefault(p =>
+                        selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
                         // recommend product (drink pair)
                         PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
@@ -300,44 +303,43 @@ namespace Presentation
                         if (selectedProduct != null && selectedProduct.ID.HasValue)
                         {
                             guestOrder.Add(selectedProduct);
+
+                            // EMERGENCY MODIFICATION: 1
                             var saveResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
                             if (!saveResult.isValid)
                             {
-                               Console.WriteLine("Failed to save the order. Please try again.");
+                               ControlHelpPresent.DisplayFeedback("Failed to save the order. Please try again.");
                                Console.ReadKey();
                                continue;
                             }
 
-                            //Console.WriteLine($"{selectedProduct.Name} added successfully!");
-                            //Console.ReadKey();
-                            break; // Exit the selection loop for this category
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid selection. Please try again.");
-                            Console.ReadKey();
-                        }
+                        break; // Exit the selection loop for this category
+                    }
+                    else
+                    {
+                        ControlHelpPresent.DisplayFeedback("Invalid selection. Please try again.");
+                        Console.ReadKey();
                     }
                 }
-                
-                allOrders.AddRange(guestOrder);
-                foreach (var lnk in Access.Allerlinks.Read().Where(
-                    x => x.EntityID == -1 && x.Personal == 1))
-                {
-                    Access.Allerlinks.Delete(lnk.ID);
-                }
-
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
             }
 
-            // I remove the user after the allergy/diet selection has executed fully
-            // so that no traces of it are left. This truly isn't one of my proudest work.
-            // <<
-            Access.Users.Delete(-1);
-            // >>
-            return allOrders; // Return the collected orders
+            allOrders.AddRange(guestOrder);
+
+            // Cleanup temporary allergy links for the guest
+            foreach (var lnk in Access.Allerlinks.Read().Where(x => x.EntityID == -1 && x.Personal == 1))
+            {
+                Access.Allerlinks.Delete(lnk.ID);
+            }
+
+            ControlHelpPresent.DisplayFeedback("\nPress any key to continue...", "bottom", "tip");
+            Console.ReadKey();
         }
+
+        // Remove the temporary user after all guests are processed
+        Access.Users.Delete(-1);
+
+        return allOrders; // Return the collected orders
+    }
 
 
 
@@ -352,7 +354,7 @@ namespace Presentation
 
             if (reservation == null)
             {
-                Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+                ControlHelpPresent.DisplayFeedback("Reservation not found. Unable to display receipt.");
                 return;
             }
 
