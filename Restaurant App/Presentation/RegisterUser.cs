@@ -70,11 +70,11 @@ internal class RegisterUser
             Console.Clear();
             Console.WriteLine("Your information: ");
             Console.WriteLine(" ");
-            Console.WriteLine($"first name: {firstName}");
-            Console.WriteLine($"last name: {lastName}");
-            Console.WriteLine($"email: {email}");
-            Console.WriteLine($"password: {password}");
-            Console.WriteLine($"phone Number: {phoneNumber}");
+            Console.WriteLine($"First name: {firstName}");
+            Console.WriteLine($"Last name: {lastName}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine(" ");
             Console.WriteLine("Are you sure this is correct? Y/N");
 

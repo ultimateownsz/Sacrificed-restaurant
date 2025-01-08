@@ -9,46 +9,46 @@ static class AdminMenu
     {
         List<string> options = new()
         {
-            "edit reservations",
-            "create (admin account)",
-            "delete (accounts)",
-            "update (themes)",
-            "show (reservation) orders",
-            "update (products)",
-            "(de)activate tables",
-            "edit (allergy/diet)\n",
-            "back"
+            "Update  table availability",
+            "Update  reservations",
+            "Update  allergies",
+            "Update  products",
+            "Update  themes",
+            "Create  admin",
+            "Delete  account",
+            "Display orders\n",
+            "Back"
         };
 
         while (true)
         {
             switch (SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text)
             {
-                case "edit reservations":
+                case "Update  reservations":
                     ShowReservations.Show(acc);
                     break;
-                case "create (admin account)":
+                case "Create  admin":
                     CreateAdminOptions.Options(acc);
                     break;
-                case "delete (accounts)":
+                case "Delete  account":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
                     break;
-                case "update (themes)":
+                case "Update  themes":
                     ThemeView.ThemedEditing();
                     break;
-                case "show (reservation) orders":
+                case "Display orders\n":
                     ReservationDetails.ShowOrders(acc);
                     break;
-                case "update (products)":
+                case "Update  products":
                     ProductView.ProductMainMenu();
                     break;
-                case "(de)activate tables":
+                case "Update  table availability":
                     AdminTableControlPresent.Show();
                     break;
-                case "edit (allergy/diet)\n":
+                case "Update  allergies":
                     EditAllergyLogic.Start();
                     break;
-                case "back":
+                case "Back":
                     return;
             }
         }
