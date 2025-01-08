@@ -6,10 +6,10 @@ public static class LoginPresent
     private static string? _request_email()
     {
         Console.Clear(); 
-        Console.WriteLine("LOGIN\n");
+        Console.WriteLine("LOGIN MENU\n");
 
         Console.ForegroundColor = palette.Primary;
-        Console.Write("mail: ", Console.ForegroundColor);
+        Console.Write("E-mail : ", Console.ForegroundColor);
         
         Console.ForegroundColor = palette.Base;
         return Console.ReadLine();
@@ -19,10 +19,10 @@ public static class LoginPresent
     {
         Console.Clear();
         Console.WriteLine("LOGIN MENU\n");
-        Console.WriteLine($"Emailaddress: {email}");
+        Console.WriteLine($"E-mail : {email}");
         
         Console.ForegroundColor = palette.Primary;
-        Console.Write($"Password:     ", Console.ForegroundColor);
+        Console.Write($"Password : ", Console.ForegroundColor);
 
         Console.ForegroundColor = palette.Base;
         return Console.ReadLine();
@@ -45,8 +45,8 @@ public static class LoginPresent
             Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Emailaddress: {email}", Console.ForegroundColor);
-            Console.WriteLine($"Password:     {password}", Console.ForegroundColor);
+            Console.WriteLine($"E-mail : {email}", Console.ForegroundColor);
+            Console.WriteLine($"Password :     {password}", Console.ForegroundColor);
             
             Console.ForegroundColor = palette.Base;
             Console.WriteLine("\nInvalid credentials, returning...");

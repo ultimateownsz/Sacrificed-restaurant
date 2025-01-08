@@ -62,7 +62,7 @@ static class Menu
                     LinkAllergyLogic.Start(LinkAllergyLogic.Type.User, acc.ID);
                     break;
 
-                case "logout":
+                case "Logout":
                     return;
 
                 default:

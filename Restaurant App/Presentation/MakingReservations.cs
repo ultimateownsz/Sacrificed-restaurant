@@ -16,7 +16,7 @@ namespace Presentation
         public static void MakingReservation(UserModel acc)
         {
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
-
+            Console.WriteLine("RESERVATION MENU");
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
@@ -267,6 +267,8 @@ namespace Presentation
                 while (true)
                 {
                     Console.Clear();
+                    Console.WriteLine("RESERVATION MENU");
+
                     var banner = $"PRODUCT SELECTION\nGuest {i + 1}, choose a product for {categories[z]}:";
                     var productOptions = products.Select(p => $"{p.Name} - €{Convert.ToString(p.Price).Replace(".", ",")}\n").ToList();
                     productOptions.Add("Skip this course"); // Option to skip the course
