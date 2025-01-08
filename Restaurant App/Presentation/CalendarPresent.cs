@@ -12,9 +12,6 @@ namespace Project
             DateTime currentDate = initialDate;
 
             int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-            // Console.Clear(); // Clear any lingering output before rendering the calendar
-            // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
-
 
             while (true)
             {
@@ -54,6 +51,8 @@ namespace Project
                     case ConsoleKey.Enter:
                         DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
 
+                    if (!isAdmin)
+                    {
                         if (IsDayFullyBooked(selectedDate, guests))
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
@@ -61,13 +60,13 @@ namespace Project
                             Console.WriteLine("This day is fully reserved.");
                             Console.ResetColor();
                         }
-                        if (NoThemeForMonth(selectedDate))
+                        else if (NoThemeForMonth(selectedDate))
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("This month has no theme.");
                             Console.ResetColor();
                         }
-                        if (NoProductsInTheme(selectedDate))
+                        else if (NoProductsInTheme(selectedDate))
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("This month has no products.");
@@ -75,8 +74,24 @@ namespace Project
                         }
                         else
                         {
+                            // Display the theme of the current month if it exists
+                            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
+                            if (theme != null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine($"\nThe theme in {selectedDate.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture)} is {theme.Name}.");
+                                Console.ResetColor();
+                            }
+
                             return selectedDate;
                         }
+                    }
+                    else
+                    {
+                        // For admins, allow navigation and selection even if there is no theme or products
+                        return selectedDate;
+                    }
+
                         break;
                     case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
@@ -86,6 +101,7 @@ namespace Project
                 }
             }
         }
+
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
@@ -123,7 +139,7 @@ namespace Project
                     noProductsReservedMessage = true;
                 }
 
-                if (isPast || noThemeReservedMessage || noProductsReservedMessage)
+                if (!isAdmin && isPast || !isAdmin && noThemeReservedMessage || !isAdmin && noProductsReservedMessage)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
@@ -153,10 +169,25 @@ namespace Project
             }
 
             Console.ResetColor();
-            if (noThemeReservedMessage)
+
+            if (!isAdmin)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n\nThis month has no theme.");
+                ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(currentDate);
+                if (theme != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n\nThis month's theme is {theme.Name}");
+                }
+                else if (noThemeReservedMessage)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n\nThis month has no theme.");
+                }
+                else if (noProductsReservedMessage)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n\nThis month has no products.");
+                }
             }
             else if (noProductsReservedMessage)
             {

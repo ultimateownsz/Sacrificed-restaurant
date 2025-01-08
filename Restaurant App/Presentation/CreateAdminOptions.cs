@@ -6,31 +6,28 @@ namespace Project.Presentation
     {
         public static void Options(UserModel acc)
         {
-
-            while (true)
+            List<string> adminOptions = new()
             {
+                "Create admin account",
+                "Make existing user admin\n",
+                "Back"
+            };
 
-                List<string> adminOptions = new()
-                {
-                    "Create a new admin account",
-                    "Make an existing user an admin",
-                };
+                string choice = SelectionPresent.Show(
+                    adminOptions, banner: "Create (admin account)").ElementAt(0).text;
 
-                string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)").ElementAt(0).text;
+            switch (choice)
+            {
+                case "Create admin account":
+                    RegisterUser.CreateAccount(true);
+                    break;
 
-                switch (choice)
-                {
-                    case "Create a new admin account":
-                        RegisterUser.CreateAccount(true);
-                        break;
-
-                    case "Make an existing user an admin":
-                        PromoteUserToAdmin();
-                        break;
+                case "Make existing user admin\n":
+                    PromoteUserToAdmin();
+                    break;
 
                     case "":
                         return;
-                }
 
             }    
         }

@@ -1,4 +1,5 @@
 using Project;
+using Project.Logic;
 using Project.Presentation;
 
 static class ProductView
@@ -11,6 +12,8 @@ static class ProductView
         {
             "Add product",
             "Show all products",
+            "Add allergy to product",
+            "Pair drink with food",
             "Choose products course",
             "Choose products theme",
         };
@@ -28,7 +31,12 @@ static class ProductView
                 case "Show all products":
                     DisplayProducts();
                     break;
-
+                case "Add allergy to product":
+                    LinkAllergyLogic.Start(LinkAllergyLogic.Type.Product, -1);
+                    break;
+                case "Pair drink with food":
+                    PairLogic.Start();
+                    break;
                 case "Choose products course":
                     while(true)
                     {

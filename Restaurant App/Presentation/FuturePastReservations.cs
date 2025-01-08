@@ -102,7 +102,7 @@ namespace Presentation
                                             .ToList(); // making sure there are 20 reservations per page
 
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
-                var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // making use of SelectionPresent.Show
+                var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATION MENU").ElementAt(0).text; // making use of SelectionPresent.Show
 
                 if (selectedReservations == "")
                 {

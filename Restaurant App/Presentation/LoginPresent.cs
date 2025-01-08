@@ -7,9 +7,9 @@ public static class LoginPresent
     private static string? _request_email(string? email)
     {
         Console.Clear();
-        string prefix = "LOGIN\n\n";
-        prefix += $"mail: ";
-
+        string prefix = "LOGIN MENU\n\n";
+        prefix += $"E-mail: ";
+        
         Console.ForegroundColor = palette.Base;
         return Terminable.ReadLine(prefix, email ?? "", colour: Console.ForegroundColor);
     }
@@ -17,8 +17,8 @@ public static class LoginPresent
     private static string? _request_password(string? email)
     {
         Console.Clear();
-        string prefix = "LOGIN\n\n";
-        prefix += $"mail: {email}\npass: ";
+        string prefix = "LOGIN MENU\n\n";
+        prefix += $"E-mail: {email}\nPassword: ";
         
         Console.ForegroundColor = palette.Base;
         return Terminable.ReadLine(prefix, colour: Console.ForegroundColor);
@@ -44,7 +44,7 @@ public static class LoginPresent
             break;
         }
 
-        UserModel? acc = LoginLogic.CheckLogin(email?.ToLower(), password);
+        UserModel? acc = LoginLogic.CheckLogin(email, password);
         if (acc != null)
         {
             return acc;
@@ -52,11 +52,11 @@ public static class LoginPresent
         else
         {
             Console.Clear();
-            Console.WriteLine("LOGIN\n");
+            Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"mail: {email}", Console.ForegroundColor);
-            Console.WriteLine($"pass: {password}", Console.ForegroundColor);
+            Console.WriteLine($"E-mail : {email}", Console.ForegroundColor);
+            Console.WriteLine($"Password : {password}", Console.ForegroundColor);
             
             Console.ForegroundColor = palette.Base;
             Console.WriteLine("\nInvalid credentials, returning...");

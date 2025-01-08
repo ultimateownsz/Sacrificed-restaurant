@@ -16,9 +16,9 @@ public static class ShowReservations
             var selectedOption = SelectionPresent.Show(
                 new List<string> 
                 { 
-                    "View Details", 
-                    "Update Reservation", 
-                    "Delete Reservation", 
+                    "View    Details", 
+                    "Update  Reservation", 
+                    "Delete  Reservation"
                 },
                 banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
             ).ElementAt(0).text;
@@ -26,15 +26,15 @@ public static class ShowReservations
             // Handle the chosen action
             switch (selectedOption)
             {
-                case "View Details":
+                case "View    Details":
                     ReservationDetails.ShowDetails(reservation);
                     break;
 
-                case "Update Reservation":
+                case "Update  Reservation":
                     UpdateReservation.Show(reservation, acc); // Boolean to check for admin
                     break;
 
-                case "Delete Reservation":
+                case "Delete  Reservation":
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
                 
