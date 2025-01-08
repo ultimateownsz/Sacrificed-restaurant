@@ -9,7 +9,7 @@ namespace Presentation
         public static void Show()
         {
             Console.Clear();
-            Console.WriteLine("Press 'Enter' to toggle table state.");
+            ControlHelpPresent.DisplayFeedback("Press 'Enter' to toggle table state", "bottom", "tip");
 
             var tableSelection = new TableSelection();
             Console.CursorVisible = false;

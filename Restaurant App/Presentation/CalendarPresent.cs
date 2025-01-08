@@ -38,7 +38,7 @@ namespace Project
                         if (currentDate.AddMonths(-1) < DateTime.Today)
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            Console.WriteLine("You cannot reserve in the past.");
+                            ControlHelpPresent.DisplayFeedback("You cannot reserve in the past.");
                         }
                         else
                         {
@@ -56,20 +56,20 @@ namespace Project
                         if (IsDayFullyBooked(selectedDate, guests))
                         {
                             Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This day is fully reserved.");
+                            // Console.ForegroundColor = ConsoleColor.Red;
+                            ControlHelpPresent.DisplayFeedback("This day is fully reserved.");
                             Console.ResetColor();
                         }
                         if (NoThemeForMonth(selectedDate))
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This month has no theme.");
+                            ControlHelpPresent.DisplayFeedback("This month has no theme. Please select another month.");
                             Console.ResetColor();
                         }
                         if (NoProductsInTheme(selectedDate))
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This month has no products.");
+                            ControlHelpPresent.DisplayFeedback("This month has no products. Please select another month");
                             Console.ResetColor();
                         }
                         else
@@ -77,10 +77,10 @@ namespace Project
                             return selectedDate;
                         }
                         break;
-                    case ConsoleKey.B:
+                    case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
                     default:
-                        Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                        ControlHelpPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
                 }
             }
@@ -89,6 +89,15 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
+            int footerHeight = ControlHelpPresent.GetFooterHeight();  // returns the height of the help footer
+            int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
+            
+            if (availableHeight < 0)
+            {
+                ControlHelpPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
+                return;
+            }
+            
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
             Console.ResetColor();
@@ -153,24 +162,29 @@ namespace Project
             }
 
             Console.ResetColor();
+            
+            // Display the footer
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Previous month", "<p>");
+            ControlHelpPresent.AddOptions("Next month", "<n>");
+            ControlHelpPresent.AddOptions("Select date", "<enter>");
+            ControlHelpPresent.AddOptions("Back", "<escape>");
+            ControlHelpPresent.ShowHelp();
             if (noThemeReservedMessage)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n\nThis month has no theme.");
+                // Console.ForegroundColor = ConsoleColor.Red;
+                ControlHelpPresent.DisplayFeedback("This month has no theme. Please select another month with 'P' or 'N'.");
             }
             else if (noProductsReservedMessage)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n\nThis month has no products.");
+                // Console.ForegroundColor = ConsoleColor.Red;
+                ControlHelpPresent.DisplayFeedback("This month has no products. Please select another month with 'P' or 'N'.");
             }
-
-            Console.ResetColor();
-            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
 
             // Display the "fully reserved" message at the bottom
             if (showFullyReservedMessage)
             {
-                Console.WriteLine("\nThis day is fully reserved.");
+                ControlHelpPresent.DisplayFeedback("This day is fully reserved.");
             }
         }
 

@@ -41,7 +41,7 @@ namespace Project.Presentation
 
                     if (selection == null || selection == "Back")
                     {
-                        Console.WriteLine(" Exiting ACCOUNT MENU...");
+                        // Console.WriteLine(" Exiting ACCOUNT MENU...");
                         // Thread.Sleep(1500);
                         return;
                     }

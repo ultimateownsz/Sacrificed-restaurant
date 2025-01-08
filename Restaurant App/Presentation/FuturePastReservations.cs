@@ -33,7 +33,7 @@ namespace Presentation
                 if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
                 {
                     Console.Clear();
-                    Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                    ControlHelpPresent.DisplayFeedback("There are no reservations for this date. Press any key to return...");
                     Console.ReadKey();
                     return;
                 }
@@ -82,7 +82,7 @@ namespace Presentation
 
             if (sortedReservations == null || sortedReservations.Count == 0) // checking if the reservations exists
             {
-                Console.WriteLine("You have no reservations.\nPress any key to return");
+                ControlHelpPresent.DisplayFeedback("You have no reservations. Press any key to return");
                 Console.ReadKey();
                 return;
             }
@@ -109,13 +109,13 @@ namespace Presentation
                     return;
                 }
 
-                if (selectedReservations == "Next Page") // option to go to the next page
+                if (selectedReservations == "Next page") // option to go to the next page
                 {
                     currentPage = Math.Min(currentPage + 1, totalPages -1);
                     continue;
                 }
 
-                if (selectedReservations == "Previous Page") // option to go to the previous page
+                if (selectedReservations == "Previous page") // option to go to the previous page
                 {
                     currentPage = Math.Max(currentPage - 1, 0);
                     continue;

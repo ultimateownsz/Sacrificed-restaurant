@@ -39,7 +39,7 @@ namespace Presentation
                 if (selectedDate == DateTime.MinValue)
                 {
                     Console.Clear(); // Ensure no residual data is left
-                    Console.WriteLine("Returning to the previous menu...");
+                    ControlHelpPresent.DisplayFeedback("Returning to the previous menu...");
                     return; // Exit completely if user presses back from the calendar
                 }
 
@@ -66,7 +66,7 @@ namespace Presentation
 
                     if (selectedTable == -1)
                     {
-                        Console.WriteLine("Returning to date selection...");
+                        ControlHelpPresent.DisplayFeedback("Returning to date selection...");
                         break; // Break the inner loop and return to the calendar
                     }
 
@@ -78,20 +78,20 @@ namespace Presentation
                     }
                     else
                     {
-                        Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                        ControlHelpPresent.DisplayFeedback("User ID is not available. Unable to create reservation.");
                         return;
                     }
 
                     if (reservationId == 0)
                     {
-                        Console.WriteLine("Failed to create a reservation. Please try again.");
+                        ControlHelpPresent.DisplayFeedback("Failed to create a reservation. Please try again.");
                         continue; // Retry table selection
                     }
 
                     var orders = TakeOrders(selectedDate, acc, reservationId, guests);
                     PrintReceipt(orders, reservationId, acc);
                     
-                    Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                    ControlHelpPresent.DisplayFeedback("Press Enter when you are ready to return to the menu...", "bottom", "tip");
                     while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                     {
                         // Do nothing, just wait for Enter
