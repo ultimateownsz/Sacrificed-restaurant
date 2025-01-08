@@ -8,8 +8,8 @@ namespace Project.Presentation
         {
             List<string> adminOptions = new()
             {
-                "Create a new admin account",
-                "Make an existing user an admin",
+                "Create admin account",
+                "Make existing user admin\n",
                 "Back"
             };
 
@@ -17,11 +17,11 @@ namespace Project.Presentation
 
             switch (choice)
             {
-                case "Create a new admin account":
+                case "Create admin account":
                     RegisterUser.CreateAccount(true);
                     break;
 
-                case "Make an existing user an admin":
+                case "Make existing user admin\n":
                     PromoteUserToAdmin();
                     break;
 
