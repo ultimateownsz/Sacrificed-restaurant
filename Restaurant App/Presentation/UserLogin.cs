@@ -1,7 +1,7 @@
 using System;
 using Project;
 
-static class LoginPresent
+static class UserLogin
 {
     private static UserLogic userLogic = new();
 
