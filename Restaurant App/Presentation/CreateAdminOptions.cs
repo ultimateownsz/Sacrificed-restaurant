@@ -6,40 +6,44 @@ namespace Project.Presentation
     {
         public static void Options(UserModel acc)
         {
-            List<string> adminOptions = new()
+
+            while (true)
             {
-                "Create a new admin account",
-                "Make an existing user an admin",
-                "Back"
-            };
 
-            string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)").ElementAt(0).text;
+                List<string> adminOptions = new()
+                {
+                    "Create a new admin account",
+                    "Make an existing user an admin",
+                };
 
-            switch (choice)
-            {
-                case "Create a new admin account":
-                    RegisterUser.CreateAccount(true);
-                    break;
+                string choice = SelectionPresent.Show(adminOptions, banner: "Create (admin account)").ElementAt(0).text;
 
-                case "Make an existing user an admin":
-                    PromoteUserToAdmin();
-                    break;
+                switch (choice)
+                {
+                    case "Create a new admin account":
+                        RegisterUser.CreateAccount(true);
+                        break;
 
-                case "Back":
-                    return;
-            }
+                    case "Make an existing user an admin":
+                        PromoteUserToAdmin();
+                        break;
+
+                    case "":
+                        return;
+                }
+
+            }    
         }
 
         private static void PromoteUserToAdmin()
         {
-            Console.Clear();
-            Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
-            Console.WriteLine("");
+            string prefix = "Please enter the following information of the user:\n\n";
 
-            Console.Write("First Name: ");
-            string firstName = Console.ReadLine()?.Trim();
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine()?.Trim();
+            string firstName = Terminable.ReadLine(prefix + "First Name: ");
+            if (firstName == null) return;
+
+            string lastName = Terminable.ReadLine(prefix + "Last Name: ");
+            if (lastName == null) return;
 
             // Validate inputs
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
@@ -76,22 +80,10 @@ namespace Project.Presentation
             {
                 // Update the user's Admin status
                 user.Admin = 1;
-                if (userAccess.Update(user))
-                {
-                    Console.WriteLine("User successfully promoted to admin.");
-                }
-                else
-                {
-                    Console.WriteLine("Failed to promote the user. Try again.");
-                }
+                userAccess.Update(user);
+                Console.WriteLine("User privileges elevated to admin");
+                Thread.Sleep(1000);
             }
-            else
-            {
-                Console.WriteLine("Action canceled. User was not promoted.");
-            }
-
-            Console.WriteLine("Press any key to return to the menu...");
-            Console.ReadKey();
         }
     }
 }

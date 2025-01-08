@@ -1,42 +1,45 @@
 using Project;
+using Project.Presentation;
 
 static class ThemeView
 {
     public static void ThemedEditing()
     {
         ConsoleKeyInfo key;
-        do
+        while (true)
         {
             string? themeName;
             int year = YearChoice();
             if (year == -1)
-            {
-                return;
-            }
+                return; 
+
+            monthSelection:
             int month = MonthChoice(year);
             if (month == 0) // The reason why this checks for 0 and not -1 because +1 is done in MonthChoice(year)
-            {
-                return;
-            }
+                continue;
 
             // Check if the chosen month has a theme, if not proceed with else
             if (ThemeMenuManager.GetThemeByYearAndMonth(month, year) is not null)
             {
                 // Menu to choose actions for a month with a theme attached
+                middleMenu:
                 string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month", "Delete the theme for this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
+                if (selection == -1)
+                    goto monthSelection;
 
                 if (selection == 0)
                 {
                     themeName = ThemeInputValidator.GetValidThemeMenu();
-                    if(themeName == null || themeName == "0")
+                    if(themeName == null)
                     {
-                        return;
+                        goto middleMenu;
                     }
                     else
                     {
                         ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                        goto monthSelection;
                     }
                 }
                 else if(selection == 1)
@@ -46,7 +49,7 @@ static class ThemeView
                     {
                         Console.Clear();
                         Console.WriteLine("Failed to update theme");
-                        return;
+                        goto middleMenu;
                     }
                     ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
@@ -54,46 +57,55 @@ static class ThemeView
                 else if(selection == 2)
                 {
                     ThemeMenuManager.DeleteMonthTheme(month, year);
+                    
                     Console.Clear();
-                    Console.WriteLine("This theme has been deleted");
+                    Console.WriteLine("This theme has been deleted!");
+                    
+                    Thread.Sleep(1000);
+                    goto monthSelection;
+
                 }
             }
             else
             {
+                middleMenu2:
                 string banner2 = $"{ThemeMenuManager.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month"};
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
+                if (selection == -1)
+                    goto monthSelection;
+                
                 if(selection == 0)
                 {
                     themeName = ThemeInputValidator.GetValidThemeMenu();
-                    if(themeName == null || themeName == "0")
+                    if(themeName == null)
                     {
-                        return;
+                        goto middleMenu2;
                     }
                     else
                     {
                         ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
+                        goto monthSelection;
                     }
                 }
                 else
                 {
                     themeName = ThemeInputValidator.GetValidString();
+                    
                 }
+
                 if(themeName == null)
                 {
                     Console.Clear();
                     Console.WriteLine("Failed to update theme");
-                    return;
+                    goto middleMenu2;
                 }
                 ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
                 Console.WriteLine($"The theme has been updated to {themeName}");
             }
 
-            Console.WriteLine("Press Escape to go back to admin menu, or press any key to keep editing...");
-
-        } while ((key = Console.ReadKey(true)).Key != ConsoleKey.Escape);
-
-        return;
+            break;
+        }
     }
 
     public static int YearChoice()
@@ -114,8 +126,7 @@ static class ThemeView
 
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine("Select a year to edit its themes:\n");
+            Terminable.Write("Select a year to edit its themes:\n");
 
             // Highlight the currently selected year in Blue
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -123,7 +134,7 @@ static class ThemeView
             Console.ResetColor();
 
             // Navigation options
-            Console.WriteLine("\n(r)eset, (b)ack");
+            Console.WriteLine("\n(r)eset, (esc)ape");
 
             // Display any error or info messages
             if (!string.IsNullOrEmpty(message))
@@ -167,7 +178,7 @@ static class ThemeView
                     currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
-                case ConsoleKey.B:
+                case ConsoleKey.Escape:
                     return -1; // Indicate user wants to go back
 
                 case ConsoleKey.Enter:
@@ -207,12 +218,10 @@ static class ThemeView
             //}
 
             var selection = SelectionPresent.Show(optionsMonths, banner: bannerMonths);
-            if (selection.Count == 0)
-            {
-                return 0; // Ensure a return value for the back option
-            }
-
             month = selection.ElementAt(0).index + 1;
+
+            if (month - 1 == -1) return 0;
+            
             if (DateTime.Now.Month == month && DateTime.Now.Year == year && ThemeMenuManager.GetThemeByYearAndMonth(month, year) is null) // only returns the current month if it has no theme
             {
                 return month;

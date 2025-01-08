@@ -18,50 +18,64 @@ internal class RegisterUser
         // Input collection with validation loops
         while (true)
         {
-            Console.Write("first name: ");
-            firstName = Console.ReadLine();
+            firstName = Terminable.ReadLine("first name: ");
+            if (firstName == null) return;
+            
             if (LoginLogic.IsNameValid(firstName))
                 break;
+            
             Console.WriteLine("Invalid first name, try again!");
+            Console.ReadKey();
         }
 
         while (true)
         {
-            Console.Write("last name: ");
-            lastName = Console.ReadLine();
+            lastName = Terminable.ReadLine("last name: ");
+            if (lastName == null) return;
+
             if (LoginLogic.IsNameValid(lastName))
                 break;
             Console.WriteLine("Invalid last name, try again!");
+            Console.ReadKey();
         }
 
         // Loop until valid email is provided
         while (true)
         {
-            Console.Write("email: ");
-            email = Console.ReadLine();
+            email = Terminable.ReadLine("email: ");
+            if (email == null) return;
+
             if (LoginLogic.IsEmailValid(email))
                 break;
+
             Console.WriteLine("Invalid email address, try again!");
+            Console.ReadKey();
         }
 
         // Loop until valid password is provided
         while (true)
         {
-            Console.Write("password (8-16 characters): ");
-            password = Console.ReadLine();
+            password = Terminable.ReadLine("password (8-16 characters): ");
+            if (password == null) return;
+
             if (LoginLogic.IsPasswordValid(password))
                 break;
+
             Console.WriteLine("Invalid password, try again!");
+            Console.ReadKey();
         }
 
         // Loop until valid phone number is provided
         while (true)
         {
-            Console.Write("phone number (8 numbers): ");
-            phoneNumber = Console.ReadLine();
+            phoneNumber = Terminable.ReadLine("phone number (8 numbers): ");
+            if (phoneNumber == null) return;
+
             if (LoginLogic.IsPhoneNumberValid(phoneNumber))
                 break;
+
             Console.WriteLine("Invalid phone number, try again!");
+            Console.ReadKey();
         }
 
         // Confirm details loop

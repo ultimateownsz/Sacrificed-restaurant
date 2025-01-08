@@ -49,26 +49,20 @@ namespace Presentation
         string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table\n", "Back"], banner: confirmChoice).ElementAt(0).text)
+            switch (SelectionPresent.Show(["Date", "Table"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
                     UpdateReservationDate(reservation, acc);
-                    Console.WriteLine("\nDate process ended successfully.");
-                    Console.WriteLine("Press any key to return.");
-                    Console.ReadKey();
                     break;
 
-                    case "Table\n":
-                        Console.Clear();
-                        UpdateTableID(reservation);
-                        Console.WriteLine("\nTable number process ended successfully.");
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
+                case "Table":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    break;
 
-                    case "Back":
-                        return;
+                case "":
+                    return;
                 }
             }
         }
@@ -78,7 +72,7 @@ namespace Presentation
         string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation\n", "Back"], banner: confirmChoice).ElementAt(0).text)
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
@@ -96,7 +90,7 @@ namespace Presentation
                     Console.ReadKey();
                     break;
                 
-                case "Cancel reservation\n":
+                case "Cancel reservation":
                     Console.Clear();
                     if (DeleteReservation(reservation))
                     {
@@ -113,7 +107,7 @@ namespace Presentation
                     Console.ReadKey();
                     break;
                 
-                case "Back":
+                case "":
                     return;
             }
         }
@@ -148,6 +142,10 @@ namespace Presentation
                 List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
                 string banner = "How many guests are reserved for your table?";
                 int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+
+                // because 6 - (-1) = 7
+                if (guests == 7)
+                    return;
 
                 int[] inactiveTables = Access.Places.Read()
                     .Where(p => p.Active == 0)

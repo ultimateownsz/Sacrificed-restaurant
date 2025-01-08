@@ -1,5 +1,6 @@
 using Project;
 using Project.Logic;
+using Project.Presentation;
 
 namespace Presentation
 {
@@ -8,15 +9,22 @@ namespace Presentation
         public static void DeleteAccount(UserModel user)
         {
             Console.Clear();
-            Console.WriteLine("WARNING: Deleting your account entails the following:");
-            Console.WriteLine("");
-            Console.WriteLine("- Delete all future reservations.");
-            Console.WriteLine("- Make your past reservations anonymous.");
-            Console.WriteLine("- Remove all your personal information.\n");
+            string prefix = "WARNING: Deleting your account entails the following:\n\n";
+            prefix += "- Delete all future reservations.\n";
+            prefix += "- Make your past reservations anonymous.\n";
+            prefix += "- Remove all your personal information.\n\n";
+            prefix += "Please confirm your password to proceed: ";
+
 
             // Password confirmation
-            Console.Write("Please confirm your password to proceed: ");
-            string enteredPassword = Console.ReadLine()?.Trim();
+            string? enteredPassword = Terminable.ReadLine(prefix);
+            
+            if (enteredPassword == null)
+                return;
+            
+            // trimming ig..
+            enteredPassword = enteredPassword.Trim();
+
 
             if (enteredPassword != user.Password)
             {

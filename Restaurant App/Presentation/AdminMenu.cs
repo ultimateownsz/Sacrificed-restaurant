@@ -15,7 +15,7 @@ static class AdminMenu
             "show (reservation) orders",
             "update (products)",
             "(de)activate tables\n",
-            "back"
+            "logout"
         };
 
         while (true)
@@ -43,7 +43,7 @@ static class AdminMenu
                 case "(de)activate tables\n":
                     AdminTableControlPresent.Show();
                     break;
-                case "back":
+                case "logout":
                     return;
             }
         }

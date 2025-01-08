@@ -1,44 +1,54 @@
 using Project;
+using Project.Presentation;
 public static class LoginPresent
 {
     private static SelectionPresent.Palette palette = new();
 
-    private static string? _request_email()
+    private static string? _request_email(string? email)
     {
-        Console.Clear(); 
-        Console.WriteLine("LOGIN\n");
+        Console.Clear();
+        string prefix = "LOGIN\n\n";
+        prefix += $"mail: ";
 
-        Console.ForegroundColor = palette.Primary;
-        Console.Write("mail: ", Console.ForegroundColor);
-        
         Console.ForegroundColor = palette.Base;
-        return Console.ReadLine();
+        return Terminable.ReadLine(prefix, email ?? "", colour: Console.ForegroundColor);
     }
 
     private static string? _request_password(string? email)
     {
         Console.Clear();
-        Console.WriteLine("LOGIN\n");
-        Console.WriteLine($"mail: {email}");
+        string prefix = "LOGIN\n\n";
+        prefix += $"mail: {email}\npass: ";
         
-        Console.ForegroundColor = palette.Primary;
-        Console.Write($"pass: ", Console.ForegroundColor);
-
         Console.ForegroundColor = palette.Base;
-        return Console.ReadLine();
+        return Terminable.ReadLine(prefix, colour: Console.ForegroundColor);
     }
 
     public static UserModel? Show()
     {
 
-        string? email = _request_email();
-        string? password = _request_password(email);
+        string? email = null;
+        string? password = null;
+        
+        while (true)
+        {
+            // request email
+            email = _request_email(email);
+            if (email == null) return null;
+
+            // request password
+            password = _request_password(email);
+            if (password == null) continue;
+
+            // user didn't try to terminate
+            break;
+        }
 
         UserModel? acc = LoginLogic.CheckLogin(email?.ToLower(), password);
         if (acc != null)
         {
             return acc;
-        }
+        }    
         else
         {
             Console.Clear();
@@ -51,6 +61,7 @@ public static class LoginPresent
             Console.ForegroundColor = palette.Base;
             Console.WriteLine("\nInvalid credentials, returning...");
 
+            Thread.Sleep(1000);
             return null;
         }
     }

@@ -65,10 +65,6 @@ static class Menu
                 case "logout":
                     return;
 
-                default:
-                    Console.WriteLine("Invalid selection. Please try again.");
-                    Console.ReadKey();
-                    break;
             }
         }
     }

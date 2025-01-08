@@ -1,4 +1,6 @@
-﻿namespace Project;
+﻿using Project.Presentation;
+
+namespace Project;
 internal class SelectionPresent
 {
 
@@ -15,12 +17,11 @@ internal class SelectionPresent
         string banner, SelectionLogic.Mode mode)
     {
 
-        // banner & colour initialization
-        Console.Clear();
+        Terminable.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
-        Console.WriteLine(banner + "\n");
 
-        foreach (((string text, SelectionLogic.Selectable selectable), int index) in selection.Select((value, index) => (value, index)))
+        foreach (((string text, SelectionLogic.Selectable selectable), int index) 
+            in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
             Console.ForegroundColor =
@@ -88,6 +89,7 @@ internal class SelectionPresent
     public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
         string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
+
         // initialization
         Dictionary<string, SelectionLogic.Selectable> selection =
             SelectionLogic.ToSelectables(options, preselected, mode);
@@ -147,27 +149,14 @@ internal class SelectionPresent
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("WWARNING\n");
-
-                    Console.ForegroundColor = palette.Base;
-                    Console.WriteLine(
-                        "You are about to attempt a menu termination,\n"+
-                        "however this functionality has been rather \n"+
-                        "buggy due to our retarded ahh approach in\n"+
-                        "making the most non-modular code imaginable.\n\n"
-                        );
-
-                    Console.Write("Would you like to proceed? [might cause a crash] (y/N)");
-                    switch (Console.ReadKey().KeyChar)
+                    return new()
                     {
-                        case 'y':
-                            return new();
-
-                        default:
-                            continue;
-                    }
+                        new()
+                        {
+                            text = "",
+                            index = -1
+                        }
+                    };
 
             }
         }

@@ -22,9 +22,13 @@ namespace Presentation
 
         private static void ViewAdmin(UserModel acc)
         {
+            START:
+
             int guests = 1;
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
+            
             DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
+            if (selectedDate == DateTime.MinValue) return;
 
             while (true)
             {
@@ -35,7 +39,7 @@ namespace Presentation
                     Console.Clear();
                     Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
                     Console.ReadKey();
-                    return;
+                    goto START;
                 }
 
                 var reservationDetails = reservations.Select(r => new
@@ -47,15 +51,11 @@ namespace Presentation
                 }).ToList();  // selecting info from reservation that are needed
 
                 var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
-
-                // format improvement
-                reservationOptions.Add("Back");
-                
                 string selectedReservation = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // displaying the info as opions to choose
 
-                if (selectedReservation == "Back")
+                if (selectedReservation == "")
                 {
-                    return;
+                    goto START;
                 }
 
                 if (reservationOptions.Contains(selectedReservation)) // esnuring that after a choice the admin is sent to the correct menu
@@ -104,7 +104,7 @@ namespace Presentation
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
                 var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // making use of SelectionPresent.Show
 
-                if (selectedReservations == "Back")
+                if (selectedReservations == "")
                 {
                     return;
                 }

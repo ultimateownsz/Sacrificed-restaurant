@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http.Headers;
 using Project;
 
 namespace Presentation
@@ -16,13 +17,19 @@ namespace Presentation
         {
             bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
 
+            START: // cleanest implementation, sorry
+            
             // Step 1: Ask for the number of guests (only once)
             List<string> options = new() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests will be coming?";
-            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+            
+            int guests = options.Count() - SelectionPresent.Show(
+                options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+            if (guests == 7) 
+                return; // b.c. count (6) - (-1) = 7
 
             DateTime selectedDate;
-
+            
             // Fetch inactive tables
             var inactiveTables = Access.Places.Read()
                 .Where(p => p.Active == 0)
@@ -35,11 +42,8 @@ namespace Presentation
                 selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
                 if (selectedDate == DateTime.MinValue)
-                {
-                    Console.Clear(); // Ensure no residual data is left
-                    Console.WriteLine("Returning to the previous menu...");
-                    return; // Exit completely if user presses back from the calendar
-                }
+                    goto START;
+                
 
                 // Step 3: Filter available tables based on the number of guests
                 TableSelection tableSelection = new();
@@ -63,10 +67,7 @@ namespace Presentation
                     int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
 
                     if (selectedTable == -1)
-                    {
-                        Console.WriteLine("Returning to date selection...");
-                        break; // Break the inner loop and return to the calendar
-                    }
+                        break;
 
                     // Step 5: Save the reservation
                     int reservationId;
@@ -87,6 +88,7 @@ namespace Presentation
                     }
 
                     var orders = TakeOrders(selectedDate, acc, reservationId, guests);
+                    if (orders == new List<ProductModel>()) continue;
                     if (orders.Count > 0)
                     {
                         PrintReceipt(orders, reservationId, acc);
@@ -242,6 +244,7 @@ namespace Presentation
             {
                 List<ProductModel> guestOrder = new();
                 // Replace manual navigation logic with SelectionPresent.Show
+                
                 for (int z = 0; z < categories.Count; z++)
                 {
                     List<ProductModel> products = ProductManager.GetAllWithinThemeCourse(categories[z], theme.ID).ToList();
@@ -257,7 +260,12 @@ namespace Presentation
                         productOptions.Add("Skip this course"); // Option to skip the course
 
                         // Display the menu and get the selected option
-                        var selectedOption = SelectionPresent.Show(productOptions, banner: banner).ElementAt(0).text;
+                        var selectedOption = SelectionPresent.Show(
+                            productOptions, banner: banner).ElementAt(0).text;
+
+                        // return
+                        if (selectedOption == "")
+                            return new();
 
                         // EMERGENCY MODIFICATION: 1
                         if (selectedOption == "Skip this course")
@@ -284,11 +292,6 @@ namespace Presentation
                             //Console.WriteLine($"{selectedProduct.Name} added successfully!");
                             //Console.ReadKey();
                             break; // Exit the selection loop for this category
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid selection. Please try again.");
-                            Console.ReadKey();
                         }
                     }
                 }

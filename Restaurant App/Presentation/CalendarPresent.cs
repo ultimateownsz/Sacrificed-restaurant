@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Presentation;
+using Project.Presentation;
 
 namespace Project
 {
@@ -77,7 +78,7 @@ namespace Project
                             return selectedDate;
                         }
                         break;
-                    case ConsoleKey.B:
+                    case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
                     default:
                         Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
@@ -88,9 +89,8 @@ namespace Project
 
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
-            Console.Clear();
-            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
-            Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            Terminable.Write(currentDate.ToString(
+                "MMMM yyyy").ToUpper() + "\n" + "Mo Tu We Th Fr Sa Su\n");
             Console.ResetColor();
 
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
@@ -165,7 +165,7 @@ namespace Project
             }
 
             Console.ResetColor();
-            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nback       : <b>");
+            Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nescape     : <esc>");
 
             // Display the "fully reserved" message at the bottom
             if (showFullyReservedMessage)
