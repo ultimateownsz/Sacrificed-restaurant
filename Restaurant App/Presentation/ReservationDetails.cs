@@ -88,14 +88,16 @@ public static class ReservationDetails
 
     private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
     {
-        Dictionary<int, string> productsCategories = new Dictionary<int, string>
+        // Mapping Course values to Categories
+        Dictionary<string, string> productsCategories = new Dictionary<string, string>
         {
-            { 1, "Main" },
-            { 3, "Beverage" },
-            { 5, "Appetizer" },
-            { 8, "Dessert" }
+            { "Appetizer", "Appetizer" },
+            { "Main", "Main" },
+            { "Dessert", "Dessert" },
+            { "Beverage", "Beverage" }
         };
 
+        // Dictionary to store count of each product by category
         Dictionary<string, Dictionary<string, int>> categoriesCount = new Dictionary<string, Dictionary<string, int>>
         {
             { "Appetizer", new Dictionary<string, int>() },
@@ -104,16 +106,20 @@ public static class ReservationDetails
             { "Beverage", new Dictionary<string, int>() }
         };
 
-        foreach (var reserv in orders)
+        // Iterate through each reservation for the selected date
+        foreach (var reserv in orders.Where(r => r != null))
         {
-            var request = Access.Requests.GetAllBy<int?>("ReservationID", reserv.ID).ToList();
+            // Get all requests associated with the current reservation ID
+            var requests = Access.Requests.GetAllBy<int?>("ReservationID", reserv!.ID).ToList();
 
-            foreach (var req in request)
+            // Process each request to get the associated product and categorize it
+            foreach (var req in requests)
             {
+                // Fetch the product details using the ProductID from the Request table
                 var product = Access.Products.GetBy<int?>("ID", req.ProductID);
-                if (product != null && productsCategories.TryGetValue((int)product.ID, out string category))
+                if (product != null && productsCategories.TryGetValue(product.Course, out string category))
                 {
-
+                    // Increment the count of the product in the appropriate category
                     if (categoriesCount[category].ContainsKey(product.Name))
                     {
                         categoriesCount[category][product.Name]++;
@@ -143,7 +149,7 @@ public static class ReservationDetails
         var mains = categoriesCount["Main"].ToList();
         var desserts = categoriesCount["Dessert"].ToList();
         var beverages = categoriesCount["Beverage"].ToList();
-        
+
         for (int i = 0; i < maxRows; i++)
         {
             string appetizer = "";
@@ -187,8 +193,7 @@ public static class ReservationDetails
         }
 
         string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
-        string padRow = grandTotalRow.PadLeft(143);
-        Console.WriteLine(padRow);
+        Console.WriteLine(grandTotalRow.PadLeft(120));
     }
 
 }
