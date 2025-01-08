@@ -11,9 +11,6 @@ namespace Project
             DateTime currentDate = initialDate;
 
             int selectedDay = FindFirstAvailableDay(currentDate, isAdmin, guests);
-            // Console.Clear(); // Clear any lingering output before rendering the calendar
-            // DisplayCalendar(currentDate, selectedDay, isAdmin, guests); // Render calendar
-
 
             while (true)
             {
@@ -93,6 +90,15 @@ namespace Project
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
             Console.ResetColor();
 
+            // Display the current month's theme if it exists
+            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(currentDate);
+            if (theme != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\nThe theme in {currentDate:MMMM} is {theme.Name}.\n");
+                Console.ResetColor();
+            }
+
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
             int startDay = (int)new DateTime(currentDate.Year, currentDate.Month, 1).DayOfWeek;
             startDay = startDay == 0 ? 6 : startDay - 1;
@@ -111,8 +117,8 @@ namespace Project
 
                 bool isPast = !isAdmin && dateToCheck < today;
                 bool isFullyBooked = IsDayFullyBooked(dateToCheck, guests);
-                bool NoTheme= NoThemeForMonth(dateToCheck);
-                bool NoProducts= NoProductsInTheme(dateToCheck);
+                bool NoTheme = NoThemeForMonth(dateToCheck);
+                bool NoProducts = NoProductsInTheme(dateToCheck);
 
                 if (NoTheme)
                 {
@@ -231,16 +237,15 @@ namespace Project
 
         private static bool NoThemeForMonth(DateTime date)
         {
-            if(ReservationMenuLogic.GetCurrentTheme(date) == null) return true;
-            return false;
+            return ReservationMenuLogic.GetCurrentTheme(date) == null;
         }
 
         private static bool NoProductsInTheme(DateTime date)
         {
             ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(date);
 
-            if(theme is null) return true;
-            if(!ProductManager.AnyProductsInTheme(theme.ID)) return true;
+            if (theme is null) return true;
+            if (!ProductManager.AnyProductsInTheme(theme.ID)) return true;
 
             return false;
         }
