@@ -139,7 +139,7 @@ namespace Project
                     noProductsReservedMessage = true;
                 }
 
-                if (isPast || noThemeReservedMessage || noProductsReservedMessage)
+                if (!isAdmin && isPast || !isAdmin && noThemeReservedMessage || !isAdmin && noProductsReservedMessage)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
@@ -169,10 +169,25 @@ namespace Project
             }
 
             Console.ResetColor();
-            if (noThemeReservedMessage)
+
+            if (!isAdmin)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n\nThis month has no theme.");
+                ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(currentDate);
+                if (theme != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n\nThis month's theme is {theme.Name}");
+                }
+                else if (noThemeReservedMessage)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n\nThis month has no theme.");
+                }
+                else if (noProductsReservedMessage)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n\nThis month has no products.");
+                }
             }
             else if (noProductsReservedMessage)
             {
