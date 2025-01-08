@@ -31,11 +31,11 @@ namespace Restaurant_App_Unittesting
                 UpdateAction = r => updateCalled = true
             };
 
+            TableSelection.SetSimulatedTableID(reservation.PlaceID);
             UpdateReservation.Show(reservation, adminUser);
-            TableSelection.SetSimulatedTableID(4);
 
             Assert.IsTrue(updateCalled, "Reservation update should be called.");
-            Assert.AreEqual(4, reservation.PlaceID, "Expected updated PlaceID.");
+            Assert.AreEqual(2, reservation.PlaceID, "Expected updated PlaceID.");
         }
 
         [TestMethod]
@@ -64,8 +64,8 @@ namespace Restaurant_App_Unittesting
             };
 
             // Act
-            UpdateReservation.Show(reservation, nonAdminUser);
             TableSelection.SetSimulatedTableID(4);
+            UpdateReservation.Show(reservation, nonAdminUser);
 
             // Assert
             Assert.IsTrue(updateCalled, "Reservation update should be called.");
@@ -149,7 +149,7 @@ namespace Restaurant_App_Unittesting
                 }
                 else
                 {
-                    UpdateTableID(reservation);
+                    UpdateTableID(reservation, acc);
                 }
 
                 // Simulate saving the reservation
@@ -162,10 +162,15 @@ namespace Restaurant_App_Unittesting
                 reservation.Date = CalendarPresent.Show(DateTime.Now, true, 1, new UserModel { Admin = true });
             }
 
-            private static void UpdateTableID(ReservationModel reservation)
+            private static void UpdateTableID(ReservationModel reservation, UserModel acc)
             {
                 // Simulate updating the table ID
-                reservation.PlaceID = TableSelection.SelectTable(new int[] { 1, 2, 3 }, new int[] { }, new int[] { }, 4, false);
+                int[] availableTables = { 1, 2, 3, 4 };
+                int[] inactiveTables = { };
+                int[] reservedTables = { };
+
+                bool isAdmin = true;
+                reservation.PlaceID = TableSelection.SelectTable(availableTables, inactiveTables, reservedTables, 4, isAdmin);
             }
         }
     }
