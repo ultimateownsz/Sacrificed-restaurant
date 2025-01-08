@@ -77,6 +77,7 @@ internal class SelectionPresent
         output += "  5. Table Selection Mode:\n";
         output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
         output += "     - Select a cell with ENTER\n";
+        output += "\nPress any key to continue...";
 
         // display
         Console.Clear();
