@@ -7,41 +7,102 @@ namespace Presentation
     {
         public static void DeleteAccount(UserModel user)
         {
-            Console.Clear();
-            Console.WriteLine("WARNING: Deleting your account entails the following:");
-            Console.WriteLine("");
-            Console.WriteLine("- Delete all future reservations.");
-            Console.WriteLine("- Make your past reservations anonymous.");
-            Console.WriteLine("- Remove all your personal information.\n");
-
-            // Password confirmation
-            Console.Write("Please confirm your password to proceed: ");
-            string enteredPassword = Console.ReadLine()?.Trim();
-
-            if (enteredPassword != user.Password)
+            // Method to display the warning message in the middle of the terminal
+            void DisplayWarning()
             {
-                Console.WriteLine("\nIncorrect password. Account deletion cancelled.");
-                Console.WriteLine("Press any key to return to the menu...");
-                Console.ReadKey();
+                Console.Clear();
+                
+                // Warning message
+                string[] warningLines = new string[]
+                {
+                    "WARNING: Deleting your account entails the following:",
+                    "",
+                    "- Delete all future reservations.",
+                    "- Make your past reservations anonymous.",
+                    "- Remove all your personal information.",
+                    ""
+                };
+
+                // Calculate vertical start position to center the message vertically
+                int consoleHeight = Console.WindowHeight;
+                int verticalStart = (consoleHeight / 2) - (warningLines.Length / 2);
+
+                // Set warning color to red
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                // Print each line starting from the leftmost position (X = 0)
+                foreach (var (line, index) in warningLines.Select((line, index) => (line, index)))
+                {
+                    Console.SetCursorPosition(0, verticalStart + index);
+                    Console.WriteLine(line);
+                }
+
+                // Reset console color to default
+                Console.ResetColor();
+            }
+
+
+            // Show initial warning and help
+            DisplayWarning();
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
+            ControlHelpPresent.ShowHelp();
+
+            // Attempt to confirm password with escape key handling
+            bool passwordConfirmed = false;
+
+            TryCatchHelper.EscapeKeyException(() =>
+            {
+                string enteredPassword = InputHelper.GetValidatedInput<string>(
+                    "Please type in your password to proceed: ",
+                    input => (input, null), // Simple validation that returns the input as is
+                    menuTitle: "DELETE ACCOUNT",
+                    showHelpAction: () =>
+                    {
+                        DisplayWarning(); // Redraw warning message
+                        ControlHelpPresent.ShowHelp();
+                    }
+                );
+
+                // Check password
+                if (enteredPassword == user.Password)
+                {
+                    passwordConfirmed = true; // Mark as confirmed
+                }
+                else
+                {
+                    Console.WriteLine("\nIncorrect password. Account deletion cancelled.");
+                    Console.WriteLine("Press any key to return to the menu...");
+                    Console.ReadKey();
+                }
+            },
+            "Password confirmation cancelled. Returning to menu...");
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
+
+            // If the password wasn't confirmed, return to the previous menu
+            if (!passwordConfirmed)
+            {
                 return;
             }
 
-            // ConfirmAndDelete method from DeleteAccountLogic
+            // Proceed with account deletion
             bool deletionSuccessful = DeleteAccountLogic.ConfirmAndDelete(user);
+            ControlHelpPresent.ResetToDefault();
+            ControlHelpPresent.ShowHelp();
 
             if (deletionSuccessful)
             {
-                // Provide feedback to the user
-                Console.WriteLine("Your account has been successfully deleted.");
+                Console.WriteLine("\nYour account has been successfully deleted.");
                 Console.WriteLine("Press any key to return to the login page...");
                 Console.ReadKey();
 
-                // Go back to the login page after deletion
+                // Redirect to login menu
                 Menu.Start();
             }
             else
             {
-                Console.WriteLine("Error occurred while deleting your account.");
+                Console.WriteLine("\nError occurred while deleting your account.");
                 Console.WriteLine("Press any key to return to the menu...");
                 Console.ReadKey();
             }
