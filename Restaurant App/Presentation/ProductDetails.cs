@@ -237,8 +237,8 @@ static class ProductView
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to Add {newProduct.Name}.");
-            Console.WriteLine("Press any key to continue..."); 
+            ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;

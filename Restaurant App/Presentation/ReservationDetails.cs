@@ -43,12 +43,18 @@ public static class ReservationDetails
             if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
             {
                 Console.Clear();
-                Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
-                Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+                ControlHelpPresent.DisplayFeedback($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
+
+                ControlHelpPresent.Clear();
+                ControlHelpPresent.AddOptions("Previous date", "<p>");
+                ControlHelpPresent.AddOptions("Next date", "<n>");
+                ControlHelpPresent.AddOptions("Exit", "<escape>");
+                ControlHelpPresent.ShowHelp();
+                // Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
                 ConsoleKeyInfo emptyOrders = Console.ReadKey();
                 switch (emptyOrders.Key)
                 {
-                    case ConsoleKey.B:
+                    case ConsoleKey.Escape:
                         return;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
@@ -62,7 +68,7 @@ public static class ReservationDetails
             {
                 DisplayOrdersGrid(orders, selectedDate);
 
-                Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
+                // Console.WriteLine("\n(B)ack - (P)revious date - (N)ext date");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 switch (key.Key)

@@ -68,7 +68,7 @@ static class Menu
                     return;
 
                 default:
-                    Console.WriteLine("Invalid selection. Please try again.");
+                    ControlHelpPresent.DisplayFeedback("Invalid selection. Please try again.");
                     Console.ReadKey();
                     break;
             }
