@@ -1,181 +1,329 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 
 namespace Project.Presentation;
-
-// The methods underneath could've easily been one method.
-// Original developer research modularity and reusability
 
 internal class RegisterUser
 {
     public static void CreateAccount(bool admin = false)
     {
-        bool isInfoValid = false;
-        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
-
-        Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Back", "<escape>");
+        ControlHelpPresent.ShowHelp();
         Console.WriteLine("Please enter the following information:\n");
 
-        // Input collection with validation loops
-        while (true)
+        // bool isRegistrationSuccessful = false;
+        bool isAdminCreated = false;
+
+        TryCatchHelper.EscapeKeyException(() =>
         {
-            Console.Write("first name: ");
-            firstName = Console.ReadLine();
-            if (LoginLogic.IsNameValid(firstName))
-                break;
-            Console.WriteLine("Invalid first name, try again!");
-        }
-
-        while (true)
-        {
-            Console.Write("last name: ");
-            lastName = Console.ReadLine();
-            if (LoginLogic.IsNameValid(lastName))
-                break;
-            Console.WriteLine("Invalid last name, try again!");
-        }
-
-        // Loop until valid email is provided
-        while (true)
-        {
-            Console.Write("email: ");
-            email = Console.ReadLine();
-            if (LoginLogic.IsEmailValid(email))
-                break;
-            Console.WriteLine("Invalid email address, try again!");
-        }
-
-        // Loop until valid password is provided
-        while (true)
-        {
-            Console.Write("password (8-16 characters): ");
-            password = Console.ReadLine();
-            if (LoginLogic.IsPasswordValid(password))
-                break;
-            Console.WriteLine("Invalid password, try again!");
-        }
-
-        // Loop until valid phone number is provided
-        while (true)
-        {
-            Console.Write("phone number (8 numbers): ");
-            phoneNumber = Console.ReadLine();
-            if (LoginLogic.IsPhoneNumberValid(phoneNumber))
-                break;
-            Console.WriteLine("Invalid phone number, try again!");
-        }
-
-        // Confirm details loop
-        while (!isInfoValid)
-        {
-            Console.Clear();
-            Console.WriteLine("Your information: ");
-            Console.WriteLine(" ");
-            Console.WriteLine($"First name: {firstName}");
-            Console.WriteLine($"Last name: {lastName}");
-            Console.WriteLine($"Email: {email}");
-            Console.WriteLine($"Password: {password}");
-            Console.WriteLine($"Phone Number: {phoneNumber}");
-            Console.WriteLine(" ");
-            Console.WriteLine("Are you sure this is correct? Y/N");
-
-            string choice = Console.ReadLine().ToUpper();
-
-            if (choice == "Y")
+            if (admin)
             {
-                // Create account and write it to storage
-                var account = new UserModel()
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Email = email,
-                        Password = password,
-                        Phone = phoneNumber,
-                        Admin = Convert.ToInt16(admin)
-                    };
+                // ControlHelpPresent.Clear();
+                // ControlHelpPresent.AddOptions("Exit", "<escape>");
+                ControlHelpPresent.ResetToDefault();
+                ControlHelpPresent.ShowHelp();
 
-                Access.Users.Write(account);
-                Console.WriteLine("\nYour account is successfully registered!");
-                Thread.Sleep(1000); // so you can read the messages
-                isInfoValid = true; // Exit the confirmation loop
-
-            }
-            else if (choice == "N")
-            {
-                while (true)
+                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin\n", "Cancel"], banner:"ACCOUNT REGISTRATION\n\n").ElementAt(0).text;
+                if (selection == null || selection == null || selection == "Cancel")
                 {
-                    string banner = "Choose which information you'd like to change:";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner: banner).ElementAt(0).text)
-                    {
-                        case "first name":
-                            Console.Clear();
-                            Console.Write("first name: ");
-                            firstName = Console.ReadLine();
-                            break;
-
-                        case "last name":
-                            Console.Clear();
-                            Console.Write("last name: ");
-                            lastName = Console.ReadLine();
-                            break;
-
-                        case "email":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("email address: ");
-                                string newEmail = Console.ReadLine();
-                                if (LoginLogic.IsEmailValid(newEmail))
-                                {
-                                    email = newEmail;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid email address, try again!");
-                            }
-                            break;
-
-                        case "password":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("password (8-16 characters): ");
-                                string newPassword = Console.ReadLine();
-                                if (LoginLogic.IsPasswordValid(newPassword))
-                                {
-                                    password = newPassword;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid password, try again!");
-                            }
-                            break;
-
-                        case "phone number":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("phone number (8 numbers): ");
-                                string newPhoneNumber = Console.ReadLine();
-                                if (LoginLogic.IsPhoneNumberValid(newPhoneNumber))
-                                {
-                                    phoneNumber = newPhoneNumber;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid phone number, try again!");
-                            }
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                    // valid input has been provided
-                    break;
+                    ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
+                    return;
                 }
 
+                if (selection == "Promote an existing user to admin")
+                {
+                    PromoteExistingUserToAdmin();
+                    ControlHelpPresent.ResetToDefault();
+                    return;
+                }
             }
-            else
+
+            string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n"; // Dynamic banner
+            // Use InputHelper.GetValidatedInput for streamlined input handling
+            string firstName = InputHelper.GetValidatedInput<string>(
+            "First name: ",
+            input => InputHelper.InputNotNull(input, "First name"),
+            menuTitle: banner,
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
+            string lastName = InputHelper.GetValidatedInput<string>(
+            "Last name: ",
+            input => InputHelper.InputNotNull(input, "Last name"),
+            menuTitle: banner,
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
+            string email = InputHelper.GetValidatedInput<string>(
+                "Email (e.g., example@domain.com): ",
+                input =>
+                {
+                    var (isValid, message) = LoginLogic.IsEmailValid(input);
+                    if (!isValid)
+                    {
+                        if (message != null)
+                        {
+                            ControlHelpPresent.DisplayFeedback(message);
+                        }
+                        return (null, null);
+                    }
+                    return (input, null);
+                },
+                menuTitle: banner,
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
+            string password = InputHelper.GetValidatedInput<string>(
+            "Password (8-16 characters, must include letters and numbers): ",
+            input =>
             {
-                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+                var (isValid, message) = LoginLogic.IsPasswordValid(input);
+                if (!isValid)
+                {
+                    if (message != null)
+                    {
+                        ControlHelpPresent.DisplayFeedback(message); // Show feedback to the user
+                    }
+                    return (null, null); // Return null to prompt the user again
+                }
+                return (input, null); // Return valid input
+            },
+            menuTitle: banner,
+            showHelpAction: () => ControlHelpPresent.ShowHelp()
+        );
+            string phoneNumber = InputHelper.GetValidatedInput<string>(
+                "Phone number (10 digits): ",
+                input =>
+                {
+                    var (isValid, error) = LoginLogic.IsPhoneNumberValid(input);
+                    if (!isValid)
+                    {
+                        if (error != null)
+                        {
+                            ControlHelpPresent.DisplayFeedback(error);
+                        }
+                        return (null, null);
+                    }
+                    return (input, null);
+                },
+                menuTitle: banner,
+                showHelpAction: () => ControlHelpPresent.ShowHelp()
+            );
+            // reset help to default before confirming and saving the account
+            ControlHelpPresent.ResetToDefault();
+
+            isAdminCreated = ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+        });
+
+        // make sure controls are displayed again when escaping or returning
+        ControlHelpPresent.ResetToDefault();
+        ControlHelpPresent.ShowHelp();
+    }
+
+    private static void PromoteExistingUserToAdmin()
+    {
+        // fetch all users who are not admins
+        var nonAdminUsers = Access.Users.Read()
+            .Where(u => u.Admin == 0)
+            .ToList();
+
+        if (!nonAdminUsers.Any())
+        {
+            ControlHelpPresent.DisplayFeedback("No users found to promote to admin.", "bottom", "error");
+            return;
+        }
+
+        var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}\n").ToList();
+        userOptions.Add("Cancel");
+
+        var userSelection = SelectionPresent.Show(userOptions, banner:"ACCOUNT PROMOTION\n\n").ElementAt(0).text;
+        
+        if (string.IsNullOrEmpty(userSelection) || userSelection == "Cancel")
+        {
+            ControlHelpPresent.DisplayFeedback("Account promotion canceled", "bottom", "error");
+            return;
+        }
+
+        var selectedUser = nonAdminUsers.FirstOrDefault(u => userSelection.StartsWith($"{u.FirstName} {u.LastName} - {u.Email}") == true);
+        
+        if (selectedUser != null)
+        {
+            selectedUser.Admin = 1;
+            Access.Users.Update(selectedUser);
+            ControlHelpPresent.DisplayFeedback($"{selectedUser.FirstName} {selectedUser.LastName} has been promoted to admin.", "bottom", "success");
+            return;
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("Promotion to admin was canceled.", "bottom", "error");
+            return;
+        }
+    }
+
+    private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
+        while (true)
+        {
+            var details = new List<string>
+            {
+                $"First name   : {firstName}",
+                $"Last name    : {lastName}",
+                $"Email        : {email}",
+                // $"Password     : {new string('*', password.Length)}",
+                $"Password     : {password}",
+                $"Phone number : {phoneNumber}\n",
+                "Save and return",
+                "Cancel"
+            };
+
+            // add navigation options for the confirmation menu
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Exit", "<escape>");
+            ControlHelpPresent.ShowHelp();
+
+            dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:\n\n").ElementAt(0).text!;
+
+            if (selection.text == null || selection.text == "Cancel")
+            {
+                ControlHelpPresent.DisplayFeedback("Account creation canceled. All entered information has been discarded.", "bottom", "tip");
+                return false;
             }
+            
+            if (selection.text == "Save and return")
+            {
+                // ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
+                SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+                return admin;
+            }
+            
+            switch (selection?.text)
+            {
+                case var s when s?.StartsWith("First name"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        firstName = InputHelper.GetValidatedInput<string>(
+                            "First name: ",
+                            input => InputHelper.InputNotNull(input, "First name"),
+                            menuTitle: "EDIT FIRSTNAME",
+                            showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("First name edit canceled.", "bottom", "error");
+                    break;
+
+                case var s when s?.StartsWith("Last name"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        lastName = InputHelper.GetValidatedInput<string>(
+                            "Last name: ",
+                            input => InputHelper.InputNotNull(input, "Last name"),
+                            menuTitle: "EDIT LASTNAME",
+                            showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Last name edit canceled.", "bottom", "error");
+                    break;
+                
+                case var s when s?.StartsWith("Email"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        email = InputHelper.GetValidatedInput<string>(
+                        "Email (e.g., example@domain.com): ",
+                        input =>
+                        {
+                            var (isValid, message) = LoginLogic.IsEmailValid(input);
+                            if (!isValid)
+                            {
+                                if (message != null)
+                                {
+                                    ControlHelpPresent.DisplayFeedback(message);
+                                }
+                                return (null, null);
+                            }
+                            return (input, null);
+                        },
+                        menuTitle: "EDIT EMAIL",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Email edit canceled.", "bottom", "error");
+                    break;
+                
+                case var s when s?.StartsWith("Password"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        password = InputHelper.GetValidatedInput<string>(
+                        "Password (8-16 characters, must include letters and numbers): ",
+                        input =>
+                        {
+                            var (isValid, message) = LoginLogic.IsPasswordValid(input);
+                            if (!isValid)
+                            {
+                                if (message != null)
+                                {
+                                    ControlHelpPresent.DisplayFeedback(message);
+                                }
+                                return (null, null);
+                            }
+                            return (input, null);
+                        },
+                        menuTitle: "EDIT PASSWORD",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                        );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Password edit canceled.", "bottom", "error");
+                    break;
+                
+                case var s when s?.StartsWith("Phone number"):
+                    TryCatchHelper.EscapeKeyException(() =>
+                    {
+                        phoneNumber = InputHelper.GetValidatedInput<string>(
+                        "Phone number (10 digits): ",
+                        input =>
+                        {
+                            var (isValid, error) = LoginLogic.IsPhoneNumberValid(input);
+                            if (!isValid)
+                            {
+                                if (error != null)
+                                {
+                                    ControlHelpPresent.DisplayFeedback(error);
+                                }
+                                return (null, null);
+                            }
+                            return (input, null);
+                        },
+                        menuTitle: "EDIT PHONE NUMBER",
+                        showHelpAction: () => ControlHelpPresent.ShowHelp()
+                    );
+                    });
+                    ControlHelpPresent.DisplayFeedback("Phone number edit canceled.", "bottom", "error");
+                    break;
+
+                default:
+                    ControlHelpPresent.DisplayFeedback("Invalid option selected.", "bottom", "error");
+                    break;
+            }
+        }
+    }
+
+    private static void SaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
+        var account = new UserModel
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Password = password,
+            Phone = phoneNumber,
+            Admin = Convert.ToInt16(admin)
+        };
+
+        Access.Users.Write(account);
+        if (admin)
+        {
+            ControlHelpPresent.DisplayFeedback("Admin account has been created!", "bottom", "success");
+        }
+        else
+        {
+            ControlHelpPresent.DisplayFeedback("Your account has been successfully created!", "bottom", "success");
         }
     }
 }

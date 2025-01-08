@@ -22,13 +22,18 @@ static class AdminMenu
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text)
+            var selection = SelectionPresent.Show(options, banner: "ADMIN MENU").ElementAt(0).text;
+
+            if (string.IsNullOrEmpty(selection)) return;
+
+            switch (selection)
             {
                 case "Update  reservations":
                     ShowReservations.Show(acc);
                     break;
                 case "Create  admin":
-                    CreateAdminOptions.Options(acc);
+                    // CreateAdminOptions.Options(acc);
+                    RegisterUser.CreateAccount(true);
                     break;
                 case "Delete  account":
                     DeleteAccount.ShowDeleteAccountMenu(acc);
