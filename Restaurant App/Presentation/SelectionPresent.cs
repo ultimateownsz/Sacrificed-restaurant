@@ -49,10 +49,10 @@ internal class SelectionPresent
         }
     }
 
-    private static void _controls()
+    public static void _controls()
     {
         string output = "";
-        output += "CONTROLS OVERVIEW:\n\n";
+        output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
 
         output += "- General:\n";
         output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
@@ -77,6 +77,7 @@ internal class SelectionPresent
         output += "  5. Table Selection Mode:\n";
         output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
         output += "     - Select a cell with ENTER\n";
+        output += "\nPress any key to continue...";
 
         // display
         Console.Clear();
