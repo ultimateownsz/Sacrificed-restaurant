@@ -89,7 +89,8 @@ namespace Project
         private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
         {
             Console.Clear();
-            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
+            // Always display the month in English
+            Console.WriteLine(currentDate.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture).ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
             Console.ResetColor();
 
@@ -98,7 +99,7 @@ namespace Project
             if (theme != null)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"\nThe theme in {currentDate:MMMM} is {theme.Name}.\n");
+                Console.WriteLine($"\nThe theme in {currentDate.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture)} is {theme.Name}.\n");
                 Console.ResetColor();
             }
             else
