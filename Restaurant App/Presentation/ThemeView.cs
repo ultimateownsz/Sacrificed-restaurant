@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Project;
 using Project.Presentation;
 
@@ -5,7 +6,7 @@ static class ThemeView
 {
     public static void ThemedEditing()
     {
-        ConsoleKeyInfo key;
+        // ConsoleKeyInfo key;
         while (true)
         {
             string? themeName;
@@ -48,7 +49,8 @@ static class ThemeView
                     if(themeName == null)
                     {
                         Console.Clear();
-                        Console.WriteLine("Failed to update theme");
+                        // Console.WriteLine("Failed to update theme");
+                        ControlHelpPresent.DisplayFeedback("Failed to update theme");
                         goto middleMenu;
                     }
                     ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
@@ -59,7 +61,8 @@ static class ThemeView
                     ThemeMenuManager.DeleteMonthTheme(month, year);
                     
                     Console.Clear();
-                    Console.WriteLine("This theme has been deleted!");
+                    // Console.WriteLine("This theme has been deleted!");
+                    ControlHelpPresent.DisplayFeedback("This theme has been deleted!");
                     
                     Thread.Sleep(1000);
                     goto monthSelection;
@@ -97,11 +100,13 @@ static class ThemeView
                 if(themeName == null)
                 {
                     Console.Clear();
-                    Console.WriteLine("Failed to update theme");
+                    // Console.WriteLine("Failed to update theme");
+                    ControlHelpPresent.DisplayFeedback("Failed to update theme");
                     goto middleMenu2;
                 }
                 ThemeMenuManager.UpdateThemeSchedule(month, year, themeName);
-                Console.WriteLine($"The theme has been updated to {themeName}");
+                // Console.WriteLine($"The theme has been updated to {themeName}");
+                ControlHelpPresent.DisplayFeedback($"The theme has been updated to {themeName}", "bottom", "success");
             }
 
             break;
@@ -134,7 +139,12 @@ static class ThemeView
             Console.ResetColor();
 
             // Navigation options
-            Console.WriteLine("\n(r)eset, (esc)ape");
+            // Console.WriteLine("\n(r)eset, (esc)ape");
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Reset", "<r>");
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
+            ControlHelpPresent.ShowHelp();
+            ControlHelpPresent.ResetToDefault();
 
             // Display any error or info messages
             if (!string.IsNullOrEmpty(message))
@@ -169,12 +179,13 @@ static class ThemeView
                     }
                     else
                     {
-                        message = "Cannot navigate to years in the past.";
+                        // message = "Cannot navigate to years in the past.";
+                        ControlHelpPresent.DisplayFeedback("Cannot navigate to years in the past.");
                     }
                     break;
 
                 case ConsoleKey.R:
-                    message = string.Empty; // Clear message on reset
+                    // message = string.Empty; // Clear message on reset
                     currentIndex = currentYearIndex; // Reset to the current year
                     break;
 
@@ -185,7 +196,8 @@ static class ThemeView
                     return availableYears[currentIndex]; // Return the selected year
 
                 default:
-                    message = "Invalid input. Use arrow keys, 'R', 'B', or Enter.";
+                    // message = "Invalid input. Use arrow keys, 'r', 'escape', or Enter.";
+                    ControlHelpPresent.DisplayFeedback("Invalid input. Use arrow keys, 'r', 'escape', or Enter.");
                     break;
             }
         }
@@ -195,7 +207,7 @@ static class ThemeView
     {
         int month;
         string banner
-            = $"Select month in {year}, or go back with <ESC>\n";
+            = $"Select month in {year}\n";
         List<string> optionsMonths = Enumerable.Range(1, 12)
             .Select(m => ThemeMenuManager.GetMonthThemeName(m, year))
             .ToList();
@@ -229,7 +241,8 @@ static class ThemeView
             }
             if (DateTime.Now.Month >= month && DateTime.Now.Year == year)
             {
-                Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
+                // Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
+                ControlHelpPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.", "bottom", "tip");
                 Console.ReadKey();
             }
             else
