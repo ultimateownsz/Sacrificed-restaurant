@@ -1,3 +1,5 @@
+using App.DataAccess.Utils;
+
 namespace Restaurant;
 
 public class OrderLogic

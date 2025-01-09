@@ -1,5 +1,10 @@
-﻿namespace Restaurant;
+﻿using Restaurant;
 
+namespace App.DataAccess.Utils;
+
+using App.DataModels.Allergy;
+using App.DataModels.Product;
+using App.DataModels.Utils;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
@@ -52,13 +57,13 @@ public class DataAccess<T1> where T1 : IModel
     public List<T1?> Read()
     {
         string query = $"SELECT * FROM {_table}";
-        return (_db.Query<T1>(query) ?? []).ToList<T1?>();
+        return (_db.Query<T1>(query) ?? []).ToList();
     }
 
     public bool Write(T1 item)
     {
-        string fields = "(" + String.Join(",", _fields) + ")";
-        string values = "(" + String.Join(",", _values) + ")";
+        string fields = "(" + string.Join(",", _fields) + ")";
+        string values = "(" + string.Join(",", _values) + ")";
         string query = $"INSERT INTO {_table} {fields} VALUES {values}";
 
         return _execute(query, item);
@@ -94,13 +99,13 @@ public class DataAccess<T1> where T1 : IModel
     public T1? GetBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
-        return _db.QueryFirstOrDefault<T1>(query, new { value = value ?? default});
+        return _db.QueryFirstOrDefault<T1>(query, new { value = value ?? default });
     }
 
     public List<T1?> GetAllBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
-        return _db.Query<T1>(query, new { value = value ?? default }).ToList<T1?>();
+        return _db.Query<T1>(query, new { value = value ?? default }).ToList();
     }
 
     public T1? Trace<T2>(T2 value)

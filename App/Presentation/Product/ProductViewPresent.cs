@@ -1,3 +1,4 @@
+using App.DataModels.Product;
 using App.Logic.Allergy;
 using App.Logic.Theme;
 using Restaurant;

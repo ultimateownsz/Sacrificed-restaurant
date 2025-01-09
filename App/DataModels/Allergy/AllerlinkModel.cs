@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using App.DataModels.Utils;
+
+namespace App.DataModels.Allergy;
 public class AllerlinkModel : IModel
 {
     public int? ID { get; set; }

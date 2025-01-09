@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using App.DataAccess.Utils;
+
+namespace Restaurant;
 public class LoginLogic
 {
     public static UserModel? CurrentAccount { get; private set; }

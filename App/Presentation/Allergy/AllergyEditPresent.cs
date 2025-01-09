@@ -1,4 +1,5 @@
-﻿using App.Logic.Allergy;
+﻿using App.DataAccess.Utils;
+using App.Logic.Allergy;
 using Restaurant;
 
 namespace App.Presentation.Allergy;

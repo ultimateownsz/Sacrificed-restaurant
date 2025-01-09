@@ -1,4 +1,9 @@
-﻿namespace Restaurant;
+﻿using App.DataAccess;
+using App.DataAccess.Allergy;
+using App.DataAccess.Product;
+using Restaurant;
+
+namespace App.DataAccess.Utils;
 public abstract class Access
 {
     // this is for centralized and simplified usage 

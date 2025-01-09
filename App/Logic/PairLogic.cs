@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.DataAccess.Utils;
+using App.DataModels.Product;
+
+namespace Restaurant;
 
 internal class PairLogic
 {

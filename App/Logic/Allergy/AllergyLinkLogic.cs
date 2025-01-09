@@ -1,4 +1,7 @@
-﻿using App.Presentation.Allergy;
+﻿using App.DataAccess.Utils;
+using App.DataModels.Allergy;
+using App.DataModels.Product;
+using App.Presentation.Allergy;
 using Restaurant;
 
 namespace App.Logic.Allergy;

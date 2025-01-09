@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using App.DataModels.Utils;
+
+namespace Restaurant;
 public class ReservationModel : IModel
 {
     public int? ID { get; set; }

@@ -1,4 +1,5 @@
 // This class handles all the logic for the themes, adding, deleting, and eventually activating themes
+using App.DataAccess.Utils;
 using Restaurant;
 
 namespace App.Logic.Theme;
