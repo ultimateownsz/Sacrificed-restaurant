@@ -1,4 +1,4 @@
-namespace App.Test;
+namespace App.Tests.Reservation;
 
 // Unit Tests for Reservation Logic
 [TestClass]

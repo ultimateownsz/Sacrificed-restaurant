@@ -1,4 +1,4 @@
-namespace App.Test;
+namespace App.Tests.Reservation;
 
 [TestClass]
 public class ReservationShowTest

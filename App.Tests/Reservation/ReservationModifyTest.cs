@@ -1,7 +1,7 @@
-namespace App.Test;
+namespace App.Tests.Reservation;
 
 [TestClass]
-public class FuturePastReservationsTests
+public class ReservationModifyTest
 {
     [TestMethod]
     public void Test_Show_Admin_DisplaysAdminView()
@@ -132,4 +132,3 @@ public class FuturePastReservationsTests
         public int PlaceID { get; set; }
     }
 }
-
