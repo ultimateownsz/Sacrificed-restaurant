@@ -115,9 +115,8 @@ namespace Project
                 ControlHelpPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
                 return;
             }
-            
-            Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
-            Console.WriteLine("Mo Tu We Th Fr Sa Su");
+
+            // Display the header
             Terminable.Write(currentDate.ToString(
                 "MMMM yyyy").ToUpper() + "\n" + "Mo Tu We Th Fr Sa Su\n");
             Console.ResetColor();
@@ -190,6 +189,7 @@ namespace Project
             ControlHelpPresent.AddOptions("Select date", "<enter>");
             ControlHelpPresent.AddOptions("Back", "<escape>");
             ControlHelpPresent.ShowHelp();
+            ControlHelpPresent.ResetToDefault();
 
             if (!isAdmin)
             {
