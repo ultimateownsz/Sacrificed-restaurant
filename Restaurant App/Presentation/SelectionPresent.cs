@@ -17,10 +17,10 @@ internal class SelectionPresent
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
         string banner, SelectionLogic.Mode mode, int menuStartLine)
     {
-
         // banner & colour initialization
         Console.Clear();
         Console.SetCursorPosition(0, menuStartLine);
+        Terminable.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
 
         foreach (((string text, SelectionLogic.Selectable selectable), int index) 
@@ -50,41 +50,41 @@ internal class SelectionPresent
         }
     }
 
-    public static void _controls()
-    {
-        string output = "";
-        output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
+    // public static void _controls()
+    // {
+    //     string output = "";
+    //     output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
 
-        output += "- General:\n";
-        output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
-        output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
-        output += "  - Go Back: ESC\n";
-        output += "  - Input Text: Type and press ENTER\n\n";
+    //     output += "- General:\n";
+    //     output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
+    //     output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
+    //     output += "  - Go Back: ESC\n";
+    //     output += "  - Input Text: Type and press ENTER\n\n";
 
-        output += "- Menu Modes:\n";
-        output += "  1. Single Mode:\n";
-        output += "     - Navigate through a list with ↑ and ↓\n";
-        output += "     - Select an item with ENTER\n";
-        output += "  2. Multi Mode:\n";
-        output += "     - Navigate through a list with ↑ and ↓\n";
-        output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
-        output += "     - Submit selection by clicking \"Continue\"\n";
-        output += "  3. Scroll Mode:\n";
-        output += "     - Scroll one line at a time with ↑ and ↓\n";
-        output += "     - Submit selection with ENTER\n";
-        output += "  4. Calendar Mode:\n";
-        output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
-        output += "     - Select a date with ENTER\n";
-        output += "  5. Table Selection Mode:\n";
-        output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
-        output += "     - Select a cell with ENTER\n";
-        output += "\nPress any key to continue...";
+    //     output += "- Menu Modes:\n";
+    //     output += "  1. Single Mode:\n";
+    //     output += "     - Navigate through a list with ↑ and ↓\n";
+    //     output += "     - Select an item with ENTER\n";
+    //     output += "  2. Multi Mode:\n";
+    //     output += "     - Navigate through a list with ↑ and ↓\n";
+    //     output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
+    //     output += "     - Submit selection by clicking \"Continue\"\n";
+    //     output += "  3. Scroll Mode:\n";
+    //     output += "     - Scroll one line at a time with ↑ and ↓\n";
+    //     output += "     - Submit selection with ENTER\n";
+    //     output += "  4. Calendar Mode:\n";
+    //     output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
+    //     output += "     - Select a date with ENTER\n";
+    //     output += "  5. Table Selection Mode:\n";
+    //     output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
+    //     output += "     - Select a cell with ENTER\n";
+    //     output += "\nPress any key to continue...";
 
-        // display
-        Console.Clear();
-        Console.WriteLine(output);
-        Console.ReadKey();
-    }
+    //     // display
+    //     Console.Clear();
+    //     Console.WriteLine(output);
+    //     Console.ReadKey();
+    // }
 
     private static SelectionLogic.Interaction _update(
         Dictionary<string, SelectionLogic.Selectable> selection, SelectionLogic.Mode mode)
@@ -117,9 +117,9 @@ internal class SelectionPresent
                 SelectionLogic.Mark(selection);
                 return SelectionLogic.Interaction.Marked;
 
-            case ConsoleKey.C:
-                _controls();
-                return SelectionLogic.Interaction.None;
+            // case ConsoleKey.C:
+            //     _controls();
+            //     return SelectionLogic.Interaction.None;
 
             // safeguard
             default:
@@ -249,16 +249,16 @@ internal class SelectionPresent
         }
     }
 
-    // clear only the menu area
-    private static void ClearMenuArea(int menuStartLine, int menuHeight)
-    {
-        int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
-        for (int i = menuStartLine; i < endLine; i++)
-        {
-            // if (i >= Console.WindowHeight) break; // prevent out of bounds
-            Console.SetCursorPosition(0, i);
-            Console.Write(new string(' ', Console.WindowWidth)); // clear the line
-        }
-        Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
-    }
+    // // clear only the menu area
+    // private static void ClearMenuArea(int menuStartLine, int menuHeight)
+    // {
+    //     int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
+    //     for (int i = menuStartLine; i < endLine; i++)
+    //     {
+    //         // if (i >= Console.WindowHeight) break; // prevent out of bounds
+    //         Console.SetCursorPosition(0, i);
+    //         Console.Write(new string(' ', Console.WindowWidth)); // clear the line
+    //     }
+    //     Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
+    // }
 }
