@@ -10,8 +10,15 @@ internal class EditAllergyPresent
         string? input;
         while (true)
         {
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Exit", "<escape>");
+            ControlHelpPresent.ShowHelp();
             input = Terminable.ReadLine("allergy name: ");
-            if (input == null) return null;
+            if (input == null)
+            {
+                ControlHelpPresent.ResetToDefault();
+                return null;
+            }
             
             break;
         }
