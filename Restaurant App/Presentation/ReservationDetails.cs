@@ -32,9 +32,12 @@ public static class ReservationDetails
 
     public static void ShowOrders(UserModel acc)
     {
+        lCalendar:
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
+        if (selectedDate == DateTime.MinValue)
+            return;
 
         while (true)
         {
@@ -55,7 +58,7 @@ public static class ReservationDetails
                 switch (emptyOrders.Key)
                 {
                     case ConsoleKey.Escape:
-                        return;
+                        goto lCalendar;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
                         continue;
@@ -73,8 +76,8 @@ public static class ReservationDetails
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.B:
-                        return;
+                    case ConsoleKey.Escape:
+                        goto lCalendar;
                     case ConsoleKey.P:
                         selectedDate = selectedDate.AddDays(-1);
                         break;

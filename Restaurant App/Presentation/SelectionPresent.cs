@@ -1,4 +1,7 @@
-﻿namespace Project;
+﻿using Project.Presentation;
+using System.Net.Http.Headers;
+
+namespace Project;
 internal class SelectionPresent
 {
 
@@ -19,9 +22,9 @@ internal class SelectionPresent
         Console.Clear();
         Console.SetCursorPosition(0, menuStartLine);
         Console.ForegroundColor = palette.Base;
-        Console.WriteLine(banner + "\n");
 
-        foreach (((string text, SelectionLogic.Selectable selectable), int index) in selection.Select((value, index) => (value, index)))
+        foreach (((string text, SelectionLogic.Selectable selectable), int index) 
+            in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
             Console.ForegroundColor = selectable.selected && selectable.highlighted
@@ -45,6 +48,42 @@ internal class SelectionPresent
             Console.WriteLine($"{prefix} {text} {suffix}");
             Console.ForegroundColor = palette.Base;
         }
+    }
+
+    public static void _controls()
+    {
+        string output = "";
+        output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
+
+        output += "- General:\n";
+        output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
+        output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
+        output += "  - Go Back: ESC\n";
+        output += "  - Input Text: Type and press ENTER\n\n";
+
+        output += "- Menu Modes:\n";
+        output += "  1. Single Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select an item with ENTER\n";
+        output += "  2. Multi Mode:\n";
+        output += "     - Navigate through a list with ↑ and ↓\n";
+        output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
+        output += "     - Submit selection by clicking \"Continue\"\n";
+        output += "  3. Scroll Mode:\n";
+        output += "     - Scroll one line at a time with ↑ and ↓\n";
+        output += "     - Submit selection with ENTER\n";
+        output += "  4. Calendar Mode:\n";
+        output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
+        output += "     - Select a date with ENTER\n";
+        output += "  5. Table Selection Mode:\n";
+        output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
+        output += "     - Select a cell with ENTER\n";
+        output += "\nPress any key to continue...";
+
+        // display
+        Console.Clear();
+        Console.WriteLine(output);
+        Console.ReadKey();
     }
 
     private static SelectionLogic.Interaction _update(
@@ -78,6 +117,9 @@ internal class SelectionPresent
                 SelectionLogic.Mark(selection);
                 return SelectionLogic.Interaction.Marked;
 
+            case ConsoleKey.C:
+                _controls();
+                return SelectionLogic.Interaction.None;
 
             // safeguard
             default:
@@ -88,6 +130,7 @@ internal class SelectionPresent
     public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
         string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
+
         // initialization
         Dictionary<string, SelectionLogic.Selectable> selection =
             SelectionLogic.ToSelectables(options, preselected, mode);

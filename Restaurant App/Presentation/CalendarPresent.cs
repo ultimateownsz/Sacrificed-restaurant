@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Presentation;
+using Project.Presentation;
 
 namespace Project
 {
@@ -50,50 +51,51 @@ namespace Project
                     case ConsoleKey.Enter:
                         DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
 
-                    if (!isAdmin)
-                    {
-                        if (IsDayFullyBooked(selectedDate, guests))
+                        if (!isAdmin)
                         {
-                            Console.SetCursorPosition(0, Console.CursorTop + 2);
-                            // Console.ForegroundColor = ConsoleColor.Red;
-                            ControlHelpPresent.DisplayFeedback("This day is fully reserved.");
-                            Console.ResetColor();
-                        }
-                        else if (NoThemeForMonth(selectedDate))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            ControlHelpPresent.DisplayFeedback("This month has no theme. Please select another month.");
-                            Console.ResetColor();
-                        }
-                        else if (NoProductsInTheme(selectedDate))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            ControlHelpPresent.DisplayFeedback("This month has no products. Please select another month");
-                            Console.ResetColor();
+                            if (IsDayFullyBooked(selectedDate, guests))
+                            {
+                                Console.SetCursorPosition(0, Console.CursorTop + 2);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("This day is fully reserved.");
+                                Console.ResetColor();
+                            }
+                            else if (NoThemeForMonth(selectedDate))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("This month has no theme.");
+                                Console.ResetColor();
+                            }
+                            else if (NoProductsInTheme(selectedDate))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("This month has no products.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                // Display the theme of the current month if it exists
+                                ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
+                                if (theme != null)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine($"\nThe theme in {selectedDate.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture)} is {theme.Name}.");
+                                    Console.ResetColor();
+                                }
+
+                                return selectedDate;
+                            }
                         }
                         else
                         {
-                            // Display the theme of the current month if it exists
-                            ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(selectedDate);
-                            if (theme != null)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine($"\nThe theme in {selectedDate.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture)} is {theme.Name}.");
-                                Console.ResetColor();
-                            }
-
+                            // For admins, allow navigation and selection even if there is no theme or products
                             return selectedDate;
                         }
-                    }
-                    else
-                    {
-                        // For admins, allow navigation and selection even if there is no theme or products
-                        return selectedDate;
-                    }
 
                         break;
                     case ConsoleKey.Escape:
                         return DateTime.MinValue; // Go back
+
                     default:
                         ControlHelpPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                         break;
@@ -116,6 +118,8 @@ namespace Project
             
             Console.WriteLine(currentDate.ToString("MMMM yyyy").ToUpper());
             Console.WriteLine("Mo Tu We Th Fr Sa Su");
+            Terminable.Write(currentDate.ToString(
+                "MMMM yyyy").ToUpper() + "\n" + "Mo Tu We Th Fr Sa Su\n");
             Console.ResetColor();
 
             int daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);

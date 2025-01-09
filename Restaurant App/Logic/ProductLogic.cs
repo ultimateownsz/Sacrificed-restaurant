@@ -1,6 +1,7 @@
 // this class handles all the logic for adding, updating, and deleting products
 using System.Diagnostics;
 using Project;
+using Project.Presentation;
 
 static class ProductLogic
 {
@@ -33,11 +34,9 @@ static class ProductLogic
         while (true)
         {
             Console.Clear();
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"Enter {type}: ", Console.ForegroundColor);
-            Console.ForegroundColor = ConsoleColor.White;
-            var productInfo = Console.ReadLine();
+            var productInfo = Terminable.ReadLine($"Enter {type}: ");
+            if (productInfo == null) return "REQUEST_PROCESS_EXIT";
+            
             if(type == "name")
             {
                 if (!string.IsNullOrWhiteSpace(productInfo) && !productInfo.Any(char.IsDigit)) // validate the name
@@ -215,21 +214,16 @@ static class ProductLogic
     //This Method validates the edit the user wants to make to a product based on the type of edit
     public static void ProductEditValidator(ProductModel oldProduct, string type)
     {
-        string newProductEdit;
+        string? newProductEdit;
         int? ThemeID = null;
 
         Console.Clear();
+
         if(type == "theme")
         {
             newProductEdit = ThemeInputValidator.GetValidThemeMenu();
-            if(newProductEdit == "0")
-            {
-                newProductEdit = null;
-            }
-            else if(newProductEdit == null)
-            {
+            if (newProductEdit == "REQUEST_PROCESS_EXIT")
                 return;
-            }
             else
             {
                 ThemeID = ThemeMenuLogic.GetThemeIDByName(newProductEdit);
@@ -238,14 +232,22 @@ static class ProductLogic
         else if(type == "price")
         {
             newProductEdit = GetValidNameOrPrice("price");
+            if (newProductEdit == "REQUEST_PROCESS_EXIT")
+                return;
         }
         else if(type == "course")
         {
             newProductEdit = CourseLogic.GetValidCourse();
+            if (newProductEdit == "REQUEST_PROCESS_EXIT")
+                return;
         }
         else
         {
+            /// terrible implementation, here's something you might find useful:
+            /// https://www.werkenbijmcdonalds.nl/en
             newProductEdit = GetValidNameOrPrice("name");
+            if (newProductEdit == "REQUEST_PROCESS_EXIT")
+                return;
         }
 
         Console.Clear();
@@ -292,22 +294,34 @@ static class ProductLogic
     {
         ProductModel newProduct = new();
 
+    lName:
         string name = GetValidNameOrPrice("name"); //ask for the name
+        if (name == "REQUEST_PROCESS_EXIT")
+            return new() { ID = -1 };
+
         if(name == null)
         {
             return null;
         }
         newProduct.Name = name;
 
+    lCourse:
         string course = CourseLogic.GetValidCourse(); //ask for the course
-        if(course == null)
+        if (course == "REQUEST_PROCESS_EXIT")
+            goto lName;
+
+        if (course == null)
         {
             return null;
         }
         newProduct.Course = course;
 
+    lTheme:
         string theme = ThemeInputValidator.GetValidThemeMenu(); //ask for the theme
-        if(theme == null)
+        if (theme == "REQUEST_PROCESS_EXIT")
+            goto lCourse;
+
+        if (theme == null)
         {
             return null;
         }
@@ -321,6 +335,9 @@ static class ProductLogic
         }
 
         string price = GetValidNameOrPrice("price"); //ask for the price
+        if (price == "REQUEST_PROCESS_EXIT")
+            goto lTheme;
+
         decimal temp;
         if (decimal.TryParse(price, out temp))
         {
@@ -328,7 +345,7 @@ static class ProductLogic
         }
         else
         {
-            return null;
+            return new() { ID = -1 };
         }
 
         return newProduct; //return the new model

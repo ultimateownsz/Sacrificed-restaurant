@@ -12,14 +12,14 @@ public class CourseLogic
         while (true)
         {
             var courseName = SelectionPresent.Show(courses, banner: "ADMIN MENU").ElementAt(0).text;
-
+            if (courseName == "") 
+                return "REQUEST_PROCESS_EXIT";
             if (courseName != "")
             {
                 return courseName;
             }
             else
             {
-                Console.WriteLine("lol");
                 return null;
             }
         }

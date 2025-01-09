@@ -17,7 +17,7 @@ static class AdminMenu
             "Create  admin",
             "Delete  account",
             "Display orders\n",
-            "Back"
+            "Logout"
         };
 
         while (true)
@@ -53,7 +53,7 @@ static class AdminMenu
                 case "Update  allergies":
                     EditAllergyLogic.Start();
                     break;
-                case "Back":
+                case "Logout":
                     return;
             }
         }
