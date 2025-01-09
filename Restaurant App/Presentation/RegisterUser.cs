@@ -24,21 +24,24 @@ internal class RegisterUser
                 ControlHelpPresent.ResetToDefault();
                 ControlHelpPresent.ShowHelp();
 
-                var selection = SelectionPresent.Show(["Create a new admin account", "Promote an existing user to admin\n", "Cancel"], banner:"ACCOUNT REGISTRATION\n\n").ElementAt(0).text;
+                var selection = SelectionPresent.Show(["Create a new admin account", "Make existing user admin", "Cancel"], banner:"ACCOUNT REGISTRATION").ElementAt(0).text;
                 if (selection == null || selection == null || selection == "Cancel")
                 {
                     ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
                     return;
                 }
 
-                if (selection == "Promote an existing user to admin")
+                if (selection == "Make existing user admin")
                 {
-                    PromoteExistingUserToAdmin();
+                    PromoteUserToAdmin();
                     ControlHelpPresent.ResetToDefault();
                     return;
                 }
             }
 
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Escape", "<escape>");
+            ControlHelpPresent.ShowHelp();
             string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n"; // Dynamic banner
             // Use InputHelper.GetValidatedInput for streamlined input handling
             string firstName = InputHelper.GetValidatedInput<string>(
@@ -118,45 +121,98 @@ internal class RegisterUser
         ControlHelpPresent.ShowHelp();
     }
 
-    private static void PromoteExistingUserToAdmin()
+    private static void PromoteUserToAdmin()
     {
-        // fetch all users who are not admins
-        var nonAdminUsers = Access.Users.Read()
-            .Where(u => u.Admin == 0)
-            .ToList();
+        // Display help options and initial prompt
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
 
-        if (!nonAdminUsers.Any())
+        void DisplayPrompt()
         {
-            ControlHelpPresent.DisplayFeedback("No users found to promote to admin.", "bottom", "error");
+            Console.Clear();
+            Console.WriteLine("Enter the first and last name of the user you want to promote to admin.\n");
+        }
+
+        string? firstName = null;
+        string? lastName = null;
+
+        TryCatchHelper.EscapeKeyException(() =>
+        {
+            DisplayPrompt();
+
+            firstName = InputHelper.GetValidatedInput<string>(
+                "First Name: ",
+                input => InputHelper.InputNotNull(input, "First name"),
+                menuTitle: "PROMOTE USER TO ADMIN",
+                showHelpAction: () =>
+                {
+                    DisplayPrompt();
+                    ControlHelpPresent.ShowHelp();
+                }
+            );
+
+            lastName = InputHelper.GetValidatedInput<string>(
+                "Last Name: ",
+                input => InputHelper.InputNotNull(input, "Last name"),
+                menuTitle: "PROMOTE USER TO ADMIN",
+                showHelpAction: () =>
+                {
+                    DisplayPrompt();
+                    ControlHelpPresent.ShowHelp();
+                }
+            );
+        });
+
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+        {
+            ControlHelpPresent.DisplayFeedback("Both first and last names are required..", "bottom", "error");
             return;
         }
 
-        var userOptions = nonAdminUsers.Select(u => $"{u.FirstName} {u.LastName} - {u.Email}\n").ToList();
-        userOptions.Add("Cancel");
+        // Access the user database
+        var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
 
-        var userSelection = SelectionPresent.Show(userOptions, banner:"ACCOUNT PROMOTION\n\n").ElementAt(0).text;
-        
-        if (string.IsNullOrEmpty(userSelection) || userSelection == "Cancel")
+        // Fetch user based on input
+        var user = userAccess.GetAllBy("FirstName", firstName)
+            .FirstOrDefault(u =>
+                string.Equals(u!.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
+                u.Admin == 0);
+
+        if (user == null)
         {
-            ControlHelpPresent.DisplayFeedback("Account promotion canceled", "bottom", "error");
+            ControlHelpPresent.DisplayFeedback("User not found. Promotion canceled.", "bottom", "error");
             return;
         }
 
-        var selectedUser = nonAdminUsers.FirstOrDefault(u => userSelection.StartsWith($"{u.FirstName} {u.LastName} - {u.Email}") == true);
-        
-        if (selectedUser != null)
+        // Confirmation for promotion
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
+        Console.Clear();
+        string? confirmation = SelectionPresent.Show(
+            new List<string> { "Yes", "No" },
+            banner: "Are you sure you want to promote this user to admin?").ElementAt(0).text;
+
+        if (confirmation == "Yes")
         {
-            selectedUser.Admin = 1;
-            Access.Users.Update(selectedUser);
-            ControlHelpPresent.DisplayFeedback($"{selectedUser.FirstName} {selectedUser.LastName} has been promoted to admin.", "bottom", "success");
-            return;
+            user.Admin = 1;
+            if (userAccess.Update(user))
+            {
+                ControlHelpPresent.DisplayFeedback($"{user.FirstName} {user.LastName} successfully promoted to admin.", "bottom", "success");
+            }
+            else
+            {
+                ControlHelpPresent.DisplayFeedback("Failed to promote the user. Try again.", "bottom", "error");
+            }
         }
         else
         {
             ControlHelpPresent.DisplayFeedback("Promotion to admin was canceled.", "bottom", "error");
-            return;
         }
     }
+
 
     private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
     {
@@ -181,20 +237,20 @@ internal class RegisterUser
 
             dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:\n\n").ElementAt(0).text!;
 
-            if (selection.text == null || selection.text == "Cancel")
+            if (selection == null || selection == "Cancel")
             {
                 ControlHelpPresent.DisplayFeedback("Account creation canceled. All entered information has been discarded.", "bottom", "tip");
                 return false;
             }
             
-            if (selection.text == "Save and return")
+            if (selection == "Save and return")
             {
                 // ControlHelpPresent.DisplayFeedback("\nSaving your account...", "bottom", "success");
                 SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
                 return admin;
             }
             
-            switch (selection?.text)
+            switch (selection)
             {
                 case var s when s?.StartsWith("First name"):
                     TryCatchHelper.EscapeKeyException(() =>
