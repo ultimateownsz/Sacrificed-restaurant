@@ -4,7 +4,7 @@ class Program
 {
     static void Main()
     {
-        UserMenuPresent.Init();
-        UserMenuPresent.Start();
+        MenuPresent.Init();
+        MenuPresent.Start();
     }
 }

@@ -41,7 +41,7 @@ public static class UserDeleteAccountPresent
             Console.ReadKey();
 
             // Go back to the login page after deletion
-            UserMenuPresent.Start();
+            MenuPresent.Start();
         }
         else
         {
