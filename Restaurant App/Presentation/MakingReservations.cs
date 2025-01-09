@@ -155,7 +155,7 @@ namespace Presentation
             for (int z = 0; z < categories.Count; z++)
             {
                 // Filter products by theme, category, and allergy restrictions
-                List<ProductModel> products = ProductLogic
+                List<ProductModel> products = ProductManager
                     .GetAllWithinThemeCourse(categories[z], theme.ID)
                     .Where(product => !LinkAllergyLogic.IsAllergic(id, product.ID))
                     .ToList();

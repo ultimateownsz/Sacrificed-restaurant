@@ -9,7 +9,7 @@ public static class UpdateProducts
             throw new ArgumentNullException(nameof(product));
         }
         
-        if (ProductLogic.AddProduct(product) == false)
+        if (ProductManager.AddProduct(product) == false)
         {
             ControlHelpPresent.DisplayFeedback($"Product: {product.Name}, with ID: {product.ID} already exists.", "bottom", "error");
         }
@@ -21,7 +21,7 @@ public static class UpdateProducts
 
     public static void DeleteProduct(int productId)
     {
-        if (ProductLogic.DeleteProduct(productId))
+        if (ProductManager.DeleteProduct(productId))
         {
             ControlHelpPresent.DisplayFeedback($"Product with ID: {productId} deleted.", "bottom", "success");
         }

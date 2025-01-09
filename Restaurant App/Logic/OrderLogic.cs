@@ -23,7 +23,7 @@ public class OrderLogic
     //     }
 
     //     // Validate product ID
-    //     if (!ProductLogic.DoesProductExist(productId))
+    //     if (!ProductManager.DoesProductExist(productId))
     //     {
     //         Console.WriteLine($"Product ID {productId} does not exist.");
     //         return false;
@@ -60,7 +60,7 @@ public class OrderLogic
         }
 
         // Validate product ID
-        if (!ProductLogic.DoesProductExist(productId))
+        if (!ProductManager.DoesProductExist(productId))
         {
             return (false, $"Product ID {productId} does not exist.");
         }

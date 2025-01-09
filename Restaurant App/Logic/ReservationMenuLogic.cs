@@ -15,7 +15,7 @@ public class ReservationMenuLogic
     {
         int month = selectedDate.Month;
         int year = selectedDate.Year;
-        ThemeModel? theme = ThemeMenuLogic.GetThemeByYearAndMonth(month, year);
+        ThemeModel? theme = ThemeMenuManager.GetThemeByYearAndMonth(month, year);
         if(theme == null) return null;
         CurrentTheme = Access.Themes.GetBy<int?>("ID", theme.ID);
         if(CurrentTheme is not null)

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Project;
 using Project.Presentation;
 
-static class ProductLogic
+static class ProductManager
 {
     //This Method is used to add products
     public static bool AddProduct(ProductModel product)
@@ -150,7 +150,7 @@ static class ProductLogic
         
         if (theme != "0")
         {
-            themeID = ThemeMenuLogic.GetThemeIDByName(theme);
+            themeID = ThemeMenuManager.GetThemeIDByName(theme);
         }
         else
         {
@@ -181,8 +181,8 @@ static class ProductLogic
         {
             themeID = parts.Count() switch
             {
-                4 => ThemeMenuLogic.GetThemeIDByName(parts[2]),
-                3 => ThemeMenuLogic.GetThemeIDByName(parts[1]),
+                4 => ThemeMenuManager.GetThemeIDByName(parts[2]),
+                3 => ThemeMenuManager.GetThemeIDByName(parts[1]),
                 _ => null
             };
         }
@@ -193,7 +193,7 @@ static class ProductLogic
                 p.Name == parts[0] &&
                 p.Price == price &&
                 (type == "course" ? p.Course == name : p.Course == parts[1]) &&
-                (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuLogic.GetThemeIDByName(name) : p.ThemeID == themeID));
+                (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == themeID));
     }
 
     //This Method updates a product in the db
@@ -226,7 +226,7 @@ static class ProductLogic
                 return;
             else
             {
-                ThemeID = ThemeMenuLogic.GetThemeIDByName(newProductEdit);
+                ThemeID = ThemeMenuManager.GetThemeIDByName(newProductEdit);
             }
         }
         else if(type == "price")
@@ -331,7 +331,7 @@ static class ProductLogic
         }
         else
         {
-            newProduct.ThemeID = ThemeMenuLogic.GetThemeIDByName(theme);
+            newProduct.ThemeID = ThemeMenuManager.GetThemeIDByName(theme);
         }
 
         string price = GetValidNameOrPrice("price"); //ask for the price
