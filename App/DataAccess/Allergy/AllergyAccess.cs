@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.DataAccess.Utils;
+using App.DataModels.Allergy;
+
+namespace App.DataAccess.Allergy;
 public class AllergyAccess : DataAccess<AllergyModel>
 {
     public AllergyAccess() : base(typeof(AllergyModel).GetProperties().Select(p => p.Name).ToArray()) { }

@@ -1,8 +1,8 @@
 ﻿using App.DataAccess.Utils;
+using App.DataModels.Allergy;
 using App.Presentation.Allergy;
-using Restaurant;
 
-namespace App.Logic.Allergy;
+namespace Restaurant;
 internal class AllergyEditLogic
 {
 

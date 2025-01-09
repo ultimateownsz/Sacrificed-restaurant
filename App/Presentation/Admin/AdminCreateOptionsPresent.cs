@@ -1,7 +1,7 @@
+using App.DataAccess.Utils;
 using App.Presentation.User;
-using Restaurant;
 
-namespace App.Presentation.Admin;
+namespace Restaurant;
 
 public static class AdminCreateOptionsPresent
 {

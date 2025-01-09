@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using App.DataModels.Utils;
+
+namespace App.DataModels.Product;
 public class PairModel : IModel
 {
     public int? ID { get; set; }

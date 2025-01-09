@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using App.DataModels.Utils;
+
+namespace Restaurant;
 public class ScheduleModel : IModel
 {
     public int? ID { get; set; }
