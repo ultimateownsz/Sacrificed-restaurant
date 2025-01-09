@@ -4,6 +4,14 @@ public static class ReservationDetails
     public static void ShowDetails(ReservationModel reservation)
     {
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
+        _ = ControlHelpPresent.GetFooterHeight(); // Dynamically determine footer height
+        int reservationStartLine = 0;
+
+        Console.SetCursorPosition(0, reservationStartLine);
 
         // Fetch the account details for the user
         var account = Access.Reservations.GetBy<int?>("UserID", reservation.UserID);
@@ -26,7 +34,7 @@ public static class ReservationDetails
         Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
         Console.WriteLine("More details may appear in the future...");
 
-        Console.WriteLine("\nPress any key to return to the reservations list.");
+        ControlHelpPresent.DisplayFeedback("\nPress any key to return to the reservations list.");
         Console.ReadKey();
     }
 

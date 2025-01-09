@@ -78,7 +78,7 @@ namespace Presentation
                     }
                     else
                     {
-                        ControlHelpPresent.DisplayFeedback("User ID is not available. Unable to create reservation.");
+                        ControlHelpPresent.DisplayFeedback("User ID is null. Unable to create reservation.");
                         return;
                     }
 
@@ -96,7 +96,7 @@ namespace Presentation
                         PrintReceipt(orders, reservationId, acc);
 
                         // Prompt the user to press Enter to return to the menu
-                        Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                        ControlHelpPresent.DisplayFeedback("Press Enter when you are ready to return to the menu...", "bottom", "tip");
                         while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                         {
                             // Do nothing, just wait for Enter
@@ -110,7 +110,7 @@ namespace Presentation
     {
         if (reservationId == 0)
         {
-            ControlHelpPresent.DisplayFeedback("Invalid reservation ID. Exiting TakeOrders.");
+            Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
             return new List<ProductModel>(); // Return an empty list for invalid reservations
         }
 
@@ -136,7 +136,7 @@ namespace Presentation
         var reservation = Access.Reservations.GetBy<int>("ID", reservationId);
         if (reservation == null)
         {
-            Console.WriteLine("Reservation not found. Unable to save orders.");
+            ControlHelpPresent.DisplayFeedback("Reservation not found. Unable to save orders.");
             return new List<ProductModel>();
         }
 
@@ -186,42 +186,23 @@ namespace Presentation
                     var selectedProduct = products.FirstOrDefault(p =>
                         selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
 
-                        // recommend product (drink pair)
-                        PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
-                        if (linkage != null)
+                    if (selectedProduct != null && selectedProduct.ID.HasValue)
+                    {
+                        guestOrder.Add(selectedProduct);
+
+                        // Save the selected product to the Request table
+                        if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                         {
-                            ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
-                            string _banner = "DRINK PAIRING\n\nWould you like to pair " +
-                                           $"{recommended.Name} with {selectedProduct.Name}";
-
-
-                            switch (SelectionPresent.Show(["Yes", "No"], 
-                                banner: _banner).ElementAt(0).index)
-                            {
-                                case 0:
-                                    guestOrder.Add(recommended);
-                                    break;
-                            }
+                            ControlHelpPresent.DisplayFeedback("Failed to save the order. Please try again.", "bottom", "tip");
+                            Console.ReadKey();
+                            continue;
                         }
-
-                        if (selectedProduct != null && selectedProduct.ID.HasValue)
-                        {
-                            guestOrder.Add(selectedProduct);
-
-                            // EMERGENCY MODIFICATION: 1
-                            var saveResult = orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value);
-                            if (!saveResult.isValid)
-                            {
-                               ControlHelpPresent.DisplayFeedback("Failed to save the order. Please try again.");
-                               Console.ReadKey();
-                               continue;
-                            }
 
                         break; // Exit the selection loop for this category
                     }
                     else
                     {
-                        ControlHelpPresent.DisplayFeedback("Invalid selection. Please try again.");
+                        ControlHelpPresent.DisplayFeedback("Invalid selection. Please try again.", "bottom", "tip");
                         Console.ReadKey();
                     }
                 }
@@ -235,7 +216,7 @@ namespace Presentation
                 Access.Allerlinks.Delete(lnk.ID);
             }
 
-            ControlHelpPresent.DisplayFeedback("\nPress any key to continue...", "bottom", "tip");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
         }
 
