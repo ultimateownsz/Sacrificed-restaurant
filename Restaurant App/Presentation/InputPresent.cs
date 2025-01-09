@@ -58,13 +58,13 @@ public static class InputHelper
             int remainingAttempts = maxAttempts - attempt;
             if (remainingAttempts > 0)
             {
-                ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.\n");
+                ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.");
                 // Console.ResetColor();
             }
             else
             {
                 // Throw exception after last attempt
-                ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.\n");
+                ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.");
                 Thread.Sleep(1500);
                 throw new OperationCanceledException("Too many invalid attempts.");
             }
