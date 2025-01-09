@@ -53,7 +53,8 @@ public static class AdminCreateOptionsPresent
         }
 
         // Create an instance fpr UserModel
-        var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
+        //var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
+        var userAccess = Access.Users;
 
         // Fetch user bases on the input
         var user = userAccess.GetAllBy("FirstName", firstName)

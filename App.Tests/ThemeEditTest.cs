@@ -12,7 +12,6 @@ public class ThemeEditTest
         var schedule = new Schedule { Year = 2025, Month = 6 };
 
         // Act
-        
         string result = SimulateAddTheme(schedule, themeName);
 
         // Assert

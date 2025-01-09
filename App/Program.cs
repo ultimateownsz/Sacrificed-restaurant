@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.DataAccess.Utils;
+using App.DataModels.Allergy;
+
+namespace Restaurant;
 
 class Program
 {
