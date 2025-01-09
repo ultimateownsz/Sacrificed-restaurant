@@ -1,5 +1,7 @@
 // the presentation layer uses this class to validate the input of the user
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Logic.Theme;
 
 public static class ThemeValidateLogic
 {
@@ -33,10 +35,10 @@ public static class ThemeValidateLogic
                 return themeName;
             }
 
-            Console.Clear();            
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Enter theme name: {themeName}", Console.ForegroundColor);
-            
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nInvalid theme name...");
             Console.WriteLine("Press any key to retry or ESCAPE to go back");
@@ -55,8 +57,8 @@ public static class ThemeValidateLogic
         {
             List<string> Themes = ThemeManageLogic.GetAllThemes();
             var themeName = SelectionPresent.Show(Themes, banner: "Choose theme:").ElementAt(0).text;
-            
-            if(themeName == "")
+
+            if (themeName == "")
                 return "REQUEST_PROCESS_EXIT";
             else if (themeName != "")
             {

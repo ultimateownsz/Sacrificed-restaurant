@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.Presentation.Allergy;
+using Restaurant;
+
+namespace App.Logic.Allergy;
 internal class AllergyEditLogic
 {
 
@@ -47,8 +50,8 @@ internal class AllergyEditLogic
             string choice = SelectionPresent.Show(
                 ["create", "delete"], banner: "EDIT MENU").ElementAt(0).text;
 
-            Mode mode = (choice == "create")
-                ? Mode.Create : (choice == "delete")
+            Mode mode = choice == "create"
+                ? Mode.Create : choice == "delete"
                 ? Mode.Delete : Mode.Terminate;
 
             AllergyEditPresent.Show(mode, ref input, ref output);
@@ -56,7 +59,7 @@ internal class AllergyEditLogic
             {
                 case Mode.Create:
 
-                    if (input.Allergies == null) 
+                    if (input.Allergies == null)
                         continue;
 
                     // simplification
@@ -80,8 +83,8 @@ internal class AllergyEditLogic
 
                     foreach (string allergy in input.Allergies)
                         Access.Allergies.Delete(
-                            Access.Allergies.GetBy<string>("Name", allergy).ID);
-                    
+                            Access.Allergies.GetBy("Name", allergy).ID);
+
                     break;
 
                 case Mode.Terminate:

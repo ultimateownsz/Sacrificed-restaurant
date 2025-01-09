@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.Presentation.Allergy;
+using Restaurant;
+
+namespace App.Logic.Allergy;
 internal class AllergyLinkLogic
 {
     public enum Type
@@ -18,7 +21,7 @@ internal class AllergyLinkLogic
         public int? ID;
         public int? Guest;
         public Type Type;
-        
+
         public List<string?> Allergies = new();
         public List<string?> Highlights = new();
     }
@@ -36,7 +39,7 @@ internal class AllergyLinkLogic
 
         // add those the user has
         foreach (AllerlinkModel? model in Access.Allerlinks.Read().Where(x => x.EntityID == id))
-            output.Highlights.Add(Access.Allergies.GetBy<int?>("ID", model?.AllergyID)?.Name);
+            output.Highlights.Add(Access.Allergies.GetBy("ID", model?.AllergyID)?.Name);
 
         return output;
     }
@@ -52,15 +55,15 @@ internal class AllergyLinkLogic
             if (allergy != null && allergies.Contains(allergy.Name))
                 models.Add(allergy);
         }
-        
+
         return models;
     }
 
     // helper method for code-simplification
     public static bool IsAllergic(int? userID, int? productID)
         => IsAllergic(
-            Access.Users.GetBy<int?>("ID", userID), 
-            Access.Products.GetBy<int?>("ID", productID)
+            Access.Users.GetBy("ID", userID),
+            Access.Products.GetBy("ID", productID)
             );
     public static bool IsAllergic(UserModel user, ProductModel product)
     {
@@ -76,10 +79,10 @@ internal class AllergyLinkLogic
         return pIDs.Contains(product.ID);
 
     }
-    
+
     public static void Start(Type type, int? id, int? guest = null)
     {
-        
+
         // standalone implement
         if (type == Type.Product)
         {
@@ -90,7 +93,7 @@ internal class AllergyLinkLogic
             if (product == "") return;
 
             // id override
-            id = Access.Products.GetBy<string>("Name", product).ID;
+            id = Access.Products.GetBy("Name", product).ID;
         };
 
         // value initialization
@@ -102,7 +105,7 @@ internal class AllergyLinkLogic
         List<AllergyModel> models = ToModels(input.Allergies);
 
         // deletion of old data
-        foreach (var allergy in Access.Allerlinks.GetAllBy<int>("EntityID", id ?? -1))
+        foreach (var allergy in Access.Allerlinks.GetAllBy("EntityID", id ?? -1))
             Access.Allerlinks.Delete(allergy?.ID);
 
         foreach (var allergy in models)
@@ -110,9 +113,9 @@ internal class AllergyLinkLogic
             // linking
             Access.Allerlinks.Write(
                 new AllerlinkModel(
-                    id, 
+                    id,
                     allergy.ID,
-                    (type == Type.User) ? 1 : 0
+                    type == Type.User ? 1 : 0
                 )
             );
         }

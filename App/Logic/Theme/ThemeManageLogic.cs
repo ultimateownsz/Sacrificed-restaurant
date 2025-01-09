@@ -1,5 +1,7 @@
 // This class handles all the logic for the themes, adding, deleting, and eventually activating themes
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Logic.Theme;
 
 static class ThemeManageLogic
 {
@@ -7,16 +9,16 @@ static class ThemeManageLogic
     // this method updates the theme name
     public static void UpdateThemeSchedule(int month, int year, string themeName)
     {
-        ScheduleModel? scheduleItem = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
-        ThemeModel? themeItem = Access.Themes.GetAllBy<string>("Name", themeName).FirstOrDefault();
+        ScheduleModel? scheduleItem = Access.Schedules.GetAllBy("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        ThemeModel? themeItem = Access.Themes.GetAllBy("Name", themeName).FirstOrDefault();
         ScheduleModel newScheduleItem;
 
         if (scheduleItem == null)
         {
-            if(themeItem == null)
+            if (themeItem == null)
             {
                 ThemeModel newTheme = new(themeName, null);
-                Access.Themes.Write(newTheme);  
+                Access.Themes.Write(newTheme);
                 newScheduleItem = new(null, year, month, (int)Access.Themes.GetLatestThemeID());
             }
             else
@@ -32,7 +34,7 @@ static class ThemeManageLogic
         }
         else
         {
-            if(themeItem == null)
+            if (themeItem == null)
             {
                 ThemeModel newTheme = new(themeName, null);
                 Access.Themes.Write(newTheme);
@@ -46,7 +48,7 @@ static class ThemeManageLogic
         }
     }
 
-    
+
     public static List<string?> GetAllThemes()
     {
         var themes = Access.Themes.GetAll().Select(t => t.Name).ToList();
@@ -56,15 +58,15 @@ static class ThemeManageLogic
     // this method gets all the Theme model attatched to a schedule
     public static ThemeModel? GetThemeByYearAndMonth(int month, int year)
     {
-        
-        ScheduleModel? item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+
+        ScheduleModel? item = Access.Schedules.GetAllBy("Year", year).Where(s => s.Month == month).FirstOrDefault();
         if (item == null)
         {
             return null;
         }
         else
         {
-            return Access.Themes.GetBy<int?>("ID", item.ThemeID);
+            return Access.Themes.GetBy("ID", item.ThemeID);
         }
     }
 
@@ -73,15 +75,15 @@ static class ThemeManageLogic
     {
         return month switch
         {
-            1 =>  $"January   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            2 =>  $"February  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            3 =>  $"March     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            4 =>  $"April     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            5 =>  $"May       -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            6 =>  $"June      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            7 =>  $"July      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            8 =>  $"August    -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
-            9 =>  $"September -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            1 => $"January   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            2 => $"February  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            3 => $"March     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            4 => $"April     -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            5 => $"May       -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            6 => $"June      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            7 => $"July      -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            8 => $"August    -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
+            9 => $"September -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
             10 => $"October   -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
             11 => $"November  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
             12 => $"December  -  {GetThemeByYearAndMonth(month ?? 0, year)?.Name ?? "no theme"}",
@@ -94,15 +96,15 @@ static class ThemeManageLogic
     {
         return month switch
         {
-            1 =>  "January",
-            2 =>  "February",
-            3 =>  "March",
-            4 =>  "April",
-            5 =>  "May",
-            6 =>  "June",
-            7 =>  "July",
-            8 =>  "August",
-            9 =>  "September",
+            1 => "January",
+            2 => "February",
+            3 => "March",
+            4 => "April",
+            5 => "May",
+            6 => "June",
+            7 => "July",
+            8 => "August",
+            9 => "September",
             10 => "October",
             11 => "November",
             12 => "December",
@@ -127,15 +129,15 @@ static class ThemeManageLogic
 
     public static bool DeleteMonthTheme(int month, int year)
     {
-        var item = Access.Schedules.GetAllBy<int>("Year", year).Where(s => s.Month == month).FirstOrDefault();
+        var item = Access.Schedules.GetAllBy("Year", year).Where(s => s.Month == month).FirstOrDefault();
         if (item == null) return false;
         return Access.Schedules.Delete(item.ID);
     }
 
-    
+
     public static int? GetThemeIDByName(string name)
     {
-        var theme = Access.Themes.GetBy<string>("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
+        var theme = Access.Themes.GetBy("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
         return theme?.ID;
     }
 }

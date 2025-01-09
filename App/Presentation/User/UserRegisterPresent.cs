@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using Restaurant;
+
+namespace App.Presentation.User;
 
 // The methods underneath could've easily been one method.
 // Original developer research modularity and reusability
@@ -18,10 +20,10 @@ internal class UserRegisterPresent
         {
             firstName = TerminableUtilsPresent.ReadLine("first name: ");
             if (firstName == null) return;
-            
+
             if (LoginLogic.IsNameValid(firstName))
                 break;
-            
+
             Console.WriteLine("Invalid first name, try again!");
             Console.ReadKey();
         }
@@ -96,14 +98,14 @@ internal class UserRegisterPresent
             {
                 // Create account and write it to storage
                 var account = new UserModel()
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Email = email,
-                        Password = password,
-                        Phone = phoneNumber,
-                        Admin = Convert.ToInt16(admin)
-                    };
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    Password = password,
+                    Phone = phoneNumber,
+                    Admin = Convert.ToInt16(admin)
+                };
 
                 Access.Users.Write(account);
                 Console.WriteLine("\nYour account is successfully registered!");

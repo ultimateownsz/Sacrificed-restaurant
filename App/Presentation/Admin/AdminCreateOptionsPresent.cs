@@ -1,4 +1,7 @@
-namespace Restaurant;
+using App.Presentation.User;
+using Restaurant;
+
+namespace App.Presentation.Admin;
 
 public static class AdminCreateOptionsPresent
 {
@@ -11,8 +14,8 @@ public static class AdminCreateOptionsPresent
             "Back"
         };
 
-            string choice = SelectionPresent.Show(
-                adminOptions, banner: "Create (admin account)").ElementAt(0).text;
+        string choice = SelectionPresent.Show(
+            adminOptions, banner: "Create (admin account)").ElementAt(0).text;
 
         switch (choice)
         {
@@ -24,10 +27,10 @@ public static class AdminCreateOptionsPresent
                 PromoteUserToAdmin();
                 break;
 
-                case "":
-                    return;
+            case "":
+                return;
 
-        }    
+        }
     }
 
     private static void PromoteUserToAdmin()
@@ -48,7 +51,7 @@ public static class AdminCreateOptionsPresent
             Console.ReadKey();
             return;
         }
-        
+
         // Create an instance fpr UserModel
         var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
 
@@ -57,7 +60,7 @@ public static class AdminCreateOptionsPresent
             .FirstOrDefault(u =>
                 string.Equals(u.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
                 u.Admin == 0); // Only fetch users
-        
+
         if (user == null)
         {
             Console.WriteLine("\nUser not found.");

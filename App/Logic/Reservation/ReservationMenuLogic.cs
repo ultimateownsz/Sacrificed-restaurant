@@ -1,4 +1,7 @@
-namespace Restaurant;
+using App.Logic.Theme;
+using Restaurant;
+
+namespace App.Logic.Reservation;
 
 public class ReservationMenuLogic
 {
@@ -16,9 +19,9 @@ public class ReservationMenuLogic
         int month = selectedDate.Month;
         int year = selectedDate.Year;
         ThemeModel? theme = ThemeManageLogic.GetThemeByYearAndMonth(month, year);
-        if(theme == null) return null;
-        CurrentTheme = Access.Themes.GetBy<int?>("ID", theme.ID);
-        if(CurrentTheme is not null)
+        if (theme == null) return null;
+        CurrentTheme = Access.Themes.GetBy("ID", theme.ID);
+        if (CurrentTheme is not null)
             return CurrentTheme;
         else
             return null;
@@ -26,9 +29,9 @@ public class ReservationMenuLogic
 
     public IEnumerable<ProductModel> GetProductsInMenu()
     {
-        if(CurrentTheme != null)
+        if (CurrentTheme != null)
         {
-            IEnumerable<ProductModel> products = Access.Products.GetAllBy<int?>("ID", CurrentTheme.ID);
+            IEnumerable<ProductModel> products = Access.Products.GetAllBy("ID", CurrentTheme.ID);
             return products;
         }
         else
@@ -36,4 +39,3 @@ public class ReservationMenuLogic
     }
 
 }
-    

@@ -1,4 +1,7 @@
-namespace Restaurant;
+using App.Logic.Reservation;
+using Restaurant;
+
+namespace App.Presentation.Reservation;
 
 static class FuturePastResrvations
 {
@@ -16,17 +19,17 @@ static class FuturePastResrvations
 
     private static void ViewAdmin(UserModel acc)
     {
-        START:
+    START:
 
         int guests = 1;
-        bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1; 
-        
+        bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc); // creating the calender (admin calender)
         if (selectedDate == DateTime.MinValue) return;
 
         while (true)
         {
-            var reservations = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate); // getting all the dates from the date column
+            var reservations = Access.Reservations.GetAllBy("Date", selectedDate); // getting all the dates from the date column
 
             if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
             {
@@ -65,7 +68,7 @@ static class FuturePastResrvations
 
     private static void ViewUser(UserModel acc)
     {
-        var testReservation = Access.Reservations.GetAllBy<int?>("UserID", acc.ID) // getting the user id's
+        var testReservation = Access.Reservations.GetAllBy("UserID", acc.ID) // getting the user id's
                                                 .Where(r => r != null)
                                                 .Cast<ReservationModel>()
                                                 .ToList();
@@ -105,7 +108,7 @@ static class FuturePastResrvations
 
             if (selectedReservations == "Next Page") // option to go to the next page
             {
-                currentPage = Math.Min(currentPage + 1, totalPages -1);
+                currentPage = Math.Min(currentPage + 1, totalPages - 1);
                 continue;
             }
 
@@ -126,7 +129,7 @@ static class FuturePastResrvations
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch the account details
+        var account = Access.Users.GetBy("ID", userID); // Fetch the account details
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";

@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Reservation;
 
 public static class ReservationDeletePresent
 {
@@ -9,7 +11,7 @@ public static class ReservationDeletePresent
         {
             // Clear the console and display the confirmation menu
             Console.Clear();
-            var account = Access.Users.GetBy<int?>("ID", reservation.UserID);
+            var account = Access.Users.GetBy("ID", reservation.UserID);
             string userFullName = GetUserFullName(account?.ID);
             Console.WriteLine($"Are you sure?");
 
@@ -39,7 +41,7 @@ public static class ReservationDeletePresent
     // Helper method to get user full name based on UserID
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy<int?>("ID", userID);
+        var account = Access.Users.GetBy("ID", userID);
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";

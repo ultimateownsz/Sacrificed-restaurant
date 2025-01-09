@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Admin;
 
 internal class AdminDeleteAccountPresent
 {

@@ -1,4 +1,10 @@
-namespace Restaurant;
+using App.Logic.Allergy;
+using App.Presentation.Product;
+using App.Presentation.Reservation;
+using App.Presentation.Table;
+using Restaurant;
+
+namespace App.Presentation.Admin;
 
 static class AdminMenuPresent
 {

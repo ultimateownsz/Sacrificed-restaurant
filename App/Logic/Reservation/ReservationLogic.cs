@@ -1,11 +1,13 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Logic.Reservation;
 
 public class ReservationLogic
 {
 
     //Static properties are shared across all instances of the class
     public static ReservationModel CurrentReservation { get; private set; } = new();
-    public static Int64 Userid { get; private set; }
+    public static long Userid { get; private set; }
 
 
     //This function is called throught the presentation layer (MakingReservation.cs)
@@ -14,7 +16,7 @@ public class ReservationLogic
     public int SaveReservation(DateTime date, int userId, int placeId)
     {
         // Validate UserID
-        var user = Access.Users.GetBy<int>("ID", userId);
+        var user = Access.Users.GetBy("ID", userId);
         if (user == null)
         {
             Console.WriteLine($"ERROR: User ID {userId} does not exist.");
@@ -22,7 +24,7 @@ public class ReservationLogic
         }
 
         // Validate PlaceID
-        var place = Access.Places.GetBy<int>("ID", placeId);
+        var place = Access.Places.GetBy("ID", placeId);
         if (place == null)
         {
             Console.WriteLine($"ERROR: Place ID {placeId} does not exist.");
@@ -31,7 +33,7 @@ public class ReservationLogic
 
         // Check for existing reservation conflict
         var existingReservation = Access.Reservations
-            .GetAllBy<DateTime>("Date", date)
+            .GetAllBy("Date", date)
             .FirstOrDefault(r => r?.PlaceID == placeId);
         if (existingReservation != null)
         {
@@ -69,13 +71,13 @@ public class ReservationLogic
 
 
     //Converts the date from string to Int64 and saves it into CurrentReservation
-    public Int64 ConvertDate(DateTime date)
+    public long ConvertDate(DateTime date)
     {
         return DateTime.Parse(date.ToString()).ToFileTimeUtc();
     }
 
     //Converts the tableChoice from string to Int64 and saves it into CurrentReservation
-    public Int64 TableChoice(string tableChoice)
+    public long TableChoice(string tableChoice)
     {
         switch (tableChoice.ToLower())
         {
@@ -99,9 +101,9 @@ public class ReservationLogic
     //    return GeneratedID;
     //}
 
-    public Int64 ReservationAmount(string reservationAmount)
+    public long ReservationAmount(string reservationAmount)
     {
-        Int64 convertedAmount = Convert.ToInt64(reservationAmount);
+        long convertedAmount = Convert.ToInt64(reservationAmount);
         switch (reservationAmount.ToLower())
         {
             case "1" or "2" or "one" or "two":
@@ -121,11 +123,11 @@ public class ReservationLogic
     //     return Access.Reservations.GetBy<int>("ID", id);
     // }
 
-    
+
     public bool RemoveReservation(int id)
     {
-        
-        if (Access.Reservations.GetBy<int>("ID", id) == null)
+
+        if (Access.Reservations.GetBy("ID", id) == null)
         {
             return false;
         }
@@ -138,7 +140,7 @@ public class ReservationLogic
 
     public IEnumerable<ReservationModel?> GetUserReservations(int? userID)
     {
-        return Access.Reservations.GetAllBy<int?>("UserID", userID);
+        return Access.Reservations.GetAllBy("UserID", userID);
     }
 
     public static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
@@ -154,8 +156,8 @@ public class ReservationLogic
     public static string? GetThemeByReservation(int reservationID)
     {
         var productID = Access.Requests.GetBy<int?>("ReservationID", reservationID)?.ProductID;
-        var themeID = Access.Products.GetBy<int?>("ID", productID)?.ThemeID;
-        return Access.Themes.GetBy<int?>("ID", themeID)?.Name;
+        var themeID = Access.Products.GetBy("ID", productID)?.ThemeID;
+        return Access.Themes.GetBy("ID", themeID)?.Name;
     }
 
     public static string FormatAccount(ReservationModel reservation)

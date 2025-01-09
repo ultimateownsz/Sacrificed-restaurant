@@ -1,4 +1,7 @@
-namespace Restaurant;
+using App.Presentation.Table;
+using Restaurant;
+
+namespace App.Presentation.Reservation;
 
 
 public static class ReservationUpdatePresent
@@ -27,7 +30,7 @@ public static class ReservationUpdatePresent
         // Save updated reservation
         Access.Reservations.Update(reservation);
 
-    } 
+    }
 
     public static void DisplayReservationDetails(ReservationModel reservation)
     {
@@ -38,59 +41,59 @@ public static class ReservationUpdatePresent
         Console.WriteLine($"User ID: {reservation.UserID}");
     }
 
-public static void UpdateReservationAdmin(ReservationModel reservation, UserModel acc)
-{
-    string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}";
-    while (true)
+    public static void UpdateReservationAdmin(ReservationModel reservation, UserModel acc)
     {
-        switch (SelectionPresent.Show(["Date", "Table"], banner: confirmChoice).ElementAt(0).text)
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for date: {reservation.Date:dd/MM/yyyy}";
+        while (true)
         {
-            case "Date":
-                Console.Clear();
-                UpdateReservationDate(reservation, acc);
-                break;
+            switch (SelectionPresent.Show(["Date", "Table"], banner: confirmChoice).ElementAt(0).text)
+            {
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation, acc);
+                    break;
 
-            case "Table":
-                Console.Clear();
-                UpdateTableID(reservation);
-                break;
+                case "Table":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    break;
 
-            case "":
-                return;
+                case "":
+                    return;
             }
         }
     }
 
-public static void UpdateReservationUser(ReservationModel reservation, UserModel acc)
-{
-    string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
-    while (true)
+    public static void UpdateReservationUser(ReservationModel reservation, UserModel acc)
     {
-        switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
+        string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
+        while (true)
         {
-            case "Date":
-                Console.Clear();
-                UpdateReservationDate(reservation, acc);
-                break;
-           
-            case "Table":
-                Console.Clear();
-                UpdateTableID(reservation);
-                break;
-            
-            case "Cancel reservation":
-                Console.Clear();
-                if (DeleteReservation(reservation))
-                {
-                    return; // Exit after deletion
-                }
-                break;
-            
-            case "":
-                return;
+            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
+            {
+                case "Date":
+                    Console.Clear();
+                    UpdateReservationDate(reservation, acc);
+                    break;
+
+                case "Table":
+                    Console.Clear();
+                    UpdateTableID(reservation);
+                    break;
+
+                case "Cancel reservation":
+                    Console.Clear();
+                    if (DeleteReservation(reservation))
+                    {
+                        return; // Exit after deletion
+                    }
+                    break;
+
+                case "":
+                    return;
+            }
         }
     }
-}
 
     private static void UpdateReservationDate(ReservationModel reservation, UserModel acc)
     {
@@ -111,7 +114,7 @@ public static void UpdateReservationUser(ReservationModel reservation, UserModel
             break;
         }
     }
-    
+
     private static void UpdateTableID(ReservationModel reservation)
     {
         bool isAdmin = false;
@@ -133,7 +136,7 @@ public static void UpdateReservationUser(ReservationModel reservation, UserModel
 
             DateTime? selectedDate = reservation.Date;
             int[] reservedTables = Access.Reservations
-                .GetAllBy<DateTime?>("Date", selectedDate)
+                .GetAllBy("Date", selectedDate)
                 .Where(r => r?.PlaceID != null)
                 .Select(r => r!.PlaceID!.Value)
                 .ToArray();
@@ -175,34 +178,34 @@ public static void UpdateReservationUser(ReservationModel reservation, UserModel
         }
     }
 
-private static bool DeleteReservation(ReservationModel reservation)
-{
-    // Check if the reservation date is in the past
-    if (reservation.Date < DateTime.Today)
+    private static bool DeleteReservation(ReservationModel reservation)
     {
-        TerminableUtilsPresent.Write("You cannot cancel a reservation that is in the past.");
-        Thread.Sleep(1000);
-        return false; // Cant cancel a past reservation
-    }
+        // Check if the reservation date is in the past
+        if (reservation.Date < DateTime.Today)
+        {
+            TerminableUtilsPresent.Write("You cannot cancel a reservation that is in the past.");
+            Thread.Sleep(1000);
+            return false; // Cant cancel a past reservation
+        }
 
-    // Confirm deletion
-    var options = new List<string> { "Yes", "No" };
-    var choice = SelectionPresent.Show(options, banner: "Are you sure you?").ElementAt(0);
+        // Confirm deletion
+        var options = new List<string> { "Yes", "No" };
+        var choice = SelectionPresent.Show(options, banner: "Are you sure you?").ElementAt(0);
 
-    if (choice.text == "Yes")
-    {
-        Access.Reservations.Delete(reservation.ID);
-        TerminableUtilsPresent.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
-        Thread.Sleep(1000);
-        return true; // Deletion was successful
+        if (choice.text == "Yes")
+        {
+            Access.Reservations.Delete(reservation.ID);
+            TerminableUtilsPresent.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
+            Thread.Sleep(1000);
+            return true; // Deletion was successful
+        }
+        else
+        {
+            TerminableUtilsPresent.Write("Reservation not cancelled.");
+            Thread.Sleep(1000);
+            return false; // Deletion was cancelled
+        }
     }
-    else
-    {
-        TerminableUtilsPresent.Write("Reservation not cancelled.");
-        Thread.Sleep(1000);
-        return false; // Deletion was cancelled
-    }
-}
 
     private static void UdpateReservationAmount(ReservationModel reservation)
     {
@@ -244,11 +247,11 @@ private static bool DeleteReservation(ReservationModel reservation)
         {
             return true;
         }
-        else if (IsFourPersonTable(tableID) && (reservationAmount >= 3 && reservationAmount <= 4))
+        else if (IsFourPersonTable(tableID) && reservationAmount >= 3 && reservationAmount <= 4)
         {
             return true;
         }
-        else if (IsSixPersonTable(tableID) && (reservationAmount >= 5 && reservationAmount <= 6))
+        else if (IsSixPersonTable(tableID) && reservationAmount >= 5 && reservationAmount <= 6)
         {
             return true;
         }
@@ -276,7 +279,7 @@ private static bool DeleteReservation(ReservationModel reservation)
     // Helper method to check if the table is already reserved for the given date
     private static bool IsTableTaken(DateTime? reservationDate, int tableID)
     {
-        var reservations = Access.Reservations.GetAllBy<DateTime?>("Date", reservationDate);
+        var reservations = Access.Reservations.GetAllBy("Date", reservationDate);
 
         foreach (var res in reservations)
         {

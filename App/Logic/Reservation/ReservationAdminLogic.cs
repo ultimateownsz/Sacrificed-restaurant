@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Logic.Reservation;
 
 public static class ReservationAdminLogic
 {
@@ -19,12 +21,12 @@ public static class ReservationAdminLogic
 
     public static ReservationModel? GetReservationByID(int reservationID)
     {
-        return Access.Reservations.GetBy<int>("ID", reservationID);
+        return Access.Reservations.GetBy("ID", reservationID);
     }
 
     public static IEnumerable<ReservationModel?> GetReservationsByDate(int date)
     {
-        return Access.Reservations.GetAllBy<int>("Date", date);
+        return Access.Reservations.GetAllBy("Date", date);
     }
 
     public static IEnumerable<ReservationModel?> GetReservationsByUserID(int userID)
@@ -39,6 +41,6 @@ public static class ReservationAdminLogic
 
     public static IEnumerable<ReservationModel?> GetReservationsByTableID(int tableID)
     {
-        return Access.Reservations.GetAllBy<int>("Place", tableID);
+        return Access.Reservations.GetAllBy("Place", tableID);
     }
 }

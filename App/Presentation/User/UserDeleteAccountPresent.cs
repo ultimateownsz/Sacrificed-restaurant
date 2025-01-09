@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.User;
 
 public static class UserDeleteAccountPresent
 {
@@ -14,10 +16,10 @@ public static class UserDeleteAccountPresent
 
         // Password confirmation
         string? enteredPassword = TerminableUtilsPresent.ReadLine(prefix);
-        
+
         if (enteredPassword == null)
             return;
-        
+
         // trimming ig..
         enteredPassword = enteredPassword.Trim();
 

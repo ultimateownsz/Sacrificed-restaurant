@@ -1,7 +1,9 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Table;
 
 public class TableSelectionPresent
-{        
+{
     private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
     private int cursorX, cursorY;
     private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
@@ -246,7 +248,7 @@ public class TableSelectionPresent
         Console.SetCursorPosition(cursorX, cursorY); // Return cursor to its original position
     }
 
-    
+
     private bool IsTableValidForGuests(int tableNumber, int guestCount, int[] activeTables)
     {
         // Validate the table size for the given guest count
@@ -265,8 +267,8 @@ public class TableSelectionPresent
         };
     }
 
-    private string GetNumberAt(int x, int y) 
-    { 
+    private string GetNumberAt(int x, int y)
+    {
         if (y < 0 || y >= GridPresent.GetGrid().GetLength(0) || x < 0 || x >= GridPresent.GetGrid().GetLength(1)) return null;
 
         string number = "";

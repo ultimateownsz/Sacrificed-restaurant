@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Product;
 
 public static class ProductControllerPresent
 {
@@ -8,7 +10,7 @@ public static class ProductControllerPresent
         {
             throw new ArgumentNullException(nameof(product));
         }
-        
+
         if (ProductLogic.AddProduct(product) == false)
         {
             Console.WriteLine($"Product: {product.Name}, with ID: {product.ID} already exists.");
@@ -41,5 +43,5 @@ public static class ProductControllerPresent
         // {
         //     Console.WriteLine($"No product found with ID: {productId}, or the product has already been deleted.");
         // }
-    } 
+    }
 }

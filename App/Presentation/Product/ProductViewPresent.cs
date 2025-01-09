@@ -1,11 +1,15 @@
-namespace Restaurant;
+using App.Logic.Allergy;
+using App.Logic.Theme;
+using Restaurant;
+
+namespace App.Presentation.Product;
 static class ProductViewPresent
 {
 
     //This is the main menu for product managment, its nothing special
     public static void ProductMainMenu()
     {
-         List<string> options = new()
+        List<string> options = new()
         {
             "Add product",
             "Show all products",
@@ -35,7 +39,7 @@ static class ProductViewPresent
                     PairLogic.Start();
                     break;
                 case "Choose products course":
-                    while(true)
+                    while (true)
                     {
                         name = CourseLogic.GetValidCourse();
                         if (name == "REQUEST_PROCESS_EXIT")
@@ -46,9 +50,9 @@ static class ProductViewPresent
                         DisplayProducts("course", name);
                     }
                     break;
-                
+
                 case "Choose products theme":
-                    while(true)
+                    while (true)
                     {
                         name = ThemeValidateLogic.GetValidThemeMenu();
                         if (name == "REQUEST_PROCESS_EXIT")
@@ -59,7 +63,7 @@ static class ProductViewPresent
                         DisplayProducts("theme", name);
                     }
                     break;
-                
+
                 case "":
                     return;
             }
@@ -75,11 +79,11 @@ static class ProductViewPresent
         List<string> products;
         while (true)
         {
-            if(filterType == "")
+            if (filterType == "")
             {
                 banner = "Choose a product to edit/delete:";
                 products = ProductLogic.GetAllProductInfo().ToList();
-                if(products.Count == 0)
+                if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in the resturaunt");
@@ -87,13 +91,13 @@ static class ProductViewPresent
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
-                } 
+                }
             }
             else if (filterType == "course")
             {
                 banner = $"Choose a product to edit/delete:\n\n{name}:";
                 products = ProductLogic.GetAllWithinCourse(name).ToList();
-                if(products.Count == 0)
+                if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in {name}");
@@ -101,11 +105,11 @@ static class ProductViewPresent
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
-                } 
+                }
             }
             else
             {
-                if(name == "0")
+                if (name == "0")
                 {
                     banner = $"Choose a product to edit/delete:\n\nNo theme:";
                 }
@@ -114,7 +118,7 @@ static class ProductViewPresent
                     banner = $"Choose a product to edit/delete:\n\n{name}:";
                 }
                 products = ProductLogic.GetAllWithinTheme(name).ToList();
-                if(products.Count == 0)
+                if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"There are no products in the {name} theme");
@@ -122,19 +126,19 @@ static class ProductViewPresent
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
-                } 
+                }
             }
 
             string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if(productSelection == "")
+            if (productSelection == "")
             {
                 Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
 
             chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType, name);
-            if(chosenProduct == null)
+            if (chosenProduct == null)
             {
                 Console.WriteLine("rizz");
                 return;
@@ -142,10 +146,10 @@ static class ProductViewPresent
             DeleteOrEditChoice(chosenProduct);
         }
     }
-    
+
     public static void DeleteOrEditChoice(ProductModel chosenProduct)
     {
-            List<string> options = new()
+        List<string> options = new()
         {
             "Edit name",
             "Edit price",
@@ -171,7 +175,7 @@ static class ProductViewPresent
                     ProductLogic.ProductEditValidator(chosenProduct, "theme");
                     break;
                 case "Delete product":
-                    if(DeleteProduct(chosenProduct))
+                    if (DeleteProduct(chosenProduct))
                         return;
                     break;
                 case "":
@@ -184,15 +188,15 @@ static class ProductViewPresent
     {
         Console.Clear();
         string banner = $"Do you want to delete {chosenProduct.Name}";
-        List<string> options = new List<string>{"Yes", "No"};
+        List<string> options = new List<string> { "Yes", "No" };
         string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
-        if(selection == "No" || selection == "")
+        if (selection == "No" || selection == "")
         {
             Console.WriteLine("fix");
             return false;
         }
         Console.Clear();
-        if(ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
+        if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{chosenProduct.Name} has been deleted.");
@@ -205,7 +209,7 @@ static class ProductViewPresent
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Failed to delete {chosenProduct.Name}.");
-            Console.WriteLine("Press any key to continue..."); 
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return false;
@@ -215,14 +219,14 @@ static class ProductViewPresent
     public static void AddProduct()
     {
         ProductModel? newProduct = ProductLogic.ProductValidator();
-        
+
         if (newProduct != null && newProduct.ID == -1)
             return;
-        
 
-        
+
+
         Console.Clear();
-        if(newProduct == null)
+        if (newProduct == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Invalid product info.");
@@ -231,7 +235,7 @@ static class ProductViewPresent
             Console.ForegroundColor = ConsoleColor.White;
             return;
         }
-        else if(ProductLogic.AddProduct(newProduct))
+        else if (ProductLogic.AddProduct(newProduct))
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{newProduct.Name} has been Added.");
@@ -244,10 +248,10 @@ static class ProductViewPresent
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Failed to Add {newProduct.Name}.");
-            Console.WriteLine("Press any key to continue..."); 
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
         }
-    } 
+    }
 }

@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.Presentation.Admin;
+using App.Presentation.User;
+
+namespace Restaurant;
 internal class MenuLogic
 {
 

@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Reservation;
 public static class ReservationDetailsPresent
 {
     public static void ShowDetails(ReservationModel reservation)
@@ -6,7 +8,7 @@ public static class ReservationDetailsPresent
         Console.Clear();
 
         // Fetch the account details for the user
-        var account = Access.Reservations.GetBy<int?>("UserID", reservation.UserID);
+        var account = Access.Reservations.GetBy("UserID", reservation.UserID);
 
         // Ensure data exists
         if (account == null)
@@ -32,7 +34,7 @@ public static class ReservationDetailsPresent
 
     public static void ShowOrders(UserModel acc)
     {
-        lCalendar:
+    lCalendar:
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
@@ -41,7 +43,7 @@ public static class ReservationDetailsPresent
 
         while (true)
         {
-            IEnumerable<ReservationModel?> orders = Access.Reservations.GetAllBy<DateTime>("Date", selectedDate);
+            IEnumerable<ReservationModel?> orders = Access.Reservations.GetAllBy("Date", selectedDate);
 
             if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
             {
@@ -64,7 +66,7 @@ public static class ReservationDetailsPresent
             else
             {
                 DisplayOrdersGrid(orders, selectedDate);
-                
+
                 Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
@@ -107,13 +109,13 @@ public static class ReservationDetailsPresent
         foreach (var reserv in orders.Where(r => r != null))
         {
             // Get all requests associated with the current reservation ID
-            var requests = Access.Requests.GetAllBy<int?>("ReservationID", reserv!.ID).ToList();
+            var requests = Access.Requests.GetAllBy("ReservationID", reserv!.ID).ToList();
 
             // Process each request to get the associated product and categorize it
             foreach (var req in requests)
             {
                 // Fetch the product details using the ProductID from the Request table
-                var product = Access.Products.GetBy<int?>("ID", req.ProductID);
+                var product = Access.Products.GetBy("ID", req.ProductID);
                 if (product != null && productsCategories.TryGetValue(product.Course, out string category))
                 {
                     // Increment the count of the product in the appropriate category
@@ -157,28 +159,28 @@ public static class ReservationDetailsPresent
 
             if (i < appetizers.Count)
             {
-                ProductModel? product = Access.Products.GetBy<string>("Name", appetizers[i].Key);
+                ProductModel? product = Access.Products.GetBy("Name", appetizers[i].Key);
                 appetizer = $"{appetizers[i].Value}x {appetizers[i].Key}";
                 totalPrice += appetizers[i].Value * (product?.Price ?? 0);
             }
 
             if (i < mains.Count)
             {
-                ProductModel? product = Access.Products.GetBy<string>("Name", mains[i].Key);
+                ProductModel? product = Access.Products.GetBy("Name", mains[i].Key);
                 main = $"{mains[i].Value}x {mains[i].Key}";
                 totalPrice += mains[i].Value * (product?.Price ?? 0);
             }
 
             if (i < desserts.Count)
             {
-                ProductModel? product = Access.Products.GetBy<string>("Name", desserts[i].Key);
+                ProductModel? product = Access.Products.GetBy("Name", desserts[i].Key);
                 dessert = $"{desserts[i].Value}x {desserts[i].Key}";
                 totalPrice += desserts[i].Value * (product?.Price ?? 0);
             }
 
             if (i < beverages.Count)
             {
-                ProductModel? product = Access.Products.GetBy<string>("Name", beverages[i].Key);
+                ProductModel? product = Access.Products.GetBy("Name", beverages[i].Key);
                 beverage = $"{beverages[i].Value}x {beverages[i].Key}";
                 totalPrice += beverages[i].Value * (product?.Price ?? 0);
             }

@@ -1,4 +1,7 @@
-namespace Restaurant;
+using App.Logic.Theme;
+using Restaurant;
+
+namespace App.Presentation.Admin;
 static class AdminThemePresent
 {
     public static void ThemedEditing()
@@ -9,7 +12,7 @@ static class AdminThemePresent
             string? themeName;
             int year = YearChoice();
             if (year == -1)
-                return; 
+                return;
 
             monthSelection:
             int month = MonthChoice(year);
@@ -19,8 +22,8 @@ static class AdminThemePresent
             // Check if the chosen month has a theme, if not proceed with else
             if (ThemeManageLogic.GetThemeByYearAndMonth(month, year) is not null)
             {
-                // Menu to choose actions for a month with a theme attached
-                middleMenu:
+            // Menu to choose actions for a month with a theme attached
+            middleMenu:
                 string banner2 = $"{ThemeManageLogic.GetMonthName(month)}\nChoose:";
                 List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month", "Delete the theme for this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
@@ -30,7 +33,7 @@ static class AdminThemePresent
                 if (selection == 0)
                 {
                     themeName = ThemeValidateLogic.GetValidThemeMenu();
-                    if(themeName == null)
+                    if (themeName == null)
                     {
                         goto middleMenu;
                     }
@@ -40,10 +43,10 @@ static class AdminThemePresent
                         goto monthSelection;
                     }
                 }
-                else if(selection == 1)
+                else if (selection == 1)
                 {
                     themeName = ThemeValidateLogic.GetValidString();
-                    if(themeName == null)
+                    if (themeName == null)
                     {
                         Console.Clear();
                         Console.WriteLine("Failed to update theme");
@@ -52,13 +55,13 @@ static class AdminThemePresent
                     ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
                     Console.WriteLine($"The theme has been updated to {themeName}");
                 }
-                else if(selection == 2)
+                else if (selection == 2)
                 {
                     ThemeManageLogic.DeleteMonthTheme(month, year);
-                    
+
                     Console.Clear();
                     Console.WriteLine("This theme has been deleted!");
-                    
+
                     Thread.Sleep(1000);
                     goto monthSelection;
 
@@ -66,17 +69,17 @@ static class AdminThemePresent
             }
             else
             {
-                middleMenu2:
+            middleMenu2:
                 string banner2 = $"{ThemeManageLogic.GetMonthName(month)}\nChoose:";
-                List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month"};
+                List<string> options2 = new List<string> { "Choose an existing theme for this month", "Add a new theme to this month" };
                 int selection = SelectionPresent.Show(options2, banner: banner2).ElementAt(0).index;
                 if (selection == -1)
                     goto monthSelection;
-                
-                if(selection == 0)
+
+                if (selection == 0)
                 {
                     themeName = ThemeValidateLogic.GetValidThemeMenu();
-                    if(themeName == null)
+                    if (themeName == null)
                     {
                         goto middleMenu2;
                     }
@@ -89,10 +92,10 @@ static class AdminThemePresent
                 else
                 {
                     themeName = ThemeValidateLogic.GetValidString();
-                    
+
                 }
 
-                if(themeName == null)
+                if (themeName == null)
                 {
                     Console.Clear();
                     Console.WriteLine("Failed to update theme");
@@ -220,7 +223,7 @@ static class AdminThemePresent
             month = selection.ElementAt(0).index + 1;
 
             if (month - 1 == -1) return 0;
-            
+
             if (DateTime.Now.Month == month && DateTime.Now.Year == year && ThemeManageLogic.GetThemeByYearAndMonth(month, year) is null) // only returns the current month if it has no theme
             {
                 return month;

@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Reservation;
 public static class ReservationShowPresent
 {
     public static void Show(UserModel acc)
@@ -12,10 +14,10 @@ public static class ReservationShowPresent
         {
             // Use SelectionPresent to display options and capture user selection
             var selectedOption = SelectionPresent.Show(
-                new List<string> 
-                { 
-                    "View    Details", 
-                    "Update  Reservation", 
+                new List<string>
+                {
+                    "View    Details",
+                    "Update  Reservation",
                     "Delete  Reservation"
                 },
                 banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
@@ -35,7 +37,7 @@ public static class ReservationShowPresent
                 case "Delete  Reservation":
                     ReservationDeletePresent.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
-                
+
                 case "":
                     return; // Exit the options and return to the reservation list
             }
@@ -49,7 +51,7 @@ public static class ReservationShowPresent
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy<int?>("ID", userID); // Fetch account details
+        var account = Access.Users.GetBy("ID", userID); // Fetch account details
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";

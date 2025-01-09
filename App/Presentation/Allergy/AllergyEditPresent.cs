@@ -1,4 +1,7 @@
-﻿namespace Restaurant;
+﻿using App.Logic.Allergy;
+using Restaurant;
+
+namespace App.Presentation.Allergy;
 internal class AllergyEditPresent
 {
 
@@ -9,7 +12,7 @@ internal class AllergyEditPresent
         {
             input = TerminableUtilsPresent.ReadLine("allergy name: ");
             if (input == null) return null;
-            
+
             break;
         }
 
@@ -25,13 +28,13 @@ internal class AllergyEditPresent
 
         if (allergies.Count == 1 && allergies.First().index == -1)
             return null;
-        
+
         return allergies.Select(x => x.text).ToList();
     }
-    
 
 
-    public static void Show(AllergyEditLogic.Mode mode, 
+
+    public static void Show(AllergyEditLogic.Mode mode,
         ref AllergyEditLogic.Input input, ref AllergyEditLogic.Output output)
     {
 
@@ -40,7 +43,7 @@ internal class AllergyEditPresent
             case AllergyEditLogic.Mode.Create:
                 input.Allergies = input_request();
                 break;
-            
+
             case AllergyEditLogic.Mode.Delete:
                 input.Allergies = selection_request();
                 break;

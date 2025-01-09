@@ -1,4 +1,6 @@
-namespace Restaurant;
+using Restaurant;
+
+namespace App.Presentation.Table;
 
 public static class TableControlPresent
 {
@@ -79,7 +81,7 @@ public static class TableControlPresent
         }
         finally
         {
-            Console.CursorVisible = true; 
+            Console.CursorVisible = true;
             Console.Clear();
         }
     }

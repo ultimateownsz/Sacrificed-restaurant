@@ -1,6 +1,9 @@
+using App.Logic.Allergy;
+using App.Presentation.Reservation;
+using Restaurant;
 using System.Globalization;
 
-namespace Restaurant;
+namespace App.Presentation.User;
 
 static class UserMenuPresent
 {
@@ -23,7 +26,7 @@ static class UserMenuPresent
                 case "View reservation":
                     FuturePastResrvations.Show(acc, false); // using the new method - commented the old method just in case
                     break;
-                
+
                 case "Delete account\n":
                     UserDeleteAccountPresent.DeleteAccount(acc);
                     break;

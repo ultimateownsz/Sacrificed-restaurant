@@ -1,4 +1,6 @@
 // this class handles all the logic for adding, updating, and deleting products
+using App.Logic.Theme;
+
 namespace Restaurant;
 
 static class ProductLogic
