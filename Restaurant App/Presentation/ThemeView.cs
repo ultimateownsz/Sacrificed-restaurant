@@ -243,7 +243,7 @@ static class ThemeView
             {
                 // Console.WriteLine("Invalid input. Please select a month that is not in the past or the current month.");
                 ControlHelpPresent.DisplayFeedback("Invalid input. Please select a month that is not in the past or the current month.", "bottom", "tip");
-                Console.ReadKey();
+                // Console.ReadKey();
             }
             else
             {
