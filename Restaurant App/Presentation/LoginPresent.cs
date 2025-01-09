@@ -3,7 +3,7 @@ using Project;
 
 static class LoginPresent
 {
-    private static UserLogic userLogic = new();
+    private static LoginLogic loginLogic = new();
 
     private static List<string> userInput = new(); // List to store the email and password
     
@@ -162,7 +162,7 @@ static class LoginPresent
         if (string.IsNullOrEmpty(password)) return null;
 
         // Check credentials
-        UserModel? acc = UserLogic.CheckLogin(email.ToLower(), password);
+        UserModel? acc = LoginLogic.CheckLogin(email.ToLower(), password);
         if (acc == null)
         {
             ControlHelpPresent.DisplayFeedback("Invalid credentials, returning...");

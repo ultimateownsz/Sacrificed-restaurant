@@ -57,7 +57,7 @@ internal class RegisterUser
                 "Email (e.g., example@domain.com): ",
                 input =>
                 {
-                    var (isValid, message) = UserLogic.IsEmailValid(input);
+                    var (isValid, message) = LoginLogic.IsEmailValid(input);
                     if (!isValid)
                     {
                         if (message != null)
@@ -75,7 +75,7 @@ internal class RegisterUser
             "Password (8-16 characters, must include letters and numbers): ",
             input =>
             {
-                var (isValid, message) = UserLogic.IsPasswordValid(input);
+                var (isValid, message) = LoginLogic.IsPasswordValid(input);
                 if (!isValid)
                 {
                     if (message != null)
@@ -93,7 +93,7 @@ internal class RegisterUser
                 "Phone number (10 digits): ",
                 input =>
                 {
-                    var (isValid, error) = UserLogic.IsPhoneNumberValid(input);
+                    var (isValid, error) = LoginLogic.IsPhoneNumberValid(input);
                     if (!isValid)
                     {
                         if (error != null)
@@ -229,7 +229,7 @@ internal class RegisterUser
                         "Email (e.g., example@domain.com): ",
                         input =>
                         {
-                            var (isValid, message) = UserLogic.IsEmailValid(input);
+                            var (isValid, message) = LoginLogic.IsEmailValid(input);
                             if (!isValid)
                             {
                                 if (message != null)
@@ -254,7 +254,7 @@ internal class RegisterUser
                         "Password (8-16 characters, must include letters and numbers): ",
                         input =>
                         {
-                            var (isValid, message) = UserLogic.IsPasswordValid(input);
+                            var (isValid, message) = LoginLogic.IsPasswordValid(input);
                             if (!isValid)
                             {
                                 if (message != null)
@@ -279,7 +279,7 @@ internal class RegisterUser
                         "Phone number (10 digits): ",
                         input =>
                         {
-                            var (isValid, error) = UserLogic.IsPhoneNumberValid(input);
+                            var (isValid, error) = LoginLogic.IsPhoneNumberValid(input);
                             if (!isValid)
                             {
                                 if (error != null)
