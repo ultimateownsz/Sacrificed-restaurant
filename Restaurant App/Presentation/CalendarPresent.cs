@@ -198,6 +198,7 @@ namespace Project
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"\n\nThis month's theme is {theme.Name}");
+                    Console.ResetColor();
                 }
                 else if (noThemeReservedMessage)
                 {
@@ -208,6 +209,7 @@ namespace Project
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n\nThis month has no products.");
+                    Console.ResetColor();
                 }
             }
             else if (noProductsReservedMessage)
