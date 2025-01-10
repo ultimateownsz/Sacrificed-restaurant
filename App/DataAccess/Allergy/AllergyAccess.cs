@@ -6,7 +6,7 @@ internal class AllergyAccess : DataAccess<AllergyModel>
 {
     internal AllergyAccess() : base(typeof(AllergyModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    private protected new bool Delete(int? id)
+    internal new bool Delete(int? id)
     {
         IEnumerable<AllerlinkModel> links =
             Access.Allerlinks.Read().Where(lnk => lnk.AllergyID == id);
