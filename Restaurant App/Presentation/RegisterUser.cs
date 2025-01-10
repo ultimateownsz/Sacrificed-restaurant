@@ -27,14 +27,13 @@ internal class RegisterUser
                 var selection = SelectionPresent.Show(["Create a new admin account", "Make existing user admin\n", "Cancel"], banner:"ACCOUNT REGISTRATION").ElementAt(0).text;
                 if (selection == null || selection == null || selection == "Cancel")
                 {
-                    ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
+                    // ControlHelpPresent.DisplayFeedback("Admin account creation canceled.", "bottom", "error");
                     return;
                 }
-
-                if (selection == "Make existing user admin\n")
+                else if (selection == "Make existing user admin\n")
                 {
                     PromoteUserToAdmin();
-                    ControlHelpPresent.ResetToDefault();
+                    // ControlHelpPresent.ResetToDefault();
                     return;
                 }
             }
@@ -128,32 +127,24 @@ internal class RegisterUser
         ControlHelpPresent.AddOptions("Escape", "<escape>");
         ControlHelpPresent.ShowHelp();
 
-        // void DisplayPrompt()
-        // {
-        //     ControlHelpPresent.ShowHelp();
-        // }
-
         string? firstName = null;
         string? lastName = null;
-
         TryCatchHelper.EscapeKeyException(() =>
         {
             
-            Console.WriteLine("Enter the first and last name of the user you want to promote to admin.\n");
+        Console.WriteLine("Enter the first and last name of the user you want to promote to admin.\n");
 
-            firstName = InputHelper.GetValidatedInput<string>(
-                "First Name: ",
-                input => InputHelper.InputNotNull(input, "First name"),
-                menuTitle: "PROMOTE USER TO ADMIN",
-                showHelpAction: () => ControlHelpPresent.ShowHelp()
-            );
+        firstName = InputHelper.GetValidatedInput<string>(
+            "First name: ",
+            input => InputHelper.InputNotNull(input.ToLower(), "First name"),
+            menuTitle: "PROMOTE USER TO ADMIN",
+            showHelpAction: () => ControlHelpPresent.ShowHelp());
 
-            lastName = InputHelper.GetValidatedInput<string>(
-                "Last Name: ",
-                input => InputHelper.InputNotNull(input, "Last name"),
-                menuTitle: "PROMOTE USER TO ADMIN",
-                showHelpAction: () => ControlHelpPresent.ShowHelp()
-            );
+        lastName = InputHelper.GetValidatedInput<string>(
+            "Last Name: ",
+            input => InputHelper.InputNotNull(input.ToLower(), "Last name"),
+            menuTitle: "PROMOTE USER TO ADMIN",
+            showHelpAction: () => ControlHelpPresent.ShowHelp());
         });
 
         if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
@@ -168,6 +159,7 @@ internal class RegisterUser
         // Fetch user based on input
         var user = userAccess.GetAllBy("FirstName", firstName)
             .FirstOrDefault(u =>
+                string.Equals(u!.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(u!.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
                 u.Admin == 0);
 
@@ -176,9 +168,7 @@ internal class RegisterUser
         ControlHelpPresent.AddOptions("Escape", "<escape>");
         ControlHelpPresent.ShowHelp();
 
-        // Console.Clear();
         Console.WriteLine("Are you sure you want to promote this user to admin?");
-        ControlHelpPresent.ShowHelp();
         
         if (user == null)
         {
@@ -187,12 +177,10 @@ internal class RegisterUser
         }
 
         // Confirmation for promotion
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
 
-        string? confirmation = SelectionPresent.Show(
-            new List<string> { "Yes", "No" },
+        dynamic? confirmation = SelectionPresent.Show(["Yes", "No"],
             banner: "PROMOTE USER TO ADMIN").ElementAt(0).text;
 
         ControlHelpPresent.ShowHelp();
@@ -211,9 +199,84 @@ internal class RegisterUser
         }
         else
         {
-            ControlHelpPresent.DisplayFeedback("Promotion to admin was canceled.", "bottom", "error");
+            ControlHelpPresent.DisplayFeedback("Action canceled. User was not promoted.");
         }
     }
+
+    // private static void PromoteUserToAdmin()
+    // {
+    //     Console.Clear();
+    //     ControlHelpPresent.Clear();
+    //     ControlHelpPresent.AddOptions("Escape", "<escape>");
+    //     ControlHelpPresent.ShowHelp();
+
+    //     int footerHeight = ControlHelpPresent.GetFooterHeight();
+    //     int inputAreaHeight = Console.WindowHeight - footerHeight - 2;
+
+    //     Console.SetCursorPosition(0, 0);
+        
+    //     Console.WriteLine("Enter the first and last name of the user you want to promote to admin.");
+    //     Console.WriteLine("");
+
+    //     Console.Write("First name: ");
+    //     string firstName = Console.ReadLine()?.Trim();
+    //     Console.Write("Last name: ");
+    //     string lastName = Console.ReadLine()?.Trim();
+
+    //     // Validate inputs
+    //     if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+    //     {
+    //         ControlHelpPresent.DisplayFeedback("Both first and last names are required. Promoting user canceled.");
+    //         ControlHelpPresent.DisplayFeedback("Press any key to return to the menu...", "bottom", "tip");
+    //         Console.ReadKey();
+    //         return;
+    //     }
+        
+    //     // Create an instance fpr UserModel
+    //     var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
+
+    //     // Fetch user bases on the input
+    //     var user = userAccess.GetAllBy("FirstName", firstName)
+    //         .FirstOrDefault(u =>
+    //             string.Equals(u.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
+    //             u.Admin == 0); // Only fetch users
+        
+    //     if (user == null)
+    //     {
+    //         ControlHelpPresent.DisplayFeedback("User not found.");
+    //         ControlHelpPresent.DisplayFeedback("Press any key to return to the menu...", "bottom", "tip");
+    //         Console.ReadKey();
+    //         return;
+    //     }
+
+    //     // Confirmation for promoting
+    //     Console.Clear();
+    //     ControlHelpPresent.ResetToDefault();
+
+    //     var confirmationOptions = new List<string> { "Yes", "No" };
+    //     string confirmation = SelectionPresent.Show(confirmationOptions, banner: "Are you sure?").ElementAt(0).text;
+
+    //     if (confirmation == "Yes")
+    //     {
+    //         // Update the user's Admin status
+    //         user.Admin = 1;
+    //         if (userAccess.Update(user))
+    //         {
+    //             ControlHelpPresent.DisplayFeedback("User successfully promoted to admin.", "bottom", "success");
+    //         }
+    //         else
+    //         {
+    //             ControlHelpPresent.DisplayFeedback("Failed to promote the user. Try again.");
+    //         }
+    //     }
+    //     else
+    //     {
+    //         ControlHelpPresent.DisplayFeedback("Action canceled. User was not promoted.");
+    //     }
+
+    //     ControlHelpPresent.DisplayFeedback("Press any key to return to the menu...", "bottom", "tip");
+    //     Console.ReadKey();
+    // }
 
 
     private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
@@ -234,8 +297,9 @@ internal class RegisterUser
 
             // add navigation options for the confirmation menu
             ControlHelpPresent.Clear();
-            ControlHelpPresent.AddOptions("Exit", "<escape>");
-            ControlHelpPresent.ShowHelp();
+            // ControlHelpPresent.AddOptions("Exit", "<escape>");
+            // ControlHelpPresent.ShowHelp();
+            ControlHelpPresent.ResetToDefault();
 
             dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:").ElementAt(0).text!;
 
@@ -268,7 +332,7 @@ internal class RegisterUser
 
                         });
                     });
-                    ControlHelpPresent.DisplayFeedback("First name edit canceled.", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback($"Changed first name to {firstName}.", "bottom", "success");
                     break;
 
                 case var s when s?.StartsWith("Last name"):
@@ -285,7 +349,7 @@ internal class RegisterUser
 
                         });
                     });
-                    ControlHelpPresent.DisplayFeedback("Last name edit canceled.", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback($"Changed last name to {lastName}.", "bottom", "success");
                     break;
                 
                 case var s when s?.StartsWith("Email"):
@@ -314,7 +378,7 @@ internal class RegisterUser
 
                         });
                     });
-                    ControlHelpPresent.DisplayFeedback("Email edit canceled.", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback($"Changed email to {email}.", "bottom", "success");
                     break;
                 
                 case var s when s?.StartsWith("Password"):
@@ -343,7 +407,7 @@ internal class RegisterUser
 
                         });
                     });
-                    ControlHelpPresent.DisplayFeedback("Password edit canceled.", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback($"Changed password to {password}.", "bottom", "success");
                     break;
                 
                 case var s when s?.StartsWith("Phone number"):
@@ -372,7 +436,7 @@ internal class RegisterUser
 
                         });
                     });
-                    ControlHelpPresent.DisplayFeedback("Phone number edit canceled.", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback($"Changed phone number to {phoneNumber}.", "bottom", "success");
                     break;
 
                 default:
