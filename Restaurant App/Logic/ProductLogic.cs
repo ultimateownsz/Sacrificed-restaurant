@@ -10,16 +10,16 @@ static class ProductManager
     {
         if (product == null)
         {
-            Console.WriteLine("Cant add empty products.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback("Cant add empty products.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             return false;
         }
 
         if (Access.Products.GetBy<string?>("Name", product.Name) != null)
         {
-            Console.WriteLine($"{product.Name} already exists.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"{product.Name} already exists.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             return false;
         }
@@ -66,13 +66,20 @@ static class ProductManager
             
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"\nInvalid {type}...");
-            if(type == "price") Console.WriteLine($"\nThe product price must have 2 decimals and no letters or symbols...");
-            else Console.WriteLine($"\nThe product name must have no number or symbols...");
-            Console.WriteLine("Press any key to retry or ESCAPE to go back"); // give the user the option to exit after making a mistake
+            if(type == "price")
+            {
+                ControlHelpPresent.DisplayFeedback("The product price must have 2 decimals and no letters or symbols...");
+            }
+            else
+            {
+                ControlHelpPresent.DisplayFeedback($"The product name must have no number or symbols...");
+
+            }
+            ControlHelpPresent.DisplayFeedback("Press any key to retry or ESCAPE to go back", "bottom", "tip"); // give the user the option to exit after making a mistake
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
             {
-                return null;
+                return null!;
             }
         }
     }
@@ -86,10 +93,10 @@ static class ProductManager
     //This Method deletes a product and all the related requests
     public static bool DeleteProductAndRelatedRequests(int? productId)
     {
-        var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
+        var requests = Access.Requests.Read().Where(r => r!.ProductID == productId).ToList();
         foreach (var request in requests)
         {
-            Access.Requests.Delete(request.ID);
+            Access.Requests.Delete(request!.ID);
         }
 
         if (Access.Products.GetBy<int?>("ID", productId) == null)
@@ -102,18 +109,19 @@ static class ProductManager
 
      public static List<ProductModel> GetAllProducts()
     {
-        return Access.Products.Read().ToList();
+        return Access.Products.Read().ToList()!;
     }
 
     public static IEnumerable<ProductModel> GetAllWithinCategory(string category)
     {
-        return Access.Products.GetAllBy<string>("Course", category);
+        return Access.Products.GetAllBy<string>("Course", category).Where(p => p != null)!;
     }
 
     public static IEnumerable<ProductModel> GetAllWithinThemeCourse(string category, int? themeID)
     {
         return Access.Products.Read()
-            .Where(p => p.Course == category && p.ThemeID == themeID)
+            .Where(p => p != null && p.Course == category && p.ThemeID == themeID)
+            .Cast<ProductModel>()
             .ToList();
     }
 
@@ -122,7 +130,7 @@ static class ProductManager
     {
         return Access.Products.Read()
             .Select(p => {
-                var themeName = p.ThemeID.HasValue
+                var themeName = p!.ThemeID.HasValue
                     ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name //If the themeID is 0 then instead of leaving it empty, it writes "No theme"
                     : null;
                 return $"{p.Name,-18}   {p.Course,-15}   {themeName,-15}   €{p.Price:F2}";
@@ -135,7 +143,7 @@ static class ProductManager
     {
         return Access.Products.GetAllBy("Course", course)
             .Select(p => {
-                var themeName = p.ThemeID.HasValue
+                var themeName = p!.ThemeID.HasValue
                     ? p.ThemeID == 0 ? "No theme" : Access.Themes.GetBy<int?>("ID", p.ThemeID.Value)?.Name //If the themeID is 0 then instead of leaving it empty, it writes "No theme"
                     : null;
                 return $"{p.Name,-18}   {themeName,-15}   €{p.Price:F2}";
@@ -150,7 +158,7 @@ static class ProductManager
         
         if (theme != "0")
         {
-            themeID = ThemeMenuManager.GetThemeIDByName(theme);
+            themeID = ThemeMenuManager.GetThemeIDByName(theme!);
         }
         else
         {
@@ -158,7 +166,7 @@ static class ProductManager
         }
         return Access.Products.GetAllBy("ThemeID", themeID)
             .Select(p => {
-                return $"{p.Name,-18}   {p.Course,-15}   €{p.Price:F2}";
+                return $"{p!.Name,-18}   {p.Course,-15}   €{p.Price:F2}";
             })
             .ToList();
     }
@@ -190,7 +198,7 @@ static class ProductManager
 
         return Access.Products.Read()
             .FirstOrDefault(p =>
-                p.Name == parts[0] &&
+                p!.Name == parts[0] &&
                 p.Price == price &&
                 (type == "course" ? p.Course == name : p.Course == parts[1]) &&
                 (type == "theme" && name != "0" ? p.ThemeID == ThemeMenuManager.GetThemeIDByName(name) : p.ThemeID == themeID));
@@ -226,7 +234,7 @@ static class ProductManager
                 return;
             else
             {
-                ThemeID = ThemeMenuManager.GetThemeIDByName(newProductEdit);
+                ThemeID = ThemeMenuManager.GetThemeIDByName(newProductEdit!);
             }
         }
         else if(type == "price")
@@ -254,8 +262,8 @@ static class ProductManager
         if(type != "theme" && newProductEdit == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
+            ControlHelpPresent.DisplayFeedback($"Failed to update the {type}");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
@@ -265,8 +273,8 @@ static class ProductManager
         {
             ID = oldProduct.ID,
             Name = type == "name" ? newProductEdit : oldProduct.Name,
-            Price = type == "price" ? decimal.Parse(newProductEdit) : oldProduct.Price,
-            Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
+            Price = type == "price" ? decimal.Parse(newProductEdit!) : oldProduct.Price,
+            Course = type == "course" ? char.ToUpper(newProductEdit![0]) + newProductEdit.Substring(1) : oldProduct.Course,
             ThemeID = type == "theme" ? ThemeID : oldProduct.ThemeID,
         };
 
@@ -274,16 +282,16 @@ static class ProductManager
         if(UpdateProduct(oldProduct, newProduct))
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"The {type} has been updated to {newProductEdit}");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"The {type} has been updated to {newProductEdit}", "bottom", "success");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
+            ControlHelpPresent.DisplayFeedback($"Failed to update the {type}");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -306,7 +314,7 @@ static class ProductManager
         newProduct.Name = name;
 
     lCourse:
-        string course = CourseLogic.GetValidCourse(); //ask for the course
+        string? course = CourseLogic.GetValidCourse(); //ask for the course
         if (course == "REQUEST_PROCESS_EXIT")
             goto lName;
 
@@ -317,7 +325,7 @@ static class ProductManager
         newProduct.Course = course;
 
     lTheme:
-        string theme = ThemeInputValidator.GetValidThemeMenu(); //ask for the theme
+        string? theme = ThemeInputValidator.GetValidThemeMenu(); //ask for the theme
         if (theme == "REQUEST_PROCESS_EXIT")
             goto lCourse;
 

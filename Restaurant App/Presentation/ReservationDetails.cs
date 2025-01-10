@@ -34,7 +34,7 @@ public static class ReservationDetails
         Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
         Console.WriteLine("More details may appear in the future...");
 
-        ControlHelpPresent.DisplayFeedback("\nPress any key to return to the reservations list.");
+        ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list.");
         Console.ReadKey();
     }
 

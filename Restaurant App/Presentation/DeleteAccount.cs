@@ -21,6 +21,7 @@ namespace Project.Presentation
                     ControlHelpPresent.DisplayFeedback("No accounts available to delete.");
                     ControlHelpPresent.DisplayFeedback("Press any key to return to the previous menu...", "bottom", "tip");
                     Console.ReadKey();
+                    ControlHelpPresent.ShowHelp();
                     return;
                 }
 
@@ -37,10 +38,11 @@ namespace Project.Presentation
                     var options = DeleteAccountLogic.GenerateMenuOptions(activeAccounts, currentPage);
 
                     // display menu and handle user input
-                    var selection = SelectionPresent.Show(options, banner:"ACCOUNTS MENU\n\n").ElementAt(0).text;
+                    var selection = SelectionPresent.Show(options, banner:"ACCOUNTS MENU").ElementAt(0).text;
 
                     if (selection == null || selection == "Back")
                     {
+                        ControlHelpPresent.ShowHelp();
                         // Console.WriteLine(" Exiting ACCOUNT MENU...");
                         // Thread.Sleep(1500);
                         return;
@@ -50,6 +52,8 @@ namespace Project.Presentation
                     {
                         case "Back":
                             running = false;
+                            ControlHelpPresent.ResetToDefault();
+                            ControlHelpPresent.ShowHelp();
                             break;
                         
                         case "Next page":
@@ -87,6 +91,7 @@ namespace Project.Presentation
             {
                 // Console.WriteLine(" Exiting ACCOUNT MENU...");
                 ControlHelpPresent.DisplayFeedback("Exciting ACCOUNT MENU");
+                ControlHelpPresent.ShowHelp();
                 // Thread.Sleep(1500);
             }
         }

@@ -46,7 +46,7 @@ static class ProductView
                             Console.WriteLine("");
                             break;
                         }
-                        DisplayProducts("course", name);
+                        DisplayProducts("course", name!);
                     }
                     break;
                 
@@ -59,7 +59,7 @@ static class ProductView
                             Console.WriteLine("");
                             break;
                         }
-                        DisplayProducts("theme", name);
+                        DisplayProducts("theme", name!);
                     }
                     break;
                 
@@ -128,15 +128,16 @@ static class ProductView
                 } 
             }
 
-            string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
+            string? productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
             if(productSelection == "")
             {
                 Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
+            if (string.IsNullOrEmpty(productSelection)) return;
 
-            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection, filterType, name);
+            chosenProduct = ProductManager.ConvertStringChoiceToProductModel(productSelection!, filterType, name);
             if(chosenProduct == null)
             {
                 Console.WriteLine("rizz");
@@ -188,7 +189,7 @@ static class ProductView
         Console.Clear();
         string banner = $"Do you want to delete {chosenProduct.Name}";
         List<string> options = new List<string>{"Yes", "No"};
-        string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
+        string? selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
         if(selection == "No" || selection == "")
         {
             Console.WriteLine("fix");
@@ -225,6 +226,9 @@ static class ProductView
 
         
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape");
+        ControlHelpPresent.ShowHelp();
         if(newProduct == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
