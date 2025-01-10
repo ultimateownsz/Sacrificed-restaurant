@@ -215,7 +215,8 @@ internal class SelectionPresent
 
                 case SelectionLogic.Interaction.Terminated:
 
-                    Console.Clear();
+                    // Console.Clear();
+                    ControlHelpPresent.ShowHelp();
                     Console.SetCursorPosition(0, menuStartLine);
                     Console.ForegroundColor = palette.Base;
                     Console.WriteLine(banner.Trim() + "\n");
