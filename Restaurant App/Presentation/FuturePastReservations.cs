@@ -53,7 +53,7 @@ namespace Presentation
                 var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
                 string selectedReservation = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // displaying the info as opions to choose
 
-                if (selectedReservation == "")
+                if (selectedReservation == null)
                 {
                     goto START;
                 }
@@ -104,7 +104,7 @@ namespace Presentation
                 var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
                 var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATION MENU").ElementAt(0).text; // making use of SelectionPresent.Show
 
-                if (selectedReservations == "")
+                if (selectedReservations == null)
                 {
                     return;
                 }

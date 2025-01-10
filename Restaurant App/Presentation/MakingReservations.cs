@@ -174,7 +174,7 @@ namespace Presentation
                             productOptions, banner: banner).ElementAt(0).text;
 
                         // return
-                        if (selectedOption == "")
+                        if (selectedOption == null)
                             return null;
 
                         // EMERGENCY MODIFICATION: 1
