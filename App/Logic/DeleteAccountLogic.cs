@@ -26,26 +26,29 @@ public class DeleteAccountLogic
 
         if (selection.text == "Yes")
         {
-            // Mark the account as inactive
-            account.FirstName = "Inactive";
+            Access.Users.Delete(account.ID);
+            return true;
+
+            //// Mark the account as inactive
+            //account.FirstName = "Inactive";
             
-            // Get the current number of inactive accounts for unique identifier
-            int inactiveCount = Access.Users.GetAllBy<string>("FirstName", "Inactive").Count();
-            account.LastName = $"#{inactiveCount + 1}";
+            //// Get the current number of inactive accounts for unique identifier
+            //int inactiveCount = Access.Users.GetAllBy<string>("FirstName", "Inactive").Count();
+            //account.LastName = $"#{inactiveCount + 1}";
 
-            // Replace data
-            account.Email = "Inactive";
-            account.Password = "Inactive";
-            account.Phone = "Inactive";
+            //// Replace data
+            //account.Email = "Inactive";
+            //account.Password = "Inactive";
+            //account.Phone = "Inactive";
 
-            // Update the account in the database
-            if (Access.Users.Update(account))
-            {
-                // After deleting the account, delete future reservations
-                DeleteFutureReservations(account.ID);
+            //// Update the account in the database
+            //if (Access.Users.Update(account))
+            //{
+            //    // After deleting the account, delete future reservations
+            //    DeleteFutureReservations(account.ID);
 
-                return true;
-            }
+            //    return true;
+            //}
         }
 
         return false;

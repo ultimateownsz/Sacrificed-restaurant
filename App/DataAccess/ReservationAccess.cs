@@ -6,7 +6,7 @@ internal class ReservationAccess : DataAccess<ReservationModel>
 {
     internal ReservationAccess() : base(typeof(ReservationModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    private protected new bool Delete(int? id)
+    internal new bool Delete(int? id)
     {
         IEnumerable<RequestModel> requests =
             Access.Requests.Read().Where(req => req.ReservationID == id);
