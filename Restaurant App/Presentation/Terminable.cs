@@ -74,7 +74,7 @@ internal class Terminable
             Console.SetCursorPosition(0, controlsStartline);
             ControlHelpPresent.ShowHelp();
 
-            capture = Console.ReadKey();
+            capture = Console.ReadKey(intercept: true);
             
             switch (capture.Key)
             {
