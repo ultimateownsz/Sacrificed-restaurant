@@ -35,7 +35,7 @@ public class ReservationLogic
             .FirstOrDefault(r => r?.PlaceID == placeId);
         if (existingReservation != null)
         {
-            Console.WriteLine($"ERROR: Conflict. Reservation already exists for PlaceID {placeId} on {date.ToShortDateString()}.");
+            // Console.WriteLine($"ERROR: Conflict. Reservation already exists for PlaceID {placeId} on {date.ToShortDateString()}.");
             return 0;
         }
 
@@ -48,7 +48,7 @@ public class ReservationLogic
         };
         if (!Access.Reservations.Write(reservation))
         {
-            Console.WriteLine("ERROR: Failed to save the reservation.");
+            // Console.WriteLine("ERROR: Failed to save the reservation.");
             return 0;
         }
 
@@ -63,7 +63,7 @@ public class ReservationLogic
             return newReservation.ID.Value;
         }
 
-        Console.WriteLine("ERROR: Failed to fetch the newly created reservation.");
+        // Console.WriteLine("ERROR: Failed to fetch the newly created reservation.");
         return 0;
     }
 
