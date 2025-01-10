@@ -33,10 +33,8 @@ internal class LinkAllergyLogic
         output.ID = id;
 
         // add all allergies
-        foreach (var x in Access.Allergies.Read())
-        {
-            output.Allergies?.Add(x?.Name);
-        }
+        Access.Allergies.Read().ForEach(
+            x => output.Allergies?.Add(x?.Name));
 
         // add those the user has
         foreach (AllerlinkModel? model in Access.Allerlinks.Read().Where(x => x.EntityID == id))
