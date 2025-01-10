@@ -42,7 +42,7 @@ static class Menu
                         continue;
                     break;
 
-                case "Register":
+                case "Register\n":
                     RegisterUser.CreateAccount();
                     continue;
 

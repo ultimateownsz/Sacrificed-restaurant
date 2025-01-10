@@ -17,8 +17,12 @@ internal class SelectionPresent
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
         string banner, SelectionLogic.Mode mode, int menuStartLine)
     {
+        // Clear only the menu area, leaving the footer intact
+        ClearMenuArea(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
+
+
         // banner & colour initialization
-        Console.Clear();
+        // Console.Clear();
         Console.SetCursorPosition(0, menuStartLine);
         Terminable.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
@@ -162,7 +166,7 @@ internal class SelectionPresent
                 }
             }
 
-            // Show help section with dynamic feedback for the selected option
+            // Refresh the footer
             ControlHelpPresent.ShowHelp(options, selectedIndex);
 
             // capture & handle interaction
@@ -250,15 +254,21 @@ internal class SelectionPresent
     }
 
     // // clear only the menu area
-    // private static void ClearMenuArea(int menuStartLine, int menuHeight)
-    // {
-    //     int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
-    //     for (int i = menuStartLine; i < endLine; i++)
-    //     {
-    //         // if (i >= Console.WindowHeight) break; // prevent out of bounds
-    //         Console.SetCursorPosition(0, i);
-    //         Console.Write(new string(' ', Console.WindowWidth)); // clear the line
-    //     }
-    //     Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
-    // }
+    private static void ClearMenuArea(int menuStartLine, int menuHeight)
+    {
+        // int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
+        // for (int i = menuStartLine; i < endLine; i++)
+        // {
+        //     // if (i >= Console.WindowHeight) break; // prevent out of bounds
+        //     Console.SetCursorPosition(0, i);
+        //     Console.Write(new string(' ', Console.WindowWidth)); // clear the line
+        // }
+        // Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
+
+        for (int i = menuStartLine; i < menuHeight; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+    }
 }
