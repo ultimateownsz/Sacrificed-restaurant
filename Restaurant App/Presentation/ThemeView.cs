@@ -131,7 +131,7 @@ static class ThemeView
 
         while (true)
         {
-            Terminable.Write("Select a year to edit its themes:\n");
+            Console.Write("Select a year to edit its themes:\n");
 
             // Highlight the currently selected year in Blue
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -140,9 +140,9 @@ static class ThemeView
 
             // Navigation options
             // Console.WriteLine("\n(r)eset, (esc)ape");
-            ControlHelpPresent.Clear();
+            // ControlHelpPresent.Clear();
+            // ControlHelpPresent.AddOptions("Escape", "<escape>");
             ControlHelpPresent.AddOptions("Reset", "<r>");
-            ControlHelpPresent.AddOptions("Escape", "<escape>");
             ControlHelpPresent.ShowHelp();
             ControlHelpPresent.ResetToDefault();
 
@@ -200,6 +200,7 @@ static class ThemeView
                     ControlHelpPresent.DisplayFeedback("Invalid input. Use arrow keys, 'r', 'escape', or Enter.");
                     break;
             }
+            Console.SetCursorPosition(0, 0);
         }
     }
 
