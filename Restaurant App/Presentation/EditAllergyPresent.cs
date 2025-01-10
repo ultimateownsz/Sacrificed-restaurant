@@ -16,7 +16,7 @@ internal class EditAllergyPresent
             input = Terminable.ReadLine("Allergy name: ");
             if (input == null)
             {
-                // ControlHelpPresent.ResetToDefault();
+                ControlHelpPresent.ResetToDefault();
                 Console.Clear();
                 return null;
             }
