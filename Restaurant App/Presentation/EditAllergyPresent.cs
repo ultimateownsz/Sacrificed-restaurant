@@ -13,10 +13,11 @@ internal class EditAllergyPresent
             ControlHelpPresent.Clear();
             ControlHelpPresent.AddOptions("Exit", "<escape>");
             ControlHelpPresent.ShowHelp();
-            input = Terminable.ReadLine("allergy name: ");
+            input = Terminable.ReadLine("Allergy name: ");
             if (input == null)
             {
-                ControlHelpPresent.ResetToDefault();
+                // ControlHelpPresent.ResetToDefault();
+                Console.Clear();
                 return null;
             }
             
