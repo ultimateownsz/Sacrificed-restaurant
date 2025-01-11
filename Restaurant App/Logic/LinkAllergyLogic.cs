@@ -89,7 +89,7 @@ internal class LinkAllergyLogic
             List<string> products = Access.Products.Read().Select(x => x.Name).ToList();
             string product = SelectionPresent.Show(
                 products, banner: "PRODUCT MENU").ElementAt(0).text;
-            if (product == "") return;
+            if (product == null) return;
 
             // id override
             id = Access.Products.GetBy<string>("Name", product).ID;
