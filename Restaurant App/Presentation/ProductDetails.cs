@@ -25,7 +25,11 @@ static class ProductView
             switch (SelectionPresent.Show(options, banner: $"PRODUCT MENU").ElementAt(0).text)
             {
                 case "Add product":
+                     ControlHelpPresent.Clear();
+                    ControlHelpPresent.AddOptions("Escape", "<escape>");
+                    ControlHelpPresent.ShowHelp();
                     AddProduct();
+                    ControlHelpPresent.ResetToDefault();
                     break;
 
                 case "Show all products":
@@ -41,7 +45,7 @@ static class ProductView
                     while(true)
                     {
                         name = CourseLogic.GetValidCourse();
-                        if (name == "REQUEST_PROCESS_EXIT")
+                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
                         {
                             Console.WriteLine("");
                             break;
@@ -54,7 +58,7 @@ static class ProductView
                     while(true)
                     {
                         name = ThemeInputValidator.GetValidThemeMenu();
-                        if (name == "REQUEST_PROCESS_EXIT")
+                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
                         {
                             Console.WriteLine("");
                             break;
@@ -63,7 +67,7 @@ static class ProductView
                     }
                     break;
                 
-                case "":
+                case null:
                     return;
             }
         }
@@ -78,7 +82,7 @@ static class ProductView
         List<string> products;
         while (true)
         {
-            if(filterType == "")
+            if(filterType == null)
             {
                 banner = "Choose a product to edit/delete:";
                 products = ProductManager.GetAllProductInfo().ToList();
@@ -130,7 +134,7 @@ static class ProductView
 
             string? productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if(productSelection == "")
+            if(productSelection == null)
             {
                 Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
@@ -190,7 +194,7 @@ static class ProductView
         string banner = $"Do you want to delete {chosenProduct.Name}";
         List<string> options = new List<string>{"Yes", "No"};
         string? selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
-        if(selection == "No" || selection == "")
+        if(selection == "No" || selection == null)
         {
             Console.WriteLine("fix");
             return false;
@@ -220,21 +224,17 @@ static class ProductView
     {
         ProductModel? newProduct = ProductManager.ProductValidator();
         
+        Console.Clear();
+        
         if (newProduct != null && newProduct.ID == -1)
             return;
-        
 
-        
-        Console.Clear();
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Escape", "<escape");
-        ControlHelpPresent.ShowHelp();
         if(newProduct == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             ControlHelpPresent.DisplayFeedback($"Invalid product info.");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
-            Console.ReadKey();
+            // ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+            // Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
         }
