@@ -159,19 +159,19 @@ namespace Presentation
 
                     if (selectedTable == -1)
                     {
-                        Console.WriteLine("Returning to previous menu...");
+                        ControlHelpPresent.DisplayFeedback("Returning to previous menu...");
                         break;
                     }
 
                     if (IsTableTaken(reservation.Date, selectedTable))
                     {
-                        Console.WriteLine("This table is already reserved for this particular date...");
+                        ControlHelpPresent.DisplayFeedback("This table is already reserved for this particular date...");
                     }
                     else
                     {
                         if (reservation.PlaceID.HasValue)
                         {
-                            Console.WriteLine("Old reserved table has been replaced...");
+                            ControlHelpPresent.DisplayFeedback("Old reserved table has been replaced...", "bottom", "success");
                         }
 
                         reservation.PlaceID = selectedTable;
@@ -186,7 +186,7 @@ namespace Presentation
         // Check if the reservation date is in the past
         if (reservation.Date < DateTime.Today)
         {
-            Terminable.Write("You cannot cancel a reservation that is in the past.");
+            ControlHelpPresent.DisplayFeedback("You cannot cancel a reservation that is in the past.");
             Thread.Sleep(1000);
             return false; // Cant cancel a past reservation
         }
@@ -198,13 +198,13 @@ namespace Presentation
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            Terminable.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
-            Thread.Sleep(1000);
+            ControlHelpPresent.DisplayFeedback($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.", "bottom", "success");
+            // Thread.Sleep(1000);
             return true; // Deletion was successful
         }
         else
         {
-            Terminable.Write("Reservation not cancelled.");
+            ControlHelpPresent.DisplayFeedback("Reservation not cancelled.");
             Thread.Sleep(1000);
             return false; // Deletion was cancelled
         }
@@ -220,7 +220,7 @@ namespace Presentation
 
                 if (string.IsNullOrEmpty(newAmountInput))
                 {
-                    Console.WriteLine("Reservation Amount not updated.");
+                    ControlHelpPresent.DisplayFeedback("Reservation amount not updated.");
                     break;
                 }
                 else if (int.TryParse(newAmountInput, out int newAmount))
@@ -238,7 +238,7 @@ namespace Presentation
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                    ControlHelpPresent.DisplayFeedback("Invalid input. Please enter a valid number.");
                 }
             }
         }
