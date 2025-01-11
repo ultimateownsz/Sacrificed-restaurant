@@ -40,7 +40,7 @@ public static class ShowReservations
                     DeleteReservation.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
                 
-                case "":
+                case null:
                     return; // Exit the options and return to the reservation list
             }
 

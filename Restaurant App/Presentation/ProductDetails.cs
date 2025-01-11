@@ -182,7 +182,7 @@ static class ProductView
                     if(DeleteProduct(chosenProduct))
                         return;
                     break;
-                case "":
+                case null:
                     return;
             }
         }

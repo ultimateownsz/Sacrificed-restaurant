@@ -61,7 +61,7 @@ namespace Presentation
                     UpdateTableID(reservation);
                     break;
 
-                case "":
+                case null:
                     return;
                 }
             }
@@ -92,7 +92,7 @@ namespace Presentation
                     }
                     break;
                 
-                case "":
+                case null:
                     return;
             }
         }
