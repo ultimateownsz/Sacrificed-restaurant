@@ -19,9 +19,10 @@ public static class ReservationDetails
         // Ensure data exists
         if (account == null)
         {
-            Console.WriteLine("Unable to retrieve user details.");
-            Console.WriteLine("Press any key to return to the reservations list.");
+            ControlHelpPresent.DisplayFeedback("Unable to retrieve user details.");
+            ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list.", "bottom", "tip");
             Console.ReadKey();
+            ControlHelpPresent.ResetToDefault();
             return;
         }
 
@@ -34,7 +35,7 @@ public static class ReservationDetails
         Console.WriteLine($"Assigned Table number: {reservation.PlaceID}");
         Console.WriteLine("More details may appear in the future...");
 
-        ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list.");
+        ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list.", "bottom", "tip");
         Console.ReadKey();
     }
 
