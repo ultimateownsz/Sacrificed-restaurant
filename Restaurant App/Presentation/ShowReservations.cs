@@ -29,7 +29,10 @@ public static class ShowReservations
             switch (selectedOption)
             {
                 case "View    Details":
+                    Console.Clear();
                     ReservationDetails.ShowDetails(reservation);
+                    ControlHelpPresent.ResetToDefault();
+                    Console.Clear();
                     break;
 
                 case "Update  Reservation":
