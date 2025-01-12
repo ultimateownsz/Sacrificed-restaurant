@@ -205,8 +205,8 @@ static class ProductViewPresent
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{chosenProduct.Name} has been deleted.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"{chosenProduct.Name} has been deleted.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return true;
@@ -214,8 +214,8 @@ static class ProductViewPresent
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to delete {chosenProduct.Name}.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"Failed to delete {chosenProduct.Name}.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return false;
@@ -226,17 +226,15 @@ static class ProductViewPresent
     {
         ProductModel? newProduct = ProductLogic.ProductValidator();
 
+        Console.Clear();
         if (newProduct != null && newProduct.ID == -1)
             return;
 
-
-
-        Console.Clear();
         if (newProduct == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Invalid product info.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"Invalid product info.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
@@ -244,8 +242,8 @@ static class ProductViewPresent
         else if (ProductLogic.AddProduct(newProduct))
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{newProduct.Name} has been Added.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"{newProduct.Name} has been added.", "bottom", "success");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
@@ -253,8 +251,8 @@ static class ProductViewPresent
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to Add {newProduct.Name}.");
-            Console.WriteLine("Press any key to continue...");
+            ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
             return;
