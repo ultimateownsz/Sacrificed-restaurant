@@ -134,9 +134,21 @@ static class ThemeMenuManager
     }
 
     
+    // public static int? GetThemeIDByName(string name)
+    // {
+    //     var theme = Access.Themes.GetBy<string>("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
+    //     return theme?.ID;
+    // }
     public static int? GetThemeIDByName(string name)
     {
-        var theme = Access.Themes.GetBy<string>("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
+        if (string.IsNullOrEmpty(name)) return null;
+
+        var formattedName = name.Length > 1
+            ? char.ToUpper(name[0]) + name.Substring(1)
+            : name.ToUpper(); // Handles single-character case
+
+        var theme = Access.Themes.GetBy<string>("Name", formattedName);
         return theme?.ID;
     }
+
 }

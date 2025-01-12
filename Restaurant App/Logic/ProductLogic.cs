@@ -150,7 +150,7 @@ static class ProductManager
         
         if (theme != "0")
         {
-            themeID = theme != null ? ThemeMenuManager.GetThemeIDByName(theme) : null;
+            themeID = ThemeMenuManager.GetThemeIDByName(theme);
         }
         else
         {
