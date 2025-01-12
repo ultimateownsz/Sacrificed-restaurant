@@ -12,7 +12,7 @@ public class CourseLogic
         while (true)
         {
             var courseName = SelectionPresent.Show(courses, banner: "ADMIN MENU").ElementAt(0).text;
-            if (courseName == "") 
+            if (courseName == null) 
                 return "REQUEST_PROCESS_EXIT";
             if (courseName != "")
             {

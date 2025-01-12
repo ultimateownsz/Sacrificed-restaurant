@@ -85,7 +85,7 @@ static class ProductViewPresent
         List<string> products;
         while (true)
         {
-            if (filterType == "")
+            if (filterType == null)
             {
                 banner = "Choose a product to edit/delete:";
                 products = ProductLogic.GetAllProductInfo().ToList();
