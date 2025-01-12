@@ -1,3 +1,4 @@
+// Presentation Layer: TableSelectionPresent.cs
 namespace App.Presentation.Table
 {
     public class TableSelectionPresent
@@ -56,7 +57,7 @@ namespace App.Presentation.Table
             });
         }
 
-        public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount, char[,] grid)
+        public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount)
         {
             return App.Logic.Table.TableSelectionLogic.SelectTableLogic(
                 grid, activeTables, inactiveTables, reservedTables, guestCount,
@@ -91,4 +92,4 @@ namespace App.Presentation.Table
                 tableNumber, guestCount, activeTables, reservedTables, inactiveTables);
         }
     }
-} 
+}
