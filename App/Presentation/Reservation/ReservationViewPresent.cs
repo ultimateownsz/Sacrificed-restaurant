@@ -35,7 +35,7 @@ static class FuturePastResrvations
             if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
             {
                 Console.Clear();
-                ControlHelpPresent.DisplayFeedback("There are no reservations for this date. Press any key to return...", "bottom", "tip");
+                ControlHelpPresent.DisplayFeedback("There are no reservations for this date. Press any key to return...", "center", "tip");
                 Console.ReadKey();
                 goto START;
             }
