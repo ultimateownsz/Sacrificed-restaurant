@@ -216,5 +216,41 @@ namespace App.Logic.Table
                 _ => int.MaxValue
             };
         }
+
+        public int SelectTable(
+            string[,] grid,
+            int[] activeTables,
+            int[] inactiveTables,
+            int[] reservedTables,
+            int guestCount,
+            bool isAdmin,
+            (int cursorX, int cursorY) currentCursor,
+            out (int x, int y) nextCursor)
+        {
+            int cursorX = currentCursor.cursorX;
+            int cursorY = currentCursor.cursorY;
+            nextCursor = currentCursor;
+
+            for (int y = 0; y < grid.GetLength(0); y++)
+            {
+                for (int x = 0; x < grid.GetLength(1); x++)
+                {
+                    string number = GetNumberAt(x, y, grid);
+                    if (!string.IsNullOrEmpty(number))
+                    {
+                        int tableNumber = int.Parse(number);
+
+                        if (!Array.Exists(reservedTables, t => t == tableNumber) &&
+                            !Array.Exists(inactiveTables, t => t == tableNumber) &&
+                            IsTableValidForGuests(tableNumber, guestCount, activeTables))
+                        {
+                            nextCursor = (x, y);
+                            return tableNumber;
+                        }
+                    }
+                }
+            }
+            return -1; // No table found
+        }
     }
 }

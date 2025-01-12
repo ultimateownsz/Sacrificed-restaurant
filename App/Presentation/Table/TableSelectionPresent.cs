@@ -17,6 +17,19 @@ public class TableSelectionPresent
     {
         _logic = logic;
     }
+    public int SelectTable(
+        int[] activeTables,
+        int[] inactiveTables,
+        int[] reservedTables,
+        int guestCount,
+        bool isAdmin,
+        (int cursorX, int cursorY) currentCursor,
+        out (int x, int y) nextCursor)
+    {
+        string[,] grid = GridPresent.GetGrid();
+        return _logic.SelectTable(grid, activeTables, inactiveTables, reservedTables, guestCount, isAdmin, currentCursor, out nextCursor);
+    }
+
         public void ClearGrid()
         {
             string[,] grid = GridPresent.GetGrid();
