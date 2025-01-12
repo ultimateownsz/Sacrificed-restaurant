@@ -27,7 +27,12 @@ static class ProductViewPresent
             switch (SelectionPresent.Show(options, banner: $"PRODUCT MENU").ElementAt(0).text)
             {
                 case "Add product":
+                    // not the best way of fixing a visual bug but this will do
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.AddOptions("Escape", "<escape>");
+                    ControlHelpPresent.ShowHelp();
                     AddProduct();
+                    ControlHelpPresent.ResetToDefault();
                     break;
 
                 case "Show all products":
@@ -43,7 +48,7 @@ static class ProductViewPresent
                     while (true)
                     {
                         name = CourseLogic.GetValidCourse();
-                        if (name == "REQUEST_PROCESS_EXIT")
+                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
                         {
                             Console.WriteLine("");
                             break;
@@ -56,7 +61,7 @@ static class ProductViewPresent
                     while (true)
                     {
                         name = ThemeValidateLogic.GetValidThemeMenu();
-                        if (name == "REQUEST_PROCESS_EXIT")
+                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
                         {
                             Console.WriteLine("");
                             break;
@@ -65,7 +70,7 @@ static class ProductViewPresent
                     }
                     break;
 
-                case "":
+                case null:
                     return;
             }
         }
