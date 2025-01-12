@@ -20,10 +20,12 @@ public static class AdminCreateOptionsPresent
         {
             case "Create admin account":
                 UserRegisterPresent.CreateAccount(true);
+                ControlHelpPresent.ResetToDefault();
                 break;
             
             case "Make existing user admin\n":
                 PromoteUserToAdmin();
+                ControlHelpPresent.ResetToDefault();
                 break; 
 
             case null:
