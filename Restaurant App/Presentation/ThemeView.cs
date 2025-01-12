@@ -131,6 +131,7 @@ static class ThemeView
 
         while (true)
         {
+            Console.Clear();
             Console.Write("Select a year to edit its themes:\n");
 
             // Highlight the currently selected year in Blue
@@ -230,7 +231,7 @@ static class ThemeView
             //{
             //    return 0; // Indicate going back
             //}
-
+            Console.Clear();
             var selection = SelectionPresent.Show(optionsMonths, banner: banner);
             month = selection.ElementAt(0).index + 1;
 
