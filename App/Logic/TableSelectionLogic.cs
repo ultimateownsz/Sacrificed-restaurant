@@ -1,13 +1,16 @@
-public class TableSelectionLogic
+namespace App.Logic.Table
 {
-    public string[] GenerateClearedRows(int gridHeight, int gridWidth)
+    public class TableSelectionLogic
     {
-        string[] clearedRows = new string[gridHeight];
-        for (int i = 0; i < gridHeight; i++)
+        public string[] GenerateClearedRows(int gridHeight, int gridWidth)
         {
-            clearedRows[i] = new string(' ', gridWidth);
-        }
+            string[] clearedRows = new string[gridHeight];
+            for (int i = 0; i < gridHeight; i++)
+            {
+                clearedRows[i] = new string(' ', gridWidth);
+            }
 
-        return clearedRows;
+            return clearedRows;
+        }
     }
 }

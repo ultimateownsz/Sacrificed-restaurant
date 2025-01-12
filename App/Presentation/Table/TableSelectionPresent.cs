@@ -1,5 +1,6 @@
 using App.DataAccess.Utils;
 using Restaurant;
+using App.Logic.Table;
 
 namespace App.Presentation.Table;
 
@@ -12,19 +13,17 @@ public class TableSelectionPresent
     public int SelectedTable { get; private set; }
 
     private readonly TableSelectionLogic _logic;
-
     public TableSelectionPresent(TableSelectionLogic logic)
     {
         _logic = logic;
     }
-
-    public void RenderClearedGrid()
+    private void ClearGrid()
     {
         // Retrieve grid dimensions
         int gridHeight = GridPresent.GetGrid().GetLength(0);
         int gridWidth = GridPresent.GetGrid().GetLength(1);
 
-        // Get cleared rows from logic layer
+        // Generate cleared rows using logic layer
         string[] clearedRows = _logic.GenerateClearedRows(gridHeight, gridWidth);
 
         // Render cleared rows to the console
@@ -36,7 +35,7 @@ public class TableSelectionPresent
 
         Console.SetCursorPosition(0, 0); // Reset cursor to the top
     }
-}
+
     private (int x, int y) FindTableCoordinates(int tableNumber)
     {
         // Iterate through the grid to locate the given table number
