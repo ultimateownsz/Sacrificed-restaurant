@@ -1,21 +1,12 @@
+using App.DataAccess.Utils;
+using Restaurant;
+
 namespace App.Logic.Table
 {
     public class TableSelectionLogic
     {
-        public string[] GenerateClearedRows(int gridHeight, int gridWidth)
-        {
-            string[] clearedRows = new string[gridHeight];
-            for (int i = 0; i < gridHeight; i++)
-            {
-                clearedRows[i] = new string(' ', gridWidth);
-            }
-
-            return clearedRows;
-        }
-
         public (int x, int y) FindTableCoordinates(int tableNumber, string[,] grid)
         {
-            // Iterate through the grid to locate the given table number
             for (int y = 0; y < grid.GetLength(0); y++)
             {
                 for (int x = 0; x < grid.GetLength(1); x++)
@@ -23,12 +14,11 @@ namespace App.Logic.Table
                     string number = GetNumberAt(x, y, grid);
                     if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
                     {
-                        return (x, y); // Return the coordinates of the table
+                        return (x, y);
                     }
                 }
             }
-
-            throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
+            throw new Exception($"Table {tableNumber} not found in the grid.");
         }
 
         public string GetNumberAt(int x, int y, string[,] grid)
@@ -41,7 +31,6 @@ namespace App.Logic.Table
                 number += grid[y, x];
                 x++;
             }
-
             return number;
         }
 
@@ -74,32 +63,57 @@ namespace App.Logic.Table
                         {
                             if (Array.Exists(reservedTables, t => t == tableNumber))
                             {
-                                tableColors[tableNumber] = ConsoleColor.Red; // Reserved
+                                tableColors[tableNumber] = ConsoleColor.Red;
                             }
                             else if (Array.Exists(inactiveTables, t => t == tableNumber))
                             {
-                                tableColors[tableNumber] = ConsoleColor.Red; // Inactive
+                                tableColors[tableNumber] = ConsoleColor.Red;
                             }
                             else if (!IsTableValidForGuests(tableNumber, guestCount, activeTables))
                             {
-                                tableColors[tableNumber] = ConsoleColor.Red; // Invalid size
+                                tableColors[tableNumber] = ConsoleColor.Red;
                             }
                             else
                             {
-                                tableColors[tableNumber] = ConsoleColor.Green; // Available
+                                tableColors[tableNumber] = ConsoleColor.Green;
                             }
                         }
                     }
                 }
             }
-
             return tableColors;
         }
 
-        private bool IsTableValidForGuests(int tableNumber, int guestCount, int[] activeTables)
+        public (int x, int y) FindFirstAvailableCoordinates(
+            int[] activeTables,
+            int[] inactiveTables,
+            int[] reservedTables,
+            int guestCount,
+            string[,] grid)
         {
-            if (!Array.Exists(activeTables, t => t == tableNumber))
-                return false;
+            for (int y = 0; y < grid.GetLength(0); y++)
+            {
+                for (int x = 0; x < grid.GetLength(1); x++)
+                {
+                    string number = GetNumberAt(x, y, grid);
+                    if (!string.IsNullOrEmpty(number))
+                    {
+                        int tableNumber = int.Parse(number);
+                        if (!Array.Exists(reservedTables, t => t == tableNumber) &&
+                            !Array.Exists(inactiveTables, t => t == tableNumber) &&
+                            IsTableValidForGuests(tableNumber, guestCount, activeTables))
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            return FindTableCoordinates(1, grid);
+        }
+
+        public bool IsTableValidForGuests(int tableNumber, int guestCount, int[] activeTables)
+        {
+            if (!Array.Exists(activeTables, t => t == tableNumber)) return false;
 
             var table = Access.Places.Read().FirstOrDefault(p => p.ID == tableNumber);
             if (table == null || table.Active == 0) return false;
@@ -110,6 +124,96 @@ namespace App.Logic.Table
                 3 or 4 => tableNumber == 6 || tableNumber == 7 || tableNumber == 10 || tableNumber == 13 || tableNumber == 14,
                 5 or 6 => tableNumber == 2 || tableNumber == 3,
                 _ => false
+            };
+        }
+
+        public string ValidateTableState(
+            int tableNumber,
+            int guestCount,
+            int[] activeTables,
+            int[] reservedTables,
+            int[] inactiveTables,
+            bool isAdmin,
+            out ConsoleColor tableColor)
+        {
+            bool isReserved = Array.Exists(reservedTables, t => t == tableNumber);
+            bool isInactive = Array.Exists(inactiveTables, t => t == tableNumber);
+            bool isActive = Array.Exists(activeTables, t => t == tableNumber);
+
+            // Determine if the table size is valid
+            bool isTooSmall = guestCount > GetMaxGuestsForTable(tableNumber);
+            bool isTooBig = guestCount < GetMinGuestsForTable(tableNumber);
+
+            string message = "";
+
+            if (isReserved && isActive)
+            {
+                message = $"Table {tableNumber} is already reserved.\n";
+                tableColor = ConsoleColor.Red;
+                return message;
+            }
+
+            if (isInactive)
+            {
+                if (isTooSmall)
+                {
+                    message = $"Table {tableNumber} is too small for {guestCount} guests and inactive.\n";
+                }
+                else if (isTooBig)
+                {
+                    message = $"Table {tableNumber} is too big for {guestCount} guests and inactive.\n";
+                }
+                else
+                {
+                    message = $"Table {tableNumber} is inactive.\n";
+                }
+                tableColor = ConsoleColor.Red;
+                return message;
+            }
+
+            if (isTooSmall)
+            {
+                message = $"Table {tableNumber} is too small for {guestCount} guests.\n";
+                tableColor = ConsoleColor.Red;
+                return message;
+            }
+
+            if (isTooBig)
+            {
+                message = $"Table {tableNumber} is too big for {guestCount} guests.\n";
+                tableColor = ConsoleColor.Red;
+                return message;
+            }
+
+            if (isActive && !isReserved)
+            {
+                tableColor = ConsoleColor.Green;
+                return $"Table {tableNumber} can be reserved.\n";
+            }
+
+            tableColor = ConsoleColor.Red;
+            return $"Table {tableNumber} is not available for selection.\n";
+        }
+
+        public int GetMaxGuestsForTable(int tableNumber)
+        {
+            return tableNumber switch
+            {
+                1 or 4 or 5 or 8 or 9 or 11 or 12 or 15 => 2,
+                6 or 7 or 10 or 13 or 14 => 4,
+                2 or 3 => 6,
+                _ => 0
+            };
+        }
+
+        public int GetMinGuestsForTable(int tableNumber)
+        {
+            return tableNumber switch
+            {
+                1 or 4 or 5 or 8 or 9 or 11 or 12 or 15 => 1,
+                6 or 7 or 10 or 13 or 14 => 3,
+                2 or 3 => 5,
+                _ => int.MaxValue
             };
         }
     }
