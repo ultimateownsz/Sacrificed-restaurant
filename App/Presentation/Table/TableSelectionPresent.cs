@@ -23,12 +23,13 @@ public class TableSelectionPresent
         int[] reservedTables,
         int guestCount,
         bool isAdmin,
-        (int cursorX, int cursorY) currentCursor,
         out (int x, int y) nextCursor)
     {
         string[,] grid = GridPresent.GetGrid();
-        return _logic.SelectTable(grid, activeTables, inactiveTables, reservedTables, guestCount, isAdmin, currentCursor, out nextCursor);
+        (int cursorX, int cursorY) = (0, 0); // Default starting position
+        return _logic.SelectTable(grid, activeTables, inactiveTables, reservedTables, guestCount, isAdmin, (cursorX, cursorY), out nextCursor);
     }
+
 
         public void ClearGrid()
         {

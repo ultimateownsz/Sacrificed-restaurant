@@ -158,7 +158,9 @@ public static class ReservationUpdatePresent
 
             while (true)
             {
-                int selectedTable = tableSelectionPresent.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+                (int x, int y) nextCursor;
+                int selectedTable = tableSelectionPresent.SelectTable(activeTables, inactiveTables, reservedTables, guestCount, isAdmin, out nextCursor);
+
 
                 if (selectedTable == -1)
                 {

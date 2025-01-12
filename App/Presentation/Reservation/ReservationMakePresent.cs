@@ -69,7 +69,9 @@ public static class ReservationMakePresent
             while (true) // Inner loop for Table Selection
             {
                 // Step 4: Select a table
-                int selectedTable = tableSelectionPresent.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+                (int x, int y) nextCursor;
+                int selectedTable = tableSelectionPresent.SelectTable(activeTables, inactiveTables, reservedTables, guestCount, isAdmin, out nextCursor);
+
 
                 if (selectedTable == -1)
                     break;

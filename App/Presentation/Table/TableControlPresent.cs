@@ -36,12 +36,14 @@ public static class TableControlPresent
                 var emptyReservedTables = Array.Empty<int>();
 
                 // Call SelectTable with isAdmin set to true
+                (int x, int y) nextCursor;
                 int selectedTable = tableSelectionPresent.SelectTable(
                     activeTables,
                     inactiveTables,
                     emptyReservedTables,
                     guestCount: 0, // No guest count needed for admin
-                    isAdmin: true
+                    isAdmin: true,
+                    out nextCursor
                 );
 
                 if (selectedTable == -1)
