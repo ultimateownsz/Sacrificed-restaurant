@@ -115,6 +115,9 @@ public class CalendarPresent
             return;
         }
 
+        // Add a zero-width space to prevent issues with the first character
+        Console.WriteLine("\u200B");
+
         // display the header
         TerminableUtilsPresent.Write(currentDate.ToString(
             "MMMM yyyy").ToUpper() + "\n" + "Mo Tu We Th Fr Sa Su\n");
