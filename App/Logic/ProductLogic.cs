@@ -12,17 +12,17 @@ static class ProductLogic
     {
         if (product == null)
         {
-            Console.WriteLine("Cant add empty products.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.WriteLine("Cant add empty products.");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             return false;
         }
 
         if (Access.Products.GetBy<string?>("Name", product.Name) != null)
         {
-            Console.WriteLine($"{product.Name} already exists.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.WriteLine($"{product.Name} already exists.");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             return false;
         }
 
@@ -255,11 +255,11 @@ static class ProductLogic
         Console.Clear();
         if(type != "theme" && newProductEdit == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.Red;
+            // Console.WriteLine($"Failed to update the {type}");
+            // Console.WriteLine("Press any key to continue..."); 
+            // Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         
@@ -275,18 +275,18 @@ static class ProductLogic
         Console.Clear();
         if(UpdateProduct(oldProduct, newProduct))
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"The {type} has been updated to {newProductEdit}");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.Green;
+            // Console.WriteLine($"The {type} has been updated to {newProductEdit}");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.Red;
+            // Console.WriteLine($"Failed to update the {type}");
+            // Console.WriteLine("Press any key to continue..."); 
+            // Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
