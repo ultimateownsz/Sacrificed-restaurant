@@ -30,7 +30,10 @@ public static class ReservationShowPresent
             switch (selectedOption)
             {
                 case "View    Details":
+                    Console.Clear();
                     ReservationDetailsPresent.ShowDetails(reservation);
+                    ControlHelpPresent.ResetToDefault();
+                    Console.Clear();
                     break;
 
                 case "Update  Reservation":
