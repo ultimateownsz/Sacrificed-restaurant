@@ -1,3 +1,5 @@
+using System.Xml;
+
 namespace Project;
 public static class ReservationDetails
 {
@@ -44,6 +46,8 @@ public static class ReservationDetails
         lCalendar:
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+        Console.Clear();
+        // ResetCursor();
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
         if (selectedDate == DateTime.MinValue)
             return;
@@ -55,7 +59,9 @@ public static class ReservationDetails
             if (!orders.Any(r => r.Date.HasValue && r.Date.Value == selectedDate))
             {
                 Console.Clear();
-                ControlHelpPresent.DisplayFeedback($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
+                // Console.SetCursorPosition(0, 0);
+                // ResetCursor();
+                Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
 
                 ControlHelpPresent.Clear();
                 ControlHelpPresent.AddOptions("Previous date", "<p>");
@@ -94,8 +100,16 @@ public static class ReservationDetails
                         selectedDate = selectedDate.AddDays(1);
                         break;
                 }
+
+                break;
             }
         }
+    }
+
+    private static void ResetCursor()
+    {
+        int footerHeight = ControlHelpPresent.GetFooterHeight();
+        Console.SetCursorPosition(0, Console.WindowHeight - footerHeight - 1);
     }
 
     private static void DisplayOrdersGrid(IEnumerable<ReservationModel?> orders, DateTime selectedDate)
@@ -148,6 +162,8 @@ public static class ReservationDetails
 
         Console.Clear();
         Console.WriteLine($"Orders for {selectedDate:dd/MM/yyyy}\n");
+
+        // ControlHelpPresent.ShowHelp();
 
         string[] headers = { "Appetizers", "Main", "Dessert", "Beverage", "Total Price" };
         Console.WriteLine("{0,-30}{1,-30}{2,-30}{3,-30}{4,-30}", headers[0], headers[1], headers[2], headers[3], headers[4]);
@@ -206,6 +222,15 @@ public static class ReservationDetails
 
         string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
         Console.WriteLine(grandTotalRow.PadLeft(120));
+
+        Console.WriteLine("\n\n");
+
+        // Display controls at the bottom
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Arrows to navigate", "<arrows>");
+        ControlHelpPresent.AddOptions("Select", "<enter>");
+        ControlHelpPresent.AddOptions("Exit", "<escape>");
+        ControlHelpPresent.ShowHelp();
     }
 
 }
