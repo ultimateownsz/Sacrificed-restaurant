@@ -166,13 +166,21 @@ static class ProductViewPresent
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, banner: "Choose a what to do with the product:").ElementAt(0).text)
+            switch (SelectionPresent.Show(options, banner: "Choose what to do with the product:").ElementAt(0).text)
             {
                 case "Edit name":
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.AddOptions("Escape", "<escape>");
+                    ControlHelpPresent.ShowHelp();
                     ProductLogic.ProductEditValidator(chosenProduct, "name");
+                    ControlHelpPresent.ResetToDefault();
                     break;
                 case "Edit price":
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.AddOptions("Escape", "<escape>");
+                    ControlHelpPresent.ShowHelp();
                     ProductLogic.ProductEditValidator(chosenProduct, "price");
+                    ControlHelpPresent.ResetToDefault();
                     break;
                 case "Edit course":
                     ProductLogic.ProductEditValidator(chosenProduct, "course");
@@ -184,7 +192,7 @@ static class ProductViewPresent
                     if (DeleteProduct(chosenProduct))
                         return;
                     break;
-                case "":
+                case null:
                     return;
             }
         }
@@ -196,7 +204,7 @@ static class ProductViewPresent
         string banner = $"Do you want to delete {chosenProduct.Name}";
         List<string> options = new List<string> { "Yes", "No" };
         string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
-        if (selection == "No" || selection == "")
+        if (selection == "No" || selection == null)
         {
             Console.WriteLine("fix");
             return false;
@@ -204,20 +212,20 @@ static class ProductViewPresent
         Console.Clear();
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
-            Console.ForegroundColor = ConsoleColor.Green;
+            // Console.ForegroundColor = ConsoleColor.Green;
             ControlHelpPresent.DisplayFeedback($"{chosenProduct.Name} has been deleted.");
             ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.White;
             return true;
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            // Console.ForegroundColor = ConsoleColor.Red;
             ControlHelpPresent.DisplayFeedback($"Failed to delete {chosenProduct.Name}.");
             ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.White;
             return false;
         }
     }
@@ -232,29 +240,29 @@ static class ProductViewPresent
 
         if (newProduct == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            // Console.ForegroundColor = ConsoleColor.Red;
             ControlHelpPresent.DisplayFeedback($"Invalid product info.");
             ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         else if (ProductLogic.AddProduct(newProduct))
         {
-            Console.ForegroundColor = ConsoleColor.Green;
+            // Console.ForegroundColor = ConsoleColor.Green;
             ControlHelpPresent.DisplayFeedback($"{newProduct.Name} has been added.", "bottom", "success");
             ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
             Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            // Console.ForegroundColor = ConsoleColor.Red;
             ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.");
             ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
             Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.White;
             return;
         }
     }
