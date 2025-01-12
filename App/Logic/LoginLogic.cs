@@ -1,4 +1,5 @@
 ﻿using App.DataAccess.Utils;
+using System.Text.RegularExpressions;
 
 namespace Restaurant;
 public class LoginLogic
@@ -8,11 +9,10 @@ public class LoginLogic
     {
         
     }
-
     public static UserModel? GetById(int id)
     {
         return Access.Users.GetBy<int>("ID", id);
-    } 
+    }
 
     public static UserModel? CheckLogin(string? email, string? password)
     {
@@ -25,11 +25,11 @@ public class LoginLogic
             // tough to segment, badly designed.
             if (acc.Admin == 1)
             {
-                Console.WriteLine("Logged in as Admin.");
+                // Console.WriteLine("Logged in as Admin.");
             }
             else
             {
-                Console.WriteLine("Logged in as a User.");
+                // Console.WriteLine("Logged in as a User.");
             }
 
             return acc;
@@ -38,31 +38,74 @@ public class LoginLogic
         return null;
     }
 
-    public static bool IsEmailValid(string email)
+    public static (bool isValid, string? message) IsEmailValid(string email)
     {
-        foreach (var mail in Access.Users.Read().Select(o => o.Email))
+        // Query the database to check for email existence
+        var existingUser = Access.Users.GetBy<string>("Email", email);
+
+        if (existingUser != null)
         {
-            if (mail == email)
-                return false;
+            return (false, "This email already exists. Please use a different email.");
         }
-         
-        return email.Contains("@") && email.Contains(".com");
+
+        // Validate email format using regex
+        string emailPattern = @"^[\w\.\-+]+@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$";
+        if (!Regex.IsMatch(email, emailPattern))
+        {
+            return (false, "The email format is invalid. Please enter a valid email address (e.g., example@domain.com).");
+        }
+
+        return (true, null); // Email is valid
     }
 
-    public static bool IsPasswordValid(string password)
+
+
+    public static (bool isValid, string? error) IsPasswordValid(string password)
     {
-        return password.Length <= 16 && password.Length >= 8;
+            if (string.IsNullOrWhiteSpace(password))
+        {
+            return (false, "Password cannot be empty.");
+        }
+
+        if (password.Length < 8 || password.Length > 16)
+        {
+            return (false, "Password must be between 8 and 16 characters long.");
+        }
+
+        if (!password.Any(char.IsLetter))
+        {
+            return (false, "Password must contain at least one letter.");
+        }
+
+        if (!password.Any(char.IsDigit))
+        {
+            return (false, "Password must contain at least one number.");
+        }
+        return (true, null); // Password is valid
     }
 
-    public static bool IsPhoneNumberValid(string phoneNumber)
+    public static (bool isValid, string? error) IsPhoneNumberValid(string phoneNumber)
     {
-        return int.TryParse(phoneNumber, out _) && phoneNumber.Length == 8;
+        if (phoneNumber.Length != 10)
+        {
+            return (false, "Phone number must be exactly 10 digits long.");
+        }
+        if (!phoneNumber.StartsWith("06"))
+        {
+            return (false, "Phone number must start with '06'.");
+        }
+        if (!phoneNumber.All(char.IsDigit))
+        {
+            return (false, "Phone number must contain only digits.");
+        }
+        // if (phoneNumber == "0612345678") // Example of an excluded number
+        // {
+        //     return (false, "The phone number '0612345678' is reserved for special purposes and cannot be used. Please enter a different phone number.");
+
+        // }
+        return (true, null); // Valid phone number
     }
 
-    public static bool IsNameValid(string name)
-    {
-        return name.Length >= 2;
-    }
 
     public static UserModel UserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
