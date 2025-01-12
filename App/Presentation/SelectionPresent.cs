@@ -10,6 +10,7 @@ public class SelectionPresent
         public ConsoleColor Base       = ConsoleColor.White;
     }
     protected internal static Palette palette = new Palette();
+    private const int TIMEOUT = 0;
 
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
         string banner, SelectionLogic.Mode mode)
@@ -52,6 +53,7 @@ public class SelectionPresent
         ConsoleKey capture;
         if (keystrokes.Count > 0)
         {
+            Thread.Sleep(TIMEOUT);
             capture = keystrokes[0];
             keystrokes.RemoveAt(0);
         }
@@ -138,15 +140,18 @@ public class SelectionPresent
                     break;
 
                 case SelectionLogic.Interaction.Selected:
+                    
+                    selected = selection.Where(x => x.Value.selected == true);
+                    int index = selected.Select(x => x.Value.index).ElementAt(0);
 
                     Console.Clear();                    
-                    selected = selection.Where(x => x.Value.selected == true);
                     return new()
                     {
                         new SelectionLogic.Selection()
                         {
                             text = selected.Select(x => x.Key).ElementAt(0),
-                            index = selected.Select(x => x.Value.index).ElementAt(0)
+                            index = (mode == SelectionLogic.Mode.Single) 
+                                ? index : (options.Count - index) - 1
                         }
                     };
 
