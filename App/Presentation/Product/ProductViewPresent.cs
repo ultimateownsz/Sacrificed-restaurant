@@ -92,8 +92,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"There are no products in the resturaunt");
-                    Console.WriteLine("Press any key to continue...");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in the restaurant");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -106,8 +106,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"There are no products in {name}");
-                    Console.WriteLine("Press any key to continue...");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in {name}");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -127,8 +127,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"There are no products in the {name} theme");
-                    Console.WriteLine("Press any key to continue...");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in the {name} theme", "bottom", "error");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -137,7 +137,7 @@ static class ProductViewPresent
 
             string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if (productSelection == "")
+            if (productSelection == null)
             {
                 Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
