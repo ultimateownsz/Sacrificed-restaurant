@@ -59,7 +59,7 @@ public static class ReservationUpdatePresent
                     UpdateTableID(reservation);
                     break;
 
-                case "":
+                case null:
                     return;
             }
         }
