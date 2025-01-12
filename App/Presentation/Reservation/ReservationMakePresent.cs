@@ -4,6 +4,8 @@ using App.Logic.Allergy;
 using App.Logic.Reservation;
 using App.Presentation.Table;
 using Restaurant;
+using App.Logic.Table;
+
 
 namespace App.Presentation.Reservation;
 
@@ -46,7 +48,10 @@ public static class ReservationMakePresent
 
 
             // Step 3: Filter available tables based on the number of guests
-            TableSelectionPresent tableSelection = new();
+            // Before: TableSelectionPresent tableSelectionPresent = new TableSelectionPresent();
+            TableSelectionLogic logic = new TableSelectionLogic();
+            TableSelectionPresent tableSelectionPresent = new TableSelectionPresent(logic);
+
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -64,7 +69,7 @@ public static class ReservationMakePresent
             while (true) // Inner loop for Table Selection
             {
                 // Step 4: Select a table
-                int selectedTable = tableSelection.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
+                int selectedTable = tableSelectionPresent.SelectTable(availableTables, inactiveTables, reservedTables, guests, isAdmin);
 
                 if (selectedTable == -1)
                     break;

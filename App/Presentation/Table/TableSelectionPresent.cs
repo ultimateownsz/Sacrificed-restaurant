@@ -36,24 +36,11 @@ public class TableSelectionPresent
         Console.SetCursorPosition(0, 0); // Reset cursor to the top
     }
 
-    private (int x, int y) FindTableCoordinates(int tableNumber)
+    public (int x, int y) FindTableCoordinates(int tableNumber)
     {
-        // Iterate through the grid to locate the given table number
-        for (int y = 0; y < GridPresent.GetGrid().GetLength(0); y++)
-        {
-            for (int x = 0; x < GridPresent.GetGrid().GetLength(1); x++)
-            {
-                string number = GetNumberAt(x, y);
-                if (!string.IsNullOrEmpty(number) && int.Parse(number) == tableNumber)
-                {
-                    return (x, y); // Return the coordinates of the table
-                }
-            }
-        }
-
-        throw new Exception($"Table {tableNumber} not found in the grid."); // Error if table not found
+        string[,] grid = GridPresent.GetGrid();
+        return _logic.FindTableCoordinates(tableNumber, grid);
     }
-
     public void ShowGrid(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount, bool isAdminMode = false)
     {
         tableColors.Clear();
@@ -282,21 +269,6 @@ public class TableSelectionPresent
             _ => false
         };
     }
-
-    private string GetNumberAt(int x, int y)
-    {
-        if (y < 0 || y >= GridPresent.GetGrid().GetLength(0) || x < 0 || x >= GridPresent.GetGrid().GetLength(1)) return null;
-
-        string number = "";
-        while (x < GridPresent.GetGrid().GetLength(1) && char.IsDigit(GridPresent.GetGrid()[y, x]))
-        {
-            number += GridPresent.GetGrid()[y, x];
-            x++;
-        }
-
-        return number;
-    }
-
 
     private bool IsDoubleDigit(int x, int y)
     {

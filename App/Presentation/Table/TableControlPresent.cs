@@ -1,5 +1,6 @@
 using App.DataAccess.Utils;
 using Restaurant;
+using App.Logic.Table;
 
 namespace App.Presentation.Table;
 
@@ -11,7 +12,10 @@ public static class TableControlPresent
         Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
         Console.WriteLine("Press Esc to return to the admin menu.");
 
-        var tableSelection = new TableSelectionPresent();
+        // Before: TableSelectionPresent tableSelectionPresent = new TableSelectionPresent();
+        TableSelectionLogic logic = new TableSelectionLogic();
+        TableSelectionPresent tableSelectionPresent = new TableSelectionPresent(logic);
+
         Console.CursorVisible = false;
 
         // Get active and inactive tables
@@ -32,7 +36,7 @@ public static class TableControlPresent
                 var emptyReservedTables = Array.Empty<int>();
 
                 // Call SelectTable with isAdmin set to true
-                int selectedTable = tableSelection.SelectTable(
+                int selectedTable = tableSelectionPresent.SelectTable(
                     activeTables,
                     inactiveTables,
                     emptyReservedTables,
