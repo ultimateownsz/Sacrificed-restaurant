@@ -25,7 +25,7 @@ public class TableSelectionPresent
         bool isAdmin,
         out (int x, int y) nextCursor)
     {
-        string[,] grid = GridPresent.GetGrid();
+        char[,] grid = GridPresent.GetGrid();
         (int cursorX, int cursorY) = (0, 0); // Default starting position
         return _logic.SelectTable(grid, activeTables, inactiveTables, reservedTables, guestCount, isAdmin, (cursorX, cursorY), out nextCursor);
     }
@@ -93,7 +93,7 @@ public class TableSelectionPresent
             int[] reservedTables,
             int guestCount)
         {
-            string[,] grid = GridPresent.GetGrid();
+            char[,] grid = GridPresent.GetGrid();
             return _logic.FindFirstAvailableCoordinates(
                 activeTables, inactiveTables, reservedTables, guestCount, grid);
         }

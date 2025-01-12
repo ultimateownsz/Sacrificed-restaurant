@@ -21,7 +21,7 @@ namespace App.Logic.Table
             throw new Exception($"Table {tableNumber} not found in the grid.");
         }
 
-        public string GetNumberAt(int x, int y, string[,] grid)
+        public string GetNumberAt(int x, int y, char[,] grid)
         {
             if (y < 0 || y >= grid.GetLength(0) || x < 0 || x >= grid.GetLength(1)) return null;
 
