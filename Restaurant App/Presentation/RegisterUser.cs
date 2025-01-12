@@ -168,7 +168,7 @@ internal class RegisterUser
         ControlHelpPresent.AddOptions("Escape", "<escape>");
         ControlHelpPresent.ShowHelp();
 
-        Console.WriteLine("Are you sure you want to promote this user to admin?");
+        // Console.WriteLine("Are you sure you want to promote this user to admin?");
         
         if (user == null)
         {
