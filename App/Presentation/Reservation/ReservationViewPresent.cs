@@ -35,7 +35,7 @@ static class FuturePastResrvations
             if (!reservations.Any(r => r.Date.HasValue && r.Date.Value == selectedDate)) // ensuring the selected date exists in the database
             {
                 Console.Clear();
-                Console.WriteLine("There are no reservations for this date.\nPress any key to return...");
+                ControlHelpPresent.DisplayFeedback("There are no reservations for this date. Press any key to return...", "bottom", "tip");
                 Console.ReadKey();
                 goto START;
             }
@@ -51,7 +51,7 @@ static class FuturePastResrvations
             var reservationOptions = reservationDetails.Select(r => $"{r.UserName} - Table {r.TableID} (ID: {r.Reservation.ID})").ToList(); // using this info in a string
             string selectedReservation = SelectionPresent.Show(reservationOptions, banner: "RESERVATIONS").ElementAt(0).text; // displaying the info as opions to choose
 
-            if (selectedReservation == "")
+            if (selectedReservation == null)
             {
                 goto START;
             }
@@ -80,7 +80,7 @@ static class FuturePastResrvations
 
         if (sortedReservations == null || sortedReservations.Count == 0) // checking if the reservations exists
         {
-            Console.WriteLine("You have no reservations.\nPress any key to return");
+            ControlHelpPresent.DisplayFeedback("You have no reservations. Press any key to return", "bottom", "tip");
             Console.ReadKey();
             return;
         }
@@ -102,7 +102,7 @@ static class FuturePastResrvations
             var reservationOptions = ReservationLogic.GenerateMenuOptions(currentPageReserv, currentPage, totalPages);
             var selectedReservations = SelectionPresent.Show(reservationOptions, banner: "RESERVATION MENU").ElementAt(0).text; // making use of SelectionPresent.Show
 
-            if (selectedReservations == "")
+            if (selectedReservations == null)
             {
                 return;
             }
