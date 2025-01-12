@@ -109,7 +109,7 @@ public static class ReservationMakePresent
     {
         if (reservationId == 0)
         {
-            Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
+            ControlHelpPresent.DisplayFeedback("Invalid reservation ID. Exiting TakeOrders.");
             return new List<ProductModel>(); // Return an empty list for invalid reservations
         }
 
