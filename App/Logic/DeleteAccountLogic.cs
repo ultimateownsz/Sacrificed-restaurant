@@ -34,7 +34,7 @@ public class DeleteAccountLogic
         var options = new List<string> { "Yes", "No" };
         var selection = SelectionPresent.Show(
             options,
-            banner:$"Are you sure you want to delete {account.FirstName} {account.LastName}?\n\n"
+            banner:$"Are you sure you want to delete your account {account.FirstName} {account.LastName}?\n\n"
         ).ElementAt(0).text;
 
         if (selection == "Yes")
@@ -89,7 +89,7 @@ public class DeleteAccountLogic
                 Access.Reservations.Delete(reservation.ID);
             }
 
-            Console.WriteLine($"{futureReservations.Count} future reservations deleted.");
+            // Console.WriteLine($"{futureReservations.Count} future reservations deleted.");
         }
         else
         {
