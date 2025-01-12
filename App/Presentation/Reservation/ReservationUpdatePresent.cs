@@ -70,14 +70,14 @@ public static class ReservationUpdatePresent
         string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
                     UpdateReservationDate(reservation, acc);
                     break;
 
-                case "Table":
+                case "Table\n":
                     Console.Clear();
                     UpdateTableID(reservation);
                     break;
