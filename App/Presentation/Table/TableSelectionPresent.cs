@@ -91,4 +91,4 @@ namespace App.Presentation.Table
                 tableNumber, guestCount, activeTables, reservedTables, inactiveTables);
         }
     }
-}
+} 
