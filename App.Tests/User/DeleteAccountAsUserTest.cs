@@ -1,9 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Restaurant_App_Unittesting
+namespace App.Tests.Reservation;
 {
     // Unit Test for Criteria 1: Past Reservations are Saved
     [TestClass]

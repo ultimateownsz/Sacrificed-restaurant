@@ -1,8 +1,5 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting; 
-using System.Collections.Generic;
-using System.Linq;
+namespace App.Tests.Reservation;
 
-namespace Restaurant_App_Unittesting
 {
     // Unit Test for Criteria 5: Database Update
     [TestClass]

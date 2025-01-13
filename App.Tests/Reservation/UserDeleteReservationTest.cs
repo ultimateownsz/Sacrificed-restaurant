@@ -1,8 +1,5 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+namespace App.Tests.Reservation;
 
-namespace Restaurant_App_Unittesting
 {
     // Unit Tests for deleting reservations as a user
     [TestClass]
