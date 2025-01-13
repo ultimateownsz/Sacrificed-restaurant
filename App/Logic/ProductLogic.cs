@@ -89,11 +89,23 @@ static class ProductLogic
     public static bool DeleteProductAndRelatedRequests(int? productId)
     {
         var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
-        foreach (var request in requests)
+        var paris = Access.Pairs.Read().Where(p => p.FoodID == productId).ToList();
+        
+        if(requests.Count != 0)
         {
-            Access.Requests.Delete(request.ID);
+            foreach (var request in requests)
+            {
+                Access.Requests.Delete(request.ID);
+            }
         }
 
+        if(paris.Count != 0)
+        {
+            foreach (var pair in paris)
+            {
+                Access.Pairs.Delete(pair.ID);
+            }
+        }
         if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
             return false;

@@ -203,7 +203,6 @@ static class ProductViewPresent
             ControlHelpPresent.DisplayFeedback("fix");
             return false;
         }
-        Console.Clear();
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
             // Console.ForegroundColor = ConsoleColor.Green;
