@@ -106,6 +106,17 @@ static class ProductLogic
                 Access.Pairs.Delete(pair.ID);
             }
         }
+        else
+        {
+            var paris2 = Access.Pairs.Read().Where(p => p.DrinkID == productId).ToList();
+            if(paris2.Count != 0)
+            {
+                foreach (var pair in paris2)
+                {
+                    Access.Pairs.Delete(pair.ID);
+                }
+            }
+        }
         if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
             return false;
