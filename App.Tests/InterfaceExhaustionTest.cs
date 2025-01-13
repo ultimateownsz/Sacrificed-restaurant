@@ -2,7 +2,7 @@
 namespace App.Tests;
 
 [TestClass]
-public class SelectionTest
+public class InterfaceExhaustionTest
 {
     public void UniExhaust(string[] options, SelectionLogic.Mode mode)
     {
