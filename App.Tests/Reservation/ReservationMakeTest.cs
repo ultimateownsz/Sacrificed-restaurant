@@ -1,6 +1,10 @@
 using App.Presentation.Reservation;
 using App.DataModels.Product;
+using App.DataModels;
 using Xunit;
+using MSTestAssert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+using XunitAssert = Xunit.Assert;
+
 
 namespace App.Tests
 {
@@ -16,7 +20,7 @@ namespace App.Tests
             var exception = Record.Exception(() => ReservationMakePresent.MakingReservation(user));
 
             // Assert no exceptions thrown (graceful exit)
-            Assert.Null(exception);
+            XunitAssert.Null(exception);
         }
 
         [Fact]
@@ -32,8 +36,8 @@ namespace App.Tests
             var result = ReservationMakePresent.TakeOrders(date, user, reservationId, guests);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<List<ProductModel>>(result);
+            XunitAssert.NotNull(result);
+            XunitAssert.IsType<List<ProductModel>>(result);
         }
 
         [Fact]
@@ -49,8 +53,8 @@ namespace App.Tests
             var result = ReservationMakePresent.TakeOrders(date, user, reservationId, guests);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Empty(result);
+            XunitAssert.NotNull(result);
+            XunitAssert.Empty(result);
         }
 
         [Fact]
@@ -69,7 +73,7 @@ namespace App.Tests
             var exception = Record.Exception(() => ReservationMakePresent.PrintReceipt(orders, reservationId, user));
 
             // Assert
-            Assert.Null(exception);
+            XunitAssert.Null(exception);
         }
 
         [Fact]
@@ -84,8 +88,8 @@ namespace App.Tests
             var exceptionRegular = Record.Exception(() => ReservationMakePresent.MakingReservation(regularUser));
 
             // Assert no exceptions thrown
-            Assert.Null(exceptionAdmin);
-            Assert.Null(exceptionRegular);
+            XunitAssert.Null(exceptionAdmin);
+            XunitAssert.Null(exceptionRegular);
         }
     }
 }
