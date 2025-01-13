@@ -108,17 +108,9 @@ public class DataAccess<T1> where T1 : IModel
         return _db.Query<T1>(query, new { value = value ?? default }).ToList();
     }
 
-    private static bool Purge(int? id, Dictionary<IModel, Predicate<IModel>> data)
-    {
-        // remove all entries that relate
-        // to provided ID (coming soon)
-        return default;
-    }
-
     private T1? Trace<T2>(T2 value)
     {
-        // trace all related columns
-        // (coming soon)
+        // coming soon...
         return default;
     }
 
