@@ -1,7 +1,5 @@
-﻿using App.DataAccess.Utils;
-using App.DataModels.Allergy;
+﻿using App.DataModels.Allergy;
 using App.DataModels.Product;
-using App.DataModels.Utils;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Restaurant;
@@ -27,7 +25,6 @@ internal class DataSynchronizationTest
         {"Pair", typeof(PairModel)},
         {"User", typeof(UserModel)},
     };
-
 
     public static void ColumnSynchronization(string table)
     {
@@ -73,9 +70,10 @@ internal class DataSynchronizationTest
         
         // extract table identities (dynamic -> names)
         List<string> tables = new();
-        foreach (string table in collection.Select(x => x.name)) { tables.Add(table); }
+        foreach (string table in collection.Select(x => x.name))
+            tables.Add(table);
 
-        // compare
+        // validate all tables
         TableSynchronization(tables);
     }
 }
