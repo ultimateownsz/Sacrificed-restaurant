@@ -1,4 +1,4 @@
-namespace App.Tests.Reservation;
+namespace App.Tests.User;
 
 {
     // Unit Test for Criteria 5: Database Update
