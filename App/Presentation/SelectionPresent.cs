@@ -12,15 +12,23 @@ public class SelectionPresent
     protected internal static Palette palette = new Palette();
     private const int TIMEOUT = 0;
 
+    private static void _clear(int menuStartLine, int menuHeight)
+    {
+        for (int i = menuStartLine; i < menuHeight; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+    }
+
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
         string banner, SelectionLogic.Mode mode, int menuStartLine)
     {
         // Clear only the menu area, leaving the footer intact
-        ClearMenuArea(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
+        _clear(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
 
 
         // banner & colour initialization
-        // Console.Clear();
         Console.SetCursorPosition(0, menuStartLine);
         TerminableUtilsPresent.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
@@ -196,26 +204,8 @@ public class SelectionPresent
                             index = -1 // Special value indicating escape
                         }
                     };
+
             }
-        }
-    }
-
-    // // clear only the menu area
-    private static void ClearMenuArea(int menuStartLine, int menuHeight)
-    {
-        // int endLine = Math.Min(menuStartLine + menuHeight, Console.WindowHeight); // Avoid going out of bounds
-        // for (int i = menuStartLine; i < endLine; i++)
-        // {
-        //     // if (i >= Console.WindowHeight) break; // prevent out of bounds
-        //     Console.SetCursorPosition(0, i);
-        //     Console.Write(new string(' ', Console.WindowWidth)); // clear the line
-        // }
-        // Console.SetCursorPosition(0, menuStartLine); // Reset cursor to menu start line
-
-        for (int i = menuStartLine; i < menuHeight; i++)
-        {
-            Console.SetCursorPosition(0, i);
-            Console.Write(new string(' ', Console.WindowWidth));
         }
     }
 }
