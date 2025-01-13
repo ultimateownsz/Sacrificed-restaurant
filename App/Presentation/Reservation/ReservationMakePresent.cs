@@ -7,11 +7,34 @@ using Restaurant;
 
 namespace App.Presentation.Reservation;
 
+public interface IConsole
+{
+    void WriteLine(string message);
+    string ReadLine();
+    ConsoleKeyInfo ReadKey(bool intercept = false);
+    void Clear();
+}
+
+public class ConsoleWrapper : IConsole
+{
+    public void WriteLine(string message) => Console.WriteLine(message);
+    public string ReadLine() => Console.ReadLine() ?? string.Empty;
+    public ConsoleKeyInfo ReadKey(bool intercept = false) => Console.ReadKey(intercept);
+    public void Clear() => Console.Clear();
+}
+
 public static class ReservationMakePresent
 {
-    static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
-    static private OrderLogic orderLogic = new();
+    private static ReservationLogic reservationLogic = new();
+    private static ReservationMenuLogic reservationMenuLogic = new();
+    private static OrderLogic orderLogic = new();
+
+    private static IConsole Console { get; set; } = new ConsoleWrapper();
+
+    public static void SetConsole(IConsole console)
+    {
+        Console = console;
+    }
 
     public static void MakingReservation(UserModel acc)
     {

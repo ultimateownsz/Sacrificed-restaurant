@@ -1,124 +1,88 @@
 using App.Presentation.Reservation;
-using App.DataModels.Product;
 using Restaurant;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 
-namespace App.Tests
+namespace App.Tests.Reservation
 {
+    public class TestConsole : IConsole
+    {
+        private readonly Queue<string> _inputs = new();
+        private readonly List<string> _outputs = new();
+        private readonly Queue<ConsoleKeyInfo> _keyInputs = new();
+
+        public void AddInput(string input) => _inputs.Enqueue(input);
+        public void AddKeyInput(ConsoleKey key) => _keyInputs.Enqueue(new ConsoleKeyInfo((char)key, key, false, false, false));
+        public IEnumerable<string> GetOutputs() => _outputs;
+
+        public string ReadLine() => _inputs.Count > 0 ? _inputs.Dequeue() : string.Empty;
+        public ConsoleKeyInfo ReadKey(bool intercept = false) => _keyInputs.Count > 0 ? _keyInputs.Dequeue() : new ConsoleKeyInfo();
+        public void WriteLine(string message) => _outputs.Add(message);
+        public void Clear() => _outputs.Add("[Screen Cleared]");
+    }
+
     [TestClass]
     public class ReservationMakeTest
     {
-        private void ValidateOrders(List<ProductModel> orders, List<ProductModel> expectedOrders)
-        {
-            Assert.AreEqual(orders.Count, expectedOrders.Count, "Order count does not match");
+        private TestConsole _testConsole;
+        private ReservationMakePresent _reservationMakePresent;
 
-            for (int i = 0; i < orders.Count; i++)
-            {
-                Assert.AreEqual(orders[i].ID, expectedOrders[i].ID, $"Mismatch at index {i}: ID");
-                Assert.AreEqual(orders[i].Name, expectedOrders[i].Name, $"Mismatch at index {i}: Name");
-                Assert.AreEqual(orders[i].Price, expectedOrders[i].Price, $"Mismatch at index {i}: Price");
-            }
+        [TestInitialize]
+        public void Setup()
+        {
+            _testConsole = new TestConsole();
+            ReservationMakePresent.SetConsole(_testConsole);
         }
 
         [TestMethod]
-        public void MakingReservation_ShouldExit_WhenGuestsAreInvalid()
+        public void MakingReservation_ShouldHandleInvalidGuestInput()
         {
             // Arrange
             var user = new UserModel { ID = 1, Admin = 1 };
+            _testConsole.AddInput("invalid"); // Invalid input
+            _testConsole.AddInput("7");      // Out-of-range input
+            _testConsole.AddInput("3");     // Valid input
 
             // Act
-            try
-            {
-                ReservationMakePresent.MakingReservation(user);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"An exception occurred: {ex.Message}");
-            }
-        }
-
-        [TestMethod]
-        public void TakeOrders_ShouldReturnValidOrders_WhenValidDataProvided()
-        {
-            // Arrange
-            var user = new UserModel { ID = 2, Admin = 0 };
-            var reservationId = 1;
-            var guests = 2;
-            var date = DateTime.Now.AddDays(2);
-
-            var expectedOrders = new List<ProductModel>
-            {
-                new ProductModel { ID = 1, Name = "Pizza", Price = 12.99M },
-                new ProductModel { ID = 2, Name = "Pasta", Price = 8.99M }
-            };
-
-            // Act
-            var orders = ReservationMakePresent.TakeOrders(date, user, reservationId, guests);
+            ReservationMakePresent.MakingReservation(user);
 
             // Assert
-            Assert.IsNotNull(orders, "Orders list is null");
-            ValidateOrders(orders, expectedOrders);
+            var outputs = _testConsole.GetOutputs();
+            Assert.IsTrue(outputs.Contains("Invalid number of guests. Please try again."));
+            Assert.IsTrue(outputs.Contains("How many guests will be coming?"));
         }
 
         [TestMethod]
-        public void TakeOrders_ShouldReturnEmptyList_WhenNoThemeAvailable()
+        public void MakingReservation_ShouldHandleSuccessfulReservation()
         {
             // Arrange
-            var user = new UserModel { ID = 3 };
-            var reservationId = 1;
-            var guests = 3;
-            var date = new DateTime(2000, 1, 1); // A date with no theme
+            var user = new UserModel { ID = 1, Admin = 1 };
+            _testConsole.AddInput("2"); // Number of guests
+            _testConsole.AddInput("1"); // Table ID
 
             // Act
-            var result = ReservationMakePresent.TakeOrders(date, user, reservationId, guests);
+            ReservationMakePresent.MakingReservation(user);
 
             // Assert
-            Assert.IsNotNull(result, "Result is null");
-            Assert.AreEqual(0, result.Count, "Result is not empty");
+            var outputs = _testConsole.GetOutputs();
+            Assert.IsTrue(outputs.Contains("How many guests will be coming?"));
+            Assert.IsTrue(outputs.Contains("Select a date for your reservation:"));
+            Assert.IsTrue(outputs.Contains("Select a table ID:"));
         }
 
         [TestMethod]
-        public void PrintReceipt_ShouldDisplayCorrectReceiptData()
+        public void MakingReservation_ShouldHandleNullUserId()
         {
             // Arrange
-            var user = new UserModel { ID = 4, FirstName = "John", LastName = "Doe" };
-            var reservationId = 1;
-            var orders = new List<ProductModel>
-            {
-                new ProductModel { ID = 1, Name = "Pizza", Price = 12.99M },
-                new ProductModel { ID = 2, Name = "Pasta", Price = 8.99M }
-            };
+            var user = new UserModel { ID = null, Admin = 1 };
+            _testConsole.AddInput("2"); // Number of guests
 
             // Act
-            try
-            {
-                ReservationMakePresent.PrintReceipt(orders, reservationId, user);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"An exception occurred: {ex.Message}");
-            }
-        }
+            ReservationMakePresent.MakingReservation(user);
 
-        [TestMethod]
-        public void MakingReservation_ShouldHandleAdminFlagCorrectly()
-        {
-            // Arrange
-            var adminUser = new UserModel { ID = 1, Admin = 1 };
-            var regularUser = new UserModel { ID = 2, Admin = 0 };
-
-            // Act
-            try
-            {
-                ReservationMakePresent.MakingReservation(adminUser);
-                ReservationMakePresent.MakingReservation(regularUser);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"An exception occurred: {ex.Message}");
-            }
+            // Assert
+            var outputs = _testConsole.GetOutputs();
+            Assert.IsTrue(outputs.Contains("Error: User ID is null."));
         }
     }
 }
