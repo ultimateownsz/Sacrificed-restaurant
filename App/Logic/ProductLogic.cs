@@ -183,8 +183,8 @@ static class ProductLogic
         {
             themeID = parts.Count() switch
             {
-                4 => ThemeManageLogic.GetThemeIDByName(parts[2]),
                 3 => ThemeManageLogic.GetThemeIDByName(parts[1]),
+                4 => ThemeManageLogic.GetThemeIDByName(parts[2]),
                 _ => null
             };
         }
