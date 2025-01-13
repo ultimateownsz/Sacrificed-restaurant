@@ -2,11 +2,11 @@
 using App.DataModels.Allergy;
 
 namespace App.DataAccess.Allergy;
-internal class AllergyAccess : DataAccess<AllergyModel>
+public class AllergyAccess : DataAccess<AllergyModel>
 {
-    internal AllergyAccess() : base(typeof(AllergyModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    public AllergyAccess() : base(typeof(AllergyModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    internal new bool Delete(int? id)
+    public new bool Delete(int? id)
     {
         IEnumerable<AllerlinkModel> links =
             Access.Allerlinks.Read().Where(lnk => lnk.AllergyID == id);

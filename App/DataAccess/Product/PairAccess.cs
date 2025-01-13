@@ -2,8 +2,8 @@
 using App.DataModels.Product;
 
 namespace App.DataAccess.Product;
-internal class PairAccess : DataAccess<PairModel>
+public class PairAccess : DataAccess<PairModel>
 {
-    internal PairAccess() : base(typeof(PairModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    public PairAccess() : base(typeof(PairModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 }
