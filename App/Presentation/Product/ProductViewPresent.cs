@@ -73,7 +73,7 @@ static class ProductViewPresent
     }
 
     // Display all products based on filter type
-    public static void DisplayProducts(string filterType = "", string name = "")
+    public static void DisplayProducts(string filterType = null, string name = "")
     {
         ProductModel? chosenProduct;
         string banner;
@@ -101,8 +101,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in {name}");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in {name}", "center", "error");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -122,8 +122,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in the {name} theme", "bottom", "error");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in the {name} theme", "center", "error");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -132,19 +132,20 @@ static class ProductViewPresent
 
             string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if (productSelection == null)
+            if (productSelection == "")
             {
-                Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
+                ControlHelpPresent.DisplayFeedback("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
 
-            chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType, name);
+            chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType ?? string.Empty, name);
             if (chosenProduct == null)
             {
-                Console.WriteLine("rizz");
-                return;
+                // ControlHelpPresent.DisplayFeedback("Couldn't found the product", "center", "tip");
+                // Console.ReadKey();
+                // return;
+                DeleteOrEditChoice(chosenProduct);
             }
-            DeleteOrEditChoice(chosenProduct);
         }
     }
 
@@ -196,12 +197,12 @@ static class ProductViewPresent
     public static bool DeleteProduct(ProductModel chosenProduct)
     {
         Console.Clear();
-        string banner = $"Do you want to delete {chosenProduct.Name}";
+        string banner = $"Do you want to delete {chosenProduct.Name}?";
         List<string> options = new List<string> { "Yes", "No" };
         string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
         if (selection == "No" || selection == null)
         {
-            Console.WriteLine("fix");
+            ControlHelpPresent.DisplayFeedback("fix");
             return false;
         }
         Console.Clear();
