@@ -25,10 +25,7 @@ public static class ReservationMakePresent
 
         int guests = 1 + SelectionPresent.Show(
             options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         if (guests == 0)
             return;
 
