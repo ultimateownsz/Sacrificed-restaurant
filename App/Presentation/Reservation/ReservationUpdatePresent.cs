@@ -124,10 +124,9 @@ public static class ReservationUpdatePresent
         {
             List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests are reserved for your table?";
-            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+            int guests = 1 + SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
-            // because 6 - (-1) = 7
-            if (guests == 7)
+            if (guests == 0)
                 return;
 
             int[] inactiveTables = Access.Places.Read()

@@ -44,11 +44,6 @@ internal class MenuPresent
                     UserRegisterPresent.CreateAccount(false);
                     continue;
 
-                // we use a new method of showing controls in the terminal
-                // case "Controls":
-                //     SelectionPresent._controls();
-                //     continue;
-
                 case "Exit":
                     Environment.Exit(0);
                     return;

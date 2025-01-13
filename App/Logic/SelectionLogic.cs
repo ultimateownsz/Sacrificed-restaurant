@@ -1,5 +1,5 @@
 ﻿namespace Restaurant;
-internal class SelectionLogic
+public class SelectionLogic
 {
     public enum Mode
     {
