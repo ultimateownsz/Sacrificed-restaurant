@@ -132,7 +132,7 @@ static class ProductViewPresent
 
             string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if (productSelection == "")
+            if (productSelection == null)
             {
                 ControlHelpPresent.DisplayFeedback("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
@@ -141,11 +141,9 @@ static class ProductViewPresent
             chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType ?? string.Empty, name);
             if (chosenProduct == null)
             {
-                // ControlHelpPresent.DisplayFeedback("Couldn't found the product", "center", "tip");
-                // Console.ReadKey();
-                // return;
-                DeleteOrEditChoice(chosenProduct);
+                return;
             }
+            DeleteOrEditChoice(chosenProduct);
         }
     }
 
