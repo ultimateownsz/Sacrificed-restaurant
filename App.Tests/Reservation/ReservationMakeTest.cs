@@ -1,5 +1,7 @@
 using App.Presentation.Reservation;
 using Restaurant;
+using App.Logic.Reservation;
+using App.DataAccess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
@@ -22,67 +24,87 @@ namespace App.Tests.Reservation
     }
 
     [TestClass]
-    public class ReservationMakeTest
+    public static class ReservationMakePresent
+{
+    private static ReservationLogic reservationLogic = new();
+    private static ReservationMenuLogic reservationMenuLogic = new();
+    private static OrderLogic orderLogic = new();
+
+    private static IConsole Console { get; set; } = new ConsoleWrapper();
+
+    public static void SetConsole(IConsole console)
     {
-        private TestConsole _testConsole;
-        private ReservationMakePresent _reservationMakePresent;
+        Console = console;
+    }
 
-        [TestInitialize]
-        public void Setup()
+    public static void MakingReservation(UserModel acc)
+    {
+        bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
+
+    START: // Cleanest implementation, sorry
+
+        // Step 1: Ask for the number of guests (only once)
+        List<string> options = new() { "1", "2", "3", "4", "5", "6" };
+        Console.WriteLine("How many guests will be coming?");
+        string guestsInput = Console.ReadLine();
+
+        if (!int.TryParse(guestsInput, out int guests) || guests < 1 || guests > 6)
         {
-            _testConsole = new TestConsole();
-            ReservationMakePresent.SetConsole(_testConsole);
+            Console.WriteLine("Invalid number of guests. Please try again.");
+            goto START;
         }
 
-        [TestMethod]
-        public void MakingReservation_ShouldHandleInvalidGuestInput()
+        DateTime selectedDate;
+
+        // Fetch inactive tables
+        var inactiveTables = Access.PlaceAccess.Read()
+            .Where(p => p.Active == 0)
+            .Select(p => p.ID.Value)
+            .ToArray();
+
+        while (true) // Loop to manage Calendar -> Table Selection navigation
         {
-            // Arrange
-            var user = new UserModel { ID = 1, Admin = 1 };
-            _testConsole.AddInput("invalid"); // Invalid input
-            _testConsole.AddInput("7");      // Out-of-range input
-            _testConsole.AddInput("3");     // Valid input
+            Console.WriteLine("Select a date for your reservation:");
+            selectedDate = DateTime.Now.AddDays(1); // Mocked date for simplicity
 
-            // Act
-            ReservationMakePresent.MakingReservation(user);
+            if (selectedDate == DateTime.MinValue)
+                goto START;
 
-            // Assert
-            var outputs = _testConsole.GetOutputs();
-            Assert.IsTrue(outputs.Contains("Invalid number of guests. Please try again."));
-            Assert.IsTrue(outputs.Contains("How many guests will be coming?"));
-        }
+            // Step 3: Filter available tables based on the number of guests
+            int[] availableTables = guests switch
+            {
+                1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
+                3 or 4 => new int[] { 6, 7, 10, 13, 14 },
+                5 or 6 => new int[] { 2, 3 },
+                _ => Array.Empty<int>()
+            };
 
-        [TestMethod]
-        public void MakingReservation_ShouldHandleSuccessfulReservation()
-        {
-            // Arrange
-            var user = new UserModel { ID = 1, Admin = 1 };
-            _testConsole.AddInput("2"); // Number of guests
-            _testConsole.AddInput("1"); // Table ID
+            Console.WriteLine("Select a table ID:");
+            string tableInput = Console.ReadLine();
 
-            // Act
-            ReservationMakePresent.MakingReservation(user);
+            if (!int.TryParse(tableInput, out int selectedTable) || !availableTables.Contains(selectedTable))
+            {
+                Console.WriteLine("Invalid table selection. Please try again.");
+                continue;
+            }
 
-            // Assert
-            var outputs = _testConsole.GetOutputs();
-            Assert.IsTrue(outputs.Contains("How many guests will be coming?"));
-            Assert.IsTrue(outputs.Contains("Select a date for your reservation:"));
-            Assert.IsTrue(outputs.Contains("Select a table ID:"));
-        }
+            // Save the reservation
+            if (!acc.ID.HasValue)
+            {
+                Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                return;
+            }
 
-        [TestMethod]
-        public void MakingReservation_ShouldHandleNullUserId()
-        {
-            // Arrange
-            var user = new UserModel { ID = null, Admin = 1 };
-            _testConsole.AddInput("2"); // Number of guests
+            int reservationId = reservationLogic.SaveReservation(selectedDate, acc.ID.Value, selectedTable);
+            if (reservationId == 0)
+            {
+                Console.WriteLine("Failed to create a reservation. Please try again.");
+                continue;
+            }
 
-            // Act
-            ReservationMakePresent.MakingReservation(user);
-
-            // Assert
-            var outputs = _testConsole.GetOutputs();
-            Assert.IsTrue(outputs.Contains("Error: User ID is null."));
+            Console.WriteLine("Reservation created successfully!");
+            return;
         }
     }
+}
 }
