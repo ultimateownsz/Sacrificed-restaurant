@@ -142,7 +142,7 @@ static class ThemeManageLogic
         // {
         //     return -1;
         // }
-        var theme = Access.Themes.GetBy("Name", name?.Substring(0).ToUpper() + name?.Substring(1));
+        var theme = Access.Themes.GetBy("Name", name);
         return theme?.ID;
     }
 }
