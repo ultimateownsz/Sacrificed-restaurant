@@ -137,6 +137,11 @@ public class AccountCreateTest
         return phoneNumber.Length == 8 && int.TryParse(phoneNumber, out _);
     }
 
+    private bool SimulateIsNameValid(string name)
+    {
+        return name.Length >= 2;
+    }
+
     private AccountModel SimulateCreateUserAccount(string firstName, string lastName, string email, string password, string phoneNumber)
     {
         return new AccountModel
