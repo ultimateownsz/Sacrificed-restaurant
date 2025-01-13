@@ -75,7 +75,7 @@ public static class UserDeleteAccountPresent
                 Console.ReadKey();
             }
         },
-        "Password confirmation cancelled. Returning to menu...");
+        "Password confirmation cancelled.");
         ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
 

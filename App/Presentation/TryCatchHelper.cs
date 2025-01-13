@@ -4,7 +4,7 @@ public static class TryCatchHelper
     /// <summary>
     /// Handles exceptions for void actions with Escape key support.
     /// </summary>
-    public static void EscapeKeyException(Action action, string cancelMessage = "Returning to the previous menu...")
+    public static void EscapeKeyException(Action action, string cancelMessage = null)
     {
         try
         {
@@ -20,7 +20,7 @@ public static class TryCatchHelper
     /// <summary>
     /// Handles exceptions for functions that return a value with Escape key support.
     /// </summary>
-    public static T EscapeKeyWithResult<T>(Func<T> func, T fallback = default!, string fallbackMessage = "Returning to the previous menu...")
+    public static T EscapeKeyWithResult<T>(Func<T> func, T fallback = default!, string fallbackMessage = null)
     {
         try
         {

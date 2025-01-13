@@ -157,7 +157,7 @@ public static class ReservationUpdatePresent
 
                 if (selectedTable == -1)
                 {
-                    ControlHelpPresent.DisplayFeedback("Returning to previous menu...");
+                    // ControlHelpPresent.DisplayFeedback("Returning to previous menu...");
                     break;
                 }
 
