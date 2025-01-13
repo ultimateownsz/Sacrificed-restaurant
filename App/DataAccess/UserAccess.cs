@@ -1,24 +1,21 @@
 ﻿using App.DataAccess.Utils;
 using App.DataModels.Allergy;
-using App.DataModels.Utils;
 
 namespace Restaurant;
-public class UserAccess: DataAccess<UserModel>
+internal class UserAccess: DataAccess<UserModel>
 {
-    public UserAccess(): base(typeof(UserModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal UserAccess(): base(typeof(UserModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    public new bool Delete(int? id)
+    internal new bool Delete(int? id)
     {
+        IEnumerable<ReservationModel> reservations =
+            Access.Reservations.Read().Where(res => res.UserID == id);
 
-        // first remove all reservations
-        foreach (var res in Access.Reservations.Read().Where(x => x.UserID == id))
-            if (!Access.Reservations.Delete(res.ID))
+        foreach (var reservation in reservations)
+        {
+            if (!Access.Reservations.Delete(reservation.ID))
                 return false;
-
-        // ... and then remove all allerlinks
-        foreach (var lnk in Access.Allerlinks.Read().Where(x => x.EntityID == id && x.Personal == 1))
-            if (!Access.Allerlinks.Delete(lnk.ID))
-                return false;
+        }
 
         return base.Delete(id);
     }

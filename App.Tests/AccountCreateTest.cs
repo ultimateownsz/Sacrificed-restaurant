@@ -1,6 +1,6 @@
 namespace App.Test;
 
-//[TestClass]
+[TestClass]
 public class AccountCreateTest
 {
     // Email validation tests
@@ -33,8 +33,7 @@ public class AccountCreateTest
         Assert.AreEqual(expectedResult, result);
     }
 
-    //
-    // number validation tests
+    // Phone number validation tests
     [TestMethod]
     [DataRow("12345678", true)]              // Valid phone number
     [DataRow("1234abcd", false)]             // Invalid (contains letters)

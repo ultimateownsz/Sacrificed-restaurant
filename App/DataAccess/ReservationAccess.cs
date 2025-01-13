@@ -2,11 +2,11 @@
 using Restaurant;
 
 namespace App.DataAccess;
-public class ReservationAccess : DataAccess<ReservationModel>
+internal class ReservationAccess : DataAccess<ReservationModel>
 {
-    public ReservationAccess() : base(typeof(ReservationModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal ReservationAccess() : base(typeof(ReservationModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    public new bool Delete(int? id)
+    internal new bool Delete(int? id)
     {
         IEnumerable<RequestModel> requests =
             Access.Requests.Read().Where(req => req.ReservationID == id);

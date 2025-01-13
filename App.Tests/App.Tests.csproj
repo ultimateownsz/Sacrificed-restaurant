@@ -12,12 +12,6 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
-
-	<ItemGroup>
-		<Content Include="App/DataSources/*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App\App.csproj" />
   </ItemGroup>
