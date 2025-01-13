@@ -24,11 +24,16 @@ public static class ReservationShowPresent
                 banner: $"Selected Reservation for: {GetUserFullName(reservation.UserID)} - Table {reservation.PlaceID}\n\nChoose an action:"
             ).ElementAt(0).text;
 
+            if (selectedOption == null) return;
+
             // Handle the chosen action
             switch (selectedOption)
             {
                 case "View    Details":
+                    Console.Clear();
                     ReservationDetailsPresent.ShowDetails(reservation);
+                    ControlHelpPresent.ResetToDefault();
+                    Console.Clear();
                     break;
 
                 case "Update  Reservation":
@@ -39,7 +44,7 @@ public static class ReservationShowPresent
                     ReservationDeletePresent.Show(reservation);
                     return; // Return after deleting a reservation to exit this menu
 
-                case "":
+                case null:
                     return; // Exit the options and return to the reservation list
             }
 

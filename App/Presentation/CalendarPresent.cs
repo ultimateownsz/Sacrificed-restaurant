@@ -34,7 +34,7 @@ public class CalendarPresent
                     if (currentDate.AddMonths(-1) < DateTime.Today)
                     {
                         Console.SetCursorPosition(0, Console.CursorTop + 2);
-                        Console.WriteLine("You cannot reserve in the past.");
+                        ControlHelpPresent.DisplayFeedback("You cannot reserve in the past.");
                     }
                     else
                     {
@@ -96,7 +96,7 @@ public class CalendarPresent
                     return DateTime.MinValue; // Go back
 
                 default:
-                    Console.WriteLine("Invalid input. Use Arrow Keys to navigate, Enter to select.");
+                    ControlHelpPresent.DisplayFeedback("Invalid input. Use Arrow Keys to navigate, Enter to select.");
                     break;
             }
         }
@@ -105,6 +105,20 @@ public class CalendarPresent
 
     private static void DisplayCalendar(DateTime currentDate, int selectedDay, bool isAdmin, int guests)
     {
+        Console.Clear();
+        int footerHeight = ControlHelpPresent.GetFooterHeight();  // returns the height of the help footer
+        int availableHeight = Console.WindowHeight - footerHeight;  // reserve space for the footer
+        
+        if (availableHeight < 0)
+        {
+            ControlHelpPresent.DisplayFeedback("Console window is too small to display the calendar and controls.");
+            return;
+        }
+
+        // Add a zero-width space to prevent issues with the first character
+        Console.WriteLine("\u200B");
+
+        // display the header
         TerminableUtilsPresent.Write(currentDate.ToString(
             "MMMM yyyy").ToUpper() + "\n" + "Mo Tu We Th Fr Sa Su\n");
         Console.ResetColor();
@@ -170,6 +184,15 @@ public class CalendarPresent
 
         Console.ResetColor();
 
+         // Display the footer
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Previous month", "<p>");
+        ControlHelpPresent.AddOptions("Next month", "<n>");
+        ControlHelpPresent.AddOptions("Select date", "<enter>");
+        ControlHelpPresent.AddOptions("Back", "<escape>");
+        ControlHelpPresent.ShowHelp();
+        ControlHelpPresent.ResetToDefault();
+
         if (!isAdmin)
         {
             ThemeModel? theme = ReservationMenuLogic.GetCurrentTheme(currentDate);
@@ -196,7 +219,7 @@ public class CalendarPresent
         }
 
         Console.ResetColor();
-        Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nescape     : <esc>");
+        // Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nescape     : <esc>");
 
         // Display the "fully reserved" message at the bottom
         if (showFullyReservedMessage)

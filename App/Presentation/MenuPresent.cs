@@ -33,18 +33,23 @@ internal class MenuPresent
         while (true)
         {
             Console.Clear();
-            switch (SelectionPresent.Show(["Login", "Register", "Exit"], banner: "MAIN MENU").ElementAt(0).text)
+            switch (SelectionPresent.Show(["Login", "Register\n", "Exit"], banner: "MAIN MENU").ElementAt(0).text)
             {
                 case "Login":
                     if (MenuLogic.Login() == "continue")
                         continue;
                     break;
 
-                case "Register":
-                    UserRegisterPresent.CreateAccount();
+                case "Register\n":
+                    UserRegisterPresent.CreateAccount(false);
                     continue;
 
                 case "Exit":
+                    Environment.Exit(0);
+                    return;
+
+                case null:
+                    Console.Clear();
                     Environment.Exit(0);
                     return;
 
