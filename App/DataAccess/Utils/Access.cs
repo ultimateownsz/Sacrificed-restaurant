@@ -18,3 +18,4 @@ internal abstract class Access
     internal static AllerlinkAccess Allerlinks = new();
     internal static ReservationAccess Reservations = new();
 }
+

@@ -7,11 +7,24 @@ using Restaurant;
 
 namespace App.Presentation.Reservation;
 
-public static class ReservationMakePresent
+public class ReservationMakePresent
 {
     static private ReservationLogic reservationLogic = new();
     static private ReservationMenuLogic reservationMenuLogic = new();
     static private OrderLogic orderLogic = new();
+
+    public interface IAccess
+    {
+        //IUserRepository Users { get; }
+        //IReservationRepository Reservations { get; }
+        // Add other repositories as needed
+    }
+
+    public interface IConsoleWrapper
+    {
+        void WriteLine(string text);
+        void Clear();
+    }
 
     public static void MakingReservation(UserModel acc)
     {
@@ -266,11 +279,11 @@ public static class ReservationMakePresent
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy("ID", userID); // Fetch the account details
+        var account = Access.Users.GetBy("ID", userID); 
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";
         }
-        return "Unknown User"; // Fallback in case no account is found
+        return "Unknown User"; 
     }
 }
