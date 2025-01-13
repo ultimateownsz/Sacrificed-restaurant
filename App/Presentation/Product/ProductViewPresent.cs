@@ -87,8 +87,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in the restaurant");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+                    ControlHelpPresent.DisplayFeedback($"There are no products in the restaurant", "center", "error");
+                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -206,8 +206,8 @@ static class ProductViewPresent
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
             // Console.ForegroundColor = ConsoleColor.Green;
-            ControlHelpPresent.DisplayFeedback($"{chosenProduct.Name} has been deleted.");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+            ControlHelpPresent.DisplayFeedback($"{chosenProduct.Name} has been deleted.", "center", "success");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
             Console.ReadKey();
             // Console.ForegroundColor = ConsoleColor.White;
             return true;
@@ -215,8 +215,8 @@ static class ProductViewPresent
         else
         {
             // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Failed to delete {chosenProduct.Name}.");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
+            ControlHelpPresent.DisplayFeedback($"Failed to delete {chosenProduct.Name}.", "center", "error");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip"); 
             Console.ReadKey();
             // Console.ForegroundColor = ConsoleColor.White;
             return false;
@@ -234,8 +234,8 @@ static class ProductViewPresent
         if (newProduct == null)
         {
             // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Invalid product info.");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+            ControlHelpPresent.DisplayFeedback($"Invalid product info.", "center", "error");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
             Console.ReadKey();
             // Console.ForegroundColor = ConsoleColor.White;
             return;
@@ -243,8 +243,8 @@ static class ProductViewPresent
         else if (ProductLogic.AddProduct(newProduct))
         {
             // Console.ForegroundColor = ConsoleColor.Green;
-            ControlHelpPresent.DisplayFeedback($"{newProduct.Name} has been added.", "bottom", "success");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip");
+            ControlHelpPresent.DisplayFeedback($"{newProduct.Name} has been added.", "center", "success");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
             Console.ReadKey();
             // Console.ForegroundColor = ConsoleColor.White;
             return;
@@ -252,8 +252,8 @@ static class ProductViewPresent
         else
         {
             // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "bottom", "tip"); 
+            ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.", "center", "error");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip"); 
             Console.ReadKey();
             // Console.ForegroundColor = ConsoleColor.White;
             return;
