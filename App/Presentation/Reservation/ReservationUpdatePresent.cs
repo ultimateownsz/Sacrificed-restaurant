@@ -59,7 +59,7 @@ public static class ReservationUpdatePresent
                     UpdateTableID(reservation);
                     break;
 
-                case "":
+                case null:
                     return;
             }
         }
@@ -70,14 +70,14 @@ public static class ReservationUpdatePresent
         string confirmChoice = $"UPDATE RESERVATION\nReservation for the date {reservation.Date:dd/MM/yyyy}";
         while (true)
         {
-            switch (SelectionPresent.Show(["Date", "Table", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
+            switch (SelectionPresent.Show(["Date", "Table\n", "Cancel reservation"], banner: confirmChoice).ElementAt(0).text)
             {
                 case "Date":
                     Console.Clear();
                     UpdateReservationDate(reservation, acc);
                     break;
 
-                case "Table":
+                case "Table\n":
                     Console.Clear();
                     UpdateTableID(reservation);
                     break;
@@ -90,7 +90,7 @@ public static class ReservationUpdatePresent
                     }
                     break;
 
-                case "":
+                case null:
                     return;
             }
         }
@@ -157,19 +157,19 @@ public static class ReservationUpdatePresent
 
                 if (selectedTable == -1)
                 {
-                    Console.WriteLine("Returning to previous menu...");
+                    ControlHelpPresent.DisplayFeedback("Returning to previous menu...");
                     break;
                 }
 
                 if (IsTableTaken(reservation.Date, selectedTable))
                 {
-                    Console.WriteLine("This table is already reserved for this particular date...");
+                    ControlHelpPresent.DisplayFeedback("This table is already reserved for this particular date...");
                 }
                 else
                 {
                     if (reservation.PlaceID.HasValue)
                     {
-                        Console.WriteLine("Old reserved table has been replaced...");
+                        ControlHelpPresent.DisplayFeedback("Old reserved table has been replaced...");
                     }
 
                     reservation.PlaceID = selectedTable;
@@ -184,8 +184,9 @@ public static class ReservationUpdatePresent
         // Check if the reservation date is in the past
         if (reservation.Date < DateTime.Today)
         {
-            TerminableUtilsPresent.Write("You cannot cancel a reservation that is in the past.");
-            Thread.Sleep(1000);
+            // TerminableUtilsPresent.Write("You cannot cancel a reservation that is in the past.");
+            ControlHelpPresent.DisplayFeedback("You cannot cancel a reservation that is in the past.");
+            // Thread.Sleep(1000);
             return false; // Cant cancel a past reservation
         }
 
@@ -196,19 +197,21 @@ public static class ReservationUpdatePresent
         if (choice.text == "Yes")
         {
             Access.Reservations.Delete(reservation.ID);
-            TerminableUtilsPresent.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
-            Thread.Sleep(1000);
+            // TerminableUtilsPresent.Write($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.");
+            ControlHelpPresent.DisplayFeedback($"Reservation for {reservation.Date:dd/MM/yyyy} cancelled successfully.", "bottom", "success");
+            // Thread.Sleep(1000);
             return true; // Deletion was successful
         }
         else
         {
-            TerminableUtilsPresent.Write("Reservation not cancelled.");
-            Thread.Sleep(1000);
+            // TerminableUtilsPresent.Write("Reservation not cancelled.");
+            ControlHelpPresent.DisplayFeedback("Reservation not cancelled.");
+            // Thread.Sleep(1000);
             return false; // Deletion was cancelled
         }
     }
 
-    private static void UdpateReservationAmount(ReservationModel reservation)
+    private static void UpdateReservationAmount(ReservationModel reservation)
     {
         // Update Reservation Amount
         while (true)
@@ -218,7 +221,7 @@ public static class ReservationUpdatePresent
 
             if (string.IsNullOrEmpty(newAmountInput))
             {
-                Console.WriteLine("Reservation Amount not updated.");
+                ControlHelpPresent.DisplayFeedback("Reservation amount not updated.");
                 break;
             }
             else if (int.TryParse(newAmountInput, out int newAmount))
@@ -236,7 +239,7 @@ public static class ReservationUpdatePresent
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a valid number.");
+                ControlHelpPresent.DisplayFeedback("Invalid input. Please enter a valid number.");
             }
         }
     }

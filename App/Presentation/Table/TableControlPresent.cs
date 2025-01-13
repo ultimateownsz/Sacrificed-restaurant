@@ -8,8 +8,11 @@ public static class TableControlPresent
     public static void Show()
     {
         Console.Clear();
-        Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
-        Console.WriteLine("Press Esc to return to the admin menu.");
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.ShowHelp();
+        ControlHelpPresent.DisplayFeedback("Press 'Enter' to toggle table state.", "center", "tip");
+        Console.ReadKey();
+        // Console.WriteLine("Press Esc to return to the admin menu.");
 
         var tableSelection = new TableSelectionPresent();
         Console.CursorVisible = false;
@@ -74,9 +77,9 @@ public static class TableControlPresent
                 else
                 {
                     Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Failed to toggle table {selectedTable}'s state. Please try again.");
-                    Console.ResetColor();
+                    // Console.ForegroundColor = ConsoleColor.Red;
+                    ControlHelpPresent.DisplayFeedback($"Failed to toggle table {selectedTable}'s state. Please try again.", "center", "error");
+                    // Console.ResetColor();
                 }
             }
         }

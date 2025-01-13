@@ -12,17 +12,17 @@ static class ProductLogic
     {
         if (product == null)
         {
-            Console.WriteLine("Cant add empty products.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.WriteLine("Cant add empty products.");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             return false;
         }
 
         if (Access.Products.GetBy<string?>("Name", product.Name) != null)
         {
-            Console.WriteLine($"{product.Name} already exists.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.WriteLine($"{product.Name} already exists.");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             return false;
         }
 
@@ -89,11 +89,34 @@ static class ProductLogic
     public static bool DeleteProductAndRelatedRequests(int? productId)
     {
         var requests = Access.Requests.Read().Where(r => r.ProductID == productId).ToList();
-        foreach (var request in requests)
+        var paris = Access.Pairs.Read().Where(p => p.FoodID == productId).ToList();
+        
+        if(requests.Count != 0)
         {
-            Access.Requests.Delete(request.ID);
+            foreach (var request in requests)
+            {
+                Access.Requests.Delete(request.ID);
+            }
         }
 
+        if(paris.Count != 0)
+        {
+            foreach (var pair in paris)
+            {
+                Access.Pairs.Delete(pair.ID);
+            }
+        }
+        else
+        {
+            var paris2 = Access.Pairs.Read().Where(p => p.DrinkID == productId).ToList();
+            if(paris2.Count != 0)
+            {
+                foreach (var pair in paris2)
+                {
+                    Access.Pairs.Delete(pair.ID);
+                }
+            }
+        }
         if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
             return false;
@@ -183,8 +206,8 @@ static class ProductLogic
         {
             themeID = parts.Count() switch
             {
-                4 => ThemeManageLogic.GetThemeIDByName(parts[2]),
                 3 => ThemeManageLogic.GetThemeIDByName(parts[1]),
+                4 => ThemeManageLogic.GetThemeIDByName(parts[2]),
                 _ => null
             };
         }
@@ -255,11 +278,11 @@ static class ProductLogic
         Console.Clear();
         if(type != "theme" && newProductEdit == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey();
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.Red;
+            // Console.WriteLine($"Failed to update the {type}");
+            // Console.WriteLine("Press any key to continue..."); 
+            // Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         
@@ -275,18 +298,18 @@ static class ProductLogic
         Console.Clear();
         if(UpdateProduct(oldProduct, newProduct))
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"The {type} has been updated to {newProductEdit}");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.Green;
+            // Console.WriteLine($"The {type} has been updated to {newProductEdit}");
+            // Console.WriteLine("Press any key to continue...");
+            // Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Failed to update the {type}");
-            Console.WriteLine("Press any key to continue..."); 
-            Console.ReadKey();
+            // Console.ForegroundColor = ConsoleColor.Red;
+            // Console.WriteLine($"Failed to update the {type}");
+            // Console.WriteLine("Press any key to continue..."); 
+            // Console.ReadKey();
             Console.ForegroundColor = ConsoleColor.White;
         }
     }

@@ -77,25 +77,25 @@ public static class ReservationMakePresent
                 }
                 else
                 {
-                    Console.WriteLine("Error: User ID is null. Unable to create reservation.");
+                    ControlHelpPresent.DisplayFeedback("User ID is null. Unable to create reservation.");
                     return;
                 }
 
                 if (reservationId == 0)
                 {
-                    Console.WriteLine("Failed to create a reservation. Please try again.");
+                    ControlHelpPresent.DisplayFeedback("Failed to create a reservation. Please try again.");
                     continue; // Retry table selection
                 }
 
                 var orders = TakeOrders(selectedDate, acc, reservationId, guests);
                 if (orders == null) continue;
-
+                
                 if (orders != null)
                 {
                     PrintReceipt(orders, reservationId, acc);
 
                     // Prompt the user to press Enter to return to the menu
-                    Console.WriteLine("\nPress Enter when you are ready to return to the menu...");
+                    ControlHelpPresent.DisplayFeedback("Press Enter when you are ready to return to the menu...", "bottom", "tip");
                     while (Console.ReadKey(intercept: true).Key != ConsoleKey.Enter)
                     {
                         // Do nothing, just wait for Enter
@@ -109,7 +109,7 @@ public static class ReservationMakePresent
     {
         if (reservationId == 0)
         {
-            Console.WriteLine("Invalid reservation ID. Exiting TakeOrders.");
+            ControlHelpPresent.DisplayFeedback("Invalid reservation ID. Exiting TakeOrders.");
             return new List<ProductModel>(); // Return an empty list for invalid reservations
         }
 
@@ -125,8 +125,8 @@ public static class ReservationMakePresent
         }
         else
         {
-            Console.WriteLine("This month is not accessible.");
-            Console.WriteLine("Press any key to return to the reservation menu.");
+            ControlHelpPresent.DisplayFeedback("This month is not accessible.");
+            ControlHelpPresent.DisplayFeedback("Press any key to return to the reservation menu.", "bottom", "tip");
             Console.ReadKey();
             return new List<ProductModel>(); // Return an empty list if no theme is available
         }
@@ -135,7 +135,7 @@ public static class ReservationMakePresent
         var reservation = Access.Reservations.GetBy("ID", reservationId);
         if (reservation == null)
         {
-            Console.WriteLine("Reservation not found. Unable to save orders.");
+            ControlHelpPresent.DisplayFeedback("Reservation not found. Unable to save orders.");
             return new List<ProductModel>();
         }
 
@@ -173,7 +173,7 @@ public static class ReservationMakePresent
                         productOptions, banner: banner).ElementAt(0).text;
 
                     // return
-                    if (selectedOption == "")
+                    if (selectedOption == null)
                         return null;
 
                     // EMERGENCY MODIFICATION: 1
@@ -192,7 +192,7 @@ public static class ReservationMakePresent
                         // Save the selected product to the Request table
                         if (!orderLogic.SaveOrder(reservationId, selectedProduct.ID.Value))
                         {
-                            Console.WriteLine("Failed to save the order. Please try again.");
+                            ControlHelpPresent.DisplayFeedback("Failed to save the order. Please try again.", "bottom", "tip");
                             Console.ReadKey();
                             continue;
                         }
@@ -201,7 +201,7 @@ public static class ReservationMakePresent
                     }
                     else
                     {
-                        Console.WriteLine("Invalid selection. Please try again.");
+                        ControlHelpPresent.DisplayFeedback("Invalid selection. Please try again.", "bottom", "tip");
                         Console.ReadKey();
                     }
                 }
@@ -214,8 +214,8 @@ public static class ReservationMakePresent
             {
                 Access.Allerlinks.Delete(lnk.ID);
             }
-
-            Console.WriteLine("\nPress any key to continue...");
+            ControlHelpPresent.DisplayFeedback("Order saved successfully", "top", "success");
+            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
             Console.ReadKey();
         }
 
@@ -237,7 +237,7 @@ public static class ReservationMakePresent
 
         if (reservation == null)
         {
-            Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+            ControlHelpPresent.DisplayFeedback("Reservation not found. Unable to display receipt.");
             return;
         }
 
