@@ -60,8 +60,8 @@ public class SelectionTest
                 if (selected.text == "") continue;
 
                 // assertion
-                Assert.AreEqual<int>(o, selected.index);
-                Assert.AreEqual<string?>(options[o], selected.text);
+                Assert.AreEqual<int>(o, selected.index, "indexes do not match");
+                Assert.AreEqual<string?>(options[o], selected.text, "texts do not match");
             }
 
         }
