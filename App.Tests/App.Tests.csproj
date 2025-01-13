@@ -12,16 +12,12 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\App\App.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <ProjectReference Include="..\App\App.csproj" />
+    <PackageReference Include="xunit" Version="2.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0" />
+    <!-- <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" /> -->
   </ItemGroup>
 
 </Project>
