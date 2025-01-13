@@ -200,7 +200,7 @@ static class ProductViewPresent
         string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
         if (selection == "No" || selection == null)
         {
-            ControlHelpPresent.DisplayFeedback("fix");
+            // ControlHelpPresent.DisplayFeedback("fix");
             return false;
         }
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
