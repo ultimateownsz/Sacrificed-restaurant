@@ -73,7 +73,7 @@ public class AccountCreateTest
     }
 
     // Admin account creation test
-    //[TestMethod]
+    [TestMethod]
     public void TestAdminAccountCreation()
     {
         // Arrange

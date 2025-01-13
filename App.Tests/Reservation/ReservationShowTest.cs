@@ -1,6 +1,6 @@
 namespace App.Tests.Reservation;
 
-//[TestClass]
+[TestClass]
 public class ReservationShowTest
 {
     [TestMethod]

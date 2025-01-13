@@ -6,7 +6,7 @@ using Restaurant;
 
 namespace App.Tests;
 
-//[TestClass]
+[TestClass]
 public class DataSynchronizationTest
 {
 
