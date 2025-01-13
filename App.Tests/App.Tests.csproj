@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk/3.6.1">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,12 +12,8 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
-
   <ItemGroup>
     <ProjectReference Include="..\App\App.csproj" />
-    <PackageReference Include="xunit" Version="2.5.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0" />
-    <!-- <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" /> -->
   </ItemGroup>
 
 </Project>
