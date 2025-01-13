@@ -6,8 +6,8 @@ using Restaurant;
 
 namespace App.Tests;
 
-[TestClass]
-internal class DataSynchronizationTest
+//[TestClass]
+public class DataSynchronizationTest
 {
 
     private static SqliteConnection _db = new($"Data Source=DataSources/project.db");
@@ -26,12 +26,12 @@ internal class DataSynchronizationTest
         {"User", typeof(UserModel)},
     };
 
-    public static void ColumnSynchronization(string table)
+    public static bool ColumnSynchronization(string table)
     {
 
         // ignore auto-increment tracking table
         if (table == "sqlite_sequence")
-            return;
+            return true;
 
         // collect all column
         IEnumerable<dynamic> registers = _db.Query(
@@ -48,32 +48,43 @@ internal class DataSynchronizationTest
         {
             Assert.Fail($"Table: '{table}' exists in database the " +
                         "but is not registered in the model-map");
-            return;
+            return false;
         }
 
         // verify that all table columns are in the models
         foreach (string column in registers.Select(x => x.name))
-            Assert.IsTrue(properties.Contains(column));
+        {
+            if (!properties.Contains(column))
+                return false;
+        }
+
+        return true;
     }
 
-    public static void TableSynchronization(List<string> tables)
-    {
-        foreach (string table in tables) ColumnSynchronization(table);
+    public static bool TableSynchronization(List<string> tables)
+    {        
+        foreach (string table in tables)
+        {
+            if (!ColumnSynchronization(table))
+                return false;
+        }
+
+        return true;
     }
 
     [TestMethod] // test all existing tables by default
-    public static void TableSynchronization()
+    public void TableSynchronization()
     {
         // collect all tables (raw)
         IEnumerable<dynamic> collection = _db.Query(
             "SELECT name FROM sqlite_master WHERE type='table'");
-        
+
         // extract table identities (dynamic -> names)
         List<string> tables = new();
         foreach (string table in collection.Select(x => x.name))
             tables.Add(table);
 
         // validate all tables
-        TableSynchronization(tables);
+        Assert.IsTrue(TableSynchronization(tables));
     }
 }

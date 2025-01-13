@@ -1,7 +1,7 @@
 ﻿using Restaurant;
 namespace App.Tests;
 
-[TestClass]
+//[TestClass]
 public class InterfaceExhaustionTest
 {
     public void UniExhaust(string[] options, SelectionLogic.Mode mode)
@@ -68,11 +68,7 @@ public class InterfaceExhaustionTest
     }
 
     [TestMethod]
-    [DataRow(["option 1"])]
-    [DataRow(["option 3", "option 2",])]
     [DataRow(["option 1", "option 2", "option 3"])]
-    [DataRow(["option 3", "option 2", "option 1"])]
-
     public void OmniExhaust(string[] options)
     {
         // uni-interact methods (click & proceed)

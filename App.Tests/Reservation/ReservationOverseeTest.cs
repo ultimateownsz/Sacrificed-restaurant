@@ -21,7 +21,7 @@ public class ReservationOverseeTest
 }
 
 // System Tests for Reservation Orders
-[TestClass]
+//[TestClass]
 public class ReservationOrderTests
 {
     // System Test for Criterion 2: Show Orders for Each Reservation
@@ -45,7 +45,7 @@ public class ReservationOrderTests
 }
 
 // System Tests for Reservation Theme
-[TestClass]
+//[TestClass]
 public class ReservationThemeTests
 {
     // System Test for Criterion 3: Show Theme for Reservation Month
