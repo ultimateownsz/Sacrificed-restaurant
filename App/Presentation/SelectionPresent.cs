@@ -12,10 +12,24 @@ public class SelectionPresent
     protected internal static Palette palette = new Palette();
     private const int TIMEOUT = 0;
 
-    private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
-        string banner, SelectionLogic.Mode mode)
+    private static void _clear(int menuStartLine, int menuHeight)
     {
+        for (int i = menuStartLine; i < menuHeight; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+    }
 
+    private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
+        string banner, SelectionLogic.Mode mode, int menuStartLine)
+    {
+        // Clear only the menu area, leaving the footer intact
+        _clear(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
+
+
+        // banner & colour initialization
+        Console.SetCursorPosition(0, menuStartLine);
         TerminableUtilsPresent.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
 
@@ -23,14 +37,13 @@ public class SelectionPresent
             in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
-            Console.ForegroundColor =
-                (selectable.selected && selectable.highlighted)
-                // selected and highlighted
-                ? palette.Secondary : (selectable.selected)
-                // only selected
-                ? palette.Primary   : (selectable.highlighted)
-                // only highlighted
-                ? palette.Tertiary  : (palette.Base);
+            Console.ForegroundColor = selectable.selected && selectable.highlighted
+                ? palette.Secondary
+                : selectable.selected
+                ? palette.Primary
+                : selectable.highlighted
+                ? palette.Tertiary
+                : palette.Base;
 
             // marker
             string prefix = (selectable.selected) ? ">" : "";
@@ -103,11 +116,32 @@ public class SelectionPresent
         // currently selected
         IEnumerable<KeyValuePair<string, SelectionLogic.Selectable>> selected;
 
+        int lastWindowHeight = Console.WindowHeight;  // track the initial terminal height
+        int reservedLines = ControlHelpPresent.GetFooterHeight();
+
         // loop
         while (true)
         {
+            // Always render at the top of the terminal
+            int menuStartLine = 0; // Fixed start at the top
+            Console.SetCursorPosition(0, menuStartLine);
+
             // formatting
-            _display(selection, banner, mode);
+            _display(selection, banner, mode, menuStartLine);
+
+            // determine the currently selected index
+            int? selectedIndex = null;
+            foreach (var item in selection)
+            {
+                if (item.Value.selected)  // the selected option
+                {
+                    selectedIndex = options.IndexOf(item.Key);
+                    break;
+                }
+            }
+
+            // Refresh the footer
+            ControlHelpPresent.ShowHelp(options, selectedIndex);
 
             // capture & handle interaction
             switch (_update(selection, mode, keystrokes ?? []))
@@ -157,13 +191,17 @@ public class SelectionPresent
 
                 case SelectionLogic.Interaction.Terminated:
 
-                    Console.Clear();                    
-                    return new()
+                    Console.Clear();
+                    ControlHelpPresent.ShowHelp();
+                    Console.SetCursorPosition(0, menuStartLine);
+                    Console.ForegroundColor = palette.Base;
+                    Console.WriteLine(banner.Trim() + "\n");
+                    return new List<SelectionLogic.Selection>
                     {
-                        new()
+                        new SelectionLogic.Selection
                         {
-                            text = "",
-                            index = -1
+                            text = null,
+                            index = -1 // Special value indicating escape
                         }
                     };
 

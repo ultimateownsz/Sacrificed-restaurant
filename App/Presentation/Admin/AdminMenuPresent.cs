@@ -53,6 +53,8 @@ static class AdminMenuPresent
                     break;
                 case "Logout":
                     return;
+                case null:
+                    return;
             }
         }
     }
