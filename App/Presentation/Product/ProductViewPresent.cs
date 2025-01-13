@@ -134,7 +134,7 @@ static class ProductViewPresent
 
             if (productSelection == null)
             {
-                ControlHelpPresent.DisplayFeedback("skibidi"); //no idea why but this fixes a lil bug somehow
+                // ControlHelpPresent.DisplayFeedback("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
 
