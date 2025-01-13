@@ -7,8 +7,10 @@ namespace App.Tests;
 [TestClass]
 internal class ForeignEntryDeletionTest
 {
-    // 
+
     private static Dictionary<IModel, List<IModel>> _linkage
-        = new() { {UserModel, new () { AllerlinkModel, ReservationModel } };
+        = new() { 
+            { new UserModel(), new() { new AllerlinkModel(), new ReservationModel() } } 
+        };
 
 }
