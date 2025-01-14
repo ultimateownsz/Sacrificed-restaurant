@@ -1,15 +1,15 @@
 // namespace App.Test;
 // using System.Text.RegularExpressions;
 
-// [TestClass]
-// public class ThemeEditTest
-// {
-//     [TestMethod]
-//     public void TestAddThemes()
-//     {
-//         // Arrange the Models(the models are the end of this file)
-//         var themeName = "Turkish";
-//         var schedule = new Schedule { Year = 2025, Month = 6 };
+//[TestClass]
+public class ThemeEditTest
+{
+    [TestMethod]
+    public void TestAddThemes()
+    {
+        // Arrange the Models(the models are the end of this file)
+        var themeName = "Turkish";
+        var schedule = new Schedule { Year = 2025, Month = 6 };
 
 //         // Act
 //         string result = SimulateAddTheme(schedule, themeName);
