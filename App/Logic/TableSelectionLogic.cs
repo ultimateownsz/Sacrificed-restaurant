@@ -3,7 +3,7 @@ using Restaurant;
 
 namespace App.Presentation.Table;
 
-public class TableSelectionPresent
+public class TableSelectionLogic
 {
     private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
     private int cursorX, cursorY;

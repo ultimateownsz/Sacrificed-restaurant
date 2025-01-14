@@ -142,7 +142,7 @@ public static class ReservationUpdatePresent
                 .Select(r => r!.PlaceID!.Value)
                 .ToArray();
 
-            TableSelectionPresent tableSelection = new();
+            TableSelectionLogic tableSelection = new();
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },

@@ -59,7 +59,7 @@ public class ReservationMakePresent
 
 
             // Step 3: Filter available tables based on the number of guests
-            TableSelectionPresent tableSelection = new();
+            TableSelectionLogic tableSelection = new();
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },

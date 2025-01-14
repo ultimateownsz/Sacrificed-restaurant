@@ -11,7 +11,7 @@ public static class TableControlPresent
         Console.WriteLine("Navigate the grid with arrow keys. Press Enter to toggle table state.");
         Console.WriteLine("Press Esc to return to the admin menu.");
 
-        var tableSelection = new TableSelectionPresent();
+        var tableSelection = new TableSelectionLogic();
         Console.CursorVisible = false;
 
         // Get active and inactive tables
