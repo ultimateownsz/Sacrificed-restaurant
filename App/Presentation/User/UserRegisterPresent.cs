@@ -89,7 +89,6 @@ internal class UserRegisterPresent
 
             if (selection == null || selection == "Cancel")
             {
-                // ControlHelpPresent.DisplayFeedback("Account creation canceled. All entered information has been discarded.", "bottom", "tip");
                 ControlHelpPresent.ResetToDefault();
                 return false;
             }
@@ -108,7 +107,6 @@ internal class UserRegisterPresent
                         input => !string.IsNullOrWhiteSpace(input) ? (true, null) : (false, "First name cannot be empty."),
                         menuTitle: "EDIT FIRSTNAME"
                     );
-                    // ControlHelpPresent.DisplayFeedback($"Changed first name to {firstName}.", "bottom", "success");
                     break;
 
                 case var s when s?.StartsWith("Last name"):
@@ -117,7 +115,6 @@ internal class UserRegisterPresent
                         input => !string.IsNullOrWhiteSpace(input) ? (true, null) : (false, "Last name cannot be empty."),
                         menuTitle: "EDIT LASTNAME"
                     );
-                    // ControlHelpPresent.DisplayFeedback($"Changed last name to {lastName}.", "bottom", "success");
                     break;
 
                 case var s when s?.StartsWith("Email"):
@@ -130,7 +127,6 @@ internal class UserRegisterPresent
                         },
                         menuTitle: "EDIT EMAIL"
                     );
-                    // ControlHelpPresent.DisplayFeedback($"Changed email to {email}.", "bottom", "success");
                     break;
 
                 case var s when s?.StartsWith("Password"):
@@ -143,7 +139,6 @@ internal class UserRegisterPresent
                         },
                         menuTitle: "EDIT PASSWORD"
                     );
-                    // ControlHelpPresent.DisplayFeedback($"Changed password to {password}.", "bottom", "success");
                     break;
 
                 case var s when s?.StartsWith("Phone number"):
@@ -156,11 +151,9 @@ internal class UserRegisterPresent
                         },
                         menuTitle: "EDIT PHONE NUMBER"
                     );
-                    // ControlHelpPresent.DisplayFeedback($"Changed phone number to {phoneNumber}.", "bottom", "success");
                     break;
 
                 default:
-                    // ControlHelpPresent.DisplayFeedback("Invalid option selected.", "bottom", "error");
                     break;
             }
         }
