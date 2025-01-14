@@ -23,7 +23,7 @@ public class ForeignEntryDeletionTest
 
         // user should be deleted
         Assert.IsTrue(Access.Users.Delete(-1), "User couldn't be deleted");
-        
+
         // all allerlinks of user should be deleted
         Assert.IsTrue(Access.Allerlinks.Read().Where(x => x.EntityID == -1 
             && x.Personal == 1).Count() == 0, "Allerlink still present after user deletion");
