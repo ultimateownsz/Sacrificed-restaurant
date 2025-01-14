@@ -12,9 +12,6 @@ public static class ReservationDeletePresent
         {
             // Clear the console and display the confirmation menu
             Console.Clear();
-            ControlHelpPresent.Clear();
-            ControlHelpPresent.ResetToDefault();
-            ControlHelpPresent.ShowHelp();
             var account = Access.Users.GetBy("ID", reservation.UserID);
             string userFullName = GetUserFullName(account?.ID);
             Console.WriteLine($"Are you sure?");
@@ -30,10 +27,6 @@ public static class ReservationDeletePresent
                 // Attempt to delete the specific reservation
                 Access.Reservations.Delete(reservation.ID);
                 //return; // Exit after successful deletion
-                Console.Clear();
-                ControlHelpPresent.DisplayFeedback("Reservation deleted successfully.", "bottom", "success");
-                ControlHelpPresent.DisplayFeedback("Press any key to return to the reservation list.", "bottom", "tip");
-                Console.ReadKey();
             }
             //else if (selectedOption == "No")
             //{

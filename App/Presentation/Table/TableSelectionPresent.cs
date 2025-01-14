@@ -430,7 +430,6 @@ public class TableSelectionPresent
             Console.ResetColor();
             Console.WriteLine("Please resize your console window and press Enter to continue...");
             Console.ReadLine();
-            Console.ResetColor();
         }
 
         Console.Clear();
@@ -597,12 +596,7 @@ public class TableSelectionPresent
             {
                 Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                 Console.ResetColor();
-                // Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
-                ControlHelpPresent.Clear();
-                ControlHelpPresent.AddOptions("Navigate", "<arrows>");
-                ControlHelpPresent.AddOptions("Select", "<enter>");
-                ControlHelpPresent.AddOptions("Exit", "<escape>");
-                ControlHelpPresent.ShowHelp();
+                Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
 
                 var key = Console.ReadKey(true);
 

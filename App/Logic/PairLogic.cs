@@ -56,7 +56,7 @@ internal class PairLogic
         
         // find ID
         string choice = SelectionPresent.Show(products, banner: "PRODUCT MENU").ElementAt(0).text;
-        if (choice == null) return;
+        if (choice == "") return;
 
         int? foodID = Access.Products.GetBy<string>("Name", choice).ID;
 

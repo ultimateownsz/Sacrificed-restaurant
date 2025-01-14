@@ -45,11 +45,11 @@ public class OrderLogic
         // Save the order using RequestAccess
         if (!requestAccess.Write(request))
         {
-            // Console.WriteLine("Failed to save the order.");
+            Console.WriteLine("Failed to save the order.");
             return false;
         }
 
-        // Console.WriteLine("Order saved successfully.");
+        Console.WriteLine("Order saved successfully.");
         return true;
     }
 
