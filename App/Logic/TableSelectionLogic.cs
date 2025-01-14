@@ -228,17 +228,6 @@ public class TableSelectionLogic
     }
 
 
-
-    private void ShowErrorMessage(string message)
-    {
-        int messageY = GridPresent.GetGrid().GetLength(0) + 3;
-        Console.SetCursorPosition(0, messageY);
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(message.PadRight(Console.WindowWidth - 1));
-        Console.ResetColor();
-    }
-
-
     private void ClearErrorMessage()
     {
         int messageY = GridPresent.GetGrid().GetLength(0) + 1; // Same line as the message
@@ -405,8 +394,6 @@ public class TableSelectionLogic
     }
 
 
-
-
     private void ResetConsoleToDefault()
     {
         Console.ResetColor();
@@ -434,24 +421,6 @@ public class TableSelectionLogic
 
         Console.Clear();
     }
-
-    // public static void MaximizeConsoleWindow()
-    // {
-    //     const int SW_MAXIMIZE = 3;
-
-    //     // Import Windows API functions
-    //     [DllImport("kernel32.dll", SetLastError = true)]
-    //     static extern IntPtr GetConsoleWindow();
-
-    //     [DllImport("user32.dll", SetLastError = true)]
-    //     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    //     IntPtr consoleWindow = GetConsoleWindow();
-    //     if (consoleWindow != IntPtr.Zero)
-    //     {
-    //         ShowWindow(consoleWindow, SW_MAXIMIZE);
-    //     }
-    // }
 
     private void StopFlashing()
     {
