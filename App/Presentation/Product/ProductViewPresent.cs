@@ -23,6 +23,7 @@ static class ProductViewPresent
         while (true)
         {
             string? name;
+            int? ret;
             // ISSUE: HERE!!
             switch (SelectionPresent.Show(options, banner: $"PRODUCT MENU").ElementAt(0).text)
             {
@@ -34,11 +35,17 @@ static class ProductViewPresent
                     DisplayProducts();
                     break;
                 case "Add allergy to product":
-                    AllergyLinkLogic.Start(AllergyLinkLogic.Type.Product, -1);
-                    break;
+                    ret = AllergyLinkLogic.Start(AllergyLinkLogic.Type.Product, -1);
+                    if (ret == -1)
+                        continue;
+                    else
+                        return;
                 case "Pair drink with food":
-                    PairLogic.Start();
-                    break;
+                    ret = PairLogic.Start();
+                    if (ret == -1)
+                        continue;
+                    else
+                        return;
                 case "Choose products course":
                     while (true)
                     {

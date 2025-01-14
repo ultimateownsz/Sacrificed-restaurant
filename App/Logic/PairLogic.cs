@@ -48,17 +48,17 @@ internal class PairLogic
         return null;
     }
 
-    public static void Start()
+    public static int? Start()
     {
         // standalone implement
-        List<string> products = Access.Products.Read().Where(
-            x => x.Course == "Main").Select(x => x.Name).ToList();
+        List<string?> products = Access.Products.Read().Where(
+            x => x.Course == "Main").Select(x => x?.Name).ToList();
         
         // find ID
-        string choice = SelectionPresent.Show(products, banner: "PRODUCT MENU").ElementAt(0).text;
-        if (choice == "") return;
+        string? choice = SelectionPresent.Show(products, banner: "PRODUCT MENU").ElementAt(0).text;
+        if (choice == "") return -1;
 
-        int? foodID = Access.Products.GetBy<string>("Name", choice).ID;
+        int? foodID = Access.Products.GetBy<string>("Name", choice)?.ID;
 
         // value initialization
         var input = new Input();
@@ -66,7 +66,9 @@ internal class PairLogic
 
         // I/O swap
         PairPresent.Show(ref input, ref output);
-        ProductModel model = ToModel(input.Product);
+        if (input.Product == "") return -1;
+        
+        ProductModel? model = ToModel(input.Product);
 
         // deletion of old data
         foreach (var pair in Access.Pairs.GetAllBy<int>("FoodID", foodID ?? -1))
@@ -79,7 +81,9 @@ internal class PairLogic
                 model.ID
             )
         );
-        
+
+        return null;
+
     }
 
 }
