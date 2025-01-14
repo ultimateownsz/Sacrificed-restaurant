@@ -103,6 +103,7 @@ public static class ControlHelpPresent
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Press {navigationControls["Navigate"]} to navigate options.");
+                Console.WriteLine($"Press <esc> to exit.");
             }
             if (controls.Any(c => c.Key == "Exit"))
             {
