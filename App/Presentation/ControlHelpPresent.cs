@@ -34,28 +34,43 @@ public static class ControlHelpPresent
     internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
-        string? feedbackMessage = null)  // pass the recalculated footer start line
-        
+        string? feedbackMessage = null,
+        string menuContext = "default") // "admin, "user
     {
+        bool showExit = menuContext != "admin" && menuContext != "user";
+
+        var filteredControls = navigationControls
+        .Where(c => showExit || c.Key != "Exit")
+        .ToList();
+
         // Display feedback if provided
         if (!string.IsNullOrWhiteSpace(feedbackMessage))
         {
             DisplayFeedback(feedbackMessage);
         }
 
-        // Preprocess options to strip out newlines
-        if (options != null)
-        {
-            options = options.Select(option => option.Replace("\n", " ")).ToList();
-        }
+        // // Preprocess options to strip out newlines
+        // if (options != null)
+        // {
+        //     options = options.Select(option => option.Replace("\n", " ")).ToList();
+        // }
+
+        ShowControls(filteredControls, options, selectedIndex);
+    }
+
+    private static void ShowControls(
+        List<KeyValuePair<string, string>> controls,
+        List<string>? options = null,
+        int? selectedIndex = null)
+    {
 
         // Split navigationControls into dynamic and static controls
-        var dynamicControls = navigationControls
+        var dynamicControls = controls
         .Where(c => c.Key != "Navigate" && c.Key != "Select" && c.Key != "Exit")
         .OrderBy(c => c.Key)
         .ToList();
 
-        var staticControls = navigationControls
+        var staticControls = controls
         .Where(c => c.Key == "Navigate" || c.Key == "Select" || c.Key == "Exit")
         .ToList();
         
@@ -78,20 +93,20 @@ public static class ControlHelpPresent
             
             string cleanOption = selectedOption.Replace("\n", "").Trim();  // Remove newlines and trim spaces
 
-            if (navigationControls.TryGetValue("Select", out var selectKey))
+            if (controls.Any(c => c.Key == "Select"))
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Press {selectKey} to select \"{cleanOption}\".");
+                Console.WriteLine($"Press {navigationControls["Select"]} to select \"{cleanOption}\".");
                 Console.ResetColor();
             }
-            if (navigationControls.TryGetValue("Navigate", out var navKey))
+            if (controls.Any(c => c.Key == "Navigate"))
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Press {navKey} to navigate options.");
+                Console.WriteLine($"Press {navigationControls["Navigate"]} to navigate options.");
             }
-            if (navigationControls.TryGetValue("Exit", out var exitKey))
+            if (controls.Any(c => c.Key == "Exit"))
             {
-                Console.WriteLine($"Press {exitKey} to exit.");
+                Console.WriteLine($"Press {navigationControls["Exit"]} to exit.");
                 Console.ResetColor();
             }
         }

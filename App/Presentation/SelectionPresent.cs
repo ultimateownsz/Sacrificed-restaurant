@@ -141,7 +141,7 @@ public class SelectionPresent
             }
 
             // Refresh the footer
-            ControlHelpPresent.ShowHelp(options, selectedIndex);
+            ControlHelpPresent.ShowHelp(options, selectedIndex, menuContext: "admin");
 
             // capture & handle interaction
             switch (_update(selection, mode, keystrokes ?? []))
