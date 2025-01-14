@@ -18,27 +18,26 @@ static class LoginPresent
         ControlHelpPresent.ResetToDefault();
     }
 
-    private static void ResetControlsOnEscape(bool isEscapePressed)
+    private static void ClearCredentials()
     {
-        if (isEscapePressed)
-        {
-            ControlHelpPresent.ResetToDefault();
-            userInput.Clear(); // Clear inputs on escape key
-        }
+        userInput.Clear(); // Clear inputs on escape key
     }
 
     // Method to request email from the user
-    private static string? RequestEmail()
+    private static string? RequestEmail(string? previousEmail = null)
     {
         ManualControls();
 
         string? email = null;
 
+        // Pre-fill email prompt with the previous email if available
+        string prompt = previousEmail == null ? "Email: " : $"Email: {previousEmail} ";
+
         // Pass the prompt directly to GetValidatedInput
         TryCatchHelper.EscapeKeyException(() =>
         {
             email = InputHelper.GetValidatedInput<string?>(
-                "Email: ", // Pass the prompt here
+                prompt,
                 input => InputHelper.InputNotNull(input, "Email cannot be empty."),
                 menuTitle: "LOGIN",
                 showHelpAction: () => ControlHelpPresent.ShowHelp()
@@ -50,14 +49,16 @@ static class LoginPresent
 
         if (email == null)
         {
+            ClearCredentials();
             SelectionControls();
-            userInput.Clear(); // Clear inputs on escape key
+            
             return null; // Escape key pressed
         }
 
-        userInput.Add($"Email: {email}"); // Store the email in the list
+        userInput.Add($"Email: {email}"); // Store the email for later use
 
-        return email; // Valid email entered
+        // If the user presses Enter without modifying the email, keep the previous one
+        return string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(previousEmail) ? previousEmail : email;
     }
 
 
@@ -101,7 +102,7 @@ static class LoginPresent
 
         if (password == null)
         {
-            ResetControlsOnEscape(true);
+            ClearCredentials();
             return null;  // Escape key pressed
         }
 
@@ -115,18 +116,23 @@ static class LoginPresent
 
     public static UserModel? Show()
     {
+        string? email = null;
+
         while (true)
         {
             ManualControls();
 
             // Request email
-            string? email = RequestEmail();
-            if (string.IsNullOrEmpty(email)) return null; // Exit if email is empty
+            email = RequestEmail(email);
+            if (string.IsNullOrEmpty(email)) return null; // Exit if email is empty or escape was pressed
 
             // Request password
             string? password = RequestPassword(email);
-            if (string.IsNullOrEmpty(password)) return null; // Exit if password is empty
-
+            if (string.IsNullOrEmpty(password))
+            {
+                // Escape was pressed during password input, go back to email input
+                continue;
+            }
             // Check credentials
             var (acc, message) = LoginLogic.CheckLogin(email.ToLower(), password);
             
