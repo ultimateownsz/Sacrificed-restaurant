@@ -36,10 +36,8 @@ static class ProductViewPresent
                     break;
                 case "Add allergy to product":
                     ret = AllergyLinkLogic.Start(AllergyLinkLogic.Type.Product, -1);
-                    if (ret == -1)
-                        continue;
-                    else
-                        return;
+                    if (ret == -1) continue;
+                    else return;
                 case "Pair drink with food":
                     ret = PairLogic.Start();
                     if (ret == -1)

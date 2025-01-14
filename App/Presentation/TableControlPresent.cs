@@ -86,9 +86,9 @@ public static class TableControlPresent
             Console.Clear();
         }
     }
-    public static void EnsureConsoleSize()
+    public static int? EnsureConsoleSize()
     {
-        const int requiredWidth = 200;
+        const int requiredWidth = 0; // changed from 200
         const int requiredHeight = 40;
         // Try to maximize the console window
         // MaximizeConsoleWindow();
@@ -102,9 +102,10 @@ public static class TableControlPresent
             Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
             Console.ResetColor();
             Console.WriteLine("Please resize your console window and press Enter to continue...");
-            Console.ReadLine();
+            if (Console.ReadKey().Key == ConsoleKey.Escape) return -1;
         }
 
         Console.Clear();
+        return null;
     }
 }

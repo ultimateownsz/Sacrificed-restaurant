@@ -1,6 +1,5 @@
 using App.DataAccess.Utils;
 using Restaurant;
-using App.Presentation.Table;
 using Microsoft.VisualBasic;
 
 namespace App.Presentation.Table;
@@ -536,7 +535,9 @@ public class TableSelectionLogic
 
     public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
     {
-        TableControlPresent.EnsureConsoleSize();
+        int? ret = TableControlPresent.EnsureConsoleSize();
+        if (ret == -1) return -1;
+
         ShowGrid(activeTables, inactiveTables, reservedTables, guestCount, isAdmin);
         Console.CursorVisible = false;
 
