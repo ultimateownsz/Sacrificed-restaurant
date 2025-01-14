@@ -31,7 +31,9 @@ static class LoginPresent
         string? email = null;
 
         // Pre-fill email prompt with the previous email if available
-        string prompt = previousEmail == null ? "Email: " : $"Email: {previousEmail} ";
+        string prompt = previousEmail == null
+            ? "Email: "
+            : $"Email (Current: {previousEmail}): ";
 
         // Pass the prompt directly to GetValidatedInput
         TryCatchHelper.EscapeKeyException(() =>
