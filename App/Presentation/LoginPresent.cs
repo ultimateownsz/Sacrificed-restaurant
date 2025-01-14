@@ -2,15 +2,35 @@ namespace Restaurant;
 static class LoginPresent
 {
     private static LoginLogic loginLogic = new();
-
     private static List<string> userInput = new(); // List to store the email and password
     
-    // Method to request email from the user
-    private static string? request_email()
+    // one private method to call instead of repeated code
+    private static void ManualControls()
     {
         ControlHelpPresent.Clear();
         ControlHelpPresent.AddOptions("Exit", "<escape>");
         ControlHelpPresent.ShowHelp();
+    }
+
+    private static void SelectionControls()
+    {
+        Console.Clear();
+        ControlHelpPresent.ResetToDefault();
+    }
+
+    private static void ResetControlsOnEscape(bool isEscapePressed)
+    {
+        if (isEscapePressed)
+        {
+            ControlHelpPresent.ResetToDefault();
+            userInput.Clear(); // Clear inputs on escape key
+        }
+    }
+
+    // Method to request email from the user
+    private static string? RequestEmail()
+    {
+        ManualControls();
 
         string? email = null;
 
@@ -26,14 +46,11 @@ static class LoginPresent
         });
 
         // Reset the navigation controls to default when escape key is pressed
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.ResetToDefault();
-        ControlHelpPresent.ShowHelp();
+        ManualControls();
 
         if (email == null)
         {
-            Console.Clear();
-            ControlHelpPresent.ResetToDefault();
+            SelectionControls();
             userInput.Clear(); // Clear inputs on escape key
             return null; // Escape key pressed
         }
@@ -44,11 +61,9 @@ static class LoginPresent
     }
 
 
-    private static string? request_password(string? email)
+    private static string? RequestPassword(string? email)
     {
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Exit", "<escape>");
-        ControlHelpPresent.ShowHelp();
+        ManualControls();
         
         // Display the email above the password prompt
         Console.SetCursorPosition(0, 0);
@@ -82,13 +97,11 @@ static class LoginPresent
             );
         });
 
-        // ControlHelpPresent.ResetToDefault();
         ControlHelpPresent.ShowHelp();
 
         if (password == null)
         {
-            ControlHelpPresent.ResetToDefault();
-            userInput.Clear(); // Clear inputs on escape key
+            ResetControlsOnEscape(true);
             return null;  // Escape key pressed
         }
 
@@ -102,32 +115,34 @@ static class LoginPresent
 
     public static UserModel? Show()
     {
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Exit", "<escape>");
-        ControlHelpPresent.ShowHelp();
-
-        // Request email
-        string? email = request_email();
-        if (string.IsNullOrEmpty(email)) return null;
-
-        // Request password
-        string? password = request_password(email);
-        if (string.IsNullOrEmpty(password)) return null;
-
-        // Check credentials
-        UserModel? acc = LoginLogic.CheckLogin(email.ToLower(), password);
-        if (acc == null)
+        while (true)
         {
-            ControlHelpPresent.DisplayFeedback("Invalid credentials, returning...");
-            return null;
+            ManualControls();
+
+            // Request email
+            string? email = RequestEmail();
+            if (string.IsNullOrEmpty(email)) return null; // Exit if email is empty
+
+            // Request password
+            string? password = RequestPassword(email);
+            if (string.IsNullOrEmpty(password)) return null; // Exit if password is empty
+
+            // Check credentials
+            var (acc, message) = LoginLogic.CheckLogin(email.ToLower(), password);
+            
+            if (acc == null)
+            {
+                ControlHelpPresent.DisplayFeedback($"{message}", "bottom", "tip");
+                Console.ReadKey(true);
+                continue;
+            }
+            string loginMessage = acc!.Admin == 1
+                ? $"Logged in as admin ({acc.FirstName})."
+                : $"Logged in as {acc.FirstName}.";
+
+            ControlHelpPresent.DisplayFeedback(loginMessage, "bottom", "success");
+            
+            return acc;
         }
-
-        string loginMessage = acc.Admin.HasValue && acc.Admin.Value > 0 
-            ? $"Logged in as admin ({acc.FirstName})." 
-            : $"Logged in as {acc.FirstName}.";
-
-        ControlHelpPresent.DisplayFeedback(loginMessage, "bottom", "success");
-        return acc; // Successful login
     }
-
 }
