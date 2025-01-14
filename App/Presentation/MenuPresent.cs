@@ -48,10 +48,10 @@ internal class MenuPresent
                     Environment.Exit(0);
                     return;
 
-                case null:
-                    Console.Clear();
-                    Environment.Exit(0);
-                    return;
+                // case null:
+                //     Console.Clear();
+                //     Environment.Exit(0);
+                //     return;
 
                 default:
                     continue;
