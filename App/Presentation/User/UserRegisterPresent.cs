@@ -1,195 +1,273 @@
-﻿using App.DataAccess.Utils;
-using Restaurant;
+﻿using Restaurant;
+using App.DataAccess.Utils;
+using App.Presentation.User;
+using App.Presentation.Admin;
 
 namespace App.Presentation.User;
-
-// The methods underneath could've easily been one method.
-// Original developer research modularity and reusability
 
 internal class UserRegisterPresent
 {
     public static void CreateAccount(bool admin = false)
     {
-        bool isInfoValid = false;
-        string firstName = "", lastName = "", email = "", password = "", phoneNumber = "";
-
-        Console.Clear();
         Console.WriteLine("Please enter the following information:\n");
 
-        // Input collection with validation loops
-        while (true)
+        bool isAdminCreated = false;
+
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
+        string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n";
+
+        string? firstName = TerminableUtilsPresent.ReadLine("First name: ", colour: ConsoleColor.Yellow);
+        if (firstName == null) return;
+        while (string.IsNullOrWhiteSpace(firstName))
         {
-            firstName = TerminableUtilsPresent.ReadLine("first name: ");
+            string message = "First name cannot be empty.";
+            firstName = TerminableUtilsPresent.ReadLine($"First name: \n\n{message}");
             if (firstName == null) return;
-
-            if (LoginLogic.IsNameValid(firstName))
-                break;
-
-            Console.WriteLine("Invalid first name, try again!");
-            Console.ReadKey();
         }
 
-        while (true)
+        string? lastName = TerminableUtilsPresent.ReadLine("Last name: ");
+        if (lastName == null) return;
+        while (string.IsNullOrWhiteSpace(lastName))
         {
-            lastName = TerminableUtilsPresent.ReadLine("last name: ");
+            string message = "Last name cannot be empty.";
+            lastName = TerminableUtilsPresent.ReadLine($"Last name: \n\n{message}");
             if (lastName == null) return;
-
-            if (LoginLogic.IsNameValid(lastName))
-                break;
-            Console.WriteLine("Invalid last name, try again!");
-            Console.ReadKey();
         }
 
-        // Loop until valid email is provided
+        string? email = TerminableUtilsPresent.ReadLine("E-mail (e.g., example@domain.com: ");
+        if (email == null) return;
         while (true)
         {
-            email = TerminableUtilsPresent.ReadLine("email: ");
-            if (email == null) return;
-
-            if (LoginLogic.IsEmailValid(email))
-                break;
-
-            Console.WriteLine("Invalid email address, try again!");
-            Console.ReadKey();
-        }
-
-        // Loop until valid password is provided
-        while (true)
-        {
-            password = TerminableUtilsPresent.ReadLine("password (8-16 characters): ");
-            if (password == null) return;
-
-            if (LoginLogic.IsPasswordValid(password))
-                break;
-
-            Console.WriteLine("Invalid password, try again!");
-            Console.ReadKey();
-        }
-
-        // Loop until valid phone number is provided
-        while (true)
-        {
-            phoneNumber = TerminableUtilsPresent.ReadLine("phone number (8 numbers): ");
-            if (phoneNumber == null) return;
-
-            if (LoginLogic.IsPhoneNumberValid(phoneNumber))
-                break;
-
-            Console.WriteLine("Invalid phone number, try again!");
-            Console.ReadKey();
-        }
-
-        // Confirm details loop
-        while (!isInfoValid)
-        {
-            Console.Clear();
-            Console.WriteLine("Your information: ");
-            Console.WriteLine(" ");
-            Console.WriteLine($"First name: {firstName}");
-            Console.WriteLine($"Last name: {lastName}");
-            Console.WriteLine($"Email: {email}");
-            Console.WriteLine($"Password: {password}");
-            Console.WriteLine($"Phone Number: {phoneNumber}");
-            Console.WriteLine(" ");
-            Console.WriteLine("Are you sure this is correct? Y/N");
-
-            string choice = Console.ReadLine().ToUpper();
-
-            if (choice == "Y")
+            var (isValid, message) = LoginLogic.IsEmailValid(email);
+            if (isValid)
             {
-                // Create account and write it to storage
-                var account = new UserModel()
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Email = email,
-                    Password = password,
-                    Phone = phoneNumber,
-                    Admin = Convert.ToInt16(admin)
-                };
-
-                Access.Users.Write(account);
-                Console.WriteLine("\nYour account is successfully registered!");
-                Thread.Sleep(1000); // so you can read the messages
-                isInfoValid = true; // Exit the confirmation loop
-
-            }
-            else if (choice == "N")
-            {
-                while (true)
-                {
-                    string banner = "Choose which information you'd like to change:";
-                    switch (SelectionPresent.Show(["first name", "last name", "email", "password", "phone number"], banner: banner).ElementAt(0).text)
-                    {
-                        case "first name":
-                            Console.Clear();
-                            Console.Write("first name: ");
-                            firstName = Console.ReadLine();
-                            break;
-
-                        case "last name":
-                            Console.Clear();
-                            Console.Write("last name: ");
-                            lastName = Console.ReadLine();
-                            break;
-
-                        case "email":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("email address: ");
-                                string newEmail = Console.ReadLine();
-                                if (LoginLogic.IsEmailValid(newEmail))
-                                {
-                                    email = newEmail;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid email address, try again!");
-                            }
-                            break;
-
-                        case "password":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("password (8-16 characters): ");
-                                string newPassword = Console.ReadLine();
-                                if (LoginLogic.IsPasswordValid(newPassword))
-                                {
-                                    password = newPassword;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid password, try again!");
-                            }
-                            break;
-
-                        case "phone number":
-                            while (true)
-                            {
-                                Console.Clear();
-                                Console.Write("phone number (8 numbers): ");
-                                string newPhoneNumber = Console.ReadLine();
-                                if (LoginLogic.IsPhoneNumberValid(newPhoneNumber))
-                                {
-                                    phoneNumber = newPhoneNumber;
-                                    break;
-                                }
-                                Console.WriteLine("Invalid phone number, try again!");
-                            }
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                    // valid input has been provided
-                    break;
-                }
-
+                break;
             }
             else
             {
-                Console.WriteLine("Invalid choice. Please enter 'Y' for Yes or 'N' for No.");
+                email = TerminableUtilsPresent.ReadLine($"E-mail (e.g., example@domain.com: \n\n{message}");
+                if (email == null) return;
+            }
+        }
+
+        string? password = TerminableUtilsPresent.ReadLine("Password (8-16 characters, must include letters and numbers): ");
+        if (password == null) return;
+        while (true)
+        {
+            var (isValid, message) = LoginLogic.IsPasswordValid(password);
+            if (isValid)
+            {
+                break;
+            }
+            else
+            {
+                password = TerminableUtilsPresent.ReadLine($"Password (8-16 characters, must include letters and numbers): \n\n{message}");
+                if (password == null) return;
+            }
+        }
+
+        string? phoneNumber = TerminableUtilsPresent.ReadLine("Phone number (10 digits, starting with 06): ");
+        if (phoneNumber == null) return;
+        while (true)
+        {
+            var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
+            if (isValid)
+            {
+                break;
+            }
+            else
+            {
+                phoneNumber = TerminableUtilsPresent.ReadLine($"Phone number (10 digits, starting with 06): \n\n{error}");
+                if (phoneNumber == null) return;
+            }
+        }
+
+
+        isAdminCreated = ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+
+        ControlHelpPresent.ResetToDefault();
+    }
+
+    private static bool ConfirmAndSaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
+        while (true)
+        {
+            var details = new List<string>
+            {
+                $"First name   : {firstName}",
+                $"Last name    : {lastName}",
+                $"Email        : {email}",
+                $"Password     : {password}",
+                $"Phone number : {phoneNumber}\n",
+                "Save and return",
+                "Cancel"
+            };
+
+            ControlHelpPresent.Clear();
+            ControlHelpPresent.AddOptions("Exit", "<escape>");
+            ControlHelpPresent.ShowHelp();
+
+            dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:").ElementAt(0).text!;
+
+            if (selection == null || selection == "Cancel")
+            {
+                ControlHelpPresent.ResetToDefault();
+                return false;
+            }
+
+            if (selection == "Save and return")
+            {
+                SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
+                return admin;
+            }
+
+            switch (selection)
+            {
+                case var s when s?.StartsWith("First name"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("First name: ");
+                    Console.ResetColor();
+                    firstName = Console.ReadLine() ?? "";
+                    while (string.IsNullOrWhiteSpace(firstName))
+                    {
+                        Console.WriteLine("First name cannot be empty.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("First name: ");
+                        Console.ResetColor();
+                        firstName = Console.ReadLine() ?? "";
+                    }
+                    break;
+
+                case var s when s?.StartsWith("Last name"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Last name: ");
+                    Console.ResetColor();
+                    lastName = Console.ReadLine() ?? "";
+                    while (string.IsNullOrWhiteSpace(lastName))
+                    {
+                        Console.WriteLine("Last name cannot be empty.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("Last name: ");
+                        Console.ResetColor();
+                        lastName = Console.ReadLine() ?? "";
+                    }
+                    break;
+
+                case var s when s?.StartsWith("Email"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Email (e.g., example@domain.com): ");
+                    Console.ResetColor();
+                    email = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, message) = LoginLogic.IsEmailValid(email);
+                        if (isValid)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(message);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("Email (e.g., example@domain.com): ");
+                            Console.ResetColor();
+                            email = Console.ReadLine() ?? "";
+                        }
+                    }
+                    break;
+
+                case var s when s?.StartsWith("Password"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Password (8-16 characters, must include letters and numbers): ");
+                    Console.ResetColor();
+                    password = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, message) = LoginLogic.IsPasswordValid(password);
+                        if (isValid)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(message);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("Password (8-16 characters, must include letters and numbers): ");
+                            Console.ResetColor();
+                            password = Console.ReadLine() ?? "";
+                        }
+                    }
+                    break;
+                case var s when s?.StartsWith("Phone number"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Phone number (10 digits): ");
+                    Console.ResetColor();
+                    phoneNumber = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
+                        if (isValid)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("Phone number (10 digits): ");
+                            Console.ResetColor();
+                            phoneNumber = Console.ReadLine() ?? "";
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    private static void SaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
+    {
+        var account = new UserModel
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Password = password,
+            Phone = phoneNumber,
+            Admin = Convert.ToInt16(admin)
+        };
+
+        Access.Users.Write(account);
+    }
+
+    private static string GetValidatedInput(string prompt, Func<string, (bool, string?)> validate, string menuTitle)
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(menuTitle);
+            Console.WriteLine(prompt);
+
+            string? input = Console.ReadLine();
+            if (input == null)
+            {
+                continue;
+            }
+
+            var (isValid, errorMessage) = validate(input);
+            if (isValid)
+            {
+                return input;
+            }
+
+            if (errorMessage != null)
+            {
+                Console.WriteLine(errorMessage);
             }
         }
     }
