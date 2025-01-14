@@ -89,7 +89,6 @@ public static class ReservationMakePresent
                 }
 
                 var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                if (orders == null) continue;
 
                 if (orders != null)
                 {
@@ -150,7 +149,8 @@ public static class ReservationMakePresent
             List<ProductModel> guestOrder = new();
 
             // Start allergy handling for the guest
-            AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            int? ret = AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            if (ret == -1) return null;
 
             for (int z = 0; z < categories.Count; z++)
             {
