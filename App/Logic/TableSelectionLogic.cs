@@ -1,5 +1,6 @@
 using App.DataAccess.Utils;
 using Restaurant;
+using System.Runtime.InteropServices;
 
 namespace App.Presentation.Table;
 
@@ -10,6 +11,13 @@ public class TableSelectionLogic
     private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
 
     public int SelectedTable { get; private set; }
+        [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr GetConsoleWindow();
+
+    private const int SW_MAXIMIZE = 3;
 
     private void ClearGrid()
     {
@@ -417,9 +425,11 @@ public class TableSelectionLogic
     {
         const int requiredWidth = 400;
         const int requiredHeight = 155;
-        // Try to maximize the console window
-        // MaximizeConsoleWindow();
 
+        // Automatically maximize the console window
+        MaximizeConsoleWindow();
+
+        // Check if the console size is still too small
         while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
         {
             Console.Clear();
@@ -433,6 +443,15 @@ public class TableSelectionLogic
         }
 
         Console.Clear();
+    }
+
+    private void MaximizeConsoleWindow()
+    {
+        IntPtr consoleWindow = GetConsoleWindow();
+        if (consoleWindow != IntPtr.Zero)
+        {
+            ShowWindow(consoleWindow, SW_MAXIMIZE);
+        }
     }
 
     // public static void MaximizeConsoleWindow()
