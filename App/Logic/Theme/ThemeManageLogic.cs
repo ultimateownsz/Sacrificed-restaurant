@@ -138,11 +138,7 @@ static class ThemeManageLogic
 
     public static int? GetThemeIDByName(string name)
     {
-        // if (name.Length == 0)
-        // {
-        //     return -1;
-        // }
-        var theme = Access.Themes.GetBy("Name", name);
+        var theme = Access.Themes.GetBy("Name", name?.Substring(0, 1).ToUpper() + name?.Substring(1));
         return theme?.ID;
     }
 }

@@ -38,9 +38,6 @@ static class UserMenuPresent
                 case "Logout":
                     return;
 
-                case null:
-                    return;
-
             }
         }
     }

@@ -43,7 +43,7 @@ static class ProductViewPresent
                     while (true)
                     {
                         name = CourseLogic.GetValidCourse();
-                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
+                        if (name == "REQUEST_PROCESS_EXIT")
                         {
                             Console.WriteLine("");
                             break;
@@ -56,7 +56,7 @@ static class ProductViewPresent
                     while (true)
                     {
                         name = ThemeValidateLogic.GetValidThemeMenu();
-                        if (name == "REQUEST_PROCESS_EXIT" || name == null)
+                        if (name == "REQUEST_PROCESS_EXIT")
                         {
                             Console.WriteLine("");
                             break;
@@ -65,7 +65,7 @@ static class ProductViewPresent
                     }
                     break;
 
-                case null:
+                case "":
                     return;
             }
         }
@@ -73,22 +73,22 @@ static class ProductViewPresent
     }
 
     // Display all products based on filter type
-    public static void DisplayProducts(string filterType = null, string name = "")
+    public static void DisplayProducts(string filterType = "", string name = "")
     {
         ProductModel? chosenProduct;
         string banner;
         List<string> products;
         while (true)
         {
-            if (filterType == null)
+            if (filterType == "")
             {
                 banner = "Choose a product to edit/delete:";
                 products = ProductLogic.GetAllProductInfo().ToList();
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in the restaurant", "center", "error");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+                    Console.WriteLine($"There are no products in the resturaunt");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -101,8 +101,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in {name}", "center", "error");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+                    Console.WriteLine($"There are no products in {name}");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -122,8 +122,8 @@ static class ProductViewPresent
                 if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    ControlHelpPresent.DisplayFeedback($"There are no products in the {name} theme", "center", "error");
-                    ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+                    Console.WriteLine($"There are no products in the {name} theme");
+                    Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.White;
                     return;
@@ -132,15 +132,16 @@ static class ProductViewPresent
 
             string productSelection = SelectionPresent.Show(products, banner: banner).ElementAt(0).text;
 
-            if (productSelection == null)
+            if (productSelection == "")
             {
-                // ControlHelpPresent.DisplayFeedback("skibidi"); //no idea why but this fixes a lil bug somehow
+                Console.WriteLine("skibidi"); //no idea why but this fixes a lil bug somehow
                 return;
             }
 
-            chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType ?? string.Empty, name);
+            chosenProduct = ProductLogic.ConvertStringChoiceToProductModel(productSelection, filterType, name);
             if (chosenProduct == null)
             {
+                Console.WriteLine("rizz");
                 return;
             }
             DeleteOrEditChoice(chosenProduct);
@@ -160,21 +161,13 @@ static class ProductViewPresent
 
         while (true)
         {
-            switch (SelectionPresent.Show(options, banner: "Choose what to do with the product:").ElementAt(0).text)
+            switch (SelectionPresent.Show(options, banner: "Choose a what to do with the product:").ElementAt(0).text)
             {
                 case "Edit name":
-                    ControlHelpPresent.Clear();
-                    ControlHelpPresent.AddOptions("Escape", "<escape>");
-                    ControlHelpPresent.ShowHelp();
                     ProductLogic.ProductEditValidator(chosenProduct, "name");
-                    ControlHelpPresent.ResetToDefault();
                     break;
                 case "Edit price":
-                    ControlHelpPresent.Clear();
-                    ControlHelpPresent.AddOptions("Escape", "<escape>");
-                    ControlHelpPresent.ShowHelp();
                     ProductLogic.ProductEditValidator(chosenProduct, "price");
-                    ControlHelpPresent.ResetToDefault();
                     break;
                 case "Edit course":
                     ProductLogic.ProductEditValidator(chosenProduct, "course");
@@ -186,7 +179,7 @@ static class ProductViewPresent
                     if (DeleteProduct(chosenProduct))
                         return;
                     break;
-                case null:
+                case "":
                     return;
             }
         }
@@ -195,30 +188,31 @@ static class ProductViewPresent
     public static bool DeleteProduct(ProductModel chosenProduct)
     {
         Console.Clear();
-        string banner = $"Do you want to delete {chosenProduct.Name}?";
+        string banner = $"Do you want to delete {chosenProduct.Name}";
         List<string> options = new List<string> { "Yes", "No" };
         string selection = SelectionPresent.Show(options, banner: banner).ElementAt(0).text;
-        if (selection == "No" || selection == null)
+        if (selection == "No" || selection == "")
         {
-            // ControlHelpPresent.DisplayFeedback("fix");
+            Console.WriteLine("fix");
             return false;
         }
+        Console.Clear();
         if (ProductLogic.DeleteProductAndRelatedRequests(chosenProduct.ID))
         {
-            // Console.ForegroundColor = ConsoleColor.Green;
-            ControlHelpPresent.DisplayFeedback($"{chosenProduct.Name} has been deleted.", "center", "success");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{chosenProduct.Name} has been deleted.");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            // Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
             return true;
         }
         else
         {
-            // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Failed to delete {chosenProduct.Name}.", "center", "error");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip"); 
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Failed to delete {chosenProduct.Name}.");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            // Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
             return false;
         }
     }
@@ -227,35 +221,37 @@ static class ProductViewPresent
     {
         ProductModel? newProduct = ProductLogic.ProductValidator();
 
-        ControlHelpPresent.ResetToDefault();
         if (newProduct != null && newProduct.ID == -1)
             return;
 
+
+
+        Console.Clear();
         if (newProduct == null)
         {
-            // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Invalid product info.", "center", "error");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Invalid product info.");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            // Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         else if (ProductLogic.AddProduct(newProduct))
         {
-            // Console.ForegroundColor = ConsoleColor.Green;
-            ControlHelpPresent.DisplayFeedback($"{newProduct.Name} has been added.", "center", "success");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{newProduct.Name} has been Added.");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            // Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
             return;
         }
         else
         {
-            // Console.ForegroundColor = ConsoleColor.Red;
-            ControlHelpPresent.DisplayFeedback($"Failed to add {newProduct.Name}.", "center", "error");
-            ControlHelpPresent.DisplayFeedback("Press any key to continue...", "center", "tip"); 
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Failed to Add {newProduct.Name}.");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            // Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
             return;
         }
     }

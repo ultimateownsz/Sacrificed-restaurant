@@ -14,105 +14,74 @@ public static class AdminCreateOptionsPresent
             "Back"
         };
 
-        var selection = SelectionPresent.Show(adminOptions, banner:"ACCOUNT REGISTRATION").ElementAt(0).text;
+        string choice = SelectionPresent.Show(
+            adminOptions, banner: "Create (admin account)").ElementAt(0).text;
 
-        switch (selection)
+        switch (choice)
         {
             case "Create admin account":
                 UserRegisterPresent.CreateAccount(true);
-                ControlHelpPresent.ResetToDefault();
                 break;
-            
+
             case "Make existing user admin\n":
                 PromoteUserToAdmin();
-                ControlHelpPresent.ResetToDefault();
-                break; 
+                break;
 
-            case null:
+            case "":
                 return;
+
         }
     }
 
     private static void PromoteUserToAdmin()
     {
-        // Display help options and initial prompt
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Escape", "<escape>");
-        ControlHelpPresent.ShowHelp();
+        string prefix = "Please enter the following information of the user:\n\n";
 
-        string? firstName = null;
-        string? lastName = null;
-        TryCatchHelper.EscapeKeyException(() =>
-        {
-            
-        Console.WriteLine("Enter the first and last name of the user you want to promote to admin.\n");
+        string firstName = TerminableUtilsPresent.ReadLine(prefix + "First Name: ");
+        if (firstName == null) return;
 
-        firstName = InputHelper.GetValidatedInput<string>(
-            "First name: ",
-            input => InputHelper.InputNotNull(input.ToLower(), "First name"),
-            menuTitle: "PROMOTE USER TO ADMIN",
-            showHelpAction: () => ControlHelpPresent.ShowHelp());
+        string lastName = TerminableUtilsPresent.ReadLine(prefix + "Last Name: ");
+        if (lastName == null) return;
 
-        lastName = InputHelper.GetValidatedInput<string>(
-            "Last Name: ",
-            input => InputHelper.InputNotNull(input.ToLower(), "Last name"),
-            menuTitle: "PROMOTE USER TO ADMIN",
-            showHelpAction: () => ControlHelpPresent.ShowHelp());
-        });
-
+        // Validate inputs
         if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
         {
-            // ControlHelpPresent.DisplayFeedback("Both first and last names are required..", "bottom", "error");
+            Console.WriteLine("\nBoth first and last names are required. Promoting user canceled.");
+            Console.WriteLine("Press any key to return to the menu...");
+            Console.ReadKey();
             return;
         }
 
-        // Access the user database
-        var userAccess = new UserAccess();
+        // Create an instance fpr UserModel
+        //var userAccess = new DataAccess<UserModel>(new[] { "ID", "FirstName", "LastName", "Email", "Password", "Phone", "Admin" });
+        var userAccess = Access.Users;
 
-        // Fetch user based on input
+        // Fetch user bases on the input
         var user = userAccess.GetAllBy("FirstName", firstName)
             .FirstOrDefault(u =>
-                string.Equals(u!.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(u!.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
-                u.Admin == 0);
+                string.Equals(u.LastName, lastName, StringComparison.OrdinalIgnoreCase) &&
+                u.Admin == 0); // Only fetch users
 
-        // Confirmation for promotion
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Escape", "<escape>");
-        ControlHelpPresent.ShowHelp();
-
-        // Console.WriteLine("Are you sure you want to promote this user to admin?");
-        
         if (user == null)
         {
-            ControlHelpPresent.DisplayFeedback("User not found. Promotion canceled.", "bottom", "error");
+            Console.WriteLine("\nUser not found.");
+            Console.WriteLine("Press any key to return to the menu...");
+            Console.ReadKey();
             return;
         }
 
-        // Confirmation for promotion
-        ControlHelpPresent.ResetToDefault();
-        ControlHelpPresent.ShowHelp();
-
-        dynamic? confirmation = SelectionPresent.Show(["Yes", "No"],
-            banner: "PROMOTE USER TO ADMIN").ElementAt(0).text;
-
-        ControlHelpPresent.ShowHelp();
+        // Confirmation for promoting
+        Console.Clear();
+        var confirmationOptions = new List<string> { "Yes", "No" };
+        string confirmation = SelectionPresent.Show(confirmationOptions, banner: "Are you sure?").ElementAt(0).text;
 
         if (confirmation == "Yes")
         {
+            // Update the user's Admin status
             user.Admin = 1;
-            if (userAccess.Update(user))
-            {
-                ControlHelpPresent.DisplayFeedback($"{user.FirstName} {user.LastName} successfully promoted to admin.", "bottom", "success");
-            }
-            else
-            {
-                ControlHelpPresent.DisplayFeedback("Failed to promote the user. Try again.", "bottom", "error");
-            }
-        }
-        else
-        {
-            ControlHelpPresent.DisplayFeedback("Action canceled. User was not promoted.");
+            userAccess.Update(user);
+            Console.WriteLine("User privileges elevated to admin");
+            Thread.Sleep(1000);
         }
     }
 }

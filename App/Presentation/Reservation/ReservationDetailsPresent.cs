@@ -8,14 +8,6 @@ public static class ReservationDetailsPresent
     public static void ShowDetails(ReservationModel reservation)
     {
         Console.Clear();
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Escape", "<escape>");
-        ControlHelpPresent.ShowHelp();
-
-        _ = ControlHelpPresent.GetFooterHeight(); // Dynamically determine footer height
-        int reservationStartLine = 0;
-
-        Console.SetCursorPosition(0, reservationStartLine);
 
         // Fetch the account details for the user
         var account = Access.Reservations.GetBy("UserID", reservation.UserID);
@@ -23,10 +15,9 @@ public static class ReservationDetailsPresent
         // Ensure data exists
         if (account == null)
         {
-            ControlHelpPresent.DisplayFeedback("Unable to retrieve user details.");
-            ControlHelpPresent.DisplayFeedback("Press any key to return to the reservations list.", "bottom", "tip");
+            Console.WriteLine("Unable to retrieve user details.");
+            Console.WriteLine("Press any key to return to the reservations list.");
             Console.ReadKey();
-            ControlHelpPresent.ResetToDefault();
             return;
         }
 
@@ -45,7 +36,7 @@ public static class ReservationDetailsPresent
 
     public static void ShowOrders(UserModel acc)
     {
-        lCalendar:
+    lCalendar:
         int guests = 1;
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
         DateTime selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
@@ -60,12 +51,7 @@ public static class ReservationDetailsPresent
             {
                 Console.Clear();
                 Console.WriteLine($"There are no orders for the date {selectedDate:dd/MM/yyyy}.");
-                // Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
-                ControlHelpPresent.Clear();
-                ControlHelpPresent.AddOptions("Previous date", "<p>");
-                ControlHelpPresent.AddOptions("Next date", "<n>");
-                ControlHelpPresent.AddOptions("Exit", "<escape>");
-                ControlHelpPresent.ShowHelp();
+                Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
                 ConsoleKeyInfo emptyOrders = Console.ReadKey();
                 switch (emptyOrders.Key)
                 {
@@ -83,7 +69,7 @@ public static class ReservationDetailsPresent
             {
                 DisplayOrdersGrid(orders, selectedDate);
 
-                // Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
+                Console.WriteLine("\n(P)revious date - (N)ext date - (ESC)ape");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 switch (key.Key)
@@ -209,15 +195,6 @@ public static class ReservationDetailsPresent
 
         string grandTotalRow = $"{grandTotalPrice:C} Grand Total";
         Console.WriteLine(grandTotalRow.PadLeft(120));
-
-        Console.WriteLine("\n\n");
-
-        // Display controls at the bottom
-        ControlHelpPresent.Clear();
-        ControlHelpPresent.AddOptions("Arrows to navigate", "<arrows>");
-        ControlHelpPresent.AddOptions("Select", "<enter>");
-        ControlHelpPresent.AddOptions("Exit", "<escape>");
-        ControlHelpPresent.ShowHelp();
     }
 
 }
