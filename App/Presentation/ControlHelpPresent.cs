@@ -44,10 +44,10 @@ public static class ControlHelpPresent
         .ToList();
 
         // Display feedback if provided
-        if (!string.IsNullOrWhiteSpace(feedbackMessage))
-        {
-            DisplayFeedback(feedbackMessage);
-        }
+        // if (!string.IsNullOrWhiteSpace(feedbackMessage))
+        // {
+        //     DisplayFeedback(feedbackMessage);
+        // }
 
         // // Preprocess options to strip out newlines
         // if (options != null)

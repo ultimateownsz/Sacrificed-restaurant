@@ -1,7 +1,7 @@
-// namespace App.Tests.Reservation;
+namespace App.Tests.Reservation;
 
 // Unit Tests for Reservation Logic
-//[TestClass]
+[TestClass]
 public class ReservationOverseeTest
 {
     // Unit Test for Criterion 1: Viewing Reservations for a Selected Month
@@ -39,10 +39,10 @@ public class ReservationOrderTests
             new OrderModel { ProductName = reservationId == 103 ? "ProductB" : "Product2" }
         } : new List<OrderModel>();
 
-//         string result = orders.Count > 0 ? string.Join(", ", orders.ConvertAll(order => order.ProductName)) : "No orders found";
-//         Assert.AreEqual(expectedResult, result);
-//     }
-// }
+        string result = orders.Count > 0 ? string.Join(", ", orders.ConvertAll(order => order.ProductName)) : "No orders found";
+        Assert.AreEqual(expectedResult, result);
+    }
+}
 
 // System Tests for Reservation Theme
 [TestClass]
@@ -63,45 +63,45 @@ public class ReservationThemeTests
     }
 }
 
-// // Mocking the ReservationAdminLogic class used in the tests
-// public static class ReservationAdminLogic
-// {
-//     public static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
-//     {
-//         month = 0;
-//         year = 0;
+// Mocking the ReservationAdminLogic class used in the tests
+public static class ReservationAdminLogic
+{
+    public static bool IsValidMonthYear(string monthInput, string yearInput, out int month, out int year)
+    {
+        month = 0;
+        year = 0;
 
-//         bool isValid = monthInput.Length == 2 && yearInput.Length == 4
-//             && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
-//             && month >= 1 && month <= 12
-//             && year >= 2024 && year <= DateTime.Now.Year;
+        bool isValid = monthInput.Length == 2 && yearInput.Length == 4
+            && int.TryParse(monthInput, out month) && int.TryParse(yearInput, out year)
+            && month >= 1 && month <= 12
+            && year >= 2024 && year <= DateTime.Now.Year;
 
-//         return isValid;
-//     }
+        return isValid;
+    }
 
-//     public static List<OrderModel> GetOrdersForReservation(int reservationId)
-//     {
-//         // Simulating fetching orders for a reservation
-//         return new List<OrderModel>
-//         {
-//             new OrderModel { ProductName = "Product1" },
-//             new OrderModel { ProductName = "Product2" }
-//         };
-//     }
+    public static List<OrderModel> GetOrdersForReservation(int reservationId)
+    {
+        // Simulating fetching orders for a reservation
+        return new List<OrderModel>
+        {
+            new OrderModel { ProductName = "Product1" },
+            new OrderModel { ProductName = "Product2" }
+        };
+    }
 
-//     public static string GetThemeForMonth(int month, int year)
-//     {
-//         // Simulating fetching theme information based on month and year
-//         if (month == 1) return "January Theme";
-//         if (month == 2) return "February Theme";
-//         if (month == 3) return null; // No theme
-//         if (month == 5) return "May Theme";
-//         return null; // No theme
-//     }
-// }
+    public static string GetThemeForMonth(int month, int year)
+    {
+        // Simulating fetching theme information based on month and year
+        if (month == 1) return "January Theme";
+        if (month == 2) return "February Theme";
+        if (month == 3) return null; // No theme
+        if (month == 5) return "May Theme";
+        return null; // No theme
+    }
+}
 
-// // Order model class used in the tests
-// public class OrderModel
-// {
-//     public string ProductName { get; set; }
-// }
+// Order model class used in the tests
+public class OrderModel
+{
+    public string ProductName { get; set; }
+}

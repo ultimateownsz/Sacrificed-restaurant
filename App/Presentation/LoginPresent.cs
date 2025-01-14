@@ -44,10 +44,11 @@ public static class LoginPresent
             break;
         }
 
-        UserModel? acc = LoginLogic.CheckLogin(email, password);
-        if (acc != null)
+        var loginResult = LoginLogic.CheckLogin(email, password);
+
+        if (loginResult.user != null)
         {
-            return acc;
+            return loginResult.user;
         }    
         else
         {
@@ -65,4 +66,5 @@ public static class LoginPresent
             return null;
         }
     }
+
 }
