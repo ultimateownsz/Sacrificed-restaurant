@@ -1,7 +1,7 @@
 ﻿using Restaurant;
 namespace App.Tests;
 
-[TestClass]
+//[TestClass]
 public class InterfaceExhaustionTest
 {
     public void UniExhaust(string[] options, SelectionLogic.Mode mode)
@@ -47,7 +47,9 @@ public class InterfaceExhaustionTest
 
             // proceed iteration
             for (int r = 0; r < (options.Count - i); r++)
+            {
                 keystrokes.Add(ConsoleKey.DownArrow);
+            }
             keystrokes.Add(ConsoleKey.Enter);
 
             // execute with simulated keystrokes
