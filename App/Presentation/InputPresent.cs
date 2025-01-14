@@ -58,25 +58,6 @@ public static class InputHelper
 
             // display error feedback and loop again
             ControlHelpPresent.DisplayFeedback($"{error}");
-
-            // display error message
-            // Console.ForegroundColor = ConsoleColor.Red;
-            // ControlHelpPresent.DisplayFeedback($"Invalid input: {error}");
-
-            // show remaining attempts
-            // int remainingAttempts = maxAttempts - attempt;
-            // if (remainingAttempts > 0)
-            // {
-            //     ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.");
-            //     // Console.ResetColor();
-            // }
-            // else
-            // {
-            //     // Throw exception after last attempt
-            //     ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.");
-            //     Thread.Sleep(1500);
-            //     throw new OperationCanceledException("Too many invalid attempts.");
-            // }
         }
         throw new OperationCanceledException("Input failed");
     }
