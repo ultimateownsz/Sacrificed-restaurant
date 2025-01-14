@@ -19,19 +19,25 @@ internal class UserRegisterPresent
 
         string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n";
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Clear();
+        Console.WriteLine(banner);
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("First name: ");
         Console.ResetColor();
         string firstName = Console.ReadLine() ?? "";
         while (string.IsNullOrWhiteSpace(firstName))
         {
             Console.WriteLine("First name cannot be empty.");
+            Console.Clear();
+            Console.WriteLine(banner);
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("First name: ");
             Console.ResetColor();
             firstName = Console.ReadLine() ?? "";
         }
 
+        Console.Clear();
+        Console.WriteLine(banner);
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Last name: ");
         Console.ResetColor();
@@ -39,12 +45,16 @@ internal class UserRegisterPresent
         while (string.IsNullOrWhiteSpace(lastName))
         {
             Console.WriteLine("Last name cannot be empty.");
+            Console.Clear();
+            Console.WriteLine(banner);
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Last name: ");
             Console.ResetColor();
             lastName = Console.ReadLine() ?? "";
         }
 
+        Console.Clear();
+        Console.WriteLine(banner);
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Email (e.g., example@domain.com): ");
         Console.ResetColor();
@@ -59,6 +69,8 @@ internal class UserRegisterPresent
             else
             {
                 Console.WriteLine(message);
+                Console.Clear();
+                Console.WriteLine(banner);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Email (e.g., example@domain.com): ");
                 Console.ResetColor();
@@ -66,6 +78,8 @@ internal class UserRegisterPresent
             }
         }
 
+        Console.Clear();
+        Console.WriteLine(banner);
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Password (8-16 characters, must include letters and numbers): ");
         Console.ResetColor();
@@ -80,6 +94,8 @@ internal class UserRegisterPresent
             else
             {
                 Console.WriteLine(message);
+                Console.Clear();
+                Console.WriteLine(banner);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Password (8-16 characters, must include letters and numbers): ");
                 Console.ResetColor();
@@ -87,6 +103,8 @@ internal class UserRegisterPresent
             }
         }
 
+        Console.Clear();
+        Console.WriteLine(banner);
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Phone number (10 digits): ");
         Console.ResetColor();
