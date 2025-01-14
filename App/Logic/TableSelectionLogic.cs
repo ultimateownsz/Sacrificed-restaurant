@@ -1,5 +1,7 @@
 using App.DataAccess.Utils;
 using Restaurant;
+using App.Presentation.Table;
+using Microsoft.VisualBasic;
 
 namespace App.Presentation.Table;
 
@@ -10,6 +12,7 @@ public class TableSelectionLogic
     private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
 
     public int SelectedTable { get; private set; }
+
 
     private void ClearGrid()
     {
@@ -400,27 +403,7 @@ public class TableSelectionLogic
         Console.Clear();
     }
 
-    private void EnsureConsoleSize()
-    {
-        const int requiredWidth = 400;
-        const int requiredHeight = 150;
-        // Try to maximize the console window
-        // MaximizeConsoleWindow();
 
-        while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Your console is too small to display the table Blueprint.");
-            Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
-            Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
-            Console.ResetColor();
-            Console.WriteLine("Please resize your console window and press Enter to continue...");
-            Console.ReadLine();
-        }
-
-        Console.Clear();
-    }
 
     private void StopFlashing()
     {
@@ -553,7 +536,7 @@ public class TableSelectionLogic
 
     public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
     {
-        EnsureConsoleSize();
+        TableControlPresent.EnsureConsoleSize();
         ShowGrid(activeTables, inactiveTables, reservedTables, guestCount, isAdmin);
         Console.CursorVisible = false;
 

@@ -86,4 +86,25 @@ public static class TableControlPresent
             Console.Clear();
         }
     }
+    public static void EnsureConsoleSize()
+    {
+        const int requiredWidth = 200;
+        const int requiredHeight = 40;
+        // Try to maximize the console window
+        // MaximizeConsoleWindow();
+
+        while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Your console is too small to display the table Blueprint.");
+            Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
+            Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+            Console.ResetColor();
+            Console.WriteLine("Please resize your console window and press Enter to continue...");
+            Console.ReadLine();
+        }
+
+        Console.Clear();
+    }
 }
