@@ -105,7 +105,7 @@ internal class AllergyLinkLogic
 
         // I/O swap
         AllergyLinkPresent.Show(ref input, ref output);
-        if (input.Allergies.First() == "") return -1;
+        if (input.Allergies?.FirstOrDefault("NULL") == "") return -1;
         
         List<AllergyModel> models = ToModels(input.Allergies);
 
