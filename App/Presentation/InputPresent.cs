@@ -11,7 +11,7 @@ public static class InputHelper
         int reservedLines = 3,
         string? menuTitle = null,
         Action? showHelpAction = null,
-        int? maxTestIterations = null) // optional limit for testing purposes
+        int? maxTestIterations = null)
     {
         int iterations = 0;
 
@@ -82,7 +82,7 @@ public static class InputHelper
     }
 
     // Clears the input area and reserves space for prompts.
-    public static void ClearInputArea(int reservedLines, int startLine = 0, int? preserveStartLine = null, int? preserveEndLine = null)
+    private static void ClearInputArea(int reservedLines, int startLine = 0, int? preserveStartLine = null, int? preserveEndLine = null)
     {
         for (int i = startLine; i < Console.WindowHeight - reservedLines + 1; i++) // clear reserved lines + input line
         {
