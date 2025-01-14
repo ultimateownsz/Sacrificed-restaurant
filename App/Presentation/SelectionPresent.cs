@@ -85,8 +85,8 @@ public class SelectionPresent
                 return SelectionLogic.Interaction.Moved;
 
             // actions
-            // case ConsoleKey.Escape:
-            //     return SelectionLogic.Interaction.Terminated;
+            case ConsoleKey.Escape:
+                return SelectionLogic.Interaction.Terminated;
 
             case ConsoleKey.Spacebar:
             case ConsoleKey.Enter:
