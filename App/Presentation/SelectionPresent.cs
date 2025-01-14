@@ -116,9 +116,6 @@ public class SelectionPresent
         // currently selected
         IEnumerable<KeyValuePair<string, SelectionLogic.Selectable>> selected;
 
-        int lastWindowHeight = Console.WindowHeight;  // track the initial terminal height
-        int reservedLines = ControlHelpPresent.GetFooterHeight();
-
         // loop
         while (true)
         {
@@ -193,14 +190,17 @@ public class SelectionPresent
 
                     Console.Clear();
                     ControlHelpPresent.ShowHelp();
+                    
+                    // what does this do?
                     Console.SetCursorPosition(0, menuStartLine);
                     Console.ForegroundColor = palette.Base;
                     Console.WriteLine(banner.Trim() + "\n");
-                    return new List<SelectionLogic.Selection>
+                    
+                    return new ()
                     {
-                        new SelectionLogic.Selection
+                        new ()
                         {
-                            text = null,
+                            text = "",
                             index = -1 // Special value indicating escape
                         }
                     };
