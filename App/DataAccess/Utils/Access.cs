@@ -4,17 +4,17 @@ using App.DataAccess.Product;
 using Restaurant;
 
 namespace App.DataAccess.Utils;
-internal abstract class Access
+public abstract class Access
 {
     // this is for centralized and simplified usage 
-    internal static PairAccess Pairs = new();
-    internal static UserAccess Users = new();
-    internal static PlaceAccess Places = new();
-    internal static ThemeAccess Themes = new();
-    internal static ProductAccess Products = new();
-    internal static RequestAccess Requests = new();
-    internal static AllergyAccess Allergies = new();
-    internal static ScheduleAccess Schedules = new();
-    internal static AllerlinkAccess Allerlinks = new();
-    internal static ReservationAccess Reservations = new();
+    public static PairAccess Pairs = new();
+    public static UserAccess Users = new();
+    public static PlaceAccess Places = new();
+    public static ThemeAccess Themes = new();
+    public static ProductAccess Products = new();
+    public static RequestAccess Requests = new();
+    public static AllergyAccess Allergies = new();
+    public static ScheduleAccess Schedules = new();
+    public static AllerlinkAccess Allerlinks = new();
+    public static ReservationAccess Reservations = new();
 }

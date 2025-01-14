@@ -23,10 +23,11 @@ public static class ReservationMakePresent
         List<string> options = new() { "1", "2", "3", "4", "5", "6" };
         string banner = "How many guests will be coming?";
 
-        int guests = options.Count() - SelectionPresent.Show(
+        int guests = 1 + SelectionPresent.Show(
             options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
-        if (guests == 7)
-            return; // b.c. count (6) - (-1) = 7
+        
+        if (guests == 0)
+            return;
 
         DateTime selectedDate;
 
@@ -88,7 +89,6 @@ public static class ReservationMakePresent
                 }
 
                 var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                if (orders == null) continue;
 
                 if (orders != null)
                 {
@@ -149,7 +149,8 @@ public static class ReservationMakePresent
             List<ProductModel> guestOrder = new();
 
             // Start allergy handling for the guest
-            AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            int? ret = AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            if (ret == -1) return null;
 
             for (int z = 0; z < categories.Count; z++)
             {

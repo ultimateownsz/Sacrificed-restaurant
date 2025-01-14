@@ -2,21 +2,29 @@
 using App.DataModels.Allergy;
 
 namespace Restaurant;
-internal class UserAccess: DataAccess<UserModel>
+public class UserAccess: DataAccess<UserModel>
 {
-    internal UserAccess(): base(typeof(UserModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    public UserAccess(): base(typeof(UserModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    internal new bool Delete(int? id)
+    public new bool Delete(int? id)
     {
-        IEnumerable<ReservationModel> reservations =
-            Access.Reservations.Read().Where(res => res.UserID == id);
+
+        // collect information
+        IEnumerable<AllerlinkModel?> allerlinks =
+            Access.Allerlinks.Read().Where(lnk => lnk?.Personal == 1 && lnk.ID == id);
+
+        IEnumerable<ReservationModel?> reservations =
+            Access.Reservations.Read().Where(res => res?.UserID == id);
+
+        // delete all entries
+        foreach (var allerlink in allerlinks)
+            if (!Access.Allerlinks.Delete(allerlink?.ID))
+                return false;
 
         foreach (var reservation in reservations)
-        {
-            if (!Access.Reservations.Delete(reservation.ID))
+            if (!Access.Reservations.Delete(reservation?.ID))
                 return false;
-        }
-
+        
         return base.Delete(id);
     }
 
