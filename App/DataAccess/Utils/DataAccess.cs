@@ -8,7 +8,7 @@ using Microsoft.Data.Sqlite;
 using App.DataModels.Utils;
 using Dapper;
 
-public class DataAccess<T1> where T1 : IModel
+internal class DataAccess<T1> where T1 : IModel
 {
     // centralized connection
     private protected static SqliteConnection _db = new($"Data Source=DataSources/project.db");
@@ -17,7 +17,7 @@ public class DataAccess<T1> where T1 : IModel
     private readonly string?[] _values;
 
     // sadly, hard-coded tables identifiers (simplicity)
-    protected internal string _table = typeof(T1) switch
+    private protected string _table = typeof(T1) switch
     {
         Type T2 when T2 == typeof(PairModel) => "Pair",
         Type T2 when T2 == typeof(UserModel) => "User",
@@ -32,7 +32,7 @@ public class DataAccess<T1> where T1 : IModel
         _ => ""
     };
 
-    protected DataAccess(string?[] fields)
+    private protected DataAccess(string?[] fields)
     {
         _fields = fields;
         _values = _fields.Select(v => '@' + v).ToArray();
@@ -54,13 +54,13 @@ public class DataAccess<T1> where T1 : IModel
     }
 
     // low-level operations
-    public List<T1?> Read()
+    internal List<T1?> Read()
     {
         string query = $"SELECT * FROM {_table}";
         return (_db.Query<T1>(query) ?? []).ToList();
     }
 
-    public bool Write(T1 item)
+    internal bool Write(T1 item)
     {
         string fields = "(" + string.Join(",", _fields) + ")";
         string values = "(" + string.Join(",", _values) + ")";
@@ -69,7 +69,7 @@ public class DataAccess<T1> where T1 : IModel
         return _execute(query, item);
     }
 
-    public bool Update(T1 item)
+    internal bool Update(T1 item)
     {
         string query = $"UPDATE {_table} SET ";
         foreach (var (field, value) in _fields.Zip(_values))
@@ -89,36 +89,28 @@ public class DataAccess<T1> where T1 : IModel
         return _execute(query, item);
     }
 
-    public bool Delete(int? id)
+    internal bool Delete(int? id)
     {
         string query = $"DELETE FROM {_table} WHERE ID = @ID";
         return _execute(query, new { ID = id });
     }
 
     // high-level operations
-    public T1? GetBy<T2>(string? column, T2? value)
+    internal T1? GetBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
         return _db.QueryFirstOrDefault<T1>(query, new { value = value ?? default });
     }
 
-    public List<T1?> GetAllBy<T2>(string? column, T2? value)
+    internal List<T1?> GetAllBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
         return _db.Query<T1>(query, new { value = value ?? default }).ToList();
     }
 
-    private static bool Purge(int? id, Dictionary<IModel, Predicate<IModel>> data)
-    {
-        // remove all entries that relate
-        // to provided ID (coming soon)
-        return default;
-    }
-
     private T1? Trace<T2>(T2 value)
     {
-        // trace all related columns
-        // (coming soon)
+        // coming soon...
         return default;
     }
 

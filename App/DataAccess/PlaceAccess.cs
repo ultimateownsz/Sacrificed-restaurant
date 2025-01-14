@@ -2,8 +2,8 @@
 using Restaurant;
 
 namespace App.DataAccess;
-public class PlaceAccess : DataAccess<PlaceModel>
+internal class PlaceAccess : DataAccess<PlaceModel>
 {
-    public PlaceAccess() : base(typeof(PlaceModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal PlaceAccess() : base(typeof(PlaceModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 }

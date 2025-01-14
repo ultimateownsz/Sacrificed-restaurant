@@ -5,9 +5,9 @@ namespace App.DataAccess;
 using App.DataAccess.Utils;
 using Dapper;
 
-public class ThemeAccess : DataAccess<ThemeModel>
+internal class ThemeAccess : DataAccess<ThemeModel>
 {
-    public ThemeAccess() : base(typeof(ThemeModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal ThemeAccess() : base(typeof(ThemeModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 
     public long GetLatestThemeID()
