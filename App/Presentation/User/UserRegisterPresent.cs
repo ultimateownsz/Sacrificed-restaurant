@@ -142,15 +142,22 @@ internal class UserRegisterPresent
                     break;
 
                 case var s when s?.StartsWith("Phone number"):
-                    phoneNumber = GetValidatedInput(
-                        "Phone number (10 digits): ",
-                        input =>
+                    Console.Write("Phone number (10 digits): ");
+                    phoneNumber = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
+                        if (isValid)
                         {
-                            var (isValid, error) = LoginLogic.IsPhoneNumberValid(input);
-                            return isValid ? (true, null) : (false, error);
-                        },
-                        menuTitle: "EDIT PHONE NUMBER"
-                    );
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            Console.Write("Phone number (10 digits): ");
+                            phoneNumber = Console.ReadLine() ?? "";
+                        }
+                    }
                     break;
 
                 default:
