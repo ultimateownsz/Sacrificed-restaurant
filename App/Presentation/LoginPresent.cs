@@ -11,6 +11,7 @@ public static class LoginPresent
         
         Console.ForegroundColor = palette.Base;
         return TerminableUtilsPresent.ReadLine(prefix, email ?? "", colour: Console.ForegroundColor);
+        
     }
 
     private static string? _request_password(string? email)

@@ -548,7 +548,7 @@ public class TableSelectionLogic
             {
                 Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                 Console.ResetColor();
-                Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
+                ControlHelpPresent.ShowHelp();
 
                 var key = Console.ReadKey(true);
 
