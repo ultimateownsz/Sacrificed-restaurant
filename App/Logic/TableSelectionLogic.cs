@@ -415,8 +415,8 @@ public class TableSelectionLogic
 
     private void EnsureConsoleSize()
     {
-        const int requiredWidth = 140;
-        const int requiredHeight = 45;
+        const int requiredWidth = 400;
+        const int requiredHeight = 155;
         // Try to maximize the console window
         // MaximizeConsoleWindow();
 
@@ -424,7 +424,7 @@ public class TableSelectionLogic
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Your console is too small to display the table Yellowprint.");
+            Console.WriteLine($"Your console is too small to display the table Blueprint.");
             Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
             Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
             Console.ResetColor();
