@@ -2,7 +2,6 @@
 using App.DataAccess.Utils;
 using App.Presentation.User;
 using App.Presentation.Admin;
-using System.Drawing;
 
 namespace App.Presentation.User;
 
@@ -20,8 +19,12 @@ internal class UserRegisterPresent
 
         string banner = admin ? "REGISTER : ADMIN\n\n" : "REGISTER\n\n";
 
-        string? firstName = TerminableUtilsPresent.ReadLine("First name: ",  colour: ConsoleColor.Yellow); 
-        if (firstName == null) return;
+        Console.Clear();
+        Console.WriteLine(banner);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("First name: ");
+        Console.ResetColor();
+        string firstName = TerminableUtilsPresent.ReadLine("first name: ");
         while (string.IsNullOrWhiteSpace(firstName))
         {
             Console.WriteLine("First name cannot be empty.");
@@ -30,11 +33,15 @@ internal class UserRegisterPresent
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("First name: ");
             Console.ResetColor();
-            firstName = TerminableUtilsPresent.ReadLine("First name: ", colour: ConsoleColor.Yellow);
+            firstName = TerminableUtilsPresent.ReadLine("first name: ");
         }
 
-        string? lastName = TerminableUtilsPresent.ReadLine("Last name: ", colour: ConsoleColor.Yellow);
-        if (lastName == null) return;
+        Console.Clear();
+        Console.WriteLine(banner);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("Last name: ");
+        Console.ResetColor();
+        string lastName = TerminableUtilsPresent.ReadLine("last name: ");
         while (string.IsNullOrWhiteSpace(lastName))
         {
             Console.WriteLine("Last name cannot be empty.");
@@ -43,11 +50,15 @@ internal class UserRegisterPresent
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Last name: ");
             Console.ResetColor();
-            lastName = TerminableUtilsPresent.ReadLine("Last name: ",  colour: ConsoleColor.Yellow);
+            lastName = TerminableUtilsPresent.ReadLine("last name: ");
         }
 
-        string? email = TerminableUtilsPresent.ReadLine("E-mail: ",  colour: ConsoleColor.Yellow);
-        if (email == null) return;
+        Console.Clear();
+        Console.WriteLine(banner);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("Email (e.g., example@domain.com): ");
+        Console.ResetColor();
+        string email = TerminableUtilsPresent.ReadLine("email: ");
         while (true)
         {
             var (isValid, message) = LoginLogic.IsEmailValid(email);
@@ -63,11 +74,16 @@ internal class UserRegisterPresent
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Email (e.g., example@domain.com): ");
                 Console.ResetColor();
-                email = TerminableUtilsPresent.ReadLine("E-mail: ",  colour: ConsoleColor.Yellow);
+                email = TerminableUtilsPresent.ReadLine("email: ");
             }
         }
 
-        string? password = TerminableUtilsPresent.ReadLine("Password: ",  colour: ConsoleColor.Yellow);
+        Console.Clear();
+        Console.WriteLine(banner);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("Password (8-16 characters, must include letters and numbers): ");
+        Console.ResetColor();
+        string password = TerminableUtilsPresent.ReadLine("password: ");
         while (true)
         {
             var (isValid, message) = LoginLogic.IsPasswordValid(password);
@@ -81,8 +97,9 @@ internal class UserRegisterPresent
                 Console.Clear();
                 Console.WriteLine(banner);
                 Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("Password (8-16 characters, must include letters and numbers): ");
                 Console.ResetColor();
-                password = TerminableUtilsPresent.ReadLine("Password: ",  colour: ConsoleColor.Yellow);
+                password = TerminableUtilsPresent.ReadLine("password: ");
             }
         }
 
@@ -91,7 +108,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Phone number (10 digits): ");
         Console.ResetColor();
-        string? phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ",  colour: ConsoleColor.Yellow);
+        string phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ");
         while (true)
         {
             var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
@@ -107,7 +124,7 @@ internal class UserRegisterPresent
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Phone number (10 digits): ");
                 Console.ResetColor();
-                phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ",  colour: ConsoleColor.Yellow);
+                phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ");
             }
         }
 
