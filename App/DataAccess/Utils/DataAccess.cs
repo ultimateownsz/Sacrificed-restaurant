@@ -8,7 +8,7 @@ using Microsoft.Data.Sqlite;
 using App.DataModels.Utils;
 using Dapper;
 
-internal class DataAccess<T1> where T1 : IModel
+public class DataAccess<T1> where T1 : IModel
 {
     // centralized connection
     private protected static SqliteConnection _db = new($"Data Source=DataSources/project.db");
@@ -54,13 +54,13 @@ internal class DataAccess<T1> where T1 : IModel
     }
 
     // low-level operations
-    internal List<T1?> Read()
+    public List<T1?> Read()
     {
         string query = $"SELECT * FROM {_table}";
         return (_db.Query<T1>(query) ?? []).ToList();
     }
 
-    internal bool Write(T1 item)
+    public bool Write(T1 item)
     {
         string fields = "(" + string.Join(",", _fields) + ")";
         string values = "(" + string.Join(",", _values) + ")";
@@ -69,7 +69,7 @@ internal class DataAccess<T1> where T1 : IModel
         return _execute(query, item);
     }
 
-    internal bool Update(T1 item)
+    public bool Update(T1 item)
     {
         string query = $"UPDATE {_table} SET ";
         foreach (var (field, value) in _fields.Zip(_values))
@@ -89,20 +89,20 @@ internal class DataAccess<T1> where T1 : IModel
         return _execute(query, item);
     }
 
-    internal bool Delete(int? id)
+    public bool Delete(int? id)
     {
         string query = $"DELETE FROM {_table} WHERE ID = @ID";
         return _execute(query, new { ID = id });
     }
 
     // high-level operations
-    internal T1? GetBy<T2>(string? column, T2? value)
+    public T1? GetBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
         return _db.QueryFirstOrDefault<T1>(query, new { value = value ?? default });
     }
 
-    internal List<T1?> GetAllBy<T2>(string? column, T2? value)
+    public List<T1?> GetAllBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
         return _db.Query<T1>(query, new { value = value ?? default }).ToList();

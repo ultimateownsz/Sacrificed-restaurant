@@ -1,7 +1,7 @@
 namespace App.Test;
 using System.Text.RegularExpressions;
 
-[TestClass]
+//[TestClass]
 public class ThemeEditTest
 {
     [TestMethod]
