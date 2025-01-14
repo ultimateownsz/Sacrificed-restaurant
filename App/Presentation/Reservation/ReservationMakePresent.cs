@@ -23,11 +23,10 @@ public static class ReservationMakePresent
         List<string> options = new() { "1", "2", "3", "4", "5", "6" };
         string banner = "How many guests will be coming?";
 
-        int guests = 1 + SelectionPresent.Show(
+        int guests = options.Count() - SelectionPresent.Show(
             options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
-
-        if (guests == 0)
-            return;
+        if (guests == 7)
+            return; // b.c. count (6) - (-1) = 7
 
         DateTime selectedDate;
 

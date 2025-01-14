@@ -2,8 +2,8 @@
 using Restaurant;
 
 namespace App.DataAccess;
-public class ScheduleAccess : DataAccess<ScheduleModel>
+internal class ScheduleAccess : DataAccess<ScheduleModel>
 {
-    public ScheduleAccess() : base(typeof(ScheduleModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal ScheduleAccess() : base(typeof(ScheduleModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 }

@@ -2,8 +2,8 @@
 using App.DataModels.Allergy;
 
 namespace App.DataAccess.Allergy;
-public class AllerlinkAccess : DataAccess<AllerlinkModel>
+internal class AllerlinkAccess : DataAccess<AllerlinkModel>
 {
-    public AllerlinkAccess() : base(typeof(AllerlinkModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    internal AllerlinkAccess() : base(typeof(AllerlinkModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 }
