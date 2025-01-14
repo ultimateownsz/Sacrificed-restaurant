@@ -24,7 +24,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("First name: ");
         Console.ResetColor();
-        string firstName = Console.ReadLine() ?? "";
+        string firstName = TerminableUtilsPresent.ReadLine("first name: ");
         while (string.IsNullOrWhiteSpace(firstName))
         {
             Console.WriteLine("First name cannot be empty.");
@@ -33,7 +33,7 @@ internal class UserRegisterPresent
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("First name: ");
             Console.ResetColor();
-            firstName = Console.ReadLine() ?? "";
+            firstName = TerminableUtilsPresent.ReadLine("first name: ");
         }
 
         Console.Clear();
@@ -41,7 +41,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Last name: ");
         Console.ResetColor();
-        string lastName = Console.ReadLine() ?? "";
+        string lastName = TerminableUtilsPresent.ReadLine("last name: ");
         while (string.IsNullOrWhiteSpace(lastName))
         {
             Console.WriteLine("Last name cannot be empty.");
@@ -50,7 +50,7 @@ internal class UserRegisterPresent
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Last name: ");
             Console.ResetColor();
-            lastName = Console.ReadLine() ?? "";
+            lastName = TerminableUtilsPresent.ReadLine("last name: ");
         }
 
         Console.Clear();
@@ -58,7 +58,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Email (e.g., example@domain.com): ");
         Console.ResetColor();
-        string email = Console.ReadLine() ?? "";
+        string email = TerminableUtilsPresent.ReadLine("email: ");
         while (true)
         {
             var (isValid, message) = LoginLogic.IsEmailValid(email);
@@ -74,7 +74,7 @@ internal class UserRegisterPresent
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Email (e.g., example@domain.com): ");
                 Console.ResetColor();
-                email = Console.ReadLine() ?? "";
+                email = TerminableUtilsPresent.ReadLine("email: ");
             }
         }
 
@@ -83,7 +83,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Password (8-16 characters, must include letters and numbers): ");
         Console.ResetColor();
-        string password = Console.ReadLine() ?? "";
+        string password = TerminableUtilsPresent.ReadLine("password: ");
         while (true)
         {
             var (isValid, message) = LoginLogic.IsPasswordValid(password);
@@ -99,7 +99,7 @@ internal class UserRegisterPresent
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Password (8-16 characters, must include letters and numbers): ");
                 Console.ResetColor();
-                password = Console.ReadLine() ?? "";
+                password = TerminableUtilsPresent.ReadLine("password: ");
             }
         }
 
@@ -108,7 +108,7 @@ internal class UserRegisterPresent
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("Phone number (10 digits): ");
         Console.ResetColor();
-        string phoneNumber = Console.ReadLine() ?? "";
+        string phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ");
         while (true)
         {
             var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
@@ -119,12 +119,15 @@ internal class UserRegisterPresent
             else
             {
                 Console.WriteLine(error);
+                Console.Clear();
+                Console.WriteLine(banner);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Phone number (10 digits): ");
                 Console.ResetColor();
-                phoneNumber = Console.ReadLine() ?? "";
+                phoneNumber = TerminableUtilsPresent.ReadLine("phone number: ");
             }
         }
+
 
 
         isAdminCreated = ConfirmAndSaveAccount(firstName, lastName, email, password, phoneNumber, admin);
