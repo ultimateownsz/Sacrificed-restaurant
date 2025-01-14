@@ -10,12 +10,19 @@ public static class InputHelper
         Func<string, (T? result, string? error)> validateAndParse,
         int reservedLines = 3,
         string? menuTitle = null,
-        Action? showHelpAction = null)
+        Action? showHelpAction = null,
+        int? maxTestIterations = null) // optional limit for testing purposes
     {
-        int maxAttempts = 2;  // allow 2 attempts
+        int iterations = 0;
 
-        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        while (true)
         {
+            iterations++;
+            if (maxTestIterations.HasValue && iterations > maxTestIterations.Value)
+            {
+                throw new InvalidOperationException("Maximum test iterations exceeded., potential infinite loop detected.");
+            }
+
             // Clear the input area, including space for the menu title
             ClearInputArea(reservedLines);
 
@@ -23,7 +30,7 @@ public static class InputHelper
             Console.SetCursorPosition(0, 0);
             Console.WriteLine(menuTitle);
 
-             // Optionally show the help section
+            // Optionally show the help section
             showHelpAction?.Invoke();
 
             // Display the prompt at the reserved space
@@ -49,24 +56,27 @@ public static class InputHelper
                 return result; // Return valid input
             }
 
+            // display error feedback and loop again
+            ControlHelpPresent.DisplayFeedback($"{error}");
+
             // display error message
             // Console.ForegroundColor = ConsoleColor.Red;
             // ControlHelpPresent.DisplayFeedback($"Invalid input: {error}");
 
             // show remaining attempts
-            int remainingAttempts = maxAttempts - attempt;
-            if (remainingAttempts > 0)
-            {
-                ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.");
-                // Console.ResetColor();
-            }
-            else
-            {
-                // Throw exception after last attempt
-                ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.");
-                Thread.Sleep(1500);
-                throw new OperationCanceledException("Too many invalid attempts.");
-            }
+            // int remainingAttempts = maxAttempts - attempt;
+            // if (remainingAttempts > 0)
+            // {
+            //     ControlHelpPresent.DisplayFeedback($"You have {remainingAttempts} attempt{(remainingAttempts > 1 ? "s" : "")} remaining.");
+            //     // Console.ResetColor();
+            // }
+            // else
+            // {
+            //     // Throw exception after last attempt
+            //     ControlHelpPresent.DisplayFeedback("Too many invalid attempts. Operation will now be canceled.");
+            //     Thread.Sleep(1500);
+            //     throw new OperationCanceledException("Too many invalid attempts.");
+            // }
         }
         throw new OperationCanceledException("Input failed");
     }
