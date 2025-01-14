@@ -102,47 +102,84 @@ internal class UserRegisterPresent
             switch (selection)
             {
                 case var s when s?.StartsWith("First name"):
-                    firstName = GetValidatedInput(
-                        "First name: ",
-                        input => !string.IsNullOrWhiteSpace(input) ? (true, null) : (false, "First name cannot be empty."),
-                        menuTitle: "EDIT FIRSTNAME"
-                    );
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("First name: ");
+                    Console.ResetColor();
+                    firstName = Console.ReadLine() ?? "";
+                    while (string.IsNullOrWhiteSpace(firstName))
+                    {
+                        Console.WriteLine("First name cannot be empty.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("First name: ");
+                        Console.ResetColor();
+                        firstName = Console.ReadLine() ?? "";
+                    }
                     break;
 
                 case var s when s?.StartsWith("Last name"):
-                    lastName = GetValidatedInput(
-                        "Last name: ",
-                        input => !string.IsNullOrWhiteSpace(input) ? (true, null) : (false, "Last name cannot be empty."),
-                        menuTitle: "EDIT LASTNAME"
-                    );
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Last name: ");
+                    Console.ResetColor();
+                    lastName = Console.ReadLine() ?? "";
+                    while (string.IsNullOrWhiteSpace(lastName))
+                    {
+                        Console.WriteLine("Last name cannot be empty.");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("Last name: ");
+                        Console.ResetColor();
+                        lastName = Console.ReadLine() ?? "";
+                    }
                     break;
 
                 case var s when s?.StartsWith("Email"):
-                    email = GetValidatedInput(
-                        "Email (e.g., example@domain.com): ",
-                        input =>
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Email (e.g., example@domain.com): ");
+                    Console.ResetColor();
+                    email = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, message) = LoginLogic.IsEmailValid(email);
+                        if (isValid)
                         {
-                            var (isValid, message) = LoginLogic.IsEmailValid(input);
-                            return isValid ? (true, null) : (false, message);
-                        },
-                        menuTitle: "EDIT EMAIL"
-                    );
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(message);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("Email (e.g., example@domain.com): ");
+                            Console.ResetColor();
+                            email = Console.ReadLine() ?? "";
+                        }
+                    }
                     break;
 
                 case var s when s?.StartsWith("Password"):
-                    password = GetValidatedInput(
-                        "Password (8-16 characters, must include letters and numbers): ",
-                        input =>
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Password (8-16 characters, must include letters and numbers): ");
+                    Console.ResetColor();
+                    password = Console.ReadLine() ?? "";
+                    while (true)
+                    {
+                        var (isValid, message) = LoginLogic.IsPasswordValid(password);
+                        if (isValid)
                         {
-                            var (isValid, message) = LoginLogic.IsPasswordValid(input);
-                            return isValid ? (true, null) : (false, message);
-                        },
-                        menuTitle: "EDIT PASSWORD"
-                    );
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(message);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("Password (8-16 characters, must include letters and numbers): ");
+                            Console.ResetColor();
+                            password = Console.ReadLine() ?? "";
+                        }
+                    }
                     break;
-
                 case var s when s?.StartsWith("Phone number"):
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Phone number (10 digits): ");
+                    Console.ResetColor();
                     phoneNumber = Console.ReadLine() ?? "";
                     while (true)
                     {
@@ -154,7 +191,9 @@ internal class UserRegisterPresent
                         else
                         {
                             Console.WriteLine(error);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.Write("Phone number (10 digits): ");
+                            Console.ResetColor();
                             phoneNumber = Console.ReadLine() ?? "";
                         }
                     }
