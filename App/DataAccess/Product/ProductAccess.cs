@@ -2,8 +2,8 @@
 using App.DataModels.Product;
 
 namespace App.DataAccess.Product;
-internal class ProductAccess : DataAccess<ProductModel>
+public class ProductAccess : DataAccess<ProductModel>
 {
-    internal ProductAccess() : base(typeof(ProductModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    public ProductAccess() : base(typeof(ProductModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
 }
