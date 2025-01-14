@@ -12,7 +12,7 @@ public static class TryCatchHelper
         }
         catch (OperationCanceledException)
         {
-            ControlHelpPresent.DisplayFeedback(cancelMessage, "bottom", "error");
+            ControlHelpPresent.DisplayFeedback(cancelMessage, "bottom", "success");
             // Console.WriteLine($"\n{cancelMessage}");
         }
     }
@@ -30,7 +30,7 @@ public static class TryCatchHelper
         {
             if (!string.IsNullOrEmpty(fallbackMessage))
             {
-                ControlHelpPresent.DisplayFeedback(fallbackMessage, "bottom", "error");
+                ControlHelpPresent.DisplayFeedback(fallbackMessage, "bottom", "success");
             }
             return fallback; // Ensure this fallback value is returned correctly
         }
