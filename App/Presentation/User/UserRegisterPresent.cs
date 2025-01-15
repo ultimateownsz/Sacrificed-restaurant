@@ -107,10 +107,10 @@ internal class UserRegisterPresent
             ControlHelpPresent.Clear();
             ControlHelpPresent.ResetToDefault();
 
-            dynamic selection = SelectionPresent.Show(details, banner: "Review and select your account details you want to modify:").ElementAt(0).text!;
+            var selection = SelectionPresent.Show(details, banner: "Review and select your account details you want to modify:").ElementAt(0).text!;
 
 
-            if (selection == null || selection == "Cancel")
+            if (selection == "" || selection == "Cancel")
             {
                 return false;
             }
@@ -124,27 +124,27 @@ internal class UserRegisterPresent
             // Gebruik logische validatie voor elke invoer
             switch (selection)
             {
-                case var s when s?.StartsWith("First name"):
+                case var s when (s?.StartsWith("First name")).GetValueOrDefault():
                     firstName = GetValidatedInput("First name: ", input =>
                         string.IsNullOrWhiteSpace(input) ? (false, "First name cannot be empty.") : (true, null),
                         "Modify First Name");
                     break;
 
-                case var s when s?.StartsWith("Last name"):
+                case var s when (s?.StartsWith("Last name")).GetValueOrDefault():
                     lastName = GetValidatedInput("Last name: ", input =>
                         string.IsNullOrWhiteSpace(input) ? (false, "Last name cannot be empty.") : (true, null),
                         "Modify Last Name");
                     break;
 
-                case var s when s?.StartsWith("Email"):
+                case var s when (s?.StartsWith("Email")).GetValueOrDefault():
                     email = GetValidatedInput("Email (e.g., example@domain.com): ", LoginLogic.IsEmailValid, "Modify Email");
                     break;
 
-                case var s when s?.StartsWith("Password"):
+                case var s when (s?.StartsWith("Password")).GetValueOrDefault():
                     password = GetValidatedInput("Password (8-16 characters, must include letters and numbers): ", LoginLogic.IsPasswordValid, "Modify Password");
                     break;
 
-                case var s when s?.StartsWith("Phone number"):
+                case var s when (s?.StartsWith("Phone number")).GetValueOrDefault():
                     phoneNumber = GetValidatedInput("Phone number (10 digits, starting with 06): ", LoginLogic.IsPhoneNumberValid, "Modify Phone Number");
                     break;
 
