@@ -1,7 +1,7 @@
 ﻿using Restaurant;
 namespace App.Tests;
 
-//[TestClass]
+//[TestClass] (only works on VS)
 public class InterfaceExhaustionTest
 {
     public void UniExhaust(string[] options, SelectionLogic.Mode mode)
