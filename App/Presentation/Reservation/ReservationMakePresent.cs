@@ -10,7 +10,6 @@ namespace App.Presentation.Reservation;
 public class ReservationMakePresent
 {
     static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
     static private OrderLogic orderLogic = new();
 
 
