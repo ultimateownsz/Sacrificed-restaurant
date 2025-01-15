@@ -10,13 +10,4 @@ public class ProductModel : IModel
     public int? ThemeID { get; set; }
 
     public ProductModel() { }
-    public ProductModel(string? name, decimal? price,
-        string? course, int? themeID, int? id = null)
-    {
-        ID = id;
-        Name = name;
-        Price = price;
-        Course = course;
-        ThemeID = themeID;
-    }
 }
