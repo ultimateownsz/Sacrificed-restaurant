@@ -227,11 +227,6 @@ public static class ReservationUpdatePresent
         }
     }
 
-    // Helper methods for table categories
-    private static bool IsTwoPersonTable(long tableID)
-    {
-        return tableID == 1 || tableID == 4 || tableID == 5 || tableID == 8 || tableID == 9 || tableID == 11 || tableID == 12 || tableID == 15;
-    }
 
     private static bool IsFourPersonTable(long tableID)
     {
