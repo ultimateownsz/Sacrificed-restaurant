@@ -42,6 +42,7 @@ internal class MenuPresent
 
                 case "Register\n":
                     UserRegisterPresent.CreateAccount();
+                    ControlHelpPresent.ResetToDefault();
                     continue;
 
                 case "Exit":
