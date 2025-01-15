@@ -136,14 +136,6 @@ public static class ControlHelpPresent
     {
         return navigationControls.Count + 4; // Number of controls + header + margin
     }
-
-    /// <summary>
-    /// Displays feedback to the user in the console, with different colors for errors, tips, and success messages.
-    /// </summary>
-    /// <param name="message">The feedback message to display.</param>
-    /// <param name="position">Where the feedback should be displayed ("top", "center", or "bottom").</param>
-    /// <param name="feedbackType">The type of feedback. Options are "error", "tip", or "success".</param>
-    /// <param name="delayMS">Optional delay in milliseconds for how long the message should be displayed.</param>
     public static void DisplayFeedback(
         string message,
         string position = "bottom",
