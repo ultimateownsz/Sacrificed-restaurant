@@ -1,5 +1,5 @@
 ﻿namespace Restaurant;
-internal class TerminableUtilsPresent
+public static class TerminableUtilsPresent
 {
 
     public static void Write(string? text)

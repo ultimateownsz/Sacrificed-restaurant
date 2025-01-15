@@ -6,7 +6,6 @@ public static class UserDeleteAccountPresent
 {
     public static void DeleteAccount(UserModel user)
     {
-        Console.Clear();
         string prefix = "WARNING: Deleting your account entails the following:\n\n";
         prefix += "- Delete all future reservations.\n";
         prefix += "- Make your past reservations anonymous.\n";
@@ -16,12 +15,14 @@ public static class UserDeleteAccountPresent
 
         // Password confirmation
         string? enteredPassword = TerminableUtilsPresent.ReadLine(prefix);
+        ControlHelpPresent.ShowHelp();
 
         if (enteredPassword == null)
             return;
 
         // trimming ig..
         enteredPassword = enteredPassword.Trim();
+        
 
 
         if (enteredPassword != user.Password)

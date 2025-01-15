@@ -11,6 +11,7 @@ public static class LoginPresent
         
         Console.ForegroundColor = palette.Base;
         return TerminableUtilsPresent.ReadLine(prefix, email ?? "", colour: Console.ForegroundColor);
+        
     }
 
     private static string? _request_password(string? email)
@@ -43,10 +44,11 @@ public static class LoginPresent
             break;
         }
 
-        UserModel? acc = LoginLogic.CheckLogin(email, password);
-        if (acc != null)
+        var loginResult = LoginLogic.CheckLogin(email, password);
+
+        if (loginResult.user != null)
         {
-            return acc;
+            return loginResult.user;
         }    
         else
         {
@@ -64,4 +66,5 @@ public static class LoginPresent
             return null;
         }
     }
+
 }

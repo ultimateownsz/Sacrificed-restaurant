@@ -5,9 +5,9 @@ namespace App.DataAccess;
 using App.DataAccess.Utils;
 using Dapper;
 
-internal class RequestAccess : DataAccess<RequestModel>
+public class RequestAccess : DataAccess<RequestModel>
 {
-    internal RequestAccess() : base(typeof(RequestModel).GetProperties().Select(p => p.Name).ToArray()) { }
+    public RequestAccess() : base(typeof(RequestModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
     // compatibility/integration
     public long GetLatestOrderID()

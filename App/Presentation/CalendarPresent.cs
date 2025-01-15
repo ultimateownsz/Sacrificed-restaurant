@@ -14,6 +14,7 @@ public class CalendarPresent
         while (true)
         {
             DisplayCalendar(currentDate, selectedDay, isAdmin, guests);
+            
 
             var key = Console.ReadKey(intercept: true);
             switch (key.Key)
@@ -196,7 +197,7 @@ public class CalendarPresent
         }
 
         Console.ResetColor();
-        Console.WriteLine("\n\nnext month : <n>\nprev month : <p>\nnavigate   : <arrows>\nselect     : <enter>\nescape     : <esc>");
+        ControlHelpPresent.ShowHelp();
 
         // Display the "fully reserved" message at the bottom
         if (showFullyReservedMessage)
