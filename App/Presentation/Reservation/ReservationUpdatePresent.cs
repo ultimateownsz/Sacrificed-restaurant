@@ -220,19 +220,6 @@ public static class ReservationUpdatePresent
                 Console.WriteLine("Reservation Amount not updated.");
                 break;
             }
-            else if (int.TryParse(newAmountInput, out int newAmount))
-            {
-                // Validate the reservation amount based on the table ID
-                //if (IsReservationAmountValid(reservation.Place, newAmount))
-                //{
-                //    reservation.ReservationAmount = newAmount;
-                //    break;
-                //}
-                //else
-                //{
-                //    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
-                //}
-            }
             else
             {
                 Console.WriteLine("Invalid input. Please enter a valid number.");
