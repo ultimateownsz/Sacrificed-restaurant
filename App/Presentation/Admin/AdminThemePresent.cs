@@ -203,21 +203,6 @@ static class AdminThemePresent
 
         while (true)
         {
-            // brother, what? cm'on
-            //Console.Clear();
-            //Console.WriteLine(bannerMonths);
-            //for (int i = 0; i < optionsMonths.Count; i++)
-            //{
-            //    Console.WriteLine($"{i + 1}. {optionsMonths[i]}");
-            //}
-
-            //Console.WriteLine("\n(b)ack")
-            //var key = Console.ReadKey(intercept: true);
-
-            //if (key.Key == ConsoleKey.B)
-            //{
-            //    return 0; // Indicate going back
-            //}
 
             var selection = SelectionPresent.Show(optionsMonths, banner: banner);
             month = selection.ElementAt(0).index + 1;
