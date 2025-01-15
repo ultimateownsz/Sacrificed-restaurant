@@ -15,11 +15,6 @@ public static class ReservationAdminLogic
     //    return ReservationAccess.GetReservationsByMonthYear(month, year);
     //}
 
-    //public static string GetThemeByMenuID(int menuID)
-    //{
-    //    return ReservationAccess.GetThemeByMenuID(menuID);
-    //}
-
     public static ReservationModel? GetReservationByID(int reservationID)
     {
         return Access.Reservations.GetBy("ID", reservationID);
