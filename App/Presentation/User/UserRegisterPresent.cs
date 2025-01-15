@@ -35,7 +35,7 @@ internal class UserRegisterPresent
             if (lastName == null) return;
         }
 
-        string? email = TerminableUtilsPresent.ReadLine("E-mail (e.g., example@domain.com: ");
+        string? email = TerminableUtilsPresent.ReadLine("E-mail (e.g., example@domain.com): ");
         if (email == null) return;
         while (true)
         {
@@ -46,7 +46,7 @@ internal class UserRegisterPresent
             }
             else
             {
-                email = TerminableUtilsPresent.ReadLine($"E-mail (e.g., example@domain.com: \n\n{message}");
+                email = TerminableUtilsPresent.ReadLine($"E-mail (e.g., example@domain.com): \n\n{message}");
                 if (email == null) return;
             }
         }
