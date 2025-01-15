@@ -91,7 +91,6 @@ public class ReservationLogic
 
     public long ReservationAmount(string reservationAmount)
     {
-        long convertedAmount = Convert.ToInt64(reservationAmount);
         switch (reservationAmount.ToLower())
         {
             case "1" or "2" or "one" or "two":
