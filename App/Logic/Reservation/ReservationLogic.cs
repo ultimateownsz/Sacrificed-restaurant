@@ -104,12 +104,6 @@ public class ReservationLogic
         };
     }
 
-    //This is used to get a specific reservation from the database based on the given ID
-    // public ReservationModel GetById(int id)
-    // {
-    //     return Access.Reservations.GetBy<int>("ID", id);
-    // }
-
 
     public bool RemoveReservation(int id)
     {
