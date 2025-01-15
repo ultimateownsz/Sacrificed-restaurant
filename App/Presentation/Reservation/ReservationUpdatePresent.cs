@@ -227,12 +227,6 @@ public static class ReservationUpdatePresent
         }
     }
 
-
-    private static bool IsFourPersonTable(long tableID)
-    {
-        return tableID == 6 || tableID == 7 || tableID == 10 || tableID == 13 || tableID == 14;
-    }
-
     private static bool IsSixPersonTable(long tableID)
     {
         return tableID == 2 || tableID == 3;
