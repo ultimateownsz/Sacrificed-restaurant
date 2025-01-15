@@ -105,121 +105,47 @@ internal class UserRegisterPresent
             };
 
             ControlHelpPresent.Clear();
-            ControlHelpPresent.AddOptions("Exit", "<escape>");
-            ControlHelpPresent.ShowHelp();
+            ControlHelpPresent.ResetToDefault();
 
-            dynamic selection = SelectionPresent.Show(details, banner:"Review and select your account details you want to modify:").ElementAt(0).text!;
+            dynamic selection = SelectionPresent.Show(details, banner: "Review and select your account details you want to modify:").ElementAt(0).text!;
+
 
             if (selection == null || selection == "Cancel")
             {
-                ControlHelpPresent.ResetToDefault();
                 return false;
             }
 
             if (selection == "Save and return")
             {
                 SaveAccount(firstName, lastName, email, password, phoneNumber, admin);
-                return admin;
+                return true;
             }
 
+            // Gebruik logische validatie voor elke invoer
             switch (selection)
             {
                 case var s when s?.StartsWith("First name"):
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("First name: ");
-                    Console.ResetColor();
-                    firstName = Console.ReadLine() ?? "";
-                    while (string.IsNullOrWhiteSpace(firstName))
-                    {
-                        Console.WriteLine("First name cannot be empty.");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write("First name: ");
-                        Console.ResetColor();
-                        firstName = Console.ReadLine() ?? "";
-                    }
+                    firstName = GetValidatedInput("First name: ", input =>
+                        string.IsNullOrWhiteSpace(input) ? (false, "First name cannot be empty.") : (true, null),
+                        "Modify First Name");
                     break;
 
                 case var s when s?.StartsWith("Last name"):
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Last name: ");
-                    Console.ResetColor();
-                    lastName = Console.ReadLine() ?? "";
-                    while (string.IsNullOrWhiteSpace(lastName))
-                    {
-                        Console.WriteLine("Last name cannot be empty.");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write("Last name: ");
-                        Console.ResetColor();
-                        lastName = Console.ReadLine() ?? "";
-                    }
+                    lastName = GetValidatedInput("Last name: ", input =>
+                        string.IsNullOrWhiteSpace(input) ? (false, "Last name cannot be empty.") : (true, null),
+                        "Modify Last Name");
                     break;
 
                 case var s when s?.StartsWith("Email"):
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Email (e.g., example@domain.com): ");
-                    Console.ResetColor();
-                    email = Console.ReadLine() ?? "";
-                    while (true)
-                    {
-                        var (isValid, message) = LoginLogic.IsEmailValid(email);
-                        if (isValid)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine(message);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.Write("Email (e.g., example@domain.com): ");
-                            Console.ResetColor();
-                            email = Console.ReadLine() ?? "";
-                        }
-                    }
+                    email = GetValidatedInput("Email (e.g., example@domain.com): ", LoginLogic.IsEmailValid, "Modify Email");
                     break;
 
                 case var s when s?.StartsWith("Password"):
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Password (8-16 characters, must include letters and numbers): ");
-                    Console.ResetColor();
-                    password = Console.ReadLine() ?? "";
-                    while (true)
-                    {
-                        var (isValid, message) = LoginLogic.IsPasswordValid(password);
-                        if (isValid)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine(message);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.Write("Password (8-16 characters, must include letters and numbers): ");
-                            Console.ResetColor();
-                            password = Console.ReadLine() ?? "";
-                        }
-                    }
+                    password = GetValidatedInput("Password (8-16 characters, must include letters and numbers): ", LoginLogic.IsPasswordValid, "Modify Password");
                     break;
+
                 case var s when s?.StartsWith("Phone number"):
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Phone number (10 digits): ");
-                    Console.ResetColor();
-                    phoneNumber = Console.ReadLine() ?? "";
-                    while (true)
-                    {
-                        var (isValid, error) = LoginLogic.IsPhoneNumberValid(phoneNumber);
-                        if (isValid)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine(error);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.Write("Phone number (10 digits): ");
-                            Console.ResetColor();
-                            phoneNumber = Console.ReadLine() ?? "";
-                        }
-                    }
+                    phoneNumber = GetValidatedInput("Phone number (10 digits, starting with 06): ", LoginLogic.IsPhoneNumberValid, "Modify Phone Number");
                     break;
 
                 default:
@@ -227,6 +153,7 @@ internal class UserRegisterPresent
             }
         }
     }
+
 
     private static void SaveAccount(string firstName, string lastName, string email, string password, string phoneNumber, bool admin)
     {
