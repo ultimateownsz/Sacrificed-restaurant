@@ -159,6 +159,7 @@ public class ReservationMakePresent
                     .Where(product => !AllergyLinkLogic.IsAllergic(id, product.ID))
                     .ToList();
 
+
                 while (true)
                 {
                     Console.Clear();
@@ -184,6 +185,24 @@ public class ReservationMakePresent
 
                     var selectedProduct = products.FirstOrDefault(p =>
                         selectedOption.StartsWith(p.Name) && selectedOption.Contains($"{Convert.ToString(p.Price).Replace(".", ",")}"));
+
+                    // recommend product (drink pair)
+                    PairModel linkage = Access.Pairs.GetBy<int?>("FoodID", selectedProduct.ID);
+                    if (linkage != null)
+                    {
+                        ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
+                        string _banner = "DRINK PAIRING\n\nWould you like to pair " +
+                                       $"{recommended.Name} with {selectedProduct.Name}";
+
+
+                        switch (SelectionPresent.Show(["Yes", "No"],
+                            banner: _banner).ElementAt(0).index)
+                        {
+                            case 0:
+                                guestOrder.Add(recommended);
+                                break;
+                        }
+                    }
 
                     if (selectedProduct != null && selectedProduct.ID.HasValue)
                     {
