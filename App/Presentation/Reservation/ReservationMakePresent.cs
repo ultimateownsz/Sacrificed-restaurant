@@ -242,7 +242,6 @@ public class ReservationMakePresent
         }
 
         // Debug log to confirm correct reservation
-        //Console.WriteLine($"DEBUG: Printing receipt for ReservationID: {reservation.ID}, Date: {reservation.Date}, PlaceID: {reservation.PlaceID}");
 
         Console.WriteLine("-------------------------------");
         Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");

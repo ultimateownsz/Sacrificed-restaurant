@@ -30,7 +30,6 @@ public static class ControlHelpPresent
         navigationControls = new Dictionary<string, string>(defaultNavigationControls);
     }
 
-
     internal static void ShowHelp(
         List<string>? options = null,
         int? selectedIndex = null,
