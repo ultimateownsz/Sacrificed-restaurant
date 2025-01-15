@@ -25,7 +25,6 @@ public static class ReservationAdminLogic
         return Access.Reservations.GetAllBy("UserID", userID);
     }
 
-
     public static IEnumerable<ReservationModel?> GetReservationsByTableID(int tableID)
     {
         return Access.Reservations.GetAllBy("Place", tableID);

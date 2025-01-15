@@ -10,10 +10,6 @@ public class ReservationLogic
     public static ReservationModel CurrentReservation { get; private set; } = new();
     public static long Userid { get; private set; }
 
-
-    //This function is called throught the presentation layer (MakingReservation.cs)
-    //this function will call all the other neccecary functions to make a new ReservationAccess instance
-    //with all the info from the user
     public int SaveReservation(DateTime date, int userId, int placeId)
     {
         // Validate UserID
