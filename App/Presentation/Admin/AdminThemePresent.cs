@@ -6,7 +6,6 @@ static class AdminThemePresent
 {
     public static void ThemedEditing()
     {
-        ConsoleKeyInfo key;
         while (true)
         {
             string? themeName;
