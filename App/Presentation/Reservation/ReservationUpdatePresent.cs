@@ -227,26 +227,6 @@ public static class ReservationUpdatePresent
         }
     }
 
-    private static bool IsReservationAmountValid(long tableID, int reservationAmount)
-    {
-        // Check table ID categories and validate reservation amount
-        if (IsTwoPersonTable(tableID) && (reservationAmount == 1 || reservationAmount == 2))
-        {
-            return true;
-        }
-        else if (IsFourPersonTable(tableID) && reservationAmount >= 3 && reservationAmount <= 4)
-        {
-            return true;
-        }
-        else if (IsSixPersonTable(tableID) && reservationAmount >= 5 && reservationAmount <= 6)
-        {
-            return true;
-        }
-
-        // If none of the conditions are met, return false
-        return false;
-    }
-
     // Helper methods for table categories
     private static bool IsTwoPersonTable(long tableID)
     {
