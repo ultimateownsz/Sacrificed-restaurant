@@ -18,9 +18,6 @@ public static class TerminableUtilsPresent
 
     }
 
-    // operates just like Console.ReadLine
-    // and -WriteLine, but returns null if terminated
-    // also python's input("text") is OP so implemented it.
     public static string? ReadLine(
         string? text = null, string? load = null,
         ConsoleColor colour = ConsoleColor.Gray)
