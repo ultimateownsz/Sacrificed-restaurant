@@ -192,7 +192,7 @@ public class ReservationMakePresent
                     {
                         ProductModel recommended = Access.Products.GetBy<int?>("ID", linkage.DrinkID);
                         string _banner = "DRINK PAIRING\n\nWould you like to pair " +
-                                       $"{recommended.Name} with {selectedProduct.Name}";
+                                       $"{recommended.Name} with {selectedProduct.Name}?";
 
 
                         switch (SelectionPresent.Show(["Yes", "No"],
