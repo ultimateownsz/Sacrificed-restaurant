@@ -137,28 +137,6 @@ public static class ControlHelpPresent
         return navigationControls.Count + 4; // Number of controls + header + margin
     }
 
-    private static void ClearFeedbackSpace(int startLine)
-    {
-        // check if start line is within bounds
-        startLine = Math.Max(0, startLine);
-
-
-        int linesToClear = GetFooterHeight(); // feedback occupies two lines max
-        int endLine = Math.Min(Console.WindowHeight, startLine + linesToClear); // feedback occupies two lines max
-    
-        // clear the feedback space
-        for (int i = startLine; i < endLine; i++)
-        {
-            // safely move the cursor to the start of the line
-            Console.SetCursorPosition(0, i);
-
-            // Clear the line by writing spaces across the console width
-            Console.Write(new string(' ', Console.WindowWidth));
-        }
-        // Reset the cursor to the start of the first cleared line
-        Console.SetCursorPosition(0, startLine);
-    }
-
     private static void ClearFooterSpace(int startLine, int endLine)
     {
         // Ensure the start and end lines are within bounds
