@@ -89,15 +89,6 @@ public class ReservationLogic
         };
     }
 
-    // THIS IS AN AUTOMATED PROCESS
-    //Generates a new ID for the reservation and saves it into CurrentReservation
-    //The Generated ID is the latest ID + 1,
-    //public int? GenerateNewReservationID()
-    //{
-    //    int? GeneratedID = ReservationAccess.GetLatestReservationID() + 1;
-    //    return GeneratedID;
-    //}
-
     public long ReservationAmount(string reservationAmount)
     {
         long convertedAmount = Convert.ToInt64(reservationAmount);
