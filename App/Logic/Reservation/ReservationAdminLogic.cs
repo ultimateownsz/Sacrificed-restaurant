@@ -10,11 +10,6 @@ public static class ReservationAdminLogic
         return Access.Reservations.Read();
     }
 
-    //public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
-    //{
-    //    return ReservationAccess.GetReservationsByMonthYear(month, year);
-    //}
-
     public static ReservationModel? GetReservationByID(int reservationID)
     {
         return Access.Reservations.GetBy("ID", reservationID);
