@@ -13,12 +13,6 @@ public class ReservationMakePresent
     static private ReservationMenuLogic reservationMenuLogic = new();
     static private OrderLogic orderLogic = new();
 
-    public interface IAccess
-    {
-        //IUserRepository Users { get; }
-        //IReservationRepository Reservations { get; }
-        // Add other repositories as needed
-    }
 
     public interface IConsoleWrapper
     {
