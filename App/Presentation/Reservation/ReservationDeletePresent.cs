@@ -28,13 +28,6 @@ public static class ReservationDeletePresent
                 Access.Reservations.Delete(reservation.ID);
                 //return; // Exit after successful deletion
             }
-            //else if (selectedOption == "No")
-            //{
-            //    Console.WriteLine("Reservation deletion cancelled.");
-            //    Console.WriteLine("Press any key to return to the reservation list.");
-            //    Console.ReadKey();
-            //    return; // Exit back to the reservation list
-            //}
             return;
         }
     }

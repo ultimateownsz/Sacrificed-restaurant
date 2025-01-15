@@ -1,4 +1,3 @@
-// this class handles all the logic for adding, updating, and deleting products
 using App.DataAccess.Utils;
 using App.DataModels.Product;
 using App.Logic.Theme;

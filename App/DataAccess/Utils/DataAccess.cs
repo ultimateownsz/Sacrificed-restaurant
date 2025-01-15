@@ -107,11 +107,4 @@ public class DataAccess<T1> where T1 : IModel
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
         return _db.Query<T1>(query, new { value = value ?? default }).ToList();
     }
-
-    private T1? Trace<T2>(T2 value)
-    {
-        // coming soon...
-        return default;
-    }
-
 }

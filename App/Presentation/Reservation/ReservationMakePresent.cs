@@ -10,21 +10,7 @@ namespace App.Presentation.Reservation;
 public class ReservationMakePresent
 {
     static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
     static private OrderLogic orderLogic = new();
-
-    public interface IAccess
-    {
-        //IUserRepository Users { get; }
-        //IReservationRepository Reservations { get; }
-        // Add other repositories as needed
-    }
-
-    public interface IConsoleWrapper
-    {
-        void WriteLine(string text);
-        void Clear();
-    }
 
     public static void MakingReservation(UserModel acc)
     {
@@ -251,12 +237,11 @@ public class ReservationMakePresent
 
         if (reservation == null)
         {
-            Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+            Console.WriteLine("Reservation not found. Unable to display receipt.");
             return;
         }
 
         // Debug log to confirm correct reservation
-        //Console.WriteLine($"DEBUG: Printing receipt for ReservationID: {reservation.ID}, Date: {reservation.Date}, PlaceID: {reservation.PlaceID}");
 
         Console.WriteLine("-------------------------------");
         Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");

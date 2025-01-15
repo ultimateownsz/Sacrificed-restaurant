@@ -1,7 +1,5 @@
 ﻿using Restaurant;
 using App.DataAccess.Utils;
-using App.Presentation.User;
-using App.Presentation.Admin;
 
 namespace App.Presentation.User;
 

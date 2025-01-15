@@ -10,16 +10,6 @@ public static class ReservationAdminLogic
         return Access.Reservations.Read();
     }
 
-    //public static List<ReservationModel> GetReservationsByMonthYear(int month, int year)
-    //{
-    //    return ReservationAccess.GetReservationsByMonthYear(month, year);
-    //}
-
-    //public static string GetThemeByMenuID(int menuID)
-    //{
-    //    return ReservationAccess.GetThemeByMenuID(menuID);
-    //}
-
     public static ReservationModel? GetReservationByID(int reservationID)
     {
         return Access.Reservations.GetBy("ID", reservationID);
@@ -34,11 +24,6 @@ public static class ReservationAdminLogic
     {
         return Access.Reservations.GetAllBy("UserID", userID);
     }
-
-    //public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
-    //{
-    //    return ReservationAccess.GetMenuItemsByReservationID(reservationID);
-    //} 
 
     public static IEnumerable<ReservationModel?> GetReservationsByTableID(int tableID)
     {

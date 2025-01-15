@@ -3,13 +3,7 @@ public static class TerminableUtilsPresent
 {
 
     public static void Write(string? text)
-    {
-        // this seems quite strange doesn't it?
-        // for <some> reason, VS' terminal excludes
-        // the first character in a STDOUT request
-        // after interrupting the <ESC> key, the 
-        // simplest yet most effective way to circumvent
-        // this issue is by simply writing it twice.        
+    {      
         for (int i = 0; i < 2; i++)
         {
             Console.Clear();
@@ -18,9 +12,6 @@ public static class TerminableUtilsPresent
 
     }
 
-    // operates just like Console.ReadLine
-    // and -WriteLine, but returns null if terminated
-    // also python's input("text") is OP so implemented it.
     public static string? ReadLine(
         string? text = null, string? load = null,
         ConsoleColor colour = ConsoleColor.Gray)
