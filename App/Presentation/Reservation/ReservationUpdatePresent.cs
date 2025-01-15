@@ -227,11 +227,6 @@ public static class ReservationUpdatePresent
         }
     }
 
-    private static bool IsSixPersonTable(long tableID)
-    {
-        return tableID == 2 || tableID == 3;
-    }
-
     // Helper method to check if the table is already reserved for the given date
     private static bool IsTableTaken(DateTime? reservationDate, int tableID)
     {
