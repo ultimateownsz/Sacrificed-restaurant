@@ -42,11 +42,6 @@ public static class ReservationShowPresent
                 case "":
                     return; // Exit the options and return to the reservation list
             }
-
-            // Pause after executing the action
-            // EMERGENCY MODIFICATION: 2
-            //Console.WriteLine("Press any key to continue...");
-            //Console.ReadKey();
         }
     }
 
