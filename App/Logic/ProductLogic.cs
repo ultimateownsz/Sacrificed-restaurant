@@ -1,6 +1,7 @@
 using App.DataAccess.Utils;
 using App.DataModels.Product;
 using App.Logic.Theme;
+using System.Globalization;
 
 namespace Restaurant;
 
@@ -53,7 +54,7 @@ static class ProductLogic
                 if (                                    // validate the price
                     !string.IsNullOrWhiteSpace(productInfo)
                     && productInfo.Contains('.')
-                    && decimal.TryParse(productInfo, out temp)
+                    && decimal.TryParse(productInfo, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out temp)
                     && productInfo.Trim().Split('.')[1].Length == 2
                     && !productInfo.Contains(' '))
                 {
@@ -266,11 +267,11 @@ static class ProductLogic
         {
             ID = oldProduct.ID,
             Name = type == "name" ? newProductEdit : oldProduct.Name,
-            Price = type == "price" ? decimal.Parse(newProductEdit) : oldProduct.Price,
+            Price = type == "price" ? decimal.Parse(newProductEdit.Replace('.', ',')) : oldProduct.Price,
             Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
             ThemeID = type == "theme" ? ThemeID : oldProduct.ThemeID,
         };
-
+        
         Console.Clear();
         if(UpdateProduct(oldProduct, newProduct))
         {
