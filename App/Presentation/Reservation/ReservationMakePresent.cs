@@ -237,7 +237,7 @@ public class ReservationMakePresent
 
         if (reservation == null)
         {
-            Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+            Console.WriteLine("Reservation not found. Unable to display receipt.");
             return;
         }
 
