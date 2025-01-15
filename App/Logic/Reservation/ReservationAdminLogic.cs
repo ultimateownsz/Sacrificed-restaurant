@@ -25,10 +25,6 @@ public static class ReservationAdminLogic
         return Access.Reservations.GetAllBy("UserID", userID);
     }
 
-    //public static List<ProductModel> GetMenuItemsForReservation(int reservationID)
-    //{
-    //    return ReservationAccess.GetMenuItemsByReservationID(reservationID);
-    //} 
 
     public static IEnumerable<ReservationModel?> GetReservationsByTableID(int tableID)
     {
