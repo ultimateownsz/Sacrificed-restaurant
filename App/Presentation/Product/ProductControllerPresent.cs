@@ -28,9 +28,5 @@ public static class ProductControllerPresent
         {
             Console.WriteLine($"Product with ID: {productId} deleted.");
         }
-        // else
-        // {
-        //     Console.WriteLine($"No product found with ID: {productId}, or the product has already been deleted.");
-        // }
     }
 }
