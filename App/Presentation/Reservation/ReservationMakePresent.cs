@@ -12,13 +12,6 @@ public class ReservationMakePresent
     static private ReservationLogic reservationLogic = new();
     static private OrderLogic orderLogic = new();
 
-
-    public interface IConsoleWrapper
-    {
-        void WriteLine(string text);
-        void Clear();
-    }
-
     public static void MakingReservation(UserModel acc)
     {
         bool isAdmin = acc.Admin.HasValue && acc.Admin.Value == 1;
