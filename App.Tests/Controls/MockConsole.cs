@@ -9,10 +9,12 @@ public class MockConsole : IConsole
     public ConsoleColor ForegroundColor { get; set; } // Simulated color changes
 
     private readonly List<string> output = new(); // Captures all output
+     private readonly List<int> cursorPositions = new(); // Captures cursor positions for each output
 
     public void SetCursorPosition(int left, int top)
     {
         CursorTop = top; // Simulate moving the cursor
+        cursorPositions.Add(top); // Log the cursor position
     }
 
     public void WriteLine(string message)
@@ -34,4 +36,6 @@ public class MockConsole : IConsole
     {
         return output; // Return captured output
     }
+
+    public List<int> GetCursorPositions() => cursorPositions; // return captured cursor positions
 }
