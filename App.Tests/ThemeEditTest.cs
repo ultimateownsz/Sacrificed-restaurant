@@ -15,7 +15,9 @@ namespace App.Tests
             // Arrange
             int month = 3;
             int year = 2025;
-            string themeName = "Nigerian";
+            string themeName = "Nigerian"; //the reason i dont test for wrong input, and i only test to see if the method is working
+                                           //its because this method will never recive a wrong name since that happens in
+                                           //another method that validates and asks the user for their input
 
             ThemeAccess themeAccess = new ThemeAccess();
             ScheduleAccess scheduleAccess = new ScheduleAccess();
@@ -64,8 +66,9 @@ namespace App.Tests
             // Arrange
             int month = 12;
             int year = 2025;
-            string themeName = "British";
-
+            string themeName = "British";//the reason i dont test for wrong input, and i only test to see if the method is working
+                                         //its because this method will never recive a wrong name since that happens in
+                                         //another method that validates and asks the user for their input
             ThemeAccess themeAccess = new ThemeAccess();
             ScheduleAccess scheduleAccess = new ScheduleAccess();
 
