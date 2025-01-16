@@ -74,7 +74,7 @@ static class ProductLogic
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
             {
-                return null;
+                return "REQUEST_PROCESS_EXIT";
             }
         }
     }
@@ -341,9 +341,10 @@ static class ProductLogic
             goto lTheme;
 
         decimal temp;
-        if (decimal.TryParse(price, out temp))
+        price = price.Replace(',', '.');
+        if (decimal.TryParse(price, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out temp))
         {
-            newProduct.Price = decimal.Parse(price);
+            newProduct.Price = decimal.Parse(price.Replace('.', ','));
         }
         else
         {
