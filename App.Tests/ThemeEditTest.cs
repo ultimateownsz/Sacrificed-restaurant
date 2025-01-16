@@ -10,7 +10,7 @@ namespace App.Tests
     {
 
         [TestMethod]
-        public void Test_UpdateThemeSchedule_NewScheduleAndTheme()
+        public void Test_NewScheduleAndTheme()
         {
             // Arrange
             int month = 3;
@@ -59,7 +59,7 @@ namespace App.Tests
         }
 
         [TestMethod]
-        public void Test_UpdateThemeSchedule_ExistingScheduleAndTheme()
+        public void Test_ExistingScheduleAndTheme()
         {
             // Arrange
             int month = 12;
