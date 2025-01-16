@@ -9,5 +9,17 @@ namespace App.Tests
     public class ProductEditTest
     {
 
+        [TestMethod]
+        public void Test_AddProduct()
+        {
+
+        }
+
+        [TestMethod]
+        public void Test_EditProduct()
+        {
+            
+        }
+
     }
 }
