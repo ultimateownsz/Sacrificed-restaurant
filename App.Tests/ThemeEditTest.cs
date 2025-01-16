@@ -26,7 +26,7 @@ namespace App.Tests
             // Simulate in-memory data
             Access.Schedules = new List<ScheduleModel>
             {
-                new ScheduleModel { ID = 1, Year = 2024, Month = 12, ThemeID = 2 }
+                new ScheduleModel { ID = 1, Year = 2025, Month = 12, ThemeID = 2 }
             };
 
             Access.Themes = new List<ThemeModel>
@@ -36,6 +36,7 @@ namespace App.Tests
 
             // Act
             ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
+            Console.WriteLine("Access.Themes.Count: " + Access.Themes.Count);
 
             // Assert: Ensure the new theme and schedule are added
             Assert.AreEqual(2, Access.Themes.Count);
