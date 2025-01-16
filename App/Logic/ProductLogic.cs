@@ -88,6 +88,12 @@ public static class ProductLogic
             Access.Requests.Delete(request.ID);
         }
 
+        var pairs = Access.Pairs.Read().Where(p => p.FoodID == productId || p.DrinkID == productId).ToList();
+        foreach (var pair in pairs)
+        {
+            Access.Pairs.Delete(pair.ID);
+        }
+
         if (Access.Products.GetBy<int?>("ID", productId) == null)
         {
             return false;
