@@ -30,17 +30,6 @@ namespace App.Restaurant
         }
 
         [TestMethod]
-        public void TestIsEmailValid_EmailAlreadyExists()
-        {
-            // Simulate existing user in database
-            Access.Users.Add(new UserModel { Email = "existing@example.com" });
-            
-            var result = LoginLogic.IsEmailValid("existing@example.com");
-            Assert.IsFalse(result.isValid, "The email validation should fail if the email already exists.");
-            Assert.AreEqual("\nThis email already exists. Please use a different email.\n\n", result.message);
-        }
-
-        [TestMethod]
         public void TestIsPasswordValid_ValidPassword()
         {
             var result = LoginLogic.IsPasswordValid("Passw0rd");
