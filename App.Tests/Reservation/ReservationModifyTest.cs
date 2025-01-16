@@ -132,3 +132,15 @@
 //         public int PlaceID { get; set; }
 //     }
 // }
+
+
+using Restaurant;
+
+namespace App.Restaurant
+{
+    [TestClass]
+    public class UpdateTests
+    {
+        
+    }
+}
