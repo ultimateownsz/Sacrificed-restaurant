@@ -69,4 +69,29 @@ public class ControlsHelperPresentTest
                 $"Missing control for {control.Key}. Expected line: '{expectedLine}'");
         }
     }
+
+    [TestMethod]
+    public void TestControlsShownAtBottom()
+    {
+        // clear controls and reset to default
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.ResetToDefault();
+
+        // show help
+        ControlHelpPresent.ShowHelpForTesting();
+
+        // capture output and cursor positions
+        var output = mockConsole!.GetOutput();
+        var cursorPositions = mockConsole.GetCursorPositions();
+        
+        int footerHeight = ControlHelpPresent.GetFooterHeight();
+        int expectedFooterStart = mockConsole.WindowHeight - footerHeight;
+
+        // assert: cursortop should align with the footer
+        Assert.AreEqual(expectedFooterStart, cursorPositions.FirstOrDefault(),
+        "The starting position of the controls does not match the expected footer position.");
+
+        
+
+    }
 }
