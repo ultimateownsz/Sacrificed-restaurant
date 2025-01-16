@@ -88,8 +88,14 @@ public static class ProductLogic
             Access.Requests.Delete(request.ID);
         }
 
-        var pairs = Access.Pairs.Read().Where(p => p.FoodID == productId || p.DrinkID == productId).ToList();
-        foreach (var pair in pairs)
+        var foodPairs = Access.Pairs.Read().Where(p => p.FoodID == productId).ToList();
+        foreach (var pair in foodPairs)
+        {
+            Access.Pairs.Delete(pair.ID);
+        }
+
+        var drinkPairs = Access.Pairs.Read().Where(p => p.DrinkID == productId).ToList();
+        foreach (var pair in drinkPairs)
         {
             Access.Pairs.Delete(pair.ID);
         }
