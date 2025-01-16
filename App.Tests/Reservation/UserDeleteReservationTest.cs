@@ -1,68 +1,64 @@
-namespace App.Tests.Reservation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Dapper;
+using Microsoft.Data.Sqlite;
+using Restaurant;
+using App.DataModels;
+using App.DataAccess;
+using System;
 
-// Unit Tests for deleting reservations as a user
 [TestClass]
-public class UserDeleteReservationTest
+public class ReservationDeletionTest
 {
-    // Unit Test for criteria: User selects "Yes" on the delete confirmation
-    [TestMethod]
-    [DataRow(1, "Yes", true)] // Reservation exists and is deleted
-    [DataRow(2, "Yes", false)] // Reservation does not exist and is not deleted
-    public void TestDeleteReservation_ConfirmYes(int reservationId, string userConfirmation, bool expectedResult)
+    private static SqliteConnection _dbConnection;
+
+    // Setup the connection to the actual database
+    [TestInitialize]
+    public void SetUp()
     {
-        // Mocking the ReservationAccess to simulate reservation data
-        var mockReservations = new Dictionary<int, string>
-        {
-            { 1, "Reservation for Table 1" },
-            { 3, "Reservation for Table 3" }
-        };
+        _dbConnection = new SqliteConnection("Data Source=DataSources/project.db");
+        _dbConnection.Open();
 
-        // Simulating the DeleteReservation method logic
-        bool DeleteReservation(int id, string confirmation)
-        {
-            if (mockReservations.ContainsKey(id) && confirmation == "Yes")
-            {
-                mockReservations.Remove(id); // Remove reservation if user confirms "Yes"
-                return true;
-            }
-            return false; // Return false if the reservation doesn't exist or user cancels
-        }
+        // Insert a user into the User table
+        var insertUserQuery = _dbConnection.Execute(
+            "INSERT INTO User (FirstName, LastName, Email, Phone, Password, Admin) " +
+            "VALUES (@FirstName, @LastName, @Email, @Phone, @Password, @Admin)",
+            new { FirstName = "John", LastName = "Doe", Email = "john@example.com", Phone = "123456789", Password = "password123", Admin = 0 }
+        );
 
-        // Act
-        bool result = DeleteReservation(reservationId, userConfirmation);
+        // Get the inserted user ID (last inserted user)
+        var userId = _dbConnection.QuerySingle<int>("SELECT last_insert_rowid()");
 
-        // Assert 
-        Assert.AreEqual(expectedResult, result);
+        // Insert a reservation for the created user
+        var insertReservationQuery = _dbConnection.Execute(
+            "INSERT INTO Reservation (Date, UserID, PlaceID) VALUES (@Date, @UserID, @PlaceID)",
+            new { Date = DateTime.Now, UserID = userId, PlaceID = 1 }
+        );
+
+        // Get the inserted reservation ID (last inserted reservation)
+        var reservationId = _dbConnection.QuerySingle<int>("SELECT last_insert_rowid()");
     }
 
-    // Unit Test for Criteria: User selects "No" on the delete confirmation
-    [TestMethod]
-    [DataRow(1, "No", false)]  // Reservation exists but user cancels
-    [DataRow(2, "No", false)]  // Reservation does not exist and is not deleted
-    public void TestDeleteReservation_ConfirmNo(int reservationId, string userConfirmation, bool expectedResult)
+    // Clean up the database after each test
+    [TestCleanup]
+    public void CleanUp()
     {
-        // Mocking the ReservationAccess to simulate reservation data
-        var mockReservations = new Dictionary<int, string>
-        {
-            { 1, "Reservation for Table 1" },
-            { 3, "Reservation for Table 3" }
-        };
+        _dbConnection.Close();
+    }
 
-        // Simulating the DeleteReservation method logic
-        bool DeleteReservation(int id, string confirmation)
-        {
-            if (mockReservations.ContainsKey(id) && confirmation == "Yes")
-            {
-                mockReservations.Remove(id); // Remove reservation if user confirms "Yes"
-                return true;
-            }
-            return false; // Return false if the reservation doesn't exist or user cancels
-        }
+    [TestMethod]
+    public void TestReservationDelete()
+    {
+        // Arrange: Set up the ReservationAccess class
+        var reservationAccess = new ReservationAccess();
 
-        // Act
-        bool result = DeleteReservation(reservationId, userConfirmation);
+        // Act: Try to delete the reservation by its ID
+        var reservationIdToDelete = 1;
+        bool deletionResult = reservationAccess.Delete(reservationIdToDelete);
 
-        // Assert
-        Assert.AreEqual(expectedResult, result);
+        // Assert: Verify that the reservation is no longer in the database
+        var deletedReservation = _dbConnection.QueryFirstOrDefault<ReservationModel>(
+            "SELECT * FROM Reservation WHERE ID = @ID", new { ID = reservationIdToDelete });
+
+        Assert.IsNull(deletedReservation);  // Reservation should be null after deletion
     }
 }
