@@ -1,79 +1,62 @@
-namespace App.Tests.User;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Dapper;
+using Microsoft.Data.Sqlite;
+using Restaurant;
+using App.DataModels.Utils;
+using System.Linq;
 
-
-// Unit Test for Criteria 5: Database Update
 [TestClass]
 public class ConvertUserToAdminTest
 {
+    private static SqliteConnection _dbConnection;
+
+    // Setup the connection to the actual database (replace with your real connection string)
+    [TestInitialize]
+    public void SetUp()
+    {
+        // Connect to your actual database (replace with your actual database path or connection string)
+        _dbConnection = new SqliteConnection("Data Source=DataSources/project.db");
+
+        // Open the connection to the actual database
+        _dbConnection.Open();
+    }
+
+    // Cleanup the connection after the test is done
+    [TestCleanup]
+    public void CleanUp()
+    {
+        // Close the connection after the test
+        _dbConnection.Close();
+    }
+
     [TestMethod]
     [DataRow("John", "Doe", false, 1)] // User exists but is already an admin
-    [DataRow("Jane", "Doe", true, 1)] // User exists and is promoted
+    [DataRow("Jane", "Doe", true, 1)]  // User exists and is promoted
     [DataRow("Piet", "Pieter", false, 0)] // User does not exist
     public void TestUpdateDatabaseForPromotion(string firstName, string lastName, bool expectedSuccess, int expectedAdminStatus)
     {
-        // Mocking database of users
-        var mockUsers = new List<UserModel_Convert>
-        {
-            new UserModel_Convert { FirstName = "Jane", LastName = "Doe", Admin = 0 }, // Non-admin user
-            new UserModel_Convert { FirstName = "John", LastName = "Doe", Admin = 1 } // Already an admin
-        };
+        // Act: Try to fetch the user from the actual database
+        var user = _dbConnection.QueryFirstOrDefault<UserModel>(
+            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",  // Correct table name 'User'
+            new { FirstName = firstName, LastName = lastName });
 
-        var userAccess = new MockDataAccess_Convert(mockUsers);
-
-        // Act: simulate fetching and updating the user
-        var user = userAccess.GetAllBy("FirstName", firstName)
-            .FirstOrDefault(u => string.Equals(u.LastName, lastName, System.StringComparison.OrdinalIgnoreCase));
-        
         bool result = false;
         if (user != null && user.Admin == 0)
         {
-            user.Admin = 1; // Promote to admin
-            result = userAccess.Update(user);
+            // Promote to admin (update the record)
+            _dbConnection.Execute(
+                "UPDATE User SET Admin = 1 WHERE ID = @ID",  // Correct table name 'User'
+                new { ID = user.ID });
+            result = true;
         }
 
-        int actualAdminStatus = mockUsers.FirstOrDefault(u => u.FirstName == firstName && u.LastName == lastName)?.Admin ?? 0;
+        // Fetch the updated user from the database
+        var updatedUser = _dbConnection.QueryFirstOrDefault<UserModel>(
+            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",  // Correct table name 'User'
+            new { FirstName = firstName, LastName = lastName });
 
-        // Assert: verify the outcome
+        // Assert: Verify the outcome
         Assert.AreEqual(expectedSuccess, result);
-        Assert.AreEqual(expectedAdminStatus, actualAdminStatus);
+        Assert.AreEqual(expectedAdminStatus, updatedUser?.Admin ?? 0);
     }
 }
-
-// Mocking data access layer for testing
-public class MockDataAccess_Convert
-{
-    private readonly List<UserModel_Convert> _users;
-
-    public MockDataAccess_Convert(List<UserModel_Convert> users)
-    {
-        _users = users;
-    }
-
-    public IEnumerable<UserModel_Convert> GetAllBy(string columnName, string value)
-    {
-        return columnName switch
-        {
-            "FirstName" => _users.Where(u => u.FirstName == value),
-            "LastName" => _users.Where(u => u.LastName == value),
-            _ => Enumerable.Empty<UserModel_Convert>()
-        };
-    }
-
-    public bool Update(UserModel_Convert user)
-    {
-        var existingUser = _users.FirstOrDefault(u => u.FirstName == user.FirstName && u.LastName == user.LastName);
-        if (existingUser == null) return false;
-
-        existingUser.Admin = user.Admin;
-        return true;
-    }
-}
-
-// Unique User model class for testing purposes
-public class UserModel_Convert
-{
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public int Admin { get; set; } // 0 = Not Admin, 1 = Admin
-}
-
