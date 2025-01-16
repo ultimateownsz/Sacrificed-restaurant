@@ -123,7 +123,7 @@ static class FuturePastResrvations
             {
                 var selectedResModel = currentPageReserv.FirstOrDefault(r => ReservationLogic.FormatAccount(r) == selectedReservations);
                 ReservationUpdatePresent.Show(selectedResModel, acc);
-                continue;
+                break;
             }
         }
     }

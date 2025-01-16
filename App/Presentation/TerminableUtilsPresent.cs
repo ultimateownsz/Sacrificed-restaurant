@@ -1,4 +1,6 @@
-﻿namespace Restaurant;
+﻿using System.Drawing;
+
+namespace Restaurant;
 public static class TerminableUtilsPresent
 {
 
@@ -25,17 +27,28 @@ public static class TerminableUtilsPresent
 
         while (true)
         {
+            ClearInputArea();
             
-            for (int i = 0; i < 2; i++)
-            {
-                Console.Clear();
-                if (text != null)
-                    Console.Write(text, colour);
+            // for (int i = 0; i < 2; i++)
+            // {
+            //     Console.Clear();
+            //     if (text != null)
+            //         Console.Write(text, colour);
             
-                Console.Write(new string(buffer.ToArray()), colour);
-            }
+            //     Console.Write(new string(buffer.ToArray()), colour);
+            // }
 
-            capture = Console.ReadKey();
+            if (text != null)
+            {
+                Console.ForegroundColor = colour;
+                Console.Write(text);
+                Console.ResetColor();
+            }
+            Console.Write(new string(buffer.ToArray()));
+
+            ControlHelpPresent.ShowHelp();
+
+            capture = Console.ReadKey(intercept: true);
             
             switch (capture.Key)
             {
@@ -56,5 +69,18 @@ public static class TerminableUtilsPresent
                     break;
             }
         }
+    }
+
+    private static void ClearInputArea()
+    {
+        int footerHeight = ControlHelpPresent.GetFooterHeight();
+        int inputAreaEnd = Console.WindowHeight - footerHeight;
+
+        for (int i = 0; i < inputAreaEnd; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+        Console.SetCursorPosition(0, 0);
     }
 }
