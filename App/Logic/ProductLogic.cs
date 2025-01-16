@@ -12,17 +12,11 @@ public static class ProductLogic
     {
         if (product == null)
         {
-            Console.WriteLine("Cant add empty products.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
             return false;
         }
 
         if (Access.Products.GetBy<string?>("Name", product.Name) != null)
         {
-            Console.WriteLine($"{product.Name} already exists.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
             return false;
         }
 
