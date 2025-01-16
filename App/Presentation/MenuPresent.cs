@@ -38,10 +38,12 @@ internal class MenuPresent
                 case "Login":
                     if (MenuLogic.Login() == "continue")
                         continue;
+                    ControlHelpPresent.ResetToDefault();
                     break;
 
                 case "Register\n":
                     UserRegisterPresent.CreateAccount();
+                    ControlHelpPresent.ResetToDefault();
                     continue;
 
                 case "Exit":

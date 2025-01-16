@@ -6,6 +6,10 @@ public static class LoginPresent
     private static string? _request_email(string? email)
     {
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
         string prefix = "LOGIN MENU\n\n";
         prefix += $"E-mail: ";
         
@@ -34,7 +38,11 @@ public static class LoginPresent
         {
             // request email
             email = _request_email(email);
-            if (email == null) return null;
+            if (email == null)
+            {
+                ControlHelpPresent.ResetToDefault();
+                return null;
+            }
 
             // request password
             password = _request_password(email);
@@ -45,6 +53,7 @@ public static class LoginPresent
         }
 
         var loginResult = LoginLogic.CheckLogin(email, password);
+        ControlHelpPresent.ResetToDefault();
 
         if (loginResult.user != null)
         {
@@ -53,6 +62,7 @@ public static class LoginPresent
         else
         {
             Console.Clear();
+            ControlHelpPresent.ResetToDefault();
             Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;

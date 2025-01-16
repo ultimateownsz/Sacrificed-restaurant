@@ -29,7 +29,7 @@ public static class ThemeValidateLogic
             var themeName = TerminableUtilsPresent.ReadLine("Enter theme name: ");
             if (themeName == null) return null;
 
-            if (!string.IsNullOrWhiteSpace(themeName) && !themeName.Any(char.IsDigit))
+            if (!string.IsNullOrWhiteSpace(themeName) && themeName.All(char.IsLetter))
             {
                 themeName = char.ToUpper(themeName[0]) + themeName.Substring(1);
                 return themeName;
