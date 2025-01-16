@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Restaurant;
 
-static class ProductLogic
+public static class ProductLogic
 {
     //This Method is used to add products
     public static bool AddProduct(ProductModel product)
