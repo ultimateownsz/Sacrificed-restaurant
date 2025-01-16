@@ -6,11 +6,16 @@ public static class LoginPresent
     private static string? _request_email(string? email)
     {
         Console.Clear();
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
         string prefix = "LOGIN MENU\n\n";
         prefix += $"E-mail: ";
         
         Console.ForegroundColor = palette.Base;
         return TerminableUtilsPresent.ReadLine(prefix, email ?? "", colour: Console.ForegroundColor);
+        
     }
 
     private static string? _request_password(string? email)
@@ -33,7 +38,11 @@ public static class LoginPresent
         {
             // request email
             email = _request_email(email);
-            if (email == null) return null;
+            if (email == null)
+            {
+                ControlHelpPresent.ResetToDefault();
+                return null;
+            }
 
             // request password
             password = _request_password(email);
@@ -43,14 +52,17 @@ public static class LoginPresent
             break;
         }
 
-        UserModel? acc = LoginLogic.CheckLogin(email, password);
-        if (acc != null)
+        var loginResult = LoginLogic.CheckLogin(email, password);
+        ControlHelpPresent.ResetToDefault();
+
+        if (loginResult.user != null)
         {
-            return acc;
+            return loginResult.user;
         }    
         else
         {
             Console.Clear();
+            ControlHelpPresent.ResetToDefault();
             Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
@@ -64,4 +76,5 @@ public static class LoginPresent
             return null;
         }
     }
+
 }

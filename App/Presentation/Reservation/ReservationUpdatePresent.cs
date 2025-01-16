@@ -124,10 +124,9 @@ public static class ReservationUpdatePresent
         {
             List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
             string banner = "How many guests are reserved for your table?";
-            int guests = options.Count() - SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
+            int guests = 1 + SelectionPresent.Show(options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
 
-            // because 6 - (-1) = 7
-            if (guests == 7)
+            if (guests == 0)
                 return;
 
             int[] inactiveTables = Access.Places.Read()
@@ -142,7 +141,7 @@ public static class ReservationUpdatePresent
                 .Select(r => r!.PlaceID!.Value)
                 .ToArray();
 
-            TableSelectionPresent tableSelection = new();
+            TableSelectionLogic tableSelection = new();
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -221,60 +220,11 @@ public static class ReservationUpdatePresent
                 Console.WriteLine("Reservation Amount not updated.");
                 break;
             }
-            else if (int.TryParse(newAmountInput, out int newAmount))
-            {
-                // Validate the reservation amount based on the table ID
-                //if (IsReservationAmountValid(reservation.Place, newAmount))
-                //{
-                //    reservation.ReservationAmount = newAmount;
-                //    break;
-                //}
-                //else
-                //{
-                //    Console.WriteLine("Invalid number of people for the selected table. Please enter a valid number.");
-                //}
-            }
             else
             {
                 Console.WriteLine("Invalid input. Please enter a valid number.");
             }
         }
-    }
-
-    private static bool IsReservationAmountValid(long tableID, int reservationAmount)
-    {
-        // Check table ID categories and validate reservation amount
-        if (IsTwoPersonTable(tableID) && (reservationAmount == 1 || reservationAmount == 2))
-        {
-            return true;
-        }
-        else if (IsFourPersonTable(tableID) && reservationAmount >= 3 && reservationAmount <= 4)
-        {
-            return true;
-        }
-        else if (IsSixPersonTable(tableID) && reservationAmount >= 5 && reservationAmount <= 6)
-        {
-            return true;
-        }
-
-        // If none of the conditions are met, return false
-        return false;
-    }
-
-    // Helper methods for table categories
-    private static bool IsTwoPersonTable(long tableID)
-    {
-        return tableID == 1 || tableID == 4 || tableID == 5 || tableID == 8 || tableID == 9 || tableID == 11 || tableID == 12 || tableID == 15;
-    }
-
-    private static bool IsFourPersonTable(long tableID)
-    {
-        return tableID == 6 || tableID == 7 || tableID == 10 || tableID == 13 || tableID == 14;
-    }
-
-    private static bool IsSixPersonTable(long tableID)
-    {
-        return tableID == 2 || tableID == 3;
     }
 
     // Helper method to check if the table is already reserved for the given date

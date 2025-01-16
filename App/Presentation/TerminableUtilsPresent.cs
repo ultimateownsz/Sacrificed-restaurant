@@ -1,15 +1,11 @@
-﻿namespace Restaurant;
-internal class TerminableUtilsPresent
+﻿using System.Drawing;
+
+namespace Restaurant;
+public static class TerminableUtilsPresent
 {
 
     public static void Write(string? text)
-    {
-        // this seems quite strange doesn't it?
-        // for <some> reason, VS' terminal excludes
-        // the first character in a STDOUT request
-        // after interrupting the <ESC> key, the 
-        // simplest yet most effective way to circumvent
-        // this issue is by simply writing it twice.        
+    {      
         for (int i = 0; i < 2; i++)
         {
             Console.Clear();
@@ -18,9 +14,6 @@ internal class TerminableUtilsPresent
 
     }
 
-    // operates just like Console.ReadLine
-    // and -WriteLine, but returns null if terminated
-    // also python's input("text") is OP so implemented it.
     public static string? ReadLine(
         string? text = null, string? load = null,
         ConsoleColor colour = ConsoleColor.Gray)
@@ -34,17 +27,28 @@ internal class TerminableUtilsPresent
 
         while (true)
         {
+            ClearInputArea();
             
-            for (int i = 0; i < 2; i++)
-            {
-                Console.Clear();
-                if (text != null)
-                    Console.Write(text, colour);
+            // for (int i = 0; i < 2; i++)
+            // {
+            //     Console.Clear();
+            //     if (text != null)
+            //         Console.Write(text, colour);
             
-                Console.Write(new string(buffer.ToArray()), colour);
-            }
+            //     Console.Write(new string(buffer.ToArray()), colour);
+            // }
 
-            capture = Console.ReadKey();
+            if (text != null)
+            {
+                Console.ForegroundColor = colour;
+                Console.Write(text);
+                Console.ResetColor();
+            }
+            Console.Write(new string(buffer.ToArray()));
+
+            ControlHelpPresent.ShowHelp();
+
+            capture = Console.ReadKey(intercept: true);
             
             switch (capture.Key)
             {
@@ -65,5 +69,18 @@ internal class TerminableUtilsPresent
                     break;
             }
         }
+    }
+
+    private static void ClearInputArea()
+    {
+        int footerHeight = ControlHelpPresent.GetFooterHeight();
+        int inputAreaEnd = Console.WindowHeight - footerHeight;
+
+        for (int i = 0; i < inputAreaEnd; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+        Console.SetCursorPosition(0, 0);
     }
 }

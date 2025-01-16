@@ -83,7 +83,7 @@ internal class AllergyLinkLogic
 
     }
 
-    public static void Start(Type type, int? id, int? guest = null)
+    public static int? Start(Type type, int? id, int? guest = null)
     {
 
         // standalone implement
@@ -93,7 +93,7 @@ internal class AllergyLinkLogic
             List<string> products = Access.Products.Read().Select(x => x.Name).ToList();
             string product = SelectionPresent.Show(
                 products, banner: "PRODUCT MENU").ElementAt(0).text;
-            if (product == "") return;
+            if (product == "") return -1;
 
             // id override
             id = Access.Products.GetBy("Name", product).ID;
@@ -105,6 +105,8 @@ internal class AllergyLinkLogic
 
         // I/O swap
         AllergyLinkPresent.Show(ref input, ref output);
+        if (input.Allergies?.FirstOrDefault("NULL") == "") return -1;
+        
         List<AllergyModel> models = ToModels(input.Allergies);
 
         // deletion of old data
@@ -122,6 +124,8 @@ internal class AllergyLinkLogic
                 )
             );
         }
+
+        return null;
     }
 
 }

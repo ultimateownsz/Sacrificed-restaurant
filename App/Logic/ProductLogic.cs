@@ -1,7 +1,7 @@
-// this class handles all the logic for adding, updating, and deleting products
 using App.DataAccess.Utils;
 using App.DataModels.Product;
 using App.Logic.Theme;
+using System.Globalization;
 
 namespace Restaurant;
 
@@ -54,7 +54,7 @@ static class ProductLogic
                 if (                                    // validate the price
                     !string.IsNullOrWhiteSpace(productInfo)
                     && productInfo.Contains('.')
-                    && decimal.TryParse(productInfo, out temp)
+                    && decimal.TryParse(productInfo, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out temp)
                     && productInfo.Trim().Split('.')[1].Length == 2
                     && !productInfo.Contains(' '))
                 {
@@ -74,7 +74,7 @@ static class ProductLogic
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
             {
-                return null;
+                return "REQUEST_PROCESS_EXIT";
             }
         }
     }
@@ -267,11 +267,11 @@ static class ProductLogic
         {
             ID = oldProduct.ID,
             Name = type == "name" ? newProductEdit : oldProduct.Name,
-            Price = type == "price" ? decimal.Parse(newProductEdit) : oldProduct.Price,
+            Price = type == "price" ? decimal.Parse(newProductEdit.Replace('.', ',')) : oldProduct.Price,
             Course = type == "course" ? char.ToUpper(newProductEdit[0]) + newProductEdit.Substring(1) : oldProduct.Course,
             ThemeID = type == "theme" ? ThemeID : oldProduct.ThemeID,
         };
-
+        
         Console.Clear();
         if(UpdateProduct(oldProduct, newProduct))
         {
@@ -341,9 +341,10 @@ static class ProductLogic
             goto lTheme;
 
         decimal temp;
-        if (decimal.TryParse(price, out temp))
+        price = price.Replace(',', '.');
+        if (decimal.TryParse(price, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out temp))
         {
-            newProduct.Price = decimal.Parse(price);
+            newProduct.Price = decimal.Parse(price.Replace('.', ','));
         }
         else
         {

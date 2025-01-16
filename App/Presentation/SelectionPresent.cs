@@ -1,20 +1,35 @@
 ﻿namespace Restaurant;
-internal class SelectionPresent
+public class SelectionPresent
 {
 
-    public struct Palette()
+    protected internal struct Palette()
     {
         public ConsoleColor Primary    = ConsoleColor.Yellow;
         public ConsoleColor Secondary  = ConsoleColor.DarkYellow;
         public ConsoleColor Tertiary   = ConsoleColor.DarkYellow;
         public ConsoleColor Base       = ConsoleColor.White;
     }
-    private static Palette palette = new Palette();
+    protected internal static Palette palette = new Palette();
+    private const int TIMEOUT = 0;
+
+    private static void _clear(int menuStartLine, int menuHeight)
+    {
+        for (int i = menuStartLine; i < menuHeight; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
+    }
 
     private static void _display(Dictionary<string, SelectionLogic.Selectable> selection,
-        string banner, SelectionLogic.Mode mode)
+        string banner, SelectionLogic.Mode mode, int menuStartLine)
     {
+        // Clear only the menu area, leaving the footer intact
+        _clear(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
 
+
+        // banner & colour initialization
+        Console.SetCursorPosition(0, menuStartLine);
         TerminableUtilsPresent.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
 
@@ -22,14 +37,13 @@ internal class SelectionPresent
             in selection.Select((value, index) => (value, index)))
         {
             // colouring (priority-sensitive)
-            Console.ForegroundColor =
-                (selectable.selected && selectable.highlighted)
-                // selected and highlighted
-                ? palette.Secondary : (selectable.selected)
-                // only selected
-                ? palette.Primary   : (selectable.highlighted)
-                // only highlighted
-                ? palette.Tertiary  : (palette.Base);
+            Console.ForegroundColor = selectable.selected && selectable.highlighted
+                ? palette.Secondary
+                : selectable.selected
+                ? palette.Primary
+                : selectable.highlighted
+                ? palette.Tertiary
+                : palette.Base;
 
             // marker
             string prefix = (selectable.selected) ? ">" : "";
@@ -46,47 +60,19 @@ internal class SelectionPresent
         }
     }
 
-    public static void _controls()
-    {
-        string output = "";
-        output += "CONTROLS OVERVIEW (click 'C' for shortcut):\n\n";
-
-        output += "- General:\n";
-        output += "  - Navigate: Arrow Keys (↑, ↓, ←, →)\n";
-        output += "  - Select/Submit: ENTER (or SPACE where allowed)\n";
-        output += "  - Go Back: ESC\n";
-        output += "  - Input Text: Type and press ENTER\n\n";
-
-        output += "- Menu Modes:\n";
-        output += "  1. Single Mode:\n";
-        output += "     - Navigate through a list with ↑ and ↓\n";
-        output += "     - Select an item with ENTER\n";
-        output += "  2. Multi Mode:\n";
-        output += "     - Navigate through a list with ↑ and ↓\n";
-        output += "     - Select multiple items with ENTER (or SPACE where allowed)\n";
-        output += "     - Submit selection by clicking \"Continue\"\n";
-        output += "  3. Scroll Mode:\n";
-        output += "     - Scroll one line at a time with ↑ and ↓\n";
-        output += "     - Submit selection with ENTER\n";
-        output += "  4. Calendar Mode:\n";
-        output += "     - Navigate the 2D calendar with ↑, ↓, ←, →\n";
-        output += "     - Select a date with ENTER\n";
-        output += "  5. Table Selection Mode:\n";
-        output += "     - Navigate the 2D table with ↑, ↓, ←, →\n";
-        output += "     - Select a cell with ENTER\n";
-        output += "\nPress any key to continue...";
-
-        // display
-        Console.Clear();
-        Console.WriteLine(output);
-        Console.ReadKey();
-    }
-
-    private static SelectionLogic.Interaction _update(
-        Dictionary<string, SelectionLogic.Selectable> selection, SelectionLogic.Mode mode)
+    private static SelectionLogic.Interaction _update(Dictionary<string, 
+        SelectionLogic.Selectable> selection, SelectionLogic.Mode mode, List<ConsoleKey> keystrokes)
     {
         ConsoleKey capture;
-        switch (capture = Console.ReadKey().Key)
+        if (keystrokes.Count > 0)
+        {
+            Thread.Sleep(TIMEOUT);
+            capture = keystrokes[0];
+            keystrokes.RemoveAt(0);
+        }
+        else capture = Console.ReadKey().Key;
+
+        switch (capture)
         {
             // movement
             case ConsoleKey.DownArrow:
@@ -113,18 +99,14 @@ internal class SelectionPresent
                 SelectionLogic.Mark(selection);
                 return SelectionLogic.Interaction.Marked;
 
-            case ConsoleKey.C:
-                _controls();
-                return SelectionLogic.Interaction.None;
-
             // safeguard
             default:
                 return SelectionLogic.Interaction.None;
         }
     }
 
-    public static List<SelectionLogic.Selection> Show(List<string> options, List<string>? preselected = null,
-        string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
+    public static List<SelectionLogic.Selection> Show(List<string> options, int? _ = null, List<string>? preselected = null, 
+        List<ConsoleKey>? keystrokes = null, string banner = "NEW MENU", SelectionLogic.Mode mode = SelectionLogic.Mode.Single)
     {
 
         // initialization
@@ -137,11 +119,29 @@ internal class SelectionPresent
         // loop
         while (true)
         {
+            // Always render at the top of the terminal
+            int menuStartLine = 0; // Fixed start at the top
+            Console.SetCursorPosition(0, menuStartLine);
+
             // formatting
-            _display(selection, banner, mode);
+            _display(selection, banner, mode, menuStartLine);
+
+            // determine the currently selected index
+            int? selectedIndex = null;
+            foreach (var item in selection)
+            {
+                if (item.Value.selected)  // the selected option
+                {
+                    selectedIndex = options.IndexOf(item.Key);
+                    break;
+                }
+            }
+
+            // Refresh the footer
+            ControlHelpPresent.ShowHelp(options, selectedIndex, menuContext: "admin");
 
             // capture & handle interaction
-            switch (_update(selection, mode))
+            switch (_update(selection, mode, keystrokes ?? []))
             {
                 case SelectionLogic.Interaction.Marked:
 
@@ -171,27 +171,37 @@ internal class SelectionPresent
                     break;
 
                 case SelectionLogic.Interaction.Selected:
-
-                    Console.Clear();
+                    
                     selected = selection.Where(x => x.Value.selected == true);
+                    int index = selected.Select(x => x.Value.index).ElementAt(0);
+
+                    Console.Clear();                    
                     return new()
                     {
                         new SelectionLogic.Selection()
                         {
                             text = selected.Select(x => x.Key).ElementAt(0),
-                            index = selected.Select(x => x.Value.index).ElementAt(0)
+                            index = (mode == SelectionLogic.Mode.Single) 
+                                ? index : (options.Count - index) - 1
                         }
                     };
 
                 case SelectionLogic.Interaction.Terminated:
 
                     Console.Clear();
-                    return new()
+                    ControlHelpPresent.ShowHelp();
+                    
+                    // what does this do?
+                    Console.SetCursorPosition(0, menuStartLine);
+                    Console.ForegroundColor = palette.Base;
+                    Console.WriteLine(banner.Trim() + "\n");
+                    
+                    return new ()
                     {
-                        new()
+                        new ()
                         {
                             text = "",
-                            index = -1
+                            index = -1 // Special value indicating escape
                         }
                     };
 

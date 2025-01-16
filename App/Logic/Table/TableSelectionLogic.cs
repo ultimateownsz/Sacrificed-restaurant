@@ -3,13 +3,14 @@ using Restaurant;
 
 namespace App.Presentation.Table;
 
-public class TableSelectionPresent
+public class TableSelectionLogic
 {
     private CancellationTokenSource flashCancellationTokenSource = new CancellationTokenSource();
     private int cursorX, cursorY;
     private Dictionary<int, ConsoleColor> tableColors = new Dictionary<int, ConsoleColor>();
 
     public int SelectedTable { get; private set; }
+
 
     private void ClearGrid()
     {
@@ -228,17 +229,6 @@ public class TableSelectionPresent
     }
 
 
-
-    private void ShowErrorMessage(string message)
-    {
-        int messageY = GridPresent.GetGrid().GetLength(0) + 3;
-        Console.SetCursorPosition(0, messageY);
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(message.PadRight(Console.WindowWidth - 1));
-        Console.ResetColor();
-    }
-
-
     private void ClearErrorMessage()
     {
         int messageY = GridPresent.GetGrid().GetLength(0) + 1; // Same line as the message
@@ -405,53 +395,13 @@ public class TableSelectionPresent
     }
 
 
-
-
     private void ResetConsoleToDefault()
     {
         Console.ResetColor();
         Console.Clear();
     }
 
-    private void EnsureConsoleSize()
-    {
-        const int requiredWidth = 140;
-        const int requiredHeight = 45;
-        // Try to maximize the console window
-        // MaximizeConsoleWindow();
 
-        while (Console.WindowWidth < requiredWidth || Console.WindowHeight < requiredHeight)
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Your console is too small to display the table Yellowprint.");
-            Console.WriteLine($"Minimum required size: {requiredWidth}x{requiredHeight}");
-            Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
-            Console.ResetColor();
-            Console.WriteLine("Please resize your console window and press Enter to continue...");
-            Console.ReadLine();
-        }
-
-        Console.Clear();
-    }
-
-    // public static void MaximizeConsoleWindow()
-    // {
-    //     const int SW_MAXIMIZE = 3;
-
-    //     // Import Windows API functions
-    //     [DllImport("kernel32.dll", SetLastError = true)]
-    //     static extern IntPtr GetConsoleWindow();
-
-    //     [DllImport("user32.dll", SetLastError = true)]
-    //     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    //     IntPtr consoleWindow = GetConsoleWindow();
-    //     if (consoleWindow != IntPtr.Zero)
-    //     {
-    //         ShowWindow(consoleWindow, SW_MAXIMIZE);
-    //     }
-    // }
 
     private void StopFlashing()
     {
@@ -584,7 +534,9 @@ public class TableSelectionPresent
 
     public int SelectTable(int[] activeTables, int[] inactiveTables, int[] reservedTables, int guestCount = 0, bool isAdmin = false)
     {
-        EnsureConsoleSize();
+        int? ret = TableControlPresent.EnsureConsoleSize();
+        if (ret == -1) return -1;
+
         ShowGrid(activeTables, inactiveTables, reservedTables, guestCount, isAdmin);
         Console.CursorVisible = false;
 
@@ -596,7 +548,7 @@ public class TableSelectionPresent
             {
                 Console.SetCursorPosition(0, GridPresent.GetGrid().GetLength(0) + 2);
                 Console.ResetColor();
-                Console.WriteLine("\nControls:\n\nNavigate : <arrows>\nSelect : <enter>\nExit : <escape>\n");
+                ControlHelpPresent.ShowHelp();
 
                 var key = Console.ReadKey(true);
 

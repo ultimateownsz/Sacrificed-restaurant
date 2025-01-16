@@ -7,10 +7,9 @@ using Restaurant;
 
 namespace App.Presentation.Reservation;
 
-public static class ReservationMakePresent
+public class ReservationMakePresent
 {
     static private ReservationLogic reservationLogic = new();
-    static private ReservationMenuLogic reservationMenuLogic = new();
     static private OrderLogic orderLogic = new();
 
     public static void MakingReservation(UserModel acc)
@@ -23,10 +22,11 @@ public static class ReservationMakePresent
         List<string> options = new() { "1", "2", "3", "4", "5", "6" };
         string banner = "How many guests will be coming?";
 
-        int guests = options.Count() - SelectionPresent.Show(
+        int guests = 1 + SelectionPresent.Show(
             options, banner: banner, mode: SelectionLogic.Mode.Scroll).ElementAt(0).index;
-        if (guests == 7)
-            return; // b.c. count (6) - (-1) = 7
+        
+        if (guests == 0)
+            return;
 
         DateTime selectedDate;
 
@@ -46,7 +46,7 @@ public static class ReservationMakePresent
 
 
             // Step 3: Filter available tables based on the number of guests
-            TableSelectionPresent tableSelection = new();
+            TableSelectionLogic tableSelection = new();
             int[] availableTables = guests switch
             {
                 1 or 2 => new int[] { 1, 4, 5, 8, 9, 11, 12, 15 },
@@ -88,7 +88,6 @@ public static class ReservationMakePresent
                 }
 
                 var orders = TakeOrders(selectedDate, acc, reservationId, guests);
-                if (orders == null) continue;
 
                 if (orders != null)
                 {
@@ -149,7 +148,8 @@ public static class ReservationMakePresent
             List<ProductModel> guestOrder = new();
 
             // Start allergy handling for the guest
-            AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            int? ret = AllergyLinkLogic.Start(AllergyLinkLogic.Type.User, id, i == 0 ? null : i + 1);
+            if (ret == -1) return null;
 
             for (int z = 0; z < categories.Count; z++)
             {
@@ -237,12 +237,11 @@ public static class ReservationMakePresent
 
         if (reservation == null)
         {
-            Console.WriteLine("ERROR: Reservation not found. Unable to display receipt.");
+            Console.WriteLine("Reservation not found. Unable to display receipt.");
             return;
         }
 
         // Debug log to confirm correct reservation
-        //Console.WriteLine($"DEBUG: Printing receipt for ReservationID: {reservation.ID}, Date: {reservation.Date}, PlaceID: {reservation.PlaceID}");
 
         Console.WriteLine("-------------------------------");
         Console.WriteLine($"Name of the customer:   {GetUserFullName(reservation.UserID)}");
@@ -266,11 +265,11 @@ public static class ReservationMakePresent
 
     private static string GetUserFullName(int? userID)
     {
-        var account = Access.Users.GetBy("ID", userID); // Fetch the account details
+        var account = Access.Users.GetBy("ID", userID); 
         if (account != null)
         {
             return $"{account.FirstName} {account.LastName}";
         }
-        return "Unknown User"; // Fallback in case no account is found
+        return "Unknown User"; 
     }
 }
