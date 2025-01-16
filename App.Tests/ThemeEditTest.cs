@@ -13,7 +13,7 @@ namespace App.Tests
         public void Test_NewScheduleAndTheme()
         {
             // Arrange
-            int month = 3;
+            int month = 12;
             int year = 2025;
             string themeName = "Nigerian"; //the reason i dont test for wrong input, and i only test to see if the method is working
                                            //its because this method will never recive a wrong name since that happens in
@@ -44,7 +44,7 @@ namespace App.Tests
             themeAccess.Write(new ThemeModel { ID = 5, Name = "Irish" });
             themeAccess.Write(new ThemeModel { ID = 6, Name = "American" });
 
-            scheduleAccess.Write(new ScheduleModel { ID = 1, Year = 2025, Month = 12, ThemeID = 1 });
+            scheduleAccess.Write(new ScheduleModel { ID = 1, Year = 2025, Month = 11, ThemeID = 1 });
             scheduleAccess.Write(new ScheduleModel { ID = 2, Year = 2025, Month = 10, ThemeID = 2 });
 
             // Act
