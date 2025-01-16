@@ -74,7 +74,7 @@ static class ProductLogic
             var key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.B)
             {
-                return null;
+                return "REQUEST_PROCESS_EXIT";
             }
         }
     }
