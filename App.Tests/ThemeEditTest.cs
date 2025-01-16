@@ -1,110 +1,123 @@
-// namespace App.Test;
-// using System.Text.RegularExpressions;
+using App.DataAccess;
+using App.DataModels;
+using Restaurant;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using App.Logic.Theme;
 
-//[TestClass]
-public class ThemeEditTest
+
+namespace App.Tests
 {
-    [TestMethod]
-    public void TestAddThemes()
+    [TestClass]
+    public class ThemeEditTest
     {
-        // Arrange the Models(the models are the end of this file)
-        var themeName = "Turkish";
-        var schedule = new Schedule { Year = 2025, Month = 6 };
 
-//         // Act
-//         string result = SimulateAddTheme(schedule, themeName);
+        [TestMethod]
+        public void Test_UpdateThemeSchedule_NewScheduleAndTheme()
+        {
+            // Arrange
+            int month = 3;
+            int year = 2025;
+            string themeName = "Turkish";
 
-//         // Assert
-//         Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
-//     }
+            // Simulate in-memory data
+            Access.Schedules = new List<ScheduleModel>
+            {
+                new ScheduleModel { ID = 1, Year = 2024, Month = 12, ThemeID = 2 }
+            };
 
-//     [TestMethod]
-//     public void TestEditThemes()
-//     {
-//         var existingTheme = new Theme { ID = 101, ThemeName = "Turkish" };
-//         var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
-//         var newThemeName = "Japanese";
+            Access.Themes = new List<ThemeModel>
+            {
+                new ThemeModel { ID = 1, Name = "Japanese" }
+            };
 
-//         string result = SimulateEditTheme(existingTheme, schedule, newThemeName);
+            // Act
+            ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
 
-//         Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
-//     }
+            // Assert: Ensure the new theme and schedule are added
+            Assert.AreEqual(2, Access.Themes.Count);
+            Assert.AreEqual("Turkish", Access.Themes.Last().Name);
 
-//     [TestMethod]
-//     public void TestDeleteThemes()
-//     {
-//         var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
-//         var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
+            Assert.AreEqual(2, Access.Schedules.Count);
+            var newSchedule = Access.Schedules.Last();
+            Assert.AreEqual(month, newSchedule.Month);
+            Assert.AreEqual(year, newSchedule.Year);
+            Assert.AreEqual(2, newSchedule.ThemeID); // Assuming theme ID increments
+        }
 
-//         string result = SimulateDeleteTheme(themeToDelete, schedule);
+        [TestMethod]
+        public void Test_UpdateThemeSchedule_ExistingScheduleAndTheme()
+        {
+            // Arrange
+            int month = 3;
+            int year = 2025;
+            string themeName = "Italian";
 
-//         Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
-//     }
+            // Simulate in-memory data
+            Access.Schedules = new List<ScheduleModel>
+            {
+                new ScheduleModel { ID = 1, Year = year, Month = month, ThemeID = 1 }
+            };
 
-//     [TestMethod]
-//     public void TestValidateThemeName()
-//     {
-//         string validThemeName = "Valid Theme";
-//         string invalidThemeName = "Invalid123!";
+            Access.Themes = new List<ThemeModel>
+            {
+                new ThemeModel { ID = 1, Name = "Italian" }
+            };
 
-//         bool isValid1 = ValidateThemeName(validThemeName);
-//         bool isValid2 = ValidateThemeName(invalidThemeName);
+            // Act
+            ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
 
-//         Assert.IsTrue(isValid1, "Expected the theme name to be valid.");
-//         Assert.IsFalse(isValid2, "Expected the theme name to be invalid.");
-//     }
+            // Assert: Ensure no new data is added and existing schedule is updated
+            Assert.AreEqual(1, Access.Themes.Count);
+            Assert.AreEqual(1, Access.Schedules.Count);
 
-//     // Simulated Methods for Testing
-//     //This Method simulates adding themes
-//     private string SimulateAddTheme(Schedule schedule, string themeName)
-//     {
-//         //calls ValidateThemeName to check if it has symbols in it
-//         if (!ValidateThemeName(themeName))
-//             return "Invalid theme name. Only letters and spaces are allowed.";
+            var existingSchedule = Access.Schedules.First();
+            Assert.AreEqual(1, existingSchedule.ThemeID);
+        }
+        public static class Access
+        {
+            public static List<ScheduleModel> Schedules { get; set; }
+            public static List<ThemeModel> Themes { get; set; }
+        }
+    }
+}
 
-//         return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
-//     }
+    //     [TestMethod]
+    //     public void TestEditThemes()
+    //     {
+    //         var existingTheme = new Theme { ID = 101, ThemeName = "Turkish" };
+    //         var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
+    //         var newThemeName = "Japanese";
 
-//     //This Method simulates editing themes
-//     private string SimulateEditTheme(Theme existingTheme, Schedule schedule, string newThemeName)
-//     {
-//         if (!ValidateThemeName(newThemeName))
-//             return "Invalid theme name. Only letters and spaces are allowed.";
+    //         string result = SimulateEditTheme(existingTheme, schedule, newThemeName);
 
-//         existingTheme.ThemeName = newThemeName;
-//         return $"Theme updated to '{newThemeName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
-//     }
+    //         Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
+    //     }
 
-//     //This Method simulates Deleting themes
-//     private string SimulateDeleteTheme(Theme themeToDelete, Schedule schedule)
-//     {
-//         return $"Theme '{themeToDelete.ThemeName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
-//     }
+    //     [TestMethod]
+    //     public void TestDeleteThemes()
+    //     {
+    //         var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
+    //         var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
 
-//     //Validates the name of the theme
-//     private bool ValidateThemeName(string themeName)
-//     {
-//         return Regex.IsMatch(themeName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
-//     }
+    //         string result = SimulateDeleteTheme(themeToDelete, schedule);
 
-//     // gets the month name
-//     private string GetMonthName(int month)
-//     {
-//         return new DateTime(1, month, 1).ToString("MMMM");
-//     }
+    //         Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
+    //     }
 
-//     // Supporting Classes
-//     public class Theme
-//     {
-//         public int ID { get; set; }
-//         public string ThemeName { get; set; }
-//     }
+    //     [TestMethod]
+    //     public void TestValidateThemeName()
+    //     {
+    //         string validThemeName = "Valid Theme";
+    //         string invalidThemeName = "Invalid123!";
 
-//     public class Schedule
-//     {
-//         public int ID { get; set; }
-//         public int Year { get; set; }
-//         public int Month { get; set; }
-//         public int ThemeID { get; set; }
-//     }
-// }
+    //         bool isValid1 = ValidateThemeName(validThemeName);
+    //         bool isValid2 = ValidateThemeName(invalidThemeName);
+
+    //         Assert.IsTrue(isValid1, "Expected the theme name to be valid.");
+    //         Assert.IsFalse(isValid2, "Expected the theme name to be invalid.");
+    //     }
+    // }
