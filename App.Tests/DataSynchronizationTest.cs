@@ -12,7 +12,7 @@ public class DataSynchronizationTest
 
     private static SqliteConnection _db = new($"Data Source=DataSources/project.db");
 
-    private static Dictionary<String, Type> _mapping = new()
+    private static Dictionary<string, Type> _mapping = new()
     {
         {"Reservation", typeof(ReservationModel)},
         {"Allerlink", typeof(AllerlinkModel)},

@@ -1,7 +1,7 @@
 ﻿using Restaurant;
 namespace App.Tests;
 
-//[TestClass] (only works on VS)
+[TestClass] // (only works on VS??)
 public class InterfaceExhaustionTest
 {
     public void UniExhaust(string[] options, SelectionLogic.Mode mode)
@@ -32,11 +32,11 @@ public class InterfaceExhaustionTest
         }
     }
 
-    public void MultiExhaust(List<string> options)
+    public void MultiExhaust(string[] options)
     {
 
         List<ConsoleKey> keystrokes = new();
-        for (int i = 0; i < (options.Count) + 1; i++)
+        for (int i = 0; i < (options.Length) + 1; i++)
         {
             // select options
             for (int c = 0; c < i; c++)
@@ -46,7 +46,7 @@ public class InterfaceExhaustionTest
             }
 
             // proceed iteration
-            for (int r = 0; r < (options.Count - i); r++)
+            for (int r = 0; r < (options.Length - i); r++)
             {
                 keystrokes.Add(ConsoleKey.DownArrow);
             }
@@ -54,7 +54,7 @@ public class InterfaceExhaustionTest
 
             // execute with simulated keystrokes
             List<SelectionLogic.Selection> collection = SelectionPresent.Show(
-                options, keystrokes: keystrokes, mode: SelectionLogic.Mode.Multi);
+                options.ToList(), keystrokes: keystrokes, mode: SelectionLogic.Mode.Multi);
 
             for (int o = 0; o < collection.Count; o++)
             {
@@ -69,16 +69,57 @@ public class InterfaceExhaustionTest
         }
     }
 
+    public void ErroneousExhaust(string[] options, SelectionLogic.Mode mode)
+    {
+     
+        // register every key
+        List<ConsoleKey> keystrokes = new();
+        foreach (var item in Enum.GetValues(typeof(ConsoleKey)).Cast<ConsoleKey>())
+            keystrokes.Add(item);
+
+        // exclude intended
+        List<ConsoleKey> intended = new() { ConsoleKey.UpArrow, ConsoleKey.DownArrow,
+                                            ConsoleKey.Enter, ConsoleKey.Escape };
+        foreach (var key in intended)
+            keystrokes.Remove(key);
+
+        // install termination
+        if (mode == SelectionLogic.Mode.Multi)
+        {
+            // equalize expected output
+            keystrokes.Add(ConsoleKey.Enter);
+            keystrokes.Add(ConsoleKey.UpArrow);
+        }
+        keystrokes.Add(ConsoleKey.Enter);
+
+        // assertion
+        Assert.AreEqual(SelectionPresent.Show(options.ToList(), keystrokes: 
+            keystrokes, mode: mode).ElementAt(0).text, options.First());
+        
+    }
+
     [TestMethod]
     [DataRow(["option 1", "option 2", "option 3"])]
     public void OmniExhaust(string[] options)
     {
-        // uni-interact methods (click & proceed)
-        UniExhaust(options, SelectionLogic.Mode.Single);
-        UniExhaust(options, SelectionLogic.Mode.Scroll);
+        foreach (var mode in new List<SelectionLogic.Mode> () { 
+            SelectionLogic.Mode.Single, SelectionLogic.Mode.Multi, SelectionLogic.Mode.Scroll })
+        {
 
-        // multi-interact methods (select [multiple] & proceed)
-        MultiExhaust(options.ToList());
+            // exhaustive I/O
+            if (mode != SelectionLogic.Mode.Multi)
+                UniExhaust(options, mode);
+            else
+                MultiExhaust(options);
+
+            // inject faulty keystrokes
+            ErroneousExhaust(options, mode);
+            
+            // terminate upon initialization
+            Assert.AreEqual(SelectionPresent.Show(options.ToList(), 
+                keystrokes: [ConsoleKey.Escape], mode: mode).ElementAt(0).index, -1);
+        }
+
     }
 
 }
