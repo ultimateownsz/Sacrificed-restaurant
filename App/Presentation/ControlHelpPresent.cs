@@ -42,18 +42,6 @@ public static class ControlHelpPresent
         .Where(c => showExit || c.Key != "Exit")
         .ToList();
 
-        // Display feedback if provided
-        // if (!string.IsNullOrWhiteSpace(feedbackMessage))
-        // {
-        //     DisplayFeedback(feedbackMessage);
-        // }
-
-        // // Preprocess options to strip out newlines
-        // if (options != null)
-        // {
-        //     options = options.Select(option => option.Replace("\n", " ")).ToList();
-        // }
-
         ShowControls(filteredControls, options, selectedIndex);
     }
 
