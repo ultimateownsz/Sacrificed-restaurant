@@ -11,11 +11,6 @@ public class ReservationMenuLogic
     //Static properties are shared across all instances of the class
     public static ThemeModel? CurrentTheme { get; private set; }
 
-    public ReservationMenuLogic()
-    {
-        // Could do something here
-    }
-
     public static ThemeModel? GetCurrentTheme(DateTime selectedDate)
     {
         int month = selectedDate.Month;

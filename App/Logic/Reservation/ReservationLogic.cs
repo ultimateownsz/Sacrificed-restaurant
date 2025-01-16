@@ -10,10 +10,6 @@ public class ReservationLogic
     public static ReservationModel CurrentReservation { get; private set; } = new();
     public static long Userid { get; private set; }
 
-
-    //This function is called throught the presentation layer (MakingReservation.cs)
-    //this function will call all the other neccecary functions to make a new ReservationAccess instance
-    //with all the info from the user
     public int SaveReservation(DateTime date, int userId, int placeId)
     {
         // Validate UserID
@@ -93,18 +89,8 @@ public class ReservationLogic
         };
     }
 
-    // THIS IS AN AUTOMATED PROCESS
-    //Generates a new ID for the reservation and saves it into CurrentReservation
-    //The Generated ID is the latest ID + 1,
-    //public int? GenerateNewReservationID()
-    //{
-    //    int? GeneratedID = ReservationAccess.GetLatestReservationID() + 1;
-    //    return GeneratedID;
-    //}
-
     public long ReservationAmount(string reservationAmount)
     {
-        long convertedAmount = Convert.ToInt64(reservationAmount);
         switch (reservationAmount.ToLower())
         {
             case "1" or "2" or "one" or "two":
@@ -117,12 +103,6 @@ public class ReservationLogic
                 return 0;
         };
     }
-
-    //This is used to get a specific reservation from the database based on the given ID
-    // public ReservationModel GetById(int id)
-    // {
-    //     return Access.Reservations.GetBy<int>("ID", id);
-    // }
 
 
     public bool RemoveReservation(int id)

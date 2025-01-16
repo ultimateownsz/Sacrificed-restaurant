@@ -1,7 +1,6 @@
 using App.Logic.Allergy;
 using App.Presentation.Reservation;
 using Restaurant;
-using System.Globalization;
 
 namespace App.Presentation.User;
 
