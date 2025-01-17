@@ -10,14 +10,12 @@ public class ConvertUserToAdminTest
 {
     private static SqliteConnection _dbConnection;
 
-    // Setup the connection to the actual database (replace with your real connection string)
+    // Setup the connection to database
     [TestInitialize]
     public void SetUp()
     {
-        // Connect to your actual database (replace with your actual database path or connection string)
         _dbConnection = new SqliteConnection("Data Source=DataSources/project.db");
 
-        // Open the connection to the actual database
         _dbConnection.Open();
     }
 
@@ -37,22 +35,22 @@ public class ConvertUserToAdminTest
     {
         // Act: Try to fetch the user from the actual database
         var user = _dbConnection.QueryFirstOrDefault<UserModel>(
-            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",  // Correct table name 'User'
+            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",
             new { FirstName = firstName, LastName = lastName });
 
         bool result = false;
         if (user != null && user.Admin == 0)
         {
-            // Promote to admin (update the record)
+            // Promote to admin
             _dbConnection.Execute(
-                "UPDATE User SET Admin = 1 WHERE ID = @ID",  // Correct table name 'User'
+                "UPDATE User SET Admin = 1 WHERE ID = @ID",
                 new { ID = user.ID });
             result = true;
         }
 
         // Fetch the updated user from the database
         var updatedUser = _dbConnection.QueryFirstOrDefault<UserModel>(
-            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",  // Correct table name 'User'
+            "SELECT * FROM User WHERE FirstName = @FirstName AND LastName = @LastName",
             new { FirstName = firstName, LastName = lastName });
 
         // Assert: Verify the outcome
