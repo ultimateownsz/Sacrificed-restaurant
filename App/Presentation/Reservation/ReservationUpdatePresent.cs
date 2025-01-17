@@ -74,11 +74,15 @@ public static class ReservationUpdatePresent
             {
                 case "Date":
                     Console.Clear();
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.ResetToDefault();
                     UpdateReservationDate(reservation, acc);
                     break;
 
                 case "Table":
                     Console.Clear();
+                    ControlHelpPresent.Clear();
+                    ControlHelpPresent.ResetToDefault();
                     UpdateTableID(reservation);
                     break;
 
@@ -120,6 +124,8 @@ public static class ReservationUpdatePresent
     {
         bool isAdmin = false;
         // Update Table ID
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.ResetToDefault();
         while (true)
         {
             List<string> options = new List<string>() { "1", "2", "3", "4", "5", "6" };
