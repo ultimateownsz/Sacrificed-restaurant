@@ -11,7 +11,7 @@ public class ReservationDeletionTest
 {
     private static SqliteConnection _dbConnection;
 
-    // Setup the connection to the actual database
+    // Setup the connection to database
     [TestInitialize]
     public void SetUp()
     {
