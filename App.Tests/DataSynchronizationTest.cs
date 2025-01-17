@@ -61,7 +61,7 @@ public class DataSynchronizationTest
         return true;
     }
 
-    public static bool TableSynchronization(List<string> tables)
+    public bool TableSynchronization(List<string> tables)
     {        
         foreach (string table in tables)
         {

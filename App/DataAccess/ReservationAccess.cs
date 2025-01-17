@@ -8,8 +8,12 @@ public class ReservationAccess : DataAccess<ReservationModel>
 
     public new bool Delete(int? id)
     {
-        IEnumerable<RequestModel> requests =
-            Access.Requests.Read().Where(req => req.ReservationID == id);
+        
+        IEnumerable<RequestModel> requests = (
+                from   entry    in Access.Requests.Read()
+                where  entry.ID == id
+                select entry
+            );
 
         foreach (var request in requests)
         {

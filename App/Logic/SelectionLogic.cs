@@ -78,7 +78,7 @@ public class SelectionLogic
     {
         // find currently selected
         KeyValuePair<string, Selectable> selected =
-            selection.Where(x => x.Value.selected == true).ElementAt(0);
+            selection.Where(x => x.Value.selected).ElementAt(0);
 
         // find next
         Selectable values = selected.Value;
@@ -105,8 +105,8 @@ public class SelectionLogic
     {
         // target current
         var current = selection
-            .Where(x => x.Value.selected == true)
-            .Select(x => x.Key).ElementAt(0);
+            .Where  (x => x.Value.selected )
+            .Select (x => x.Key            ).ElementAt(0);
 
         // modify
         selection[current] = new()
