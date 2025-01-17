@@ -21,10 +21,12 @@ public static class AdminCreateOptionsPresent
         {
             case "Create admin account":
                 UserRegisterPresent.CreateAccount(true);
+                ControlHelpPresent.ResetToDefault();
                 break;
 
             case "Make existing user admin\n":
                 PromoteUserToAdmin();
+                ControlHelpPresent.ResetToDefault();
                 break;
 
             case "":
@@ -35,6 +37,10 @@ public static class AdminCreateOptionsPresent
 
     private static void PromoteUserToAdmin()
     {
+        ControlHelpPresent.Clear();
+        ControlHelpPresent.AddOptions("Escape", "<escape>");
+        ControlHelpPresent.ShowHelp();
+
         string prefix = "Please enter the following information of the user:\n\n";
 
         string firstName = TerminableUtilsPresent.ReadLine(prefix + "First Name: ");

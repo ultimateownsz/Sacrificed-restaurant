@@ -197,6 +197,8 @@ public class CalendarPresent
         }
 
         Console.ResetColor();
+        ControlHelpPresent.AddOptions("Next Month", "<n>");
+        ControlHelpPresent.AddOptions("Previous Month", "<p>");
         ControlHelpPresent.ShowHelp();
 
         // Display the "fully reserved" message at the bottom
