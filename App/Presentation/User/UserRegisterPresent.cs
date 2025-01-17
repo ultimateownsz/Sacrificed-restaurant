@@ -37,6 +37,7 @@ internal class UserRegisterPresent
 
         string? email = TerminableUtilsPresent.ReadLine("E-mail (e.g., example@domain.com): ");
         if (email == null) return;
+        email = email.ToLower();
         while (true)
         {
             var (isValid, message) = LoginLogic.IsEmailValid(email);
@@ -138,6 +139,7 @@ internal class UserRegisterPresent
 
                 case var s when (s?.StartsWith("Email")).GetValueOrDefault():
                     email = GetValidatedInput("Email (e.g., example@domain.com): ", LoginLogic.IsEmailValid, "Modify Email");
+                    email = email.ToLower();
                     break;
 
                 case var s when (s?.StartsWith("Password")).GetValueOrDefault():
