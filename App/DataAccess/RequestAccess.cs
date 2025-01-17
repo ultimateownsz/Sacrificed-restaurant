@@ -15,4 +15,10 @@ public class RequestAccess : DataAccess<RequestModel>
         string sql = $"SELECT MAX(orderID) FROM {_table}";
         return _db.ExecuteScalar<long?>(sql) ?? 0;
     }
+
+    public List<RequestModel> GetAll()
+    {
+        string sql = $"SELECT * FROM {_table}";
+        return _db.Query<RequestModel>(sql, null).ToList();
+    }
 }

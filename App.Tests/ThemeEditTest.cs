@@ -1,110 +1,112 @@
-namespace App.Test;
-using System.Text.RegularExpressions;
+using App.DataAccess;
+using Restaurant;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using App.Logic.Theme;
 
-//[TestClass]
-public class ThemeEditTest
+namespace App.Tests
 {
-    [TestMethod]
-    public void TestAddThemes()
+    [TestClass]
+    public class ThemeEditTest
     {
-        // Arrange the Models(the models are the end of this file)
-        var themeName = "Turkish";
-        var schedule = new Schedule { Year = 2025, Month = 6 };
 
-        // Act
-        string result = SimulateAddTheme(schedule, themeName);
+        [TestMethod]
+        public void Test_NewScheduleAndTheme()
+        {
+            // Arrange
+            int month = 12;
+            int year = 2025;
+            string themeName = "Nigerian"; //the reason i dont test for wrong input, and i only test to see if the method is working
+                                           //its because this method will never recive a wrong name since that happens in
+                                           //another method that validates and asks the user for their input
 
-        // Assert
-        Assert.AreEqual("Theme 'Turkish' has been added for June 2025.", result);
-    }
+            ThemeAccess themeAccess = new ThemeAccess();
+            ScheduleAccess scheduleAccess = new ScheduleAccess();
 
-    [TestMethod]
-    public void TestEditThemes()
-    {
-        var existingTheme = new Theme { ID = 101, ThemeName = "Turkish" };
-        var schedule = new Schedule { Year = 2025, Month = 7, ThemeID = 101 };
-        var newThemeName = "Japanese";
+            foreach (var theme in themeAccess.GetAll())
+            {
+                themeAccess.Delete(theme.ID);
+            }
+            
+            foreach (var schedule in scheduleAccess.GetAll())
+            {
+                scheduleAccess.Delete(schedule.ID);
+            }
 
-        string result = SimulateEditTheme(existingTheme, schedule, newThemeName);
+            foreach (var theme in themeAccess.GetAll())
+            {
+                themeAccess.Delete(theme.ID);
+            }
+            
+            themeAccess.Write(new ThemeModel { ID = 1, Name = "Japanese" });
+            themeAccess.Write(new ThemeModel { ID = 2, Name = "Italian" });
+            themeAccess.Write(new ThemeModel { ID = 3, Name = "British" });
+            themeAccess.Write(new ThemeModel { ID = 4, Name = "Turkish" });
+            themeAccess.Write(new ThemeModel { ID = 5, Name = "Irish" });
+            themeAccess.Write(new ThemeModel { ID = 6, Name = "American" });
 
-        Assert.AreEqual("Theme updated to 'Japanese' for July 2025.", result);
-    }
+            scheduleAccess.Write(new ScheduleModel { ID = 1, Year = 2025, Month = 11, ThemeID = 1 });
+            scheduleAccess.Write(new ScheduleModel { ID = 2, Year = 2025, Month = 10, ThemeID = 2 });
 
-    [TestMethod]
-    public void TestDeleteThemes()
-    {
-        var themeToDelete = new Theme { ID = 102, ThemeName = "Japanese" };
-        var schedule = new Schedule { Year = 2025, Month = 12, ThemeID = 102 };
+            // Act
+            ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
 
-        string result = SimulateDeleteTheme(themeToDelete, schedule);
+            // Assert: Ensure the new theme and schedule are added
+            Assert.AreEqual(7, themeAccess.GetAll().Count, "Themes count mismatch");
+            Assert.AreEqual("Nigerian", themeAccess.GetAll().Last().Name, "Theme name mismatch");
 
-        Assert.AreEqual("Theme 'Japanese' has been deleted for July 2025.", result);
-    }
+            Assert.AreEqual(3, scheduleAccess.GetAll().Count, "Schedules count mismatch");
+            var newSchedule = scheduleAccess.GetAll().Last();
+            Assert.AreEqual(month, newSchedule.Month, "Month mismatch");
+            Assert.AreEqual(year, newSchedule.Year, "Year mismatch");
+        }
 
-    [TestMethod]
-    public void TestValidateThemeName()
-    {
-        string validThemeName = "Valid Theme";
-        string invalidThemeName = "Invalid123!";
+        [TestMethod]
+        public void Test_ExistingScheduleAndTheme()
+        {
+            // Arrange
+            int month = 12;
+            int year = 2025;
+            string themeName = "British";//the reason i dont test for wrong input, and i only test to see if the method is working
+                                         //its because this method will never recive a wrong name since that happens in
+                                         //another method that validates and asks the user for their input
+            ThemeAccess themeAccess = new ThemeAccess();
+            ScheduleAccess scheduleAccess = new ScheduleAccess();
 
-        bool isValid1 = ValidateThemeName(validThemeName);
-        bool isValid2 = ValidateThemeName(invalidThemeName);
+            foreach (var theme in themeAccess.GetAll())
+            {
+                themeAccess.Delete(theme.ID);
+            }
+            
+            foreach (var schedule in scheduleAccess.GetAll())
+            {
+                scheduleAccess.Delete(schedule.ID);
+            }
 
-        Assert.IsTrue(isValid1, "Expected the theme name to be valid.");
-        Assert.IsFalse(isValid2, "Expected the theme name to be invalid.");
-    }
+            foreach (var theme in themeAccess.GetAll())
+            {
+                themeAccess.Delete(theme.ID);
+            }
+            
+            themeAccess.Write(new ThemeModel { ID = 1, Name = "Japanese" });
+            themeAccess.Write(new ThemeModel { ID = 2, Name = "Italian" });
+            themeAccess.Write(new ThemeModel { ID = 3, Name = "British" });
+            themeAccess.Write(new ThemeModel { ID = 4, Name = "Turkish" });
+            themeAccess.Write(new ThemeModel { ID = 5, Name = "Irish" });
+            themeAccess.Write(new ThemeModel { ID = 6, Name = "American" });
 
-    // Simulated Methods for Testing
-    //This Method simulates adding themes
-    private string SimulateAddTheme(Schedule schedule, string themeName)
-    {
-        //calls ValidateThemeName to check if it has symbols in it
-        if (!ValidateThemeName(themeName))
-            return "Invalid theme name. Only letters and spaces are allowed.";
+            scheduleAccess.Write(new ScheduleModel { ID = 1, Year = 2025, Month = 12, ThemeID = 6 });
+            scheduleAccess.Write(new ScheduleModel { ID = 2, Year = 2025, Month = 10, ThemeID = 2 });
 
-        return $"Theme '{themeName}' has been added for {GetMonthName(schedule.Month)} {schedule.Year}.";
-    }
+            // Act
+            ThemeManageLogic.UpdateThemeSchedule(month, year, themeName);
 
-    //This Method simulates editing themes
-    private string SimulateEditTheme(Theme existingTheme, Schedule schedule, string newThemeName)
-    {
-        if (!ValidateThemeName(newThemeName))
-            return "Invalid theme name. Only letters and spaces are allowed.";
+            // Assert: Ensure no new data is added and existing schedule is updated
+            Assert.AreEqual(6, themeAccess.GetAll().Count);
+            Assert.AreEqual(2, scheduleAccess.GetAll().Count);
 
-        existingTheme.ThemeName = newThemeName;
-        return $"Theme updated to '{newThemeName}' for {GetMonthName(schedule.Month)} {schedule.Year}.";
-    }
+            var existingSchedule = scheduleAccess.GetAll().First();
+            Assert.AreEqual(3, existingSchedule.ThemeID);
+        }
 
-    //This Method simulates Deleting themes
-    private string SimulateDeleteTheme(Theme themeToDelete, Schedule schedule)
-    {
-        return $"Theme '{themeToDelete.ThemeName}' has been deleted for {GetMonthName(schedule.Month)} {schedule.Year}.";
-    }
-
-    //Validates the name of the theme
-    private bool ValidateThemeName(string themeName)
-    {
-        return Regex.IsMatch(themeName, "^[A-Za-z ]+$"); //This line(FROM GOOGLE NOT GPT) validates if the name has anything other than letters or spaces, then proceeds to return true/false
-    }
-
-    // gets the month name
-    private string GetMonthName(int month)
-    {
-        return new DateTime(1, month, 1).ToString("MMMM");
-    }
-
-    // Supporting Classes
-    public class Theme
-    {
-        public int ID { get; set; }
-        public string ThemeName { get; set; }
-    }
-
-    public class Schedule
-    {
-        public int ID { get; set; }
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public int ThemeID { get; set; }
     }
 }

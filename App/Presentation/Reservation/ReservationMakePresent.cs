@@ -41,6 +41,8 @@ public class ReservationMakePresent
             // Step 2: Display the calendar and mark unreservable dates
             selectedDate = CalendarPresent.Show(DateTime.Now, isAdmin, guests, acc);
 
+            ControlHelpPresent.ResetToDefault();
+
             if (selectedDate == DateTime.MinValue)
                 goto START;
 
@@ -102,6 +104,7 @@ public class ReservationMakePresent
                     return; // Exit after completing reservation
                 }
             }
+            ControlHelpPresent.ResetToDefault();
         }
     }
     public static List<ProductModel>? TakeOrders(DateTime selectedDate, UserModel acc, int reservationId, int guests)

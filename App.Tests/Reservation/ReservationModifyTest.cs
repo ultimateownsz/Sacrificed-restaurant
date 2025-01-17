@@ -124,11 +124,11 @@ public class ReservationModifyTest
         public string FirstName { get; set; }
     }
 
-    public class ReservationModel
-    {
-        public int ID { get; set; }
-        public DateTime? Date { get; set; }
-        public int UserID { get; set; }
-        public int PlaceID { get; set; }
-    }
-}
+//     public class ReservationModel
+//     {
+//         public int ID { get; set; }
+//         public DateTime? Date { get; set; }
+//         public int UserID { get; set; }
+//         public int PlaceID { get; set; }
+//     }
+// }

@@ -43,6 +43,7 @@ public static class LoginPresent
                 ControlHelpPresent.ResetToDefault();
                 return null;
             }
+            email =  email.ToLower();
 
             // request password
             password = _request_password(email);
@@ -66,8 +67,8 @@ public static class LoginPresent
             Console.WriteLine("LOGIN MENU\n");
             
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"E-mail: {email}", Console.ForegroundColor);
-            Console.WriteLine($"Password: {password}", Console.ForegroundColor);
+            Console.WriteLine($"E-mail : {email}", Console.ForegroundColor);
+            Console.WriteLine($"Password : {password}", Console.ForegroundColor);
             
             Console.ForegroundColor = palette.Base;
             Console.WriteLine("\nInvalid credentials, returning...");

@@ -1,7 +1,26 @@
+using App.DataModels.Controls;
+
 namespace Restaurant;
 
 public static class ControlHelpPresent
 {   
+    private static IConsole console = new ConsoleModel();
+    public static void SetConsoleMock(IConsole mock)
+    {
+        console = mock;
+    }
+
+    public static IReadOnlyDictionary<string, string> GetCurrentControls()
+    {
+        return navigationControls;
+    }
+
+    
+    public static IReadOnlyDictionary<string, string> GetDefaultControls()
+    {
+        return defaultNavigationControls;
+    }
+
     // default navigation controls
     private static readonly Dictionary<string, string> defaultNavigationControls = new()
     {
@@ -45,6 +64,21 @@ public static class ControlHelpPresent
         ShowControls(filteredControls, options, selectedIndex);
     }
 
+    
+    public static void ShowHelpForTesting(
+        List<string>? options = null,
+        int? selectedIndex = null,
+        string? feedbackMessage = null,
+        string menuContext = "default")
+    {
+        foreach (var control in navigationControls)
+        {
+            console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
+        }
+
+        ShowHelp(options, selectedIndex, feedbackMessage, menuContext);
+    }
+
     private static void ShowControls(
         List<KeyValuePair<string, string>> controls,
         List<string>? options = null,
@@ -63,10 +97,10 @@ public static class ControlHelpPresent
         
         // Calculate the footer start position
         int footerHeight = GetFooterHeight();
-        int startLine = Console.WindowHeight - footerHeight;
+        int startLine = console.WindowHeight - footerHeight;
 
-        ClearFooterSpace(startLine, Console.WindowHeight);
-        Console.SetCursorPosition(0, startLine);
+        ClearFooterSpace(startLine, console.WindowHeight);
+        console.SetCursorPosition(0, startLine);
 
         Console.ForegroundColor = ConsoleColor.White;
         Console.ResetColor();
@@ -83,18 +117,18 @@ public static class ControlHelpPresent
             if (controls.Any(c => c.Key == "Select"))
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Press {navigationControls["Select"]} to select \"{cleanOption}\".");
+                console.WriteLine($"Press {navigationControls["Select"]} to select \"{cleanOption}\".");
                 Console.ResetColor();
             }
             if (controls.Any(c => c.Key == "Navigate"))
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Press {navigationControls["Navigate"]} to navigate options.");
+                console.WriteLine($"Press {navigationControls["Navigate"]} to navigate options.");
                 Console.WriteLine($"Press <esc> to return.");
             }
             if (controls.Any(c => c.Key == "Exit"))
             {
-                Console.WriteLine($"Press {navigationControls["Exit"]} to return.");
+                console.WriteLine($"Press {navigationControls["Exit"]} to return.");
                 Console.ResetColor();
             }
         }
@@ -105,7 +139,7 @@ public static class ControlHelpPresent
             foreach (var control in dynamicControls)
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
+                console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
                 Console.ResetColor();
             }
 
@@ -113,7 +147,7 @@ public static class ControlHelpPresent
             foreach (var control in staticControls)
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
+                console.WriteLine($"Press {control.Value} to {control.Key.ToLower()}.");
                 Console.ResetColor();
             }
         }
@@ -127,15 +161,15 @@ public static class ControlHelpPresent
     private static void ClearFooterSpace(int startLine, int endLine)
     {
         // Ensure the start and end lines are within bounds
-        startLine = Math.Max(0, startLine);
-        endLine = Math.Min(Console.WindowHeight, endLine);
+        // startLine = Math.Max(0, startLine);
+        // endLine = Math.Min(Console.WindowHeight, endLine);
 
-        int currentLine = Console.CursorTop;
+        // int currentLine = Console.CursorTop;
         for (int i = startLine; i < endLine; i++)
         {
-            Console.SetCursorPosition(0, i); // Safeguard to avoid invalid positions
-            Console.Write(new string(' ', Console.WindowWidth)); // Clear the line
+            console.SetCursorPosition(0, i); // Safeguard to avoid invalid positions
+            console.Write(new string(' ', console.WindowWidth)); // Clear the line
         }
-        Console.SetCursorPosition(0, Math.Min(currentLine, Console.WindowHeight - 1)); // Return cursor to a valid position
+        console.SetCursorPosition(0, Math.Min(console.CursorTop, console.WindowHeight - 1)); // Return cursor to a valid position
     }
 }
