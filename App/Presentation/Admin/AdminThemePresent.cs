@@ -32,7 +32,7 @@ static class AdminThemePresent
                 if (selection == 0)
                 {
                     themeName = ThemeValidateLogic.GetValidThemeMenu();
-                    if (themeName == null)
+                    if (themeName == null || themeName == "REQUEST_PROCESS_EXIT")
                     {
                         goto middleMenu;
                     }
@@ -45,7 +45,7 @@ static class AdminThemePresent
                 else if (selection == 1)
                 {
                     themeName = ThemeValidateLogic.GetValidString();
-                    if (themeName == null)
+                    if (themeName == null || themeName == "REQUEST_PROCESS_EXIT")
                     {
                         Console.Clear();
                         Console.WriteLine("Failed to update theme");
