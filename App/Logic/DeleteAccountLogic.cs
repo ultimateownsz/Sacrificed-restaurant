@@ -44,8 +44,8 @@ public class DeleteAccountLogic
     public static List<string> GenerateMenuOptions(List<UserModel> accounts, int currentPage, int totalPages)
     {
         
+        //if (totalPages < 10) return options;
         var options = accounts.Select(FormatAccount).ToList();
-        if (totalPages < 10) return options;
         
         if (currentPage > 0) options.Add("<< Previous Page");
         if (currentPage < totalPages - 1) options.Add("Next Page >>");
