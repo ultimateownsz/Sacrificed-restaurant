@@ -1,6 +1,6 @@
-namespace App.DataModels.Controls;
+namespace App.Logic.Controls;
 
-public interface IConsole
+public interface IConsoleLogic
 {
     int WindowHeight { get; }
     int WindowWidth { get; }
@@ -10,5 +10,5 @@ public interface IConsole
     void Write(string message);
     void WriteLine(string message);
 
-    
+
 }

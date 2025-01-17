@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 
-namespace App.Restaurant
+namespace App.Tests.Account
 {
     [TestClass]
     public class ValidationTests

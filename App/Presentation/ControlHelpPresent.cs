@@ -1,11 +1,11 @@
-using App.DataModels.Controls;
+using App.Logic.Controls;
 
 namespace Restaurant;
 
 public static class ControlHelpPresent
 {   
-    private static IConsole console = new ConsoleModel();
-    public static void SetConsoleMock(IConsole mock)
+    private static IConsoleLogic console = new ConsoleModelLogic();
+    public static void SetConsoleMock(IConsoleLogic mock)
     {
         console = mock;
     }

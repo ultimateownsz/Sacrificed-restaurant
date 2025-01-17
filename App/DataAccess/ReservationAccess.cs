@@ -1,4 +1,5 @@
 ﻿using App.DataAccess.Utils;
+using App.DataModels.Allergy;
 using Restaurant;
 
 namespace App.DataAccess;
@@ -6,22 +7,25 @@ public class ReservationAccess : DataAccess<ReservationModel>
 {
     public ReservationAccess() : base(typeof(ReservationModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    public new bool Delete(int? id)
+    public override bool Purge(int? id)
     {
-        
-        IEnumerable<RequestModel> requests = (
-                from   entry    in Access.Requests.Read()
-                where  entry.ID == id
-                select entry
-            );
+        IEnumerable<RequestModel?> requests =
+        (
+            from val in Access.Requests.Read()
+            where val?.ID == id
+            select val
+        );
 
         foreach (var request in requests)
         {
-            if (!Access.Requests.Delete(request.ID))
+            if (!Access.Requests.Delete(request?.ID))
                 return false;
         }
 
-        return base.Delete(id);
+        return true;
     }
+
+    public new bool Delete(int? id)
+        => Purge(id) && base.Delete(id);
 
 }

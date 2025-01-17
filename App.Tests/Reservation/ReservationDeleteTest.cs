@@ -1,7 +1,7 @@
 namespace App.Tests.Reservation;
 
 // Unit Tests for Reservation Logic (Removing Reservations)
-//[TestClass]
+[TestClass]
 public class ReservationDeleteTest
 {
     // Unit Test for Criterion: Removing Reservations

@@ -38,13 +38,13 @@ public class LoginLogic
         // Query the database to check for email existence
         var existingUser = Access.Users.GetBy<string>("Email", email);
 
-        if (existingUser != null) return (false, "\nThis email already exists. Please use a different email.\n\n");
+        if (existingUser != null) return (false, "This email already exists. Please use a different email.");
 
         // Validate email format using regex
         string emailPattern = @"^[\w\.\-+]+@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$";
         if (!Regex.IsMatch(email, emailPattern)) 
         {
-            return (false, "\nThe email format is invalid. Please enter a valid email address (e.g., example@domain.com).\n\n");
+            return (false, "The email format is invalid. Please enter a valid email address (e.g., example@domain.com).");
         }
 
         return (true, null); // Email is valid
@@ -54,24 +54,24 @@ public class LoginLogic
 
     public static (bool isValid, string? error) IsPasswordValid(string password)
     {
-        if (string.IsNullOrWhiteSpace(password)) return (false, "\nPassword cannot be empty. Please try again.\n\n");
+        if (string.IsNullOrWhiteSpace(password)) return (false, "Password cannot be empty. Please try again.");
 
-        if (password.Length < 8 || password.Length > 16) return (false, "\nPassword must be between 8 and 16 characters long. Please try again.\n\n");
+        if (password.Length < 8 || password.Length > 16) return (false, "Password must be between 8 and 16 characters long. Please try again.\n");
 
-        if (!password.Any(char.IsLetter)) return (false, "\nPassword must contain at least one letter. Please try again.\n\n");
+        if (!password.Any(char.IsLetter)) return (false, "Password must contain at least one letter. Please try again.\n");
 
-        if (!password.Any(char.IsDigit)) return (false, "\nPassword must contain at least one number. Please try again.\n\n");
+        if (!password.Any(char.IsDigit)) return (false, "Password must contain at least one number. Please try again.\n");
 
         return (true, null); // Password is valid
     }
 
     public static (bool isValid, string? error) IsPhoneNumberValid(string phoneNumber)
     {
-        if (phoneNumber.Length != 10) return (false, "\nPhone number must be exactly 10 digits long. Please try again.\n\n");
+        if (phoneNumber.Length != 10) return (false, "Phone number must be exactly 10 digits long. Please try again.\n");
         
-        if (!phoneNumber.StartsWith("06")) return (false, "\nPhone number must start with '06'. Please try again.\n\n");
+        if (!phoneNumber.StartsWith("06")) return (false, "Phone number must start with '06'. Please try again.\n");
         
-        if (!phoneNumber.All(char.IsDigit)) return (false, "\nPhone number must contain only digits. Please try again.\n\n");
+        if (!phoneNumber.All(char.IsDigit)) return (false, "Phone number must contain only digits. Please try again.\n");
        
         // if (phoneNumber == "0612345678") return (false, "The phone number '0612345678' is reserved for special purposes and cannot be used. Please enter a different phone number.");
         

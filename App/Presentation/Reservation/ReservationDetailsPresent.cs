@@ -111,7 +111,7 @@ public static class ReservationDetailsPresent
         foreach (var reserv in orders.Where(r => r != null))
         {
             // Get all requests associated with the current reservation ID
-            var requests = Access.Requests.GetAllBy("ReservationID", reserv!.ID).ToList();
+            var requests = Access.Requests.GetAllBy("ReservationID", reserv?.ID).ToList();
 
             // Process each request to get the associated product and categorize it
             foreach (var req in requests)
