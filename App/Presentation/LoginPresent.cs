@@ -43,6 +43,7 @@ public static class LoginPresent
                 ControlHelpPresent.ResetToDefault();
                 return null;
             }
+            email =  email.ToLower();
 
             // request password
             password = _request_password(email);
