@@ -28,6 +28,7 @@ static class UserMenuPresent
 
                 case "Delete account\n":
                     UserDeleteAccountPresent.DeleteAccount(acc);
+                    ControlHelpPresent.ResetToDefault(); // fallback to selection controls
                     break;
 
                 case "Specify allergies":
