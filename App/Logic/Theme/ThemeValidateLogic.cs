@@ -67,7 +67,7 @@ public static class ThemeValidateLogic
             else
             {
                 Console.WriteLine("?");
-                return null;
+                return "REQUEST_PROCESS_EXIT";
             }
         }
     }

@@ -78,7 +78,7 @@ static class AdminThemePresent
                 if (selection == 0)
                 {
                     themeName = ThemeValidateLogic.GetValidThemeMenu();
-                    if (themeName == null)
+                    if (themeName == null || themeName == "REQUEST_PROCESS_EXIT")
                     {
                         goto middleMenu2;
                     }
