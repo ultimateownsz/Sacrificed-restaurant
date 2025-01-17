@@ -43,51 +43,6 @@ namespace App.Restaurant
             Assert.AreEqual("John Doe (Admin)", result, "The formatted account string should indicate the admin status.");
         }
 
-        // [TestMethod]
-        // public void TestConfirmAndDelete_ConfirmDeletion()
-        // {
-        //     // Arrange
-        //     var user = new UserModel { ID = 1, FirstName = "John", LastName = "Doe" };
-
-        //     // Act
-        //     var result = DeleteAccountLogic.ConfirmAndDelete(user);
-
-        //     // Assert
-        //     Assert.IsTrue(result, "The account deletion should return true if confirmed.");
-        // }
-
-        // [TestMethod]
-        // public void TestConfirmAndDelete_CancelDeletion()
-        // {
-        //     // Arrange
-        //     var user = new UserModel { ID = 1, FirstName = "John", LastName = "Doe" };
-
-        //     // Act
-        //     var result = DeleteAccountLogic.ConfirmAndDelete(user);
-
-        //     // Assert
-        //     Assert.IsFalse(result, "The account deletion should return false if not confirmed.");
-        // }
-
-        // [TestMethod]
-        // public void TestGetActiveAccounts()
-        // {
-        //     // Arrange
-        //     var allAccounts = new List<UserModel>
-        //     {
-        //         new UserModel { FirstName = "John", LastName = "Doe" },
-        //         new UserModel { FirstName = "Inactive", LastName = "User" }
-        //     };
-        //     Access.Users.Read();
-
-        //     // Act
-        //     var result = DeleteAccountLogic.GetActiveAccounts();
-
-        //     // Assert
-        //     Assert.AreEqual(1, result.Count, "Only active accounts should be included.");
-        //     Assert.AreEqual("John", result.First().FirstName, "The active account should be John Doe.");
-        // }
-
         [TestMethod]
         public void TestGenerateMenuOptions()
         {
@@ -105,24 +60,6 @@ namespace App.Restaurant
             Assert.AreEqual(11, result.Count, "Menu options should include accounts and 'Next Page' option.");
             Assert.IsTrue(result.Contains("Next Page >>"), "The menu should include 'Next Page' when there are more pages.");
         }
-
-        // [TestMethod]
-        // public void TestDeleteAccount_ValidDeletion()
-        // {
-        //     // Arrange
-        //     var currentUser = new UserModel { ID = 1, FirstName = "Current", LastName = "User" };
-        //     var sortedAccounts = Enumerable.Range(2, 5)
-        //                                    .Select(i => new UserModel { ID = i, FirstName = $"User{i}", LastName = $"Last{i}" })
-        //                                    .ToList();
-        //     string selectedText = "User2 Last2 (User)";
-        //     int currentPage = 0;
-
-        //     // Act
-        //     var result = DeleteAccountLogic.DeleteAccount(currentUser, currentPage, sortedAccounts, selectedText);
-
-        //     // Assert
-        //     Assert.IsTrue(result, "The account should be successfully deleted.");
-        // }
 
         [TestMethod]
         public void TestDeleteAccount_InvalidDeletion_SelfAccount()
