@@ -12,7 +12,7 @@ public class DataSynchronizationTest
 
     private static SqliteConnection _db = new($"Data Source=DataSources/project.db");
 
-    private static Dictionary<String, Type> _mapping = new()
+    private static Dictionary<string, Type> _mapping = new()
     {
         {"Reservation", typeof(ReservationModel)},
         {"Allerlink", typeof(AllerlinkModel)},
@@ -61,7 +61,7 @@ public class DataSynchronizationTest
         return true;
     }
 
-    public static bool TableSynchronization(List<string> tables)
+    public bool TableSynchronization(List<string> tables)
     {        
         foreach (string table in tables)
         {

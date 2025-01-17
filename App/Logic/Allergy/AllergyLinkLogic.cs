@@ -41,7 +41,7 @@ internal class AllergyLinkLogic
             x => output.Allergies?.Add(x?.Name));
 
         // add those the user has
-        foreach (AllerlinkModel? model in Access.Allerlinks.Read().Where(x => x.EntityID == id))
+        foreach (AllerlinkModel? model in Access.Allerlinks.Read().Where(x => x.EntityID == id && x.Personal == 1))
             output.Highlights.Add(Access.Allergies.GetBy("ID", model?.AllergyID)?.Name);
 
         return output;

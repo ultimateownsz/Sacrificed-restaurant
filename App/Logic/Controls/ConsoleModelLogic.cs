@@ -1,6 +1,6 @@
-namespace App.DataModels.Controls;
+namespace App.Logic.Controls;
 
-public class ConsoleModel : IConsole
+public class ConsoleModelLogic : IConsoleLogic
 {
     public int WindowHeight => Console.WindowHeight;
     public int WindowWidth => Console.WindowWidth;

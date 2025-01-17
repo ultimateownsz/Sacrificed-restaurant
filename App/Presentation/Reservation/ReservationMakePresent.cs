@@ -203,6 +203,7 @@ public class ReservationMakePresent
                         {
                             case 0:
                                 guestOrder.Add(recommended);
+                                orderLogic.SaveOrder(reservationId, recommended.ID.Value);
                                 break;
                         }
                     }

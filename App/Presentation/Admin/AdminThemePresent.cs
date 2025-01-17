@@ -162,7 +162,7 @@ static class AdminThemePresent
                     break;
 
                 case ConsoleKey.DownArrow:
-                    if (currentIndex > 0)
+                    if (currentIndex > 1)
                     {
                         message = string.Empty; // Clear message on valid navigation
                         currentIndex--;

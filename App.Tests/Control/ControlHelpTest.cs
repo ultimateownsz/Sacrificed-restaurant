@@ -6,12 +6,12 @@ namespace App.Tests;
 public class ControlsHelperPresentTest
 {
     public TestContext TestContext { get; set; }
-    private MockConsole? mockConsole;
+    private ControlMockTest? mockConsole;
 
     [TestInitialize]
     public void SetUp()
     {
-        mockConsole = new MockConsole();
+        mockConsole = new ControlMockTest();
         ControlHelpPresent.SetConsoleMock(mockConsole);
         ControlHelpPresent.ResetToDefault();
     }

@@ -26,10 +26,9 @@ public class SelectionPresent
     {
         // Clear only the menu area, leaving the footer intact
         _clear(menuStartLine, Console.WindowHeight - ControlHelpPresent.GetFooterHeight());
-
+        Console.SetCursorPosition(0, menuStartLine);
 
         // banner & colour initialization
-        Console.SetCursorPosition(0, menuStartLine);
         TerminableUtilsPresent.Write(banner + "\n\n");
         Console.ForegroundColor = palette.Base;
 
@@ -88,7 +87,7 @@ public class SelectionPresent
             case ConsoleKey.Escape:
                 return SelectionLogic.Interaction.Terminated;
 
-            case ConsoleKey.Spacebar:
+            //case ConsoleKey.Spacebar:
             case ConsoleKey.Enter:
 
                 // terminate
@@ -119,10 +118,10 @@ public class SelectionPresent
         // loop
         while (true)
         {
-            // Always render at the top of the terminal
+            
             int menuStartLine = 0; // Fixed start at the top
             Console.SetCursorPosition(0, menuStartLine);
-
+            
             // formatting
             _display(selection, banner, mode, menuStartLine);
 

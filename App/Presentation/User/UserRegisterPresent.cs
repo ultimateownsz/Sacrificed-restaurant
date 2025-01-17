@@ -22,7 +22,7 @@ internal class UserRegisterPresent
         while (string.IsNullOrWhiteSpace(firstName))
         {
             string message = "First name cannot be empty.";
-            firstName = TerminableUtilsPresent.ReadLine($"First name: \n\n{message}");
+            firstName = TerminableUtilsPresent.ReadLine($"{message}\n\nFirst name: ");
             if (firstName == null) return;
         }
 
@@ -31,7 +31,7 @@ internal class UserRegisterPresent
         while (string.IsNullOrWhiteSpace(lastName))
         {
             string message = "Last name cannot be empty.";
-            lastName = TerminableUtilsPresent.ReadLine($"Last name: \n\n{message}");
+            lastName = TerminableUtilsPresent.ReadLine($"{message}\n\nLast name: ");
             if (lastName == null) return;
         }
 
@@ -47,7 +47,7 @@ internal class UserRegisterPresent
             }
             else
             {
-                email = TerminableUtilsPresent.ReadLine($"E-mail (e.g., example@domain.com): \n\n{message}");
+                email = TerminableUtilsPresent.ReadLine($"{message}\n\nE-mail (e.g., example@domain.com): ");
                 if (email == null) return;
             }
         }
@@ -63,7 +63,7 @@ internal class UserRegisterPresent
             }
             else
             {
-                password = TerminableUtilsPresent.ReadLine($"Password (8-16 characters, must include letters and numbers): \n\n{message}");
+                password = TerminableUtilsPresent.ReadLine($"{message}\n\nPassword (8-16 characters, must include letters and numbers): ");
                 if (password == null) return;
             }
         }
@@ -79,7 +79,7 @@ internal class UserRegisterPresent
             }
             else
             {
-                phoneNumber = TerminableUtilsPresent.ReadLine($"Phone number (10 digits, starting with 06): \n\n{error}");
+                phoneNumber = TerminableUtilsPresent.ReadLine($"{error}\n\nPhone number (10 digits, starting with 06): ");
                 if (phoneNumber == null) return;
             }
         }
@@ -174,11 +174,11 @@ internal class UserRegisterPresent
 
     private static string GetValidatedInput(string prompt, Func<string, (bool, string?)> validate, string menuTitle)
     {
+        Console.Clear();
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(menuTitle);
-            Console.WriteLine(prompt);
+            //Console.WriteLine(menuTitle);
+            Console.WriteLine('\n'+prompt);
 
             string? input = Console.ReadLine();
             if (input == null)
@@ -194,6 +194,7 @@ internal class UserRegisterPresent
 
             if (errorMessage != null)
             {
+                Console.Clear();
                 Console.WriteLine(errorMessage);
             }
         }

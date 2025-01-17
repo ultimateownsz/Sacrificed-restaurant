@@ -1,3 +1,5 @@
+using Restaurant;
+
 namespace App.Tests.Reservation;
 
 [TestClass]
@@ -123,6 +125,8 @@ public class ReservationModifyTest
         public int ID { get; set; }
         public string FirstName { get; set; }
     }
+
+}
 
 //     public class ReservationModel
 //     {

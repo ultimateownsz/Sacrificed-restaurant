@@ -1,4 +1,5 @@
 using App.DataAccess.Utils;
+using App.DataModels.Utils;
 
 namespace Restaurant;
 
@@ -42,7 +43,10 @@ public class DeleteAccountLogic
     // Method to generate menu options based on the current page and total pages
     public static List<string> GenerateMenuOptions(List<UserModel> accounts, int currentPage, int totalPages)
     {
+        
+        //if (totalPages < 10) return options;
         var options = accounts.Select(FormatAccount).ToList();
+        
         if (currentPage > 0) options.Add("<< Previous Page");
         if (currentPage < totalPages - 1) options.Add("Next Page >>");
         return options;

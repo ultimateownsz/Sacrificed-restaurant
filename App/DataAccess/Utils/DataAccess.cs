@@ -57,7 +57,7 @@ public class DataAccess<T1> where T1 : IModel
     public List<T1?> Read()
     {
         string query = $"SELECT * FROM {_table}";
-        return (_db.Query<T1>(query) ?? []).ToList();
+        return (_db.Query<T1?>(query) ?? []).ToList();
     }
 
     public bool Write(T1 item)
@@ -105,6 +105,9 @@ public class DataAccess<T1> where T1 : IModel
     public List<T1?> GetAllBy<T2>(string? column, T2? value)
     {
         string query = $"SELECT * FROM {_table} WHERE {column} = @value";
-        return _db.Query<T1>(query, new { value = value ?? default }).ToList();
+        return _db.Query<T1?>(query, new { value = value ?? default }).ToList();
     }
+
+    public virtual bool Purge(int? id)
+        => throw new NotImplementedException();
 }

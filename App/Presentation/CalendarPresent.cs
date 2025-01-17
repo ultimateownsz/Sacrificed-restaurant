@@ -34,7 +34,7 @@ public class CalendarPresent
                 case ConsoleKey.P:
                     if (currentDate.AddMonths(-1) < DateTime.Today)
                     {
-                        Console.SetCursorPosition(0, Console.CursorTop + 2);
+                        //Console.SetCursorPosition(0, Console.CursorTop + 2);
                         Console.WriteLine("You cannot reserve in the past.");
                     }
                     else
@@ -50,11 +50,13 @@ public class CalendarPresent
                 case ConsoleKey.Enter:
                     DateTime selectedDate = new DateTime(currentDate.Year, currentDate.Month, selectedDay);
 
+
+
                     if (!isAdmin)
                     {
                         if (IsDayFullyBooked(selectedDate, guests))
                         {
-                            Console.SetCursorPosition(0, Console.CursorTop + 2);
+                            //Console.SetCursorPosition(0, Console.CursorTop + 2);
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("This day is fully reserved.");
                             Console.ResetColor();

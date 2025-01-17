@@ -6,18 +6,26 @@ public class AllergyAccess : DataAccess<AllergyModel>
 {
     public AllergyAccess() : base(typeof(AllergyModel).GetProperties().Select(p => p.Name).ToArray()) { }
 
-    public new bool Delete(int? id)
+    public override bool Purge(int? id)
     {
-        IEnumerable<AllerlinkModel> links =
-            Access.Allerlinks.Read().Where(lnk => lnk.AllergyID == id);
+        IEnumerable<AllerlinkModel?> links =
+        (
+            from lnk in Access.Allerlinks.Read()
+            where lnk?.AllergyID == id
+            select lnk
+        );
 
         foreach (var link in links)
         {
-            if (!Access.Allerlinks.Delete(link.ID))
+            if (!Access.Allerlinks.Delete(link?.ID))
                 return false;
         }
 
-        return base.Delete(id);
+        return true;
     }
+
+    public new bool Delete(int? id)
+        => Purge(id) && base.Delete(id);
+    
 
 }

@@ -1,7 +1,7 @@
-using App.DataModels.Controls;
+using App.Logic.Controls;
 namespace App.Tests;
 
-public class MockConsole : IConsole
+public class ControlMockTest : IConsoleLogic
 {
     public int WindowHeight { get; set; } = 50; // Simulated console height
     public int WindowWidth { get; set; } = 100; // Simulated console width
