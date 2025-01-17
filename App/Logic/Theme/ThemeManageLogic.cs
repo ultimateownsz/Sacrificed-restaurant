@@ -4,7 +4,7 @@ using Restaurant;
 
 namespace App.Logic.Theme;
 
-static class ThemeManageLogic
+public static class ThemeManageLogic
 {
 
     // this method updates the theme name

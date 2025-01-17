@@ -5,24 +5,18 @@ using System.Globalization;
 
 namespace Restaurant;
 
-static class ProductLogic
+public static class ProductLogic
 {
     //This Method is used to add products
     public static bool AddProduct(ProductModel product)
     {
         if (product == null)
         {
-            Console.WriteLine("Cant add empty products.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
             return false;
         }
 
         if (Access.Products.GetBy<string?>("Name", product.Name) != null)
         {
-            Console.WriteLine($"{product.Name} already exists.");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
             return false;
         }
 
@@ -92,6 +86,18 @@ static class ProductLogic
         foreach (var request in requests)
         {
             Access.Requests.Delete(request.ID);
+        }
+
+        var foodPairs = Access.Pairs.Read().Where(p => p.FoodID == productId).ToList();
+        foreach (var pair in foodPairs)
+        {
+            Access.Pairs.Delete(pair.ID);
+        }
+
+        var drinkPairs = Access.Pairs.Read().Where(p => p.DrinkID == productId).ToList();
+        foreach (var pair in drinkPairs)
+        {
+            Access.Pairs.Delete(pair.ID);
         }
 
         if (Access.Products.GetBy<int?>("ID", productId) == null)
